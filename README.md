@@ -1,5 +1,14 @@
 # YooLink
 
+Dieses Video schauen bevor man irgendwas macht:
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+https://www.youtube.com/watch?v=DLxcyndCvO4
+
 Protfolio Page for YooLink
 
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
@@ -74,7 +83,7 @@ celery -A config.celery_app worker -B -l info
 
 ## Deployment
 
-The following details how to deploy this application.
+https://www.youtube.com/watch?v=DLxcyndCvO4 hier ab minute 28
 
 ### Docker
 
