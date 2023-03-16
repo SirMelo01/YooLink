@@ -8,17 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Protfolio Page for YooLink">
     <meta name="author" content="Sebastian">
+    {% compress css %}
+      <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    {% endcompress css %}
+
+    {% compress js %}
+      <script defer src="{% static 'js/loadinit.js' %}"></script>
+    {% endcompress js %}
 
     {% block css %}
-      {% compress css %}
-        <link href="{% static 'css/output.css' %}" rel="stylesheet">
-      {% endcompress css %}
     {% endblock css %}
 
     {% block javascript %}
-      {% compress js %}
-        <script defer src="{% static 'js/loadinit.js' %}"></script>
-      {% endcompress js %}
     {% endblock javascript %}
 
   </head>
@@ -30,7 +31,7 @@
       <div class="px-4 py-5 md:px-24 lg:px-8 bg-blue-900 rounded-b-2xl text-white shadow-2xl">
         <div class="relative flex items-center justify-between">
           <a href="/" aria-label="Company" title="Company" class="inline-flex items-center">
-            <img src="./ressources/img/LogoWeis.PNG" alt="YooLink Logo" class="h-10"/>
+            <img src="{% static 'images/LogoWeis.PNG' %}" alt="YooLink Logo" class="h-10"/>
             <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
           </a>
           <ul class="hidden items-center space-x-8 lg:flex">
@@ -150,6 +151,7 @@
 
     {% endblock content %}
 
+
     <!--Cookies Beginn-->
     {% block cookies %}
     <div class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" id="menu-cookie">
@@ -233,11 +235,10 @@
     {% endblock footer %}
     <!--Footer End-->
 
-
+    {% compress js %}
+      <script defer src="{% static 'js/base.js' %}"></script>
+    {% endcompress js %}
     {% block javascriptend %}
-      {% compress js %}
-        <script defer src="{% static 'js/base.js' %}"></script>
-      {% endcompress js %}
     {% endblock javascriptend %}
 
   </body>

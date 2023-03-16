@@ -1,9 +1,863 @@
 {% extends "base.html" %}
+{% load compress static %}
 {% block content %}
-<div>hi</div>
+
+  {% block css %}
+    {% compress css %}
+      <link href="{% static 'css/cardslider.css' %}" rel="stylesheet">
+      <link href="{% static 'css/wellen.css' %}" rel="stylesheet">
+      <link href="{% static 'css/fische.css' %}" rel="stylesheet">
+      <link href="{% static 'css/uboot.css' %}" rel="stylesheet">
+    {% endcompress css %}
+  {% endblock css %}
 
 
-{% endblock %}
+  <!--Kontaktbuttons Beginn-->
+  {% block kontaktbuttons %}
+  <div class="hidden md:block fixed z-50 bottom-40 right-10 bg-blue-900 rounded-full shadow-2xl p-3">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-7 h-7">
+      <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/>
+      <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/>
+    </svg>
+  </div>
+  <div class="hidden md:block fixed z-50 bottom-24 right-10 bg-blue-900 rounded-full shadow-2xl p-3">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-7 h-7">
+      <path fill-rule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clip-rule="evenodd"/>
+    </svg>
+  </div>
+  {% endblock kontaktbuttons %}
+  <!--Kontaktbuttons Ende-->
+
+
+  <!--Templates Beginn-->
+  {% block Templates %}
+  <section class="bg-white mb-20">
+    <div class="flex flex-col items-center justify-center px-4 pt-6 mx-auto sm:max-w-xl md:max-w-full lg:pt-6 md:px-0">
+      <div class="flex flex-col items-center max-w-2xl md:px-8">
+        <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
+          <div>
+            <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+              Ihr Internetauftritt
+            </p>
+          </div>
+          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto">
+            Der moderne, professionelle Internetauftritt
+          </h2>
+          <p class="text-base text-gray-800 md:text-lg">
+            Dieser ist heutzutage nicht mehr wegzudenken. Gemeinsam mit Ihnen
+            erarbeiten wir für Sie einen professionellen Internetauftritt. Als
+            junges angaschiertes Team bringen wir Motivation und Kreativität
+            mit.
+          </p>
+        </div>
+      </div>
+
+      <!--Cardslider Beginn-->
+        <figure class="icon-cards mt-3">
+          <div class="icon-cards__content">
+            <div class="icon-cards__item d-flex align-items-center justify-content-center">
+              <img src="{% static 'images/Template1.png' %}" alt=""/>
+            </div>
+            <div class="icon-cards__item d-flex align-items-center justify-content-center">
+              <img src="{% static 'images/Template2.png' %}" alt=""/>
+            </div>
+            <div class="icon-cards__item d-flex align-items-center justify-content-center">
+              <img src="{% static 'images/Template3.png' %}" alt=""/>
+            </div>
+          </div>
+        </figure>
+      <!--Cardslider End-->
+    </div>
+  </section>
+  {% endblock Templates %}
+  <!--Templates End-->
+
+
+  <!--Wellen Beginn-->
+  {% block Wellen %}
+  <section class="bg-white">
+    <div>
+      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(219,234,254,0.7)"/>
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(219,234,254,0.5)"/>
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(219,234,254,0.3)"/>
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#dbeafe" />
+        </g>
+      </svg>
+    </div>
+  </section>
+  {% endblock Wellen %}
+  <!--Wellen End-->
+
+
+  <!--Responsive Design-->
+  {% block ResponsiveDesign %}
+  <section class="bg-blue-100">
+    <div class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl">
+      <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
+        <div class="w-6xl mb-5">
+          <div>
+            <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+                  Responsive Design
+            </p>
+          </div>
+          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none">
+            Eine Website optimiert für alle Geräte
+          </h2>
+          <p class="text-base text-gray-700 md:text-lg">
+            asdasdasdasdasdasd asd asdasdasdasdasdasdasd
+            asdasdasdasdasdasdasda asdasdasdasdasdasd asdasdasdasdasdasd
+          </p>
+          <br/>
+          <div class="flex">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
+            </svg>
+            <label class="relative inline-flex items-center mb-5 mx-3 cursor-pointer">
+              <input type="checkbox" value="" class="sr-only peer" onclick="toggleResponsive()"/>
+              <div class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"></div>
+            </label>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <!--Imageslider-->
+      <div class="container content-center px-1">
+        <!--Browser-->
+        <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
+          <img src="{% static 'images/MacBookPro16.png' %}" class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10" alt=""/>
+          <span id="slider">
+            <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" class="relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
+            <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" class="hidden relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
+          </span>
+        </div>
+        <!--Phone-->
+        <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
+          <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute h-full w-full object-contain z-10" alt=""/>
+          <span id="slider">
+            <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="relative h-full w-full object-contain" alt=""/>
+            <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="hidden relative h-full w-full object-contain" alt=""/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock ResponsiveDesign %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--Referenzen-->
+  <section class="bg-blue-100">
+    <div class="absolute">
+      <svg class="fish" id="fish">
+        <path
+          id="fish2"
+          d="m 172.04828,20.913839 c 0.0489,-0.444179 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.475049 -1.4826,-0.932948 -2.2149,-1.401138 -1.6035,-1.028129 -3.29018,-1.969653 -4.89798,-3.079244 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.1509392 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.44486897 -2.77227,-1.44486897 0,0 1.30939,3.55000597 1.60951,4.26429497 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.0418502 2.13772,0.8129002 2.26463,1.7827212 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082841 -11.56925,0.884071 -4.3046,-1.38313 -7.37269,-4.129669 -10.46566,-7.2354952 1.43801,6.7252892 5.4382,10.6028562 5.6157,11.4226162 0.18607,0.905509 -0.45961,1.091584 -1.04099,1.682394 -1.28967,1.265655 -6.91566,7.731125 -6.93366,9.781383 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932949 0.0695,0.932949 -0.30784,1.137031 -0.18436,1.527189 0.22638,0.746016 1.44144,1.465449 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.07136 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.577091 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925922 z"
+          style="fill: #528484; fill-opacity: 1"
+          inkscape:connector-curvature="0"
+          sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+        />
+        <path
+          sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+          inkscape:connector-curvature="0"
+          style="fill: #528484; fill-opacity: 1"
+          d="m 234.99441,42.953992 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+          id="fish3"
+        />
+        <path
+          id="fish6"
+          d="m 200.07076,80.737109 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+          style="fill: #528484; fill-opacity: 1"
+          inkscape:connector-curvature="0"
+          sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+        />
+        <path
+          sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+          inkscape:connector-curvature="0"
+          style="fill: #528484; fill-opacity: 1"
+          d="m 77.275623,89.018799 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.272347,-0.286401 -4.812227,-0.168925 -6.721857,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.9156603,7.731122 -6.9336603,9.781382 1.6137903,-0.24782 3.5611503,-1.66096 4.9803003,-2.48586 1.58035,-0.90551 7.60593,-5.37303 9.29347,-6.065025 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527183 0.22638,0.74602 1.44144,1.46546 2.02282,1.98509 1.50918,1.29224 3.21044,2.42841 4.27373,4.15625 1.49203,2.40183 1.55805,4.999171 1.98251,7.677111 0.99469,-0.11148 2.0091,-2.17545 2.55961,-2.99264 0.51278,-0.7726 2.38639,-4.071361 3.09725,-4.275441 0.67227,-0.20408 2.75511,0.95867 3.50284,1.18076 2.85973,0.84806 5.644,1.35398 8.560317,1.35398 3.50799,0.009 12.726,0.2581 19.55505,-4.80023 0.75545,-0.56766 2.55703,-2.7311 2.55703,-2.7311 0,0 -0.37644,-0.57709 -1.04785,-0.79061 0.89779,-0.58481 1.8659,-1.211632 1.94993,-1.92592 z"
+          id="fish4"
+        />
+        <path
+          id="fish5"
+          d="m 127.65312,60.900973 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89799,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.812228,-0.168925 -6.721858,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.643998,1.353976 8.560318,1.353976 3.50799,0.0094 12.726,0.258104 19.55506,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+          style="fill: #528484; fill-opacity: 1"
+          inkscape:connector-curvature="0"
+          sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+        />
+        <path
+          d="m 68.19699,20.522295 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 C 55.39553,11.384887 49.845,10.221274 44.30305,9.4752582 42.0307,9.1888572 39.49082,9.3063332 37.58119,7.900907 36.09945,6.819613 33.53126,3.072384 30.71613,1.444869 30.22993,1.154181 27.94386,0 27.94386,0 c 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.0418502 2.13772,0.8129002 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 C 8.52001,12.607667 5.45192,9.8611282 2.35895,6.755302 3.79696,13.480591 7.79715,17.358159 7.97465,18.177919 8.16072,19.083427 7.51504,19.269502 6.93366,19.860313 5.64399,21.125967 0.018,27.591438 0,29.641695 1.61379,29.39388 3.56115,27.980738 4.9803,27.155833 c 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+          id="fish1"
+        />
+      </svg>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div class="flex flex-col mb-6 lg:justify-between lg:flex-row md:mb-8">
+        <h2
+          class="max-w-lg mb-5 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none md:mb-6 group"
+        >
+          <span class="inline-block mb-1 sm:mb-4">
+            Referenzen<br class="hidden md:block" />
+            der Kunden</span
+          >
+          <div
+            class="h-1 ml-auto duration-300 origin-left transform bg-deep-purple-accent-400 scale-x-30 group-hover:scale-x-100"
+          ></div>
+        </h2>
+        <p class="text-gray-700 lg:text-sm lg:max-w-md">
+          Gerne können Sie sich ein Bild von unseren erfolgreichen Projekten
+          machen und diese als Refernez oder Inspiration für die eigene
+          Website nuten.
+        </p>
+      </div>
+      <div
+        class="grid gap-6 row-gap-5 mb-8 lg:grid-cols-4 sm:row-gap-6 sm:grid-cols-2"
+      >
+        <a href="/" aria-label="View Item">
+          <div
+            class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl"
+          >
+            <img
+              class="object-cover w-full h-56 md:h-64 xl:h-80"
+              src="./ressources/img/RSAutoglas-Logo.png"
+              alt=""
+            />
+            <div
+              class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100"
+            >
+              <p class="mb-4 text-lg font-bold text-gray-100">RS-Autoglas</p>
+              <p class="text-sm tracking-wide text-gray-300">
+                RS-Autoglas ist ein....
+              </p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div
+            class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl"
+          >
+            <img
+              class="object-cover w-full h-56 md:h-64 xl:h-80"
+              src=""
+              alt=""
+            />
+            <div
+              class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100"
+            >
+              <p class="mb-4 text-lg font-bold text-gray-100">
+                Hier könnte Ihr Name stehen
+              </p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div
+            class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl"
+          >
+            <img
+              class="object-cover w-full h-56 md:h-64 xl:h-80"
+              src=""
+              alt=""
+            />
+            <div
+              class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100"
+            >
+              <p class="mb-4 text-lg font-bold text-gray-100">
+                Hier könnte Ihr Name stehen
+              </p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div
+            class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl"
+          >
+            <img
+              class="object-cover w-full h-56 md:h-64 xl:h-80"
+              src=""
+              alt=""
+            />
+            <div
+              class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100"
+            >
+              <p class="mb-4 text-lg font-bold text-gray-100">
+                Hier könnte Ihr Name stehen
+              </p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--Pricing-->
+  <section class="bg-blue-100">
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+      >
+        <div>
+          <p
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-gray-800 uppercase rounded-full bg-teal-accent-400"
+          >
+            Unsere Preise
+          </p>
+        </div>
+        <h2
+          class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-black sm:text-4xl md:mx-auto"
+        >
+          <span class="relative inline-block">
+            <span class="relative text-gray-800">Transparente Preise</span>
+          </span>
+          ,monatlich keine Einmalzahlungen
+        </h2>
+        <p class="text-base text-gray-700 md:text-lg">
+          Was uns von anderen Anbietern unterscheidet, ist der Verzicht auf
+          die oft sehr hohe Initalzahlung. Wir arbeiten mit einem Abomodell,
+          das erstmalig nach einem Jahr gekündigt werden kann.
+        </p>
+      </div>
+      <div
+        class="grid max-w-md gap-10 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto"
+      >
+        <div
+          class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Standart</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">30€</div>
+              <div class="text-gray-700">/ mo</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-gray-700">1 Domain</div>
+              <div class="text-gray-700">SSL-Zertifikat</div>
+              <div class="text-gray-700">Individuelle-Gestaltung</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="/"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Dieses Angebot gilt für relativ einfache Seiten, siehe
+              Refernenzen.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Standart</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">30€</div>
+              <div class="text-gray-700">/ mo</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-gray-700">1 Domain</div>
+              <div class="text-gray-700">SSL-Zertifikat</div>
+              <div class="text-gray-700">Individuelle-Gestaltung</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="/"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Dieses Angebot gilt für relativ einfache Seiten, siehe
+              Refernenzen.
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Standart</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">30€</div>
+              <div class="text-gray-700">/ mo</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-gray-700">1 Domain</div>
+              <div class="text-gray-700">SSL-Zertifikat</div>
+              <div class="text-gray-700">Individuelle-Gestaltung</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="/"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Dieses Angebot gilt für relativ einfache Seiten, siehe
+              Refernenzen.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--Team-->
+  <section class="bg-blue-100">
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
+        <p
+          class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+        >
+          Unser Team
+        </p>
+        <p class="text-base text-gray-700 md:text-lg">
+          Wir sind drei Studenten im IT-Bereich und bringen alle eine
+          Faszination und Leidenschaft für Frontend-Entwicklung mit.
+        </p>
+      </div>
+      <div
+        class="grid gap-10 mx-auto sm:grid-cols-2 lg:grid-cols-3 lg:max-w-screen-lg"
+      >
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded"
+              src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260"
+              alt="Person"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
+            <p class="mb-5 text-xs text-gray-800">Product Manager</p>
+          </div>
+        </div>
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded"
+              src="./ressources/img/johannes.JPG"
+              alt="Person"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">Johannes Rösner</p>
+            <p class="mb-5 text-xs text-gray-800">Design Team Lead</p>
+          </div>
+        </div>
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded"
+              src="https://images.pexels.com/photos/3747435/pexels-photo-3747435.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260"
+              alt="Person"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">Lennert</p>
+            <p class="mb-5 text-xs text-gray-800">Human Resources</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--U-Boot-->
+  <section class="h-72">
+    <div class="seaContainer">
+      <div class="submarine__container">
+        <div class="light"></div>
+        <div class="submarine__periscope"></div>
+        <div class="submarine__periscope-glass"></div>
+        <div class="submarine__sail">
+          <div class="submarine__sail-shadow dark1"></div>
+          <div class="submarine__sail-shadow light1"></div>
+          <div class="submarine__sail-shadow dark2"></div>
+        </div>
+        <div class="submarine__body">
+          <div class="submarine__window one"></div>
+          <div class="submarine__window two"></div>
+          <div class="submarine__shadow-dark"></div>
+          <div class="submarine__shadow-light"></div>
+          <div class="submarine__shadow-arcLight"></div>
+        </div>
+        <div class="submarine__propeller">
+          <div class="propeller__perspective">
+            <div class="submarine__propeller-parts darkOne"></div>
+            <div class="submarine__propeller-parts lightOne"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bubbles__container">
+        <span class="bubbles bubble-1"></span>
+        <span class="bubbles bubble-2"></span>
+        <span class="bubbles bubble-3"></span>
+        <span class="bubbles bubble-4"></span>
+      </div>
+      <div class="ground__container">
+        <div class="ground ground1">
+          <span class="up-1"></span>
+          <span class="up-2"></span>
+          <span class="up-3"></span>
+          <span class="up-4"></span>
+          <span class="up-5"></span>
+          <span class="up-6"></span>
+          <span class="up-7"></span>
+          <span class="up-8"></span>
+          <span class="up-9"></span>
+          <span class="up-10"></span>
+        </div>
+        <div class="ground ground2">
+          <span class="up-1"></span>
+          <span class="up-2"></span>
+          <span class="up-3"></span>
+          <span class="up-4"></span>
+          <span class="up-5"></span>
+          <span class="up-6"></span>
+          <span class="up-7"></span>
+          <span class="up-8"></span>
+          <span class="up-9"></span>
+          <span class="up-10"></span>
+          <span class="up-11"></span>
+          <span class="up-12"></span>
+          <span class="up-13"></span>
+          <span class="up-14"></span>
+          <span class="up-15"></span>
+          <span class="up-16"></span>
+          <span class="up-17"></span>
+          <span class="up-18"></span>
+          <span class="up-19"></span>
+          <span class="up-20"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+  <!--FAQ-->
+  <section class="bg-gray-700 text-white -mt-5">
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
+        <div
+          class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+        >
+          <div>
+            <p
+              class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-white uppercase rounded-full bg-teal-accent-400"
+            >
+              FAQ
+            </p>
+          </div>
+          <h2
+            class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto"
+          >
+            <span class="relative inline-block">
+              <span class="relative">Häufig</span>
+            </span>
+            gestellte Fragen
+          </h2>
+          <p class="text-base text-white md:text-lg">
+            Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir
+            das wichtigste hier zu beantworten. Bei weiteren Fragen können Sie
+            sich jederzeit gerne melden.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <div class="border-b">
+            <button
+              type="button"
+              aria-label="Open item"
+              title="Open item"
+              class="flex items-center justify-between w-full p-4 focus:outline-none"
+              onclick="toggleFaq1()"
+            >
+              <p class="text-lg font-medium">
+                The quick, brown fox jumps over a lazy dog?
+              </p>
+              <!-- Add "transform rotate-180" classes on svg, if is open" -->
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow1">
+                <polyline
+                  fill="white"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-miterlimit="10"
+                  points="2,7 12,17 22,7"
+                  stroke-linejoin="round"
+                ></polyline>
+              </svg>
+            </button>
+
+            <div class="p-4 pt-0 hidden" id="content1">
+              <p class="text-white">
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                accusantium doloremque rem aperiam, eaque ipsa quae.
+              </p>
+            </div>
+          </div>
+          <div class="border-b">
+            <button
+              type="button"
+              aria-label="Open item"
+              title="Open item"
+              class="flex items-center justify-between w-full p-4 focus:outline-none"
+              onclick="toggleFaq2()"
+            >
+              <p class="text-lg font-medium">
+                The quick, brown fox jumps over a lazy dog?
+              </p>
+              <!-- Add "transform rotate-180" classes on svg, if is open" -->
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow2">
+                <polyline
+                  fill="white"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-miterlimit="10"
+                  points="2,7 12,17 22,7"
+                  stroke-linejoin="round"
+                ></polyline>
+              </svg>
+            </button>
+
+            <div class="p-4 pt-0 hidden" id="content2">
+              <p class="text-white">
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                accusantium doloremque rem aperiam, eaque ipsa quae.
+              </p>
+            </div>
+          </div>
+          <div class="border-b">
+            <button
+              type="button"
+              aria-label="Open item"
+              title="Open item"
+              class="flex items-center justify-between w-full p-4 focus:outline-none"
+              onclick="toggleFaq3()"
+            >
+              <p class="text-lg font-medium">
+                The quick, brown fox jumps over a lazy dog?
+              </p>
+              <!-- Add "transform rotate-180" classes on svg, if is open" -->
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow3">
+                <polyline
+                  fill="white"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-miterlimit="10"
+                  points="2,7 12,17 22,7"
+                  stroke-linejoin="round"
+                ></polyline>
+              </svg>
+            </button>
+
+            <div class="p-4 pt-0 hidden" id="content3">
+              <p class="text-white">
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                accusantium doloremque rem aperiam, eaque ipsa quae.
+              </p>
+            </div>
+          </div>
+          <div class="border-b">
+            <button
+              type="button"
+              aria-label="Open item"
+              title="Open item"
+              class="flex items-center justify-between w-full p-4 focus:outline-none"
+              onclick="toggleFaq4()"
+            >
+              <p class="text-lg font-medium">
+                The quick, brown fox jumps over a lazy dog?
+              </p>
+              <!-- Add "transform rotate-180" classes on svg, if is open" -->
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow4">
+                <polyline
+                  fill="white"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-miterlimit="10"
+                  points="2,7 12,17 22,7"
+                  stroke-linejoin="round"
+                ></polyline>
+              </svg>
+            </button>
+
+            <div class="p-4 pt-0 hidden" id="content4">
+              <p class="text-white">
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                accusantium doloremque rem aperiam, eaque ipsa quae.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--Cookies-->
+  <div
+    class="relative z-50 hidden"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+    id="menu-cookie"
+  >
+    <div
+      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    ></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div
+        class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+      >
+        <div
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div
+                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                  />
+                </svg>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                <h3
+                  class="text-xl font-medium leading-6 text-gray-800"
+                  id="modal-title"
+                >
+                  Cookie-Richtlinie
+                </h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">
+                    Diese Website verwendet Cookies. Weitere Informationen zu
+                    den Cookie-Arten finden sich unter den jeweiligen
+                    Kategorien. Dort lassen sich auch einzelne Cookies
+                    aktivieren. Die Cookie-Einstellungen können jederzeit über
+                    den Link im Footer dieser Website angepasst werden.
+                  </p>
+                  <div class="text-xs mt-5 mr-3">
+                    <a href="./impressum" class="mr-5">Impressum</a>
+                    <a href="./datenschutz">Datenschutz</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+          >
+            <button
+              onclick="acceptCookie()"
+              class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-blue-900 text-white px-4 py-2 text-base font-medium shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition ease-linear duration-300"
+            >
+              Bestätigen
+            </button>
+            <button
+              onclick="refuseCookie()"
+              class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm transition ease-linear duration-300"
+            >
+              Ablehnen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+  {% block javascriptend %}
+    {% compress js %}
+      <script defer src="{% static 'js/home.js' %}"></script>
+    {% endcompress js %}
+  {% endblock javascriptend %}
+
+{% endblock content %}
 
 
 
