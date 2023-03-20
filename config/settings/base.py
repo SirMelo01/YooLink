@@ -63,6 +63,7 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "yoolink"
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -254,6 +255,8 @@ LOGGING = {
     },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
+
+
 
 # Celery
 # ------------------------------------------------------------------------------

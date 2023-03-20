@@ -6,16 +6,19 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
+from yoolink.cms.admin import cms_admin_site
 
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
+    #path(settings.ADMIN_URL, admin.site.urls),
+    path('cmsadmin/', cms_admin_site.urls),
     # User management
     path("users/", include("yoolink.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("", include('django.contrib.auth.urls')),
     path("cms/", include("yoolink.cms.urls", namespace="cms"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -32,6 +35,11 @@ urlpatterns += [
         name="api-docs",
     ),
 ]
+
+#admin.site.index_title= "YooLink Admin"
+#admin.site.site_header = "YooLink Admin"
+#admin.site.site_title = "YooLink Admin"
+
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit

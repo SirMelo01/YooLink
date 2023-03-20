@@ -1,4 +1,12 @@
 from django.contrib import admin
 from . import models
 
-admin.site.register(models.Text_Content)
+
+
+
+class CmsAdminArea(admin.AdminSite):
+    site_header = 'CMS Admin Area'
+
+cms_admin_site = CmsAdminArea(name='CmsAdmin')
+
+cms_admin_site.register(models.Galerie)
