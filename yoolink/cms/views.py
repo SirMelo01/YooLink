@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from cms.models import Text_Content, Galerie
+from yoolink.cms.models import Text_Content, Galerie
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
