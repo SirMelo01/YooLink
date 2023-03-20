@@ -8,4 +8,4 @@ class fileform(forms.ModelForm):
         fields = ('file', )         ### This trailing comma is neccessary
         widgets = {
             'file':                 ### This is what allows you to select multiple files
-                forms.ClearableFileInput(attrs={'multiple': True})}     
+                forms.ClearableFileInput(attrs={'multiple': True})}

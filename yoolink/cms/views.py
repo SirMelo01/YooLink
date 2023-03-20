@@ -18,9 +18,7 @@ def upload(request):
                 new_file = fileentry(
                 file = file
                 )
-                for chunk in new_file.chunks():
-                    chunk.save()
-                #new_file.save()
+                new_file.save()
                 
                 
                   
