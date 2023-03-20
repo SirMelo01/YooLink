@@ -10,3 +10,4 @@ class CmsAdminArea(admin.AdminSite):
 cms_admin_site = CmsAdminArea(name='CmsAdmin')
 
 cms_admin_site.register(models.Galerie)
+cms_admin_site.register(models.fileentry)

@@ -1,44 +1,70 @@
 from django.shortcuts import render, redirect
-from yoolink.cms.models import Text_Content, Galerie
+from yoolink.cms.models import Text_Content, Galerie, fileentry
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+from .forms import fileform
+
+def upload(request):
+
+    context = {'form': None, 'last': None}
+
+    if request.method == 'POST':
+        form = fileform(request.POST, request.FILES)
+        if form.is_valid():
+            context['last'] = '\n'.join([f.name for f in request.FILES.getlist('file')])
+            
+            for file in request.FILES.getlist('file'):
+                new_file = fileentry(
+                file = file
+                )
+                for chunk in new_file.chunks():
+                    chunk.save()
+                #new_file.save()
+                
+                
+                  
+    else:
+        form = fileform()
+
+    context['form'] = form
+    return render(request, 'cms/cms_upload.html', context)
 
 # Create your views here.
 
-@login_required(login_url='login')
-def Text_Setting_Content(request):
-    print("text")
-    text1=Text_Content.objects.get(id=2).text1
-    bild = Text_Content.objects.get(id = 2).bild
+#@login_required(login_url='login')
+#def Text_Setting_Content(request):
+#    print("text")
+#    text1=Text_Content.objects.get(id=2).text1
+#    bild = Text_Content.objects.get(id = 2).bild#
+#
+#    
+#    context = {
+#            'text1': text1,
+#            'bild': bild,
+#            }
+#    return render(request, 'cms/cms.html', context=context)
 
-    
-    context = {
-            'text1': text1,
-            'bild': bild,
-            }
-    return render(request, 'cms/cms.html', context=context)
 
-
-@login_required(login_url='login')
-def Upload_Content(request):
-     # Get all Files in Galerie
-     file_list= []
-     allfiles = Galerie.objects.all()
-     for file in allfiles:
-         file_list.append(file.file.url)
-
-     if request.method == 'POST':
-        files = request.FILES.getlist('files')
-        
-        for file in files:
-             new_file = Galerie(
-                file = file
-             )
-             new_file.save()
-        return render(request, 'cms/cms_upload.html', {'all_urls': file_list})
-     else:
-        return render(request, 'cms/cms_upload.html', {'all_urls': file_list})
+#@login_required(login_url='login')
+#def Upload_Content(request):
+#     # Get all Files in Galerie
+#     file_list= []
+#     allfiles = Galerie.objects.all()
+#     for file in allfiles:
+#         file_list.append(file.file.url)
+#
+#     if request.method == 'POST':
+#        files = request.FILES.getlist('files')
+#        
+#        for file in files:
+#             new_file = Galerie(
+#                file = file
+#             )
+#             new_file.save()
+#        return render(request, 'cms/cms_upload.html', {'all_urls': file_list})
+#     else:
+#        return render(request, 'cms/cms_upload.html', {'all_urls': file_list})
 
 
 def Login_Cms(request):
