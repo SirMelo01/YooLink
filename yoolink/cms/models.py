@@ -4,6 +4,14 @@ from PIL import Image
 from django.db.models.signals import post_save
 
 
+## Produktiv und funktioniert
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=70, null=True)
+    answer = models.CharField(max_length=1000, null=True)
+
+## Produktiv und funktioniert
+
 
 class fileentry(models.Model):
     file = models.FileField()

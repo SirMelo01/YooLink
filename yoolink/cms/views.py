@@ -1,9 +1,19 @@
 from django.shortcuts import render, redirect
-from yoolink.cms.models import Text_Content, Galerie, fileentry
+from yoolink.cms.models import Text_Content, Galerie, fileentry, FAQ
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import fileform
+
+
+def load_index(request):
+    faq = FAQ.objects.all().values().order_by('id')
+
+    context = {
+        'FAQ': faq,
+    }
+    return render(request, 'pages/home.html', context=context)
+
 
 
 @login_required(login_url='login')

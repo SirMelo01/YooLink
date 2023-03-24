@@ -472,74 +472,27 @@
           </p>
         </div>
         <div class="space-y-4">
+          {% csrf_token %}
+          {% for faq in FAQ %}
+          
           <div class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq1()">
+            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq{{ faq.id }}()">
               <p class="text-lg font-medium">
-                The quick, brown fox jumps over a lazy dog?
+               {{ faq.question }}
               </p>
               <!-- Add "transform rotate-180" classes on svg, if is open" -->
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow1">
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow{{ faq.id }}">
                 <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
               </svg>
             </button>
-            <div class="p-4 pt-0 hidden" id="content1">
+            <div class="p-4 pt-0 hidden" id="content{{ faq.id }}">
               <p class="text-white">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque rem aperiam, eaque ipsa quae.
+                {{ faq.answer }}
               </p>
             </div>
           </div>
-          <div class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq2()">
-              <p class="text-lg font-medium">
-                The quick, brown fox jumps over a lazy dog?
-              </p>
-              <!-- Add "transform rotate-180" classes on svg, if is open" -->
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow2">
-                <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-              </svg>
-            </button>
-            <div class="p-4 pt-0 hidden" id="content2">
-              <p class="text-white">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque rem aperiam, eaque ipsa quae.
-              </p>
-            </div>
-          </div>
-          <div class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq3()">
-              <p class="text-lg font-medium">
-                The quick, brown fox jumps over a lazy dog?
-              </p>
-              <!-- Add "transform rotate-180" classes on svg, if is open" -->
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow3">
-                <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-              </svg>
-            </button>
-            <div class="p-4 pt-0 hidden" id="content3">
-              <p class="text-white">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque rem aperiam, eaque ipsa quae.
-              </p>
-            </div>
-          </div>
-          <div class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq4()">
-              <p class="text-lg font-medium">
-                The quick, brown fox jumps over a lazy dog?
-              </p>
-              <!-- Add "transform rotate-180" classes on svg, if is open" -->
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow4">
-                <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round" ></polyline>
-              </svg>
-            </button>
-            <div class="p-4 pt-0 hidden" id="content4">
-              <p class="text-white">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque rem aperiam, eaque ipsa quae.
-              </p>
-            </div>
-          </div>
+          {% endfor %}
+
         </div>
       </div>
     </div>
