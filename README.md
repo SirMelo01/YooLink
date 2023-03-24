@@ -45,7 +45,7 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ bestehender Superuser: Sepp PW: 1234Sepp1234
 
 ### .django Manuell kopieren:
--   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden:
+-   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden
         $ cd .envs/
         $ cd .production/
         $ nano .django 
