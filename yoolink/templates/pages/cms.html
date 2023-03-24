@@ -1,0 +1,53 @@
+{% extends  'base.html' %}
+{% load compress static %}
+{% block content %}
+
+
+  <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+      <li class="mr-2">
+        <button class="inline-block p-4 border-b-2 border-transparent text-blue-700 border-blue-700 rounded-t-lg" id="cmstab1" type="button" onclick="togtab1()">Galerie</button>
+      </li>
+      <li class="mr-2">
+        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg" id="cmstab2" type="button" onclick="togtab2()">Referenz</button>
+      </li>
+      <li class="mr-2">
+        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg" id="cmstab3" type="button" onclick="togtab3()">Preise</button>
+      </li>
+      <li class="mr-2">
+        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg" id="cmstab4" type="button" onclick="togtab4()">FAQ</button>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="p-4 rounded-lg bg-gray-50" id="cmscontent1">
+      Galerie
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.file.errors }}
+        {{ form.file }}
+        <button type="submit">Upload</button>
+      </form>
+      <pre>{{ last }}</pre>
+    </div>
+    <div class="hidden p-4 rounded-lg bg-gray-50" id="cmscontent2">
+      Referenz
+    </div>
+    <div class="hidden p-4 rounded-lg bg-gray-50" id="cmscontent3">
+      Preise
+    </div>
+    <div class="hidden p-4 rounded-lg bg-gray-50" id="cmscontent4">
+      FAQ
+    </div>
+  </div>
+
+  {% block javascriptend %}
+    {% compress js %}
+      <script defer src="{% static 'js/cms.js' %}"></script>
+    {% endcompress js %}
+  {% endblock javascriptend %}
+
+
+
+{% endblock %}

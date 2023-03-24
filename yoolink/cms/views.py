@@ -25,7 +25,7 @@ def upload(request):
         form = fileform()
 
     context['form'] = form
-    return render(request, 'cms/cms.html', context)
+    return render(request, 'pages/cms.html', context)
 
 
 
@@ -40,7 +40,7 @@ def Login_Cms(request):
             user_authenticated = user.objects.get(username=user.get_username())
             
             login(request, user)
-            return redirect('cms/cms.html')
+            return redirect('pages/cms.html')
         else:
             #messages.error(request, "Falsche Anmeldeinformationen. Bitte versuchen Sie es erneut.")
             return redirect('pages/home.html')
