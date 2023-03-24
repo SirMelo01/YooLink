@@ -8,6 +8,7 @@ Docker wird benutzt und deshalb muss vor allen Befehlen stehen: ()
 ## Local:
 
 ### Webseite starten:
+        $ python manage.py createsuperuser
 docker-compose -f local.yml build
 docker-compose -f local.yml up
 
