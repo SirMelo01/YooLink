@@ -1,18 +1,64 @@
 # YooLink
 
-Dieses Video schauen bevor man irgendwas macht:
-https://www.youtube.com/watch?v=DLxcyndCvO4
-https://www.youtube.com/watch?v=DLxcyndCvO4
-https://www.youtube.com/watch?v=DLxcyndCvO4
-https://www.youtube.com/watch?v=DLxcyndCvO4
-https://www.youtube.com/watch?v=DLxcyndCvO4
-https://www.youtube.com/watch?v=DLxcyndCvO4
+Wie ich alles aufgesetzt habe und gehostet habe:
 https://www.youtube.com/watch?v=DLxcyndCvO4
 
-Protfolio Page for YooLink
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+Docker wird benutzt und deshalb muss vor allen Befehlen stehen: ()
+## Local:
+
+### Webseite starten:
+docker-compose -f local.yml build
+docker-compose -f local.yml up
+
+### Django Migrations:
+docker-compose -f local.yml run --rm django python manage.py makemigrations
+docker-compose -f local.yml run --rm django python manage.py migrate 
+
+### App erstellen:
+docker-compose -f local.yml run --rm django python manage.py startapp cms
+
+### Superuser erstellen:
+docker-compose -f local.yml run --rm django python manage.py createsuperuser
+
+### File Compress:
+docker-compose -f local.yml run --rm django python manage.py collectstatic
+docker-compose -f local.yml run --rm django python manage.py compress --force
+
+
+
+
+
+## Production:
+in der Console erst mal in Ordner YooLink gehen: cd YooLink/
+
+### Webseite starten:
+docker-compose -f production.yml build
+docker-compose -f production.yml up
+
+### Django Migrations:
+docker-compose -f production.yml run --rm django python manage.py migrate
+docker-compose -f production.yml run --rm django python manage.py makemigrations
+
+### Superuser erstellen:
+docker-compose -f production.yml run --rm django python manage.py createsuperuser
+bestehender Superuser: Sepp PW: 1234Sepp1234
+
+### .django Manuell kopieren:
+da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden:
+cd .envs/
+cd .production/
+nano .django 
+
+### Konsole verlassen:
+exit
+
+
+
+
+## Tailwind:
+npm run build
+npm run watch
 
 License: MIT
 
