@@ -4,7 +4,7 @@ Wie ich alles aufgesetzt habe und gehostet habe:
 https://www.youtube.com/watch?v=DLxcyndCvO4
 
 
-Docker wird benutzt und deshalb muss vor allen Befehlen stehen: ()
+-   Docker wird benutzt und deshalb muss vor allen Befehlen stehen: ()
 ## Local:
 
 ### Webseite starten:
@@ -45,7 +45,7 @@ Docker wird benutzt und deshalb muss vor allen Befehlen stehen: ()
         $ bestehender Superuser: Sepp PW: 1234Sepp1234
 
 ### .django Manuell kopieren:
-da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden:
+-   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden:
         $ cd .envs/
         $ cd .production/
         $ nano .django 
