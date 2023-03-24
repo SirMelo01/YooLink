@@ -46,6 +46,7 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 
 ### .django Manuell kopieren:
 -   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden
+
         $ cd .envs/
         $ cd .production/
         $ nano .django 
