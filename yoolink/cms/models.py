@@ -14,7 +14,7 @@ class FAQ(models.Model):
 
 
 class fileentry(models.Model):
-    file = models.FileField(upload_to='media')
+    file = models.FileField(upload_to='upload')
     uploaddate = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
