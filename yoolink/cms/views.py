@@ -40,22 +40,22 @@ def upload(request):
                 )
                 new_file.save()
 
-
+        
         # Set the file path for the source image
-        path = r'../../var/lib/docker/volumes/yoolink_production_django_media/_data/media/6.jpg'
+        #path = r'../../var/lib/docker/volumes/yoolink_production_django_media/_data/media/6.jpg'
 
         # Set the directory for saving the image
-        directory = r'yoolink/media'
+        #directory = r'yoolink/media'
 
         # Load the image using OpenCV
-        img = cv2.imread(path)
+        #img = cv2.imread(path)
 
         # Change the working directory to the specified directory for saving the image
-        os.chdir(directory)
+        #os.chdir(directory)
 
         # Save the image with the filename "cat.jpg"
-        filename = '6.jpg'
-        cv2.imwrite(filename, img) 
+        #filename = '6.jpg'
+        #cv2.imwrite(filename, img) 
         
     else:
         form = fileform()
