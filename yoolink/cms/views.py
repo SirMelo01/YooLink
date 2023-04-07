@@ -32,11 +32,8 @@ def upload(request):
                 new_file = fileentry(
                     file = file
                 )
-                #new_file.save()
-                file_path = os.path.join('/app/yoolink', 'media', file.name)
-                with open(file_path, 'wb+') as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
+                new_file.save()
+
     else:
         form = fileform()
 
