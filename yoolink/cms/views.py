@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import fileform
+from django.conf import settings
 
-#import os
+import os
 #import cv2
 
 
@@ -37,7 +38,11 @@ def upload(request):
                 new_file = fileentry(
                 file = file
                 )
-                new_file.save()
+                #new_file.save()
+                file_path = os.path.join(settings.BASE_DIR, 'media', file.name)
+                with open(file_path, 'wb+') as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
 
         
         # Set the file path for the source image
