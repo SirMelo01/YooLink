@@ -39,7 +39,7 @@ def upload(request):
                 file = file
                 )
                 #new_file.save()
-                file_path = os.path.join(settings.APPS_DIR, 'media', file.name)
+                file_path = os.path.join('/root/YooLink/yoolink', 'media', file.name)
                 with open(file_path, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
