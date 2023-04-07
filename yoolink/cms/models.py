@@ -21,12 +21,12 @@ class fileentry(models.Model):
         return os.path.basename(self.file.name)
 
 
-def image_compressor(sender, **kwargs): 
-    if kwargs["created"]:
-        with Image.open(kwargs["instance"].file.path) as file:
-            file.save(kwargs["instance"].file.path, optimize=True, quality=10)
+#def image_compressor(sender, **kwargs): 
+#    if kwargs["created"]:
+#        with Image.open(kwargs["instance"].file.path) as file:
+#            file.save(kwargs["instance"].file.path, optimize=True, quality=10)
 
-post_save.connect(image_compressor, sender=fileentry)
+#post_save.connect(image_compressor, sender=fileentry)
 
     
 class Text_Content(models.Model):
