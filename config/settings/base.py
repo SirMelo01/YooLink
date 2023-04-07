@@ -163,7 +163,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
 
-DEFAULT_FILE_STORAGE = 'settings.cdn.backends.MediaRootS3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'config.settings.cdn.backends.MediaRootS3Boto3Storage'
 AWS_ACCESS_KEY_ID='DO00HJFLRWJCM3RQ6ANW'
 AWS_SECRET_ACCESS_KEY = 'sLTs3mPUprd3bNcafCVkzcdORA1VFqQn9zHYhGZUhks'
 AWS_STORAGE_BUCKET_NAME='yoolink-django'
