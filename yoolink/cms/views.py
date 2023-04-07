@@ -10,8 +10,8 @@ from .forms import fileform
 
 
 # Import the necessary libraries
-import cv2 
-import os 
+#import cv2 
+#import os 
 
 
 def load_index(request):
