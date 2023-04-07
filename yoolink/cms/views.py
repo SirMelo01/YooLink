@@ -6,12 +6,6 @@ from django.urls import reverse
 from .forms import fileform
 from django.conf import settings
 
-import os
-#import cv2
-
-
-
-
 
 
 def load_index(request):
@@ -43,24 +37,6 @@ def upload(request):
                 with open(file_path, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
-
-        
-        # Set the file path for the source image
-        #path = r'/var/lib/docker/volumes/yoolink_production_django_media/_data/media/6.jpg'
-
-        # Set the directory for saving the image
-        #directory = r'/root/YooLink/yoolink/media'
-
-        # Load the image using OpenCV
-        #img = cv2.imread(path)
-
-        # Change the working directory to the specified directory for saving the image
-        #os.chdir(directory)
-
-        # Save the image with the filename "cat.jpg"
-        #filename = '6.jpg'
-        #cv2.imwrite(filename, img) 
-        
     else:
         form = fileform()
 
