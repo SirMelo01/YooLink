@@ -502,7 +502,7 @@
 
 
   {% block javascriptend %}
-    {% compress js %}
+    {% compress js inline %}
       <script defer src="{% static 'js/home.js' %}"></script>
     {% endcompress js %}
   {% endblock javascriptend %}

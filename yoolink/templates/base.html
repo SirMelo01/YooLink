@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Protfolio Page for YooLink">
     <meta name="author" content="Sebastian">
-    {% compress css %}
+    {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
     {% endcompress css %}
 
-    {% compress js %}
+    {% compress js inline %}
       <script defer src="{% static 'js/loadinit.js' %}"></script>
     {% endcompress js %}
 
@@ -235,7 +235,7 @@
     {% endblock footer %}
     <!--Footer End-->
 
-    {% compress js %}
+    {% compress js inline %}
       <script defer src="{% static 'js/base.js' %}"></script>
     {% endcompress js %}
     {% block javascriptend %}
