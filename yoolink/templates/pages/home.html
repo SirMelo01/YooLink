@@ -2,7 +2,7 @@
 {% load compress static %}
 {% block content %}
 
-  {% block css %}
+  {% block css inline %}
     {% compress css %}
       <link href="{% static 'css/cardslider.css' %}" rel="stylesheet">
       <link href="{% static 'css/wellen.css' %}" rel="stylesheet">
