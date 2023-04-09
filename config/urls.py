@@ -18,7 +18,8 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("", include('django.contrib.auth.urls')),
-    path("cms/", include("yoolink.cms.urls", namespace="cms"))
+    path("cms/", include("yoolink.cms.urls", namespace="cms")),
+    path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

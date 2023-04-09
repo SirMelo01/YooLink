@@ -16,7 +16,7 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f local.yml run --rm django python manage.py migrate 
 
 ### App erstellen:
-        $ docker-compose -f local.yml run --rm django python manage.py startapp cms
+        $ docker-compose -f local.yml run --rm django python manage.py startapp namederapp
 
 ### Superuser erstellen:
         $ docker-compose -f local.yml run --rm django python manage.py createsuperuser
