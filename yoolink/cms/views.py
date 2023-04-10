@@ -3,6 +3,8 @@ from yoolink.cms.models import Text_Content, Galerie, fileentry, FAQ
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+from django.http import JsonResponse
+from django.http import HttpResponse
 from .forms import fileform
 from django.conf import settings
 
@@ -49,3 +51,25 @@ def Login_Cms(request):
     return render(request, 'registration/login.html', {
         'currentPath': request.get_full_path
     })
+
+
+
+# --------------- [FILES] ---------------
+# Displays Document Upload Page
+@login_required(login_url='login')
+def upload_view(request):
+
+
+    data = {
+        
+    }
+    return render(request, "pages/upload.html", data)
+
+# Uploads File (used by dropzone.js)
+@login_required(login_url='login')
+def file_upload_view(request):
+    if request.method == 'POST':
+        my_file = request.FILES.get('file')
+        fileentry.objects.create(file=my_file)
+        return HttpResponse('')
+    return JsonResponse({'post': 'false'})

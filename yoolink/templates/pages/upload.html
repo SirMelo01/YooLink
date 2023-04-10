@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Seite X {% endblock %}
+
+{% block javascript %}
+<link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
+<script src="{% static 'js/cms/cms.js' %}"></script>
+<!-- Dropzone JS and CSS -->
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+{% endblock %}
+{% block content %}
+
+<div class="container mx-auto mt-8">
+    <h1 class="text-2xl ">CMS - Upload</h1>
+    <form action="{% url 'cms:post-upload' %}" method="POST" class="dropzone mt-8" id="my-dropzone">
+        {% csrf_token %}
+        <div class="fallback">
+          <input name="file" type="file" multiple />
+        </div>
+      </form>
+</div>
+
+
+{% endblock %}
