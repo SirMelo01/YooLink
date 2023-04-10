@@ -6,18 +6,6 @@ from django.urls import reverse
 from .forms import fileform
 from django.conf import settings
 
-
-## gehört noch verschoben in dei views auserhalb der cms app, da dies für das laden der Index seite zusändig ist und nichts mit dem cms zu tun hat.
-def load_index(request):
-    faq = FAQ.objects.all().values().order_by('id')
-
-    context = {
-        'FAQ': faq,
-    }
-    return render(request, 'pages/home.html', context=context)
-## gehört noch verschoben in dei views auserhalb der cms app, da dies für das laden der Index seite zusändig ist und nichts mit dem cms zu tun hat.
-
-
 @login_required(login_url='login')
 def upload(request):
 
