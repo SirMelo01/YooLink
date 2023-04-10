@@ -13,9 +13,6 @@ urlpatterns = [
     path("", view=load_index, name="home"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("users/", include("yoolink.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("", include('django.contrib.auth.urls')),
     path("cms/", include("yoolink.cms.urls", namespace="cms")),
@@ -35,10 +32,6 @@ urlpatterns += [
         name="api-docs",
     ),
 ]
-
-#admin.site.index_title= "YooLink Admin"
-#admin.site.site_header = "YooLink Admin"
-#admin.site.site_title = "YooLink Admin"
 
 
 if settings.DEBUG:

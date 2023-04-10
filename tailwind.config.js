@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./yoolink/templates/*.{html,js}",
-            "./yoolink/templates/pages/*.{html,js}"],
+            "./yoolink/templates/pages/*.{html,js}",
+            "./yoolink/templates/designs/*.{html,js}"],
   theme: {
     screens: {
       xs: "320px",

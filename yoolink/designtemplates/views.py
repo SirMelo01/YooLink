@@ -7,4 +7,4 @@ from django.conf import settings
 
 def load_designtemp(request):
     
-    return render(request, 'pages/vorlagen.html')
+    return render(request, 'designs/overview.html')

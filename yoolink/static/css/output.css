@@ -1159,12 +1159,20 @@ video {
   padding-bottom: 1px;
 }
 
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
 .pb-4 {
   padding-bottom: 1rem;
 }
 
 .pb-56 {
   padding-bottom: 14rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
 }
 
 .pt-0 {
@@ -1181,22 +1189,6 @@ video {
 
 .pt-6 {
   padding-top: 1.5rem;
-}
-
-.pb-3 {
-  padding-bottom: 0.75rem;
-}
-
-.pl-2 {
-  padding-left: 0.5rem;
-}
-
-.pr-2 {
-  padding-right: 0.5rem;
-}
-
-.pb-2 {
-  padding-bottom: 0.5rem;
 }
 
 .text-left {
@@ -1250,24 +1242,16 @@ video {
   font-weight: 700;
 }
 
+.font-light {
+  font-weight: 300;
+}
+
 .font-medium {
   font-weight: 500;
 }
 
 .font-semibold {
   font-weight: 600;
-}
-
-.font-extralight {
-  font-weight: 200;
-}
-
-.font-light {
-  font-weight: 300;
-}
-
-.font-thin {
-  font-weight: 100;
 }
 
 .uppercase {
@@ -1351,10 +1335,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.underline {
-  text-decoration-line: underline;
 }
 
 .no-underline {
@@ -1842,20 +1822,12 @@ video {
     padding-right: 2rem;
   }
 
-  .md\:pb-4 {
-    padding-bottom: 1rem;
+  .md\:pb-2 {
+    padding-bottom: 0.5rem;
   }
 
   .md\:pl-4 {
     padding-left: 1rem;
-  }
-
-  .md\:pr-4 {
-    padding-right: 1rem;
-  }
-
-  .md\:pb-2 {
-    padding-bottom: 0.5rem;
   }
 
   .md\:text-lg {
@@ -1974,16 +1946,6 @@ video {
 
   .lg\:pt-6 {
     padding-top: 1.5rem;
-  }
-
-  .lg\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
-  .lg\:text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
   }
 }
 
