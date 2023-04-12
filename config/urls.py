@@ -15,6 +15,8 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # Your stuff: custom urls includes go here
     path("", include('django.contrib.auth.urls')),
+    path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
+    path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
     path("cms/", include("yoolink.cms.urls", namespace="cms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

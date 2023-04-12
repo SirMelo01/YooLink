@@ -1,13 +1,20 @@
 {% load static i18n compress%}<!DOCTYPE html>
-{% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="de">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}YooLink{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Protfolio Page for YooLink">
-    <meta name="author" content="Sebastian">
+    <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
+    <meta name="description" content="Yoolink Webseitenagentur Deggendorf">
+    <meta name="keywords" content="Webseitenerstellung Yoolink Agentur Deggendorf">
+    <meta property="og:image" content="https://www.yoolink.de">
+    <meta property="og:description" content="Yoolink Webseitenagentur Deggendorf | [tagline_1]">
+    <meta property="og:url" content="https://www.yoolink.de/">
+    <meta property="og:title" content="Yoolink Webseitenagentur Deggendorf | [tagline_1]">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="#">
+
     {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
     {% endcompress css %}
@@ -185,8 +192,8 @@
                       den Link im Footer dieser Website angepasst werden.
                     </p>
                     <div class="text-xs mt-5 mr-3">
-                      <a href="./impressum" class="mr-5">Impressum</a>
-                      <a href="./datenschutz">Datenschutz</a>
+                      <a href="{% url 'impressum' %}" class="mr-5">Impressum</a>
+                      <a href="{% url 'datenschutz' %}">Datenschutz</a>
                     </div>
                   </div>
                 </div>
@@ -225,10 +232,10 @@
             <div class="order-1 md:order-2 text-white mt-5">
               <span class="px-2"><a href="#kontakt">Kontakt</a></span>
               <span class="px-2 border-l">
-                <a href="./impressum.html">Impressum</a>
+                <a href="{% url 'impressum' %}" >Impressum</a>
               </span>
               <span class="px-2 border-l">
-                <a href="./datenschutz.html">Datenschutz</a>
+                <a href="{% url 'datenschutz' %}">Datenschutz</a>
               </span>
               <span class="px-2 border-l">
                 <a href="./cookies.html">Cookies</a>
