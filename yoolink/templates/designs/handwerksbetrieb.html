@@ -1,0 +1,366 @@
+{% load compress static %}
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% compress css inline %}
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    {% endcompress css %}
+
+  <title>Template-Handwerksbetrieb</title>
+</head>
+
+<body class="bg-white">
+  <div class="text-center bg-white opacity-95 pt-6 mb-2">
+    <h1 class="  md:text-2xl text-slate-600 mt-1">Handwerksbetrieb - Max Mustermann</h1>
+    <h2 class=" md:text-xl text-slate-600 mt-1">professionell - leistungsstark - zuverlässig</h2>
+  </div>
+  <header class="sticky top-0 z-50">
+    <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded opacity-95 sticky">
+      <div class="block lg:flex flex-wrap items-center justify-center mx-auto  ">
+        <div class="flex lg:order-2 xl:mr-10 justify-between">
+          <button type="button"
+            class="text-white bg-slate-400 focus:ring-4 focus:outline-none focus:ring-blue font-medium rounded-lg text-xs sm:text-sm lg:text-l px-4 py-2 text-center mr-5"><a
+              href="tel:850-123-5021">Telefon: 850-123-5021</a></button>
+          <button data-collapse-toggle="navbar-cta" type="button"
+            class="inline-flex items-center p-2text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 aria-controls="
+            navbar-cta" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg" id="menu-button">
+              <path fill-rule="evenodd"
+                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-2" id="navbar-cta">
+          <ul
+            class="flex flex-col p-1 mt-3 border border-gray-100  bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-lg md:font-medium md:border-0 md:bg-white ">
+            <li>
+              <a href="#"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded lg:p-2 hover:bg-slate-400 hover:text-white transition ease-linear duration-300 "
+                id="eins">INFORMATIONEN</a>
+            </li>
+            <li>
+              <a href="#"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded lg:p-2 hover:bg-slate-400 hover:text-white transition ease-linear duration-300 "
+                id="zwei">LEISTUNGEN</a>
+            </li>
+            <li>
+              <a href="#"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded lg:p-2 hover:bg-slate-400 hover:text-white transition ease-linear duration-300 "
+                id="drei">BILDER</a>
+            </li>
+            <li>
+              <a href="#"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded lg:p-2 hover:bg-slate-400 hover:text-white transition ease-linear duration-300 "
+                id="fuenf">KONTAKT</a>
+            </li>
+            <li>
+              <a href="#"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded lg:p-2 hover:bg-slate-400 hover:text-white transition ease-linear duration-300 "
+                id="vier">STANDORT</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+    </div>
+  </header>
+
+  <!--Banner-->
+  <main>
+    <div class="mb-10">
+      <div class="relative w-screen">
+        <img src="{% static 'images/designImg/filler.png' %}" alt="content">
+      </div>
+    </div>
+    <div class="text-center mb-10 text-slate-600 mx-5">
+      <h1 class=" text-lg md:text-3xl font-bold mb-3">Willkommen bei Handwerk Mustermann - Max Mustermann aus Musterstadt</h1>
+      <h2 class=" text-sm md:text-2xl font-bold">Ihr Fachpartner für handwerkliche Dienste</h2>
+    </div>
+
+    <!--Information-->
+    <section class="mb-10 lg:mb-32 text-gray-800 mt-70 w-auto mx-5 lg:mx-16 scroll-my-16" id="informationen">
+      <div class="block rounded-lg shadow-2xl bg-white">
+        <div class="flex flex-wrap items-center">
+          <div class="grow-0 shrink-0 basis-auto w-full lg:w-6/12 xl:w-8/12">
+            <div class="px-6 py-12 md:px-12">
+              <h1 class="text-center text-2xl mb-3 text-slate-600 font-bold">Informationen</h1>
+              <div class=" text-xs lg:text-base xl:text-lg md:text-center">
+                <p>Ich bin Max Mustermann und ich bin der stolze Inhaber meines Handwerksbetriebs. Seit über 20 Jahren bin ich auf die Reparatur und Installation von Heizungs- und Sanitärsystemen spezialisiert. Mit meinem erfahrenen Team von Handwerkern und Technikern biete ich meinen Kunden schnelle und zuverlässige Arbeit, die immer auf dem neuesten Stand der Technik ist.</p>
+                <br>
+                <p>Ich bin sehr umweltbewusst und investiere in umweltfreundliche Ausrüstung und Technologien. Ich arbeite eng mit meinen Lieferanten zusammen, um sicherzustellen, dass sie umweltfreundliche Produkte und Materialien verwenden, und ich setze auch auf umweltfreundliche Ausrüstung und Technologien.</p>
+                <br>
+              </div>
+            </div>
+          </div>
+          <div class="hidden lg:flex grow-0 shrink-0 basis-auto lg:w-6/12 xl:w-4/12">
+            <img src="{% static 'images/designImg/profil.webp' %}" alt="logo" class="w-full rounded-t-lg lg:rounded-xl animate-fade-in-down" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Leistungen-->
+    <section class="md:h-full flex items-center text-gray-600 scroll-my-16" id="leistungen">
+      <div class="container px-5 pb-20 mx-auto">
+        <h1 class="text-center text-4xl  text-slate-600 font-bold mb-10">Leistungen</h1>
+        <div class="flex flex-wrap -m-4">
+          <div class="p-4 sm:w-1/2 lg:w-1/3">
+            <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+              <img class="lg:h-72 md:h-48 w-full object-cover object-center" src="{% static 'images/designImg/filler.png' %}" alt="blog">
+              <div class="p-6 h-full hover:bg-slate-400 hover:text-white transition ease-linear duration-300">
+                <h1 class=" md:text-2xl font-semibold mb-3 ">Heizungseinbau</h1>
+                <p class="leading-relaxed mb-3 text-xs md:text-base">Heizungseinbau bedeutet die Installation von Heizsystemen in Gebäuden oder Wohnungen, wie z.B. Kesseln, Heizkörpern oder Fußbodenheizungen, um das Gebäude zu beheizen. Die Installation wird von Fachleuten durchgeführt, um sicherzustellen, dass das System ordnungsgemäß funktioniert.</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 sm:w-1/2 lg:w-1/3">
+            <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+              <img class="lg:h-72 md:h-48 w-full object-cover object-center" src="{% static 'images/designImg/filler.png' %}" alt="blog">
+              <div class="p-6 h-full hover:bg-slate-400 hover:text-white transition ease-linear duration-300">
+                <h1 class="md:text-2xl font-semibold mb-3">Heizungswartung</h1>
+                <p class="leading-relaxed mb-3 text-xs md:text-base">Heizungswartung bezieht sich auf die regelmäßige Inspektion, Reinigung und Wartung von Heizsystemen, um deren effiziente und sichere Funktion zu gewährleisten. Die Heizungswartung wird von Fachleuten wie Heizungsinstallateuren durchgeführt und umfasst Aufgaben wie die Überprüfung von Leitungen und Ventilen, den Austausch von Filtern und die Optimierung der Einstellungen des Systems.</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 sm:w-1/2 lg:w-1/3">
+            <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+              <img class="lg:h-72 md:h-48 w-full object-cover object-center" src="{% static 'images/designImg/filler.png' %}" alt="blog">
+              <div class="p-6 h-full hover:bg-slate-400 hover:text-white transition ease-linear duration-300">
+                <h1 class="md:text-2xl font-semibold mb-3">Erneuerbare Energien</h1>
+                <p class="leading-relaxed mb-3 text-xs md:text-base">Die Heizungsmodernisierung ist ein wichtiger Teil der Leistungen eines Heizungsbauers, da sie dazu beitragen kann, die Energieeffizienz zu verbessern und die Heizkosten zu senken. Eine Heizungsmodernisierung kann beinhalten, dass alte oder ineffiziente Heizsysteme durch moderne und umweltfreundlichere Systeme ersetzt werden, wie z.B. Brennwertkessel, Wärmepumpen oder Solarthermieanlagen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Bilder-->
+    <section class="scroll-my-16" id="bilder">
+      <div class="mb-10 lg:mb-40">
+        <div>
+          <h1 class="text-center text-4xl mb-3 lg:mb-10 text-slate-600 font-bold">Bilder</h1>
+        </div>
+        <div class="h-50 relative">
+          <div id="slider" class="container xs:h-129 sm:h-130 md:h-131 lg:h-132 xl:h-133 mx-auto relative">
+            <img class="h-full w-full object-scale-down" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler-slate.png' %}" alt="" />
+            <img class="h-full w-full object-scale-down hidden" src="{% static 'images/designImg/filler.png' %}" alt="" />
+          </div>
+          <div class="absolute top-1/2 -translate-y-1/2 w-full  px-5">
+            <div class="my-auto flex w-full justify-between ">
+              <button onclick="prev()" class="rounded-full bg-white bg-opacity-80 p-3 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="h-6 w-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button onclick="next()" class="rounded-full bg-white bg-opacity-80 p-3 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="h-6 w-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Kontakt-->
+    <section class="mb-20 text-slate-600 mt-70 w-auto mx-5 lg:mx-16 scroll-my-16" id="kontakt">
+      <div class="block rounded-lg shadow-2xl bg-white">
+        <div class="flex flex-wrap items-center">
+          <div class="grow-0 shrink-0 basis-auto w-full">
+            <div class="px-6 py-12 md:px-12 text-start w-auto">
+              <h2 class="text-2xl font-bold mb-4 text-slate-600">Kontakt</h2>
+              <p class="text-start text-xs md:text-lg">Sie haben noch Fragen, Wünsche oder Anregungen? Dann nehmen Sie
+                mit uns Kontakt auf!
+                Schreiben Sie uns eine Email oder rufen Sie uns einfach an. Das Team von Handwerk Max Mustermann steht Ihnen gerne
+                zur Verfügung.</p>
+              <div class="lg:flex lg:flex-row  mt-8 w-auto">
+                <div class="text-start text-xs md:text-lg ">
+                  <p>Handwerk </p>
+                  <p>Max Mustermann</p>
+                  <p>Musterstraße 1</p>
+                  <p>94447 Musterstadt</p>
+                  <p class="inline">Telefon: </p><a href="tel:+850-123-5021" class="text-blue-600">850-123-5021
+                    </a>
+                  <p>Telefax: 850-123-5021</p>
+                  <p class="inline">E-Mail: </p><a href="mailto:max.mustermann@mustermail.de"
+                    class="text-blue-600">max.mustermann@mustermail.de</a>
+                </div>
+                <div class="text-start lg:ml-16 xl:ml-40">
+                  <p class=" mt-4 text-xs md:text-xl ">Geschäftszeiten</p>
+                  <p class=" mt-1 xl:mt-4 text-xs md:text-xl">Montag - Freitag</p>
+                  <p class="text-xs md:text-xl">07:00 - 18:00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Karte-->
+    <section class="bg-white scroll-my-16" id="standort">
+      <div>
+        <h1 class="text-center text-4xl mb-10 text-slate-600 font-bold">Standort</h1>
+           
+            <div id="map" class="h-80 z-10 mx-16 my-18 "><img class="h-full w-full object-cover brightness-75" src="{% static 'images/designImg/BlackandWhiteMap.png' %}" alt="Karte" /></div>
+      </div>
+    </section>
+
+
+
+    
+
+   <!--Footer-->
+    <footer class="w-auto">
+      <div class="bg-white">
+        <div class="max-w-2xl mx-auto text-slate-600 py-10">
+          <div class="text-center">
+            <h3 class=" sm:text-3xl mb-1">Vielen Dank für Ihr Interesse!</h3>
+            <p>Ihr Team von Handwerk Max Mustermann</p>
+          </div>
+          <div class="mt-25 flex flex-col  md:justify-between items-center text-xs md:text-sm text-black">
+            <p class="order-2 md:order-1 mt-7 "> &copy; YooLink, 2023. </p>
+            <div class="order-1 md:order-2 text-black mt-5">
+              <span class="px-2"><a href="#">Kontakt</a></span>
+              <span class="px-2 border-l"><a href="#">Impressum</a></span>
+              <span class="px-2 border-l"><a href="#">Datenschutz</a></span>
+              <span class="px-2 border-l"><a href="#">Cookies</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!--JS-->
+
+    <script>
+      const button = document.querySelector("#menu-button");
+      const menu = document.querySelector("#navbar-cta");
+
+      //dropdown var
+      const informationen = document.querySelector("#eins");
+      const leistungen = document.querySelector("#zwei");
+      const bilder = document.querySelector("#drei");
+      const standort = document.querySelector("#vier");
+      const kontakt = document.querySelector("#fuenf");
+
+      //code dropdown
+      informationen.addEventListener("click", () => {
+       menu.classList.add("hidden");
+      });
+        leistungen.addEventListener("click", () => {
+      menu.classList.add("hidden");
+      });
+      bilder.addEventListener("click", () => {
+      menu.classList.add("hidden");
+      });
+      standort.addEventListener("click", () => {
+      menu.classList.add("hidden");
+      });
+      kontakt.addEventListener("click", () => {
+      menu.classList.add("hidden");
+      });
+
+    button.addEventListener("click", () => {
+      if (menu.classList.contains("hidden")) {
+      menu.classList.remove("hidden");
+      } else {
+      menu.classList.add("hidden");
+      }
+      });
+    </script>
+    
+    <script>
+    var currentSlideId = 1;
+    var sliderElement = document.getElementById("slider");
+    var totalSlides = sliderElement.childElementCount;
+    let myInterval = setInterval(next, 7000);
+
+
+      // Image slider
+function next() {
+  if (currentSlideId < totalSlides) {
+    currentSlideId++;
+    showSlide();
+  } else {
+    currentSlideId = 1;
+    showSlide();
+  }
+  clearInterval(myInterval);
+  myInterval = setInterval(next, 7000);
+}
+
+function prev() {
+  if (currentSlideId > 1) {
+    currentSlideId--;
+    showSlide();
+  } else {
+    currentSlideId = totalSlides;
+    showSlide();
+  }
+  clearInterval(myInterval);
+  myInterval = setInterval(next, 7000);
+}
+
+function showSlide() {
+  slides = document.getElementById("slider").getElementsByTagName("img");
+  for (let index = 0; index < totalSlides; index++) {
+    const element = slides[index];
+    if (currentSlideId == index + 1) {
+      element.classList.add("animate-fade-in-down");
+      element.classList.remove("hidden");
+    } else {
+      element.classList.add("hidden");
+      element.classList.remove("animate-fade-in-down");
+    }
+  }
+}
+
+setTimeout(() => {
+  if (cookiemapselect === null || cookiemapselect === "false") {
+    console.log("cookie nicht da");
+  } else {
+    map = L.map("map");
+    map.on("focus", function () {
+      map.scrollWheelZoom.enable();
+    });
+    map.on("blur", function () {
+      map.scrollWheelZoom.disable();
+    });
+  }
+  mapLoad();
+}, 500);
+
+
+
+
+    </script>
+    
+    
+
+</body>
+</main>
+
+</html>

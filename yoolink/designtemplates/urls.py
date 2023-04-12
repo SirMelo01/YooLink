@@ -5,5 +5,9 @@ from django.views.generic import TemplateView
 app_name = "designtemplates"
 urlpatterns = [
     path("", view=load_designtemp, name="designtemplates"),
-    path("template1/", TemplateView.as_view(template_name="designs/template1.html"), name="template1"),
+    path("portfolio/", TemplateView.as_view(template_name="designs/portfolio.html"), name="portfolio"),
+    path("handwerksbetrieb/", TemplateView.as_view(template_name="designs/handwerksbetrieb.html"), name="handwerksbtrieb"),
+    
 ]
+
+
