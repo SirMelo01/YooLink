@@ -1,5 +1,7 @@
 {% extends "base.html" %} {% load compress static %}
 
+<title>{% block title %}{{block.super}} | Impressum{% endblock title %}</title>
+
 {% block content %}
 
 <div class="md:mt-20 ml-5  xl:mx-40 w-8/12 space-y-5 text-xs md:text-sm">
