@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Seite X {% endblock %}
+
+{% block js %}
+<!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="container mx-auto mt-8">
+  <h1 class="text-2xl mb-5">FAQ - Overview</h1>
+  <!-- Simple List -->
+  <div id="simpleList" class="list-group">
+    {% csrf_token %}
+    {% for faq in faqs %}
+    <div class="list-group-item mb-4" data-id="{{ faq.id }}">
+      <div class="flex items-center w-full justify-between bg-slate-600 p-4 text-white rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="w-8 h-8 handle mr-5 hover:cursor-pointer">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+        </svg>
+
+        <div class="w-2/5 mr-4">
+          <input type="text" value="{{faq.question}}" placeholder="Deine Frage"
+            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline question">
+        </div>
+        <div class="w-2/5 mr-4">
+          <input type="text" value="{{faq.answer}}" placeholder="Deine Antwort"
+            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline answer">
+        </div>
+        <div class="w-1/5">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline update"
+            type="button">
+            Sichere
+          </button>
+          <button
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete"
+            type="button">
+            Lösche
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <button id="save-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    Sichere Reihenfolge
+  </button>
+  <button id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    Hinzufügen
+  </button>
+</div>
+
+{% endblock %}
+
+
+{% block javascriptend %}
+{% compress js inline %}
+  <script defer src="{% static 'js/faq.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}

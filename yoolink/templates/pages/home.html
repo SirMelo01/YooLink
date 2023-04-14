@@ -489,16 +489,16 @@
           {% for faq in FAQ %}
           
           <div class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none" onclick="toggleFaq{{ faq.id }}()">
+            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none faq-toggle">
               <p class="text-lg font-medium">
                {{ faq.question }}
               </p>
               <!-- Add "transform rotate-180" classes on svg, if is open" -->
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600" id="arrow{{ faq.id }}">
+              <svg viewBox="0 0 24 24" class="w-3 text-gray-600 faq-arrow">
                 <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
               </svg>
             </button>
-            <div class="p-4 pt-0 hidden" id="content{{ faq.id }}">
+            <div class="p-4 pt-0 hidden faq-content">
               <p class="text-white">
                 {{ faq.answer }}
               </p>

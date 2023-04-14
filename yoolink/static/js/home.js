@@ -28,44 +28,21 @@ function toggleResponsive() {
 }
 
 //FQA
-function toggleFaq1() {
-  if (content1.classList.contains("hidden")) {
-    content1.classList.remove("hidden");
-    arrow1.classList.add("rotate-180");
-  } else {
-    content1.classList.add("hidden");
-    arrow1.classList.remove("rotate-180");
-  }
-}
-function toggleFaq2() {
-  if (content2.classList.contains("hidden")) {
-    content2.classList.remove("hidden");
-    arrow2.classList.add("rotate-180");
-  } else {
-    content2.classList.add("hidden");
-    arrow2.classList.remove("rotate-180");
-  }
-}
+$(document).ready(function() {
+  $(".faq-toggle").click(function() {
+    var content = $(this).siblings(".faq-content");
+    var arrow = $(this).find(".faq-arrow");
+    
+    if (content.hasClass("hidden")) {
+      content.removeClass("hidden");
+      arrow.addClass("rotate-180");
+    } else {
+      content.addClass("hidden");
+      arrow.removeClass("rotate-180");
+    }
+  });
+});
 
-function toggleFaq3() {
-  if (content3.classList.contains("hidden")) {
-    content3.classList.remove("hidden");
-    arrow3.classList.add("rotate-180");
-  } else {
-    content3.classList.add("hidden");
-    arrow3.classList.remove("rotate-180");
-  }
-}
-
-function toggleFaq4() {
-  if (content4.classList.contains("hidden")) {
-    content4.classList.remove("hidden");
-    arrow4.classList.add("rotate-180");
-  } else {
-    content4.classList.add("hidden");
-    arrow4.classList.remove("rotate-180");
-  }
-}
 // Image slider
 function next() {
   if (currentSlideId < totalSlides) {
