@@ -3,7 +3,7 @@ from yoolink.cms.models import FAQ
 
 
 def load_index(request):
-    faq = FAQ.objects.all().values().order_by('id')
+    faq = FAQ.objects.all()
 
     context = {
         'FAQ': faq,
