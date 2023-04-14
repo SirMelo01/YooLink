@@ -13,10 +13,10 @@
             <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
             <div class="flex-grow"></div>
             <div class="flex justify-center items-center mt-12">
-                <a href="{% url 'images-view' %}"
+                <a href="{% url 'cms:images-view' %}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
                 <div class="flex-grow"></div>
-                <a href="{% url 'upload' %}"
+                <a href="{% url 'cms:upload' %}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Hochladen</a>
             </div>
         </div>
@@ -28,7 +28,7 @@
             <p class="mb-4">Momentane Anzahl: <strong>{{faq_count}}</strong></p>
             <div class="flex-grow"></div>
             <div class="flex justify-center items-center mt-12">
-                <a href="{% url 'faq-view' %}"
+                <a href="{% url 'cms:faq-view' %}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
             </div>
         </div>
