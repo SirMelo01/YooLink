@@ -6,14 +6,10 @@
     <title>{% block title %}YooLink{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
-    <meta name="description" content="Yoolink Webseitenagentur Deggendorf">
-    <meta name="keywords" content="Webseitenerstellung Yoolink Agentur Deggendorf">
-    <meta property="og:image" content="https://www.yoolink.de">
-    <meta property="og:description" content="Yoolink Webseitenagentur Deggendorf | [tagline_1]">
-    <meta property="og:url" content="https://www.yoolink.de/">
-    <meta property="og:title" content="Yoolink Webseitenagentur Deggendorf | [tagline_1]">
+    <meta name="description" content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Deinem Internetauftritt herauszuholen. Dich erwartet Transparenz, Sichtbarkeit und &amp ein junges dynamisches Team">
+    <meta name="keywords" content="Yoolink, Webdesign, Homepageerstellung, Agentur, Deggendorf, Internetauftritt">
     <meta property="og:type" content="website">
-    <link rel="icon" href="#">
+    <link rel="icon" href="{% static 'images/favicons/logo_blau.ico' %}">
 
     {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
@@ -72,13 +68,19 @@
                 Team
               </a>
             </li>
+            <li>
+              <a href="{% url 'designtemplates:designtemplates' %}" aria-label="About us" title="About us"
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                Vorlagen
+              </a>
+            </li>
           </ul>
 
           <ul class="items-center hidden space-x-8 lg:flex bg-blue-400 rounded-2xl">
             <li>
-              <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Sign up" title="Sign up"
+              <a href="/" aria-label="Sign up" title="Sign up"
                 class="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none">
-                Webseite-Vorlagen
+                Kontaktiere uns
               </a>
             </li>
           </ul>

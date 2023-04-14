@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress static %}
 
-
+<title>{% block title %}{{block.super}} - Webdesign Agentur{% endblock title %}</title>
 
 {% block content %}
 
@@ -40,13 +40,13 @@
       <div class="flex flex-col items-center max-w-2xl md:px-8">
         <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
           <div class="text-center"> 
-            <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
-              Ihr Internetauftritt
-            </p>
+            <h1 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
+              Webdesign Agentur - YooLink
+            </h1>
           </div>
-          <h1 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
-            YooLink der moderne, professionelle Internetauftritt
-          </h1>
+          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
+            Der moderne, professionelle Internetauftritt
+          </h2>
           <p class="text-base text-gray-800 md:text-lg">
             Dieser ist heutzutage nicht mehr wegzudenken. Gemeinsam mit Ihnen
             erarbeiten wir für Sie einen professionellen Internetauftritt. Als
@@ -371,7 +371,7 @@
         </div>
         <div>
           <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-            <img class="absolute object-cover w-full h-full rounded" src="https://images.pexels.com/photos/3747435/pexels-photo-3747435.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260" alt="Person"/>
+            <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/johannes.JPG' %}" alt="Person"/>
           </div>
           <div class="flex flex-col sm:text-center">
             <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
