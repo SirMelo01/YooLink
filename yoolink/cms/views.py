@@ -26,7 +26,7 @@ def compress_image(image):
 
     # Compress the image using Pillow's save() method
     format = img.format
-    img.save(buffer, format=format, quality=60)
+    img.save(buffer, format=format, quality=30)
 
     # Create a Django InMemoryUploadedFile object from the compressed image data
     file = InMemoryUploadedFile(
@@ -114,9 +114,9 @@ def file_upload_view(request):
 
 
         # Compress the image
-        # compressed_image = compress_image(my_file)
+        compressed_image = compress_image(my_file)
 
-        fileentry.objects.create(file=my_file)
+        fileentry.objects.create(file=compressed_image)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
