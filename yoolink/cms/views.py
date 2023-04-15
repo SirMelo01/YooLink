@@ -36,7 +36,7 @@ def resize_image(image):
 def scale_image(image):
     img = Image.open(image)
     format = img.format
-    img.thumbnail((800,800), Image.ANTIALIAS)
+    img.thumbnail((1920,1920), Image.ANTIALIAS)
     buffer = BytesIO()
 
     img.save(buffer, format=format, quality=100)
