@@ -33,6 +33,26 @@ def resize_image(image):
     )
     return file
 
+def scale_image(image):
+    img = Image.open(image)
+    format = img.format
+    img.thumbnail((800,800), Image.ANTIALIAS)
+    buffer = BytesIO()
+
+    img.save(buffer, format=format, quality=100)
+    buffer.seek(0)
+
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        f"image/{format.lower()}",
+        buffer.tell(),
+        None
+    )
+
+    return file
+
 
 
 def compress_image(image):
@@ -133,12 +153,14 @@ def file_upload_view(request):
         my_file = request.FILES.get('file')
 
         # Resize the image
-        resized_image = resize_image(my_file)
+        #resized_image = resize_image(my_file)
 
         # Compress the image
-        compressed_image = compress_image(resized_image)
+        #compressed_image = compress_image(resized_image)
 
-        fileentry.objects.create(file=compressed_image)
+        scaled_image = scale_image(my_file)
+
+        fileentry.objects.create(file=scaled_image)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
