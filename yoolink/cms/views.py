@@ -152,6 +152,16 @@ def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
 
+# für mich zum merken: Bild soll:
+#           1. scaled_image auf 1920 breite
+#           2. resized_image auf dpi von (72,72)
+#           3. compressed_image auf maximal 200KB - 500KB Internet ist sich noch nicht einig (falls die Datei zu gross ist)
+
+# Alles klappt bis jetzt, jedoch bloed mit dem inmemoryspeicher geloest. Vielleicht in eine Methode aber dann ist
+# trotzdem ein mal inmemory da... kann man das clearen? 
+
+# aus der anleitung von oben die drei schritte soll in eine Methode 
+
         # Resize the image
         #resized_image = resize_image(my_file)
 
