@@ -34,18 +34,18 @@ def compress_image(image):
 
     img.save(buffer, format=format)
 
-    target_size = 500 * 1024 # 500 KB
+    #target_size = 500 * 1024 # 500 KB
 
     
-    quality = 80
+    #quality = 80
     # Compress the image using Pillow's save() method
-    img.save(buffer, format=format, quality=quality)
-    while buffer.tell() > target_size and quality > 10:
-        buffer.seek(0)
-        buffer.truncate()
-        quality -= 10
+    #img.save(buffer, format=format, quality=quality)
+    #while buffer.tell() > target_size and quality > 10:
+    #    buffer.seek(0)
+    #    buffer.truncate()
+    #    quality -= 10
 
-        img.save(buffer, format=format, quality=quality)
+    #    img.save(buffer, format=format, quality=quality)
 
 
     # Create a Django InMemoryUploadedFile object from the compressed image data
@@ -54,7 +54,8 @@ def compress_image(image):
         None,
         f"{image.name.split('.')[0]}.{format.lower()}",
         f"image/{format.lower()}",
-        buffer.tell(),
+        #buffer.tell(),
+        buffer.getbuffer().nbytes,
         None
     )
 
