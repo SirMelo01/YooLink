@@ -39,7 +39,7 @@ def compress_image(image):
     img = Image.open(image)
     buffer = BytesIO()
 
-    target_size = 1000 * 1024 # 500 KB
+    target_size = 700 * 1024 # 500 KB
     quality = 95
     format = img.format
     img.save(buffer, format=format, quality=quality)
