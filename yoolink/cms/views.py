@@ -111,10 +111,12 @@ def upload_view(request):
 def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
-        # Compress the image
-        compressed_image = compress_image(my_file)
 
-        fileentry.objects.create(file=compressed_image)
+
+        # Compress the image
+        # compressed_image = compress_image(my_file)
+
+        fileentry.objects.create(file=my_file)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
