@@ -40,13 +40,13 @@ def compress_image(image):
     buffer = BytesIO()
 
     target_size = 500 * 1024 # 500 KB
-    quality = 80
+    quality = 95
     format = img.format
     img.save(buffer, format=format, quality=quality)
-    while buffer.tell() > target_size and quality > 10:
+    while buffer.tell() > target_size and quality > 5:
         buffer.seek(0)
         buffer.truncate()
-        quality -= 10
+        quality -= 5
 
         img.save(buffer, format=format, quality=quality)
 
