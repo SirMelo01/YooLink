@@ -11,6 +11,29 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+
+def resize_image(image):
+    img = Image.open(image)
+    format = img.format
+    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
+    img.info['dpi'] = (72,72)
+
+    buffer = BytesIO()
+
+    img.save(buffer, format=format)
+
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        "image/{format.lower()}",
+        buffer.getbuffer().nbytes,
+        None
+    )
+    return file
+
+
+
 def compress_image(image):
     img = Image.open(image)
     buffer = BytesIO()
@@ -108,9 +131,11 @@ def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
 
+        # Resize the image
+        resized_image = resize_image(my_file)
 
         # Compress the image
-        compressed_image = compress_image(my_file)
+        compressed_image = compress_image(resized_image)
 
         fileentry.objects.create(file=compressed_image)
         return HttpResponse('')
