@@ -135,9 +135,9 @@ def file_upload_view(request):
         resized_image = resize_image(my_file)
 
         # Compress the image
-        compressed_image = compress_image(resized_image)
+        #compressed_image = compress_image(resized_image)
 
-        fileentry.objects.create(file=compressed_image)
+        fileentry.objects.create(file=resized_image)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
