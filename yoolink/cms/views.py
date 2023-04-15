@@ -24,9 +24,19 @@ def compress_image(image):
     # Create a BytesIO object to hold the compressed image data
     buffer = BytesIO()
 
+    target_size = 500 * 1024 # 500 KB
+
+    
+    quality = 80
     # Compress the image using Pillow's save() method
     format = img.format
     img.save(buffer, format=format, quality=30)
+    while buffer.tell() > target_size and quality > 10:
+        buffer.seek(0)
+        buffer.truncate()
+        quality -= 10
+
+        img.save(buffer, format=format, quality=quality)
 
     # Create a Django InMemoryUploadedFile object from the compressed image data
     file = InMemoryUploadedFile(
@@ -40,31 +50,6 @@ def compress_image(image):
 
     return file
 ##########
-
-
-
-
-@login_required(login_url='login')
-def upload(request):
-
-    context = {'form': None, 'last': None}
-
-    if request.method == 'POST':
-        form = fileform(request.POST, request.FILES)
-        if form.is_valid():
-            context['last'] = '\n'.join([f.name for f in request.FILES.getlist('file')])
-            
-            for file in request.FILES.getlist('file'):
-                new_file = fileentry(
-                    file = file
-                )
-                new_file.save()
-
-    else:
-        form = fileform()
-
-    context['form'] = form
-    return render(request, 'pages/cms.html', context)
 
 
 
