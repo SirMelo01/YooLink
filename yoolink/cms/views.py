@@ -15,10 +15,10 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 def resize_image(image):
     
     img = Image.open(image)
-    
+    format = img.format
     img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
     img.info['dpi'] = (72,72)
-    format = img.format
+
     buffer = BytesIO()
 
     img.save(buffer, format=format)
