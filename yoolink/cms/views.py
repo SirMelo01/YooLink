@@ -21,15 +21,24 @@ def compress_image(image):
     # Open the image using PIL
     img = Image.open(image)
 
+
+    # Rescale image
+    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
+    img.info['dpi'] = (72, 72)
+
+
     # Create a BytesIO object to hold the compressed image data
     buffer = BytesIO()
+
+    format = img.format
+
+    img.save(buffer, format=format)
 
     target_size = 500 * 1024 # 500 KB
 
     
     quality = 80
     # Compress the image using Pillow's save() method
-    format = img.format
     img.save(buffer, format=format, quality=quality)
     while buffer.tell() > target_size and quality > 10:
         buffer.seek(0)
