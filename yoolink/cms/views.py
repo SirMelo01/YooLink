@@ -8,6 +8,42 @@ from django.http import HttpResponse
 from .forms import fileform
 from django.conf import settings
 
+##########
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+def compress_image(image):
+    """
+    This function takes a PIL Image object and returns a compressed version
+    of the image as a Django InMemoryUploadedFile object.
+    """
+    # Open the image using PIL
+    img = Image.open(image)
+
+    # Create a BytesIO object to hold the compressed image data
+    buffer = BytesIO()
+
+    # Compress the image using Pillow's save() method
+    format = img.format
+    img.save(buffer, format=format, quality=60)
+
+    # Create a Django InMemoryUploadedFile object from the compressed image data
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        f"image/{format.lower()}",
+        buffer.tell(),
+        None
+    )
+
+    return file
+##########
+
+
+
+
 @login_required(login_url='login')
 def upload(request):
 
@@ -54,6 +90,11 @@ def Login_Cms(request):
 
 
 
+
+
+
+
+
 # --------------- [FILES] ---------------
 # Displays Document Upload Page
 @login_required(login_url='login')
@@ -70,7 +111,10 @@ def upload_view(request):
 def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
-        fileentry.objects.create(file=my_file)
+        # Compress the image
+        compressed_image = compress_image(my_file)
+
+        fileentry.objects.create(file=compressed_image)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
