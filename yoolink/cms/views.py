@@ -16,7 +16,7 @@ def resize_image(image):
     
     img = Image.open(image)
     
-    if img.info['dpi'] > (72,72):
+    if img.info['dpi'] > 72:
         img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
         img.info['dpi'] = (72,72)
         format = img.format
