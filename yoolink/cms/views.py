@@ -13,23 +13,25 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 def resize_image(image):
+    
     img = Image.open(image)
-    format = img.format
-    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
-    img.info['dpi'] = (72,72)
+    
+    if img.info['dpi'] > (72,72):
+        img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
+        img.info['dpi'] = (72,72)
+        format = img.format
+        buffer = BytesIO()
 
-    buffer = BytesIO()
+        img.save(buffer, format=format)
 
-    img.save(buffer, format=format)
-
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        "image/{format.lower()}",
-        buffer.getbuffer().nbytes,
-        None
-    )
+        file = InMemoryUploadedFile(
+            buffer,
+            None,
+            f"{image.name.split('.')[0]}.{format.lower()}",
+            "image/{format.lower()}",
+            buffer.getbuffer().nbytes,
+            None
+        )
     return file
 
 
