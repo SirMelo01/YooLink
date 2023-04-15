@@ -7,60 +7,35 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from .forms import fileform
 from django.conf import settings
-
-##########
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def compress_image(image):
-    """
-    This function takes a PIL Image object and returns a compressed version
-    of the image as a Django InMemoryUploadedFile object.
-    """
-    # Open the image using PIL
     img = Image.open(image)
-
-
-    # Rescale image
-    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
-    img.info['dpi'] = (72, 72)
-
-
-    # Create a BytesIO object to hold the compressed image data
     buffer = BytesIO()
 
+    target_size = 500 * 1024 # 500 KB
+    quality = 80
     format = img.format
+    img.save(buffer, format=format, quality=quality)
+    while buffer.tell() > target_size and quality > 10:
+        buffer.seek(0)
+        buffer.truncate()
+        quality -= 10
 
-    img.save(buffer, format=format)
+        img.save(buffer, format=format, quality=quality)
 
-    #target_size = 500 * 1024 # 500 KB
-
-    
-    #quality = 80
-    # Compress the image using Pillow's save() method
-    #img.save(buffer, format=format, quality=quality)
-    #while buffer.tell() > target_size and quality > 10:
-    #    buffer.seek(0)
-    #    buffer.truncate()
-    #    quality -= 10
-
-    #    img.save(buffer, format=format, quality=quality)
-
-
-    # Create a Django InMemoryUploadedFile object from the compressed image data
     file = InMemoryUploadedFile(
         buffer,
         None,
         f"{image.name.split('.')[0]}.{format.lower()}",
         f"image/{format.lower()}",
-        #buffer.tell(),
-        buffer.getbuffer().nbytes,
+        buffer.tell(),
         None
     )
 
     return file
-##########
 
 
 
