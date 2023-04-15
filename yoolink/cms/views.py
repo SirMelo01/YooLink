@@ -153,8 +153,8 @@ def file_upload_view(request):
         my_file = request.FILES.get('file')
 
 # für mich zum merken: Bild soll:
-#           1. scaled_image auf 1920 breite
-#           2. resized_image auf dpi von (72,72)
+#           1. scaled_image auf 1920 breite (falls die breite zu breit ist) (was ist mit der hohe? soll man die auch auf 1920)
+#           2. resized_image auf dpi von (72,72) (falls die DPI hoeher ist)
 #           3. compressed_image auf maximal 200KB - 500KB Internet ist sich noch nicht einig (falls die Datei zu gross ist)
 
 # Alles klappt bis jetzt, jedoch bloed mit dem inmemoryspeicher geloest. Vielleicht in eine Methode aber dann ist
