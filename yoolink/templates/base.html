@@ -13,7 +13,7 @@
     <meta name="twitter:description" content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Deinem Internetauftritt herauszuholen. Dich erwartet Transparenz, Sichtbarkeit und &amp ein junges dynamisches Team">
     <meta name="twitter:site" content="@YooLinkDE">
     <meta name="twitter:creator" content="@YooLinkDE">
-    <meta name="twitter:image" content="https://vierless.de/wp-content/uploads/2021/10/vl-seo-1.jpg">
+    <!--<meta name="twitter:image" content="">-->
     <meta name="twitter:label1" content="Verfasst von">
     <meta name="twitter:data1" content="YooLink">
     <meta name="twitter:label2" content="Zeit zum Lesen">
@@ -61,7 +61,7 @@
             <li>
               <a href="{% url 'home' %}#linkDesign" aria-label="Produkt" title="Produkt"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
-                Unser Produkt
+                Responsive
               </a>
             </li>
             <!--
@@ -256,9 +256,11 @@
               &copy; YooLink - Sebastian Rauch, 2023.
             </p>
             <div class="order-1 md:order-2 text-white mt-5">
-              <span class="px-2"><a href="#kontakt">Kontakt</a></span>
+              <span class="px-2">
+                <a href="{% url 'home' %}">Home</a>
+              </span>
               <span class="px-2 border-l">
-                <a href="{% url 'impressum' %}" >Impressum</a>
+                <a href="{% url 'impressum' %}">Impressum</a>
               </span>
               <span class="px-2 border-l">
                 <a href="{% url 'datenschutz' %}">Datenschutz</a>
