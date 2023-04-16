@@ -60,7 +60,7 @@ def compress_image(image):
     buffer = BytesIO()
 
     target_size = 500 * 1024 # 500 KB
-    quality = 95
+    quality = 100
     format = img.format
     img.save(buffer, format=format, quality=quality)
     while buffer.tell() > target_size and quality > 5:
@@ -80,8 +80,6 @@ def compress_image(image):
     )
 
     return file
-
-
 
 
 @login_required(login_url='login')
@@ -129,12 +127,6 @@ def Login_Cms(request):
     })
 
 
-
-
-
-
-
-
 # --------------- [FILES] ---------------
 # Displays Document Upload Page
 @login_required(login_url='login')
@@ -152,25 +144,16 @@ def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
 
-# für mich zum merken: Bild soll:
-#           1. scaled_image auf 1920 breite (falls die breite zu breit ist) (was ist mit der hohe? soll man die auch auf 1920)
-#           2. resized_image auf dpi von (72,72) (falls die DPI hoeher ist)
-#           3. compressed_image auf maximal 200KB - 500KB Internet ist sich noch nicht einig (falls die Datei zu gross ist)
+        # Resize the image (Aufloesung wird geaendert)
+        resized_image = resize_image(my_file)
 
-# Alles klappt bis jetzt, jedoch bloed mit dem inmemoryspeicher geloest. Vielleicht in eine Methode aber dann ist
-# trotzdem ein mal inmemory da... kann man das clearen? 
+        # Pixelgroese wird auf maximale Breite gesetzt
+        scaled_image = scale_image(resized_image)
 
-# aus der anleitung von oben die drei schritte soll in eine Methode 
+        # Compress the image (Maximale Groese auf Limit setzten)
+        compressed_image = compress_image(scaled_image)
 
-        # Resize the image
-        #resized_image = resize_image(my_file)
-
-        # Compress the image
-        #compressed_image = compress_image(resized_image)
-
-        scaled_image = scale_image(my_file)
-
-        fileentry.objects.create(file=scaled_image)
+        fileentry.objects.create(file=compressed_image)
         return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
