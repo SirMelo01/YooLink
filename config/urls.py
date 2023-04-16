@@ -8,6 +8,12 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 from yoolink.views import load_index
 
+from django.contrib.sitemaps.views import sitemap
+from yoolink.sitemaps import StaticViewSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap
+}
 
 urlpatterns = [
     path("", view=load_index, name="home"),
@@ -15,6 +21,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # Your stuff: custom urls includes go here
     path("", include('django.contrib.auth.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
     path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
     path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
