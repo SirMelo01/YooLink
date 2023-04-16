@@ -12,76 +12,6 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def resize_image(image):
-    
-    img = Image.open(image)
-    format = img.format
-    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
-    img.info['dpi'] = (72,72)
-
-    buffer = BytesIO()
-
-    img.save(buffer, format=format)
-
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        "image/{format.lower()}",
-        buffer.getbuffer().nbytes,
-        None
-    )
-    return file
-
-def scale_image(image):
-    img = Image.open(image)
-    format = img.format
-    img.thumbnail((1920,1920), Image.ANTIALIAS)
-    buffer = BytesIO()
-
-    img.save(buffer, format=format, quality=100)
-    buffer.seek(0)
-
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        f"image/{format.lower()}",
-        buffer.tell(),
-        None
-    )
-
-    return file
-
-
-
-def compress_image(image):
-    img = Image.open(image)
-    buffer = BytesIO()
-
-    target_size = 500 * 1024 # 500 KB
-    quality = 100
-    format = img.format
-    img.save(buffer, format=format, quality=quality)
-    while buffer.tell() > target_size and quality > 5:
-        buffer.seek(0)
-        buffer.truncate()
-        quality -= 5
-
-        img.save(buffer, format=format, quality=quality)
-
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        f"image/{format.lower()}",
-        buffer.tell(),
-        None
-    )
-
-    return file
-
-
 @login_required(login_url='login')
 def upload(request):
 
@@ -144,13 +74,8 @@ def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
 
-        # Resize the image (Aufloesung wird geaendert)
         resized_image = resize_image(my_file)
-
-        # Pixelgroese wird auf maximale Breite gesetzt
         scaled_image = scale_image(resized_image)
-
-        # Compress the image (Maximale Groese auf Limit setzten)
         compressed_image = compress_image(scaled_image)
 
         fileentry.objects.create(file=compressed_image)
@@ -169,6 +94,80 @@ def delete_file(request, id):
 def images_view(request):
     files = fileentry.objects.all()
     return render(request, "pages/cms/images.html", {"files": files})
+
+
+# Resize the image (Aufloesung wird geaendert)
+def resize_image(image):
+    
+    img = Image.open(image)
+    format = img.format
+    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
+    img.info['dpi'] = (72,72)
+
+    buffer = BytesIO()
+
+    img.save(buffer, format=format)
+
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        "image/{format.lower()}",
+        buffer.getbuffer().nbytes,
+        None
+    )
+    return file
+
+# Pixelgroese wird auf maximale Breite gesetzt
+def scale_image(image):
+    img = Image.open(image)
+    format = img.format
+    img.thumbnail((1920,1920), Image.ANTIALIAS)
+    buffer = BytesIO()
+
+    img.save(buffer, format=format, quality=100)
+    buffer.seek(0)
+
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        f"image/{format.lower()}",
+        buffer.tell(),
+        None
+    )
+
+    return file
+
+
+# Compress the image (Maximale Groese auf Limit setzten)
+def compress_image(image):
+    img = Image.open(image)
+    buffer = BytesIO()
+
+    target_size = 500 * 1024 # 500 KB
+    quality = 100
+    format = img.format
+    img.save(buffer, format=format, quality=quality)
+    while buffer.tell() > target_size and quality > 5:
+        buffer.seek(0)
+        buffer.truncate()
+        quality -= 5
+
+        img.save(buffer, format=format, quality=quality)
+
+    file = InMemoryUploadedFile(
+        buffer,
+        None,
+        f"{image.name.split('.')[0]}.{format.lower()}",
+        f"image/{format.lower()}",
+        buffer.tell(),
+        None
+    )
+
+    return file
+
+
 
 # --------------- [FAQ] ---------------
 @login_required(login_url='login')
