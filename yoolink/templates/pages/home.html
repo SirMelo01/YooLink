@@ -466,7 +466,7 @@
 
   <!--FAQ Beginn-->
   {% block FAQ %}
-  <section class="bg-gray-700 text-white -mt-5">
+  <section itemscope itemtype="https://schema.org/FAQPage" class="bg-gray-700 text-white -mt-5">
     <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
       <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
         <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
@@ -490,20 +490,19 @@
           {% csrf_token %}
           {% for faq in FAQ %}
           
-          <div class="border-b">
+          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question" class="border-b">
             <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none faq-toggle">
-              <p class="text-lg font-medium">
+              <div itemprop="name" class="text-lg font-medium">
                {{ faq.question }}
-              </p>
-              <!-- Add "transform rotate-180" classes on svg, if is open" -->
+              </div>
               <svg viewBox="0 0 24 24" class="w-3 text-gray-600 faq-arrow">
                 <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
               </svg>
             </button>
-            <div class="p-4 pt-0 hidden faq-content">
-              <p class="text-white">
+            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="p-4 pt-0 hidden faq-content">
+              <div itemprop="text" class="text-white">
                 {{ faq.answer }}
-              </p>
+              </div>
             </div>
           </div>
           {% endfor %}
