@@ -30,7 +30,7 @@ urlpatterns = [
     path("cms/", include("yoolink.cms.urls", namespace="cms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
     path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico"))),
-    path("/favicons/", RedirectView.as_view(url=staticfiles_storage.url("/images/favicons")))
+    path("favicons/", RedirectView.as_view(url=staticfiles_storage.url("images/favicons/")))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
