@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% load compress static %}
 
-<title>{% block title %}{{block.super}} | Impressum{% endblock title %}</title>
+{% block title %}{{block.super}} | Impressum{% endblock title %}
 
 {% block content %}
 
