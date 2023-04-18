@@ -7,6 +7,8 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 from yoolink.views import load_index
+from django.views.generic import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from django.contrib.sitemaps.views import sitemap
 from yoolink.sitemaps import StaticViewSitemap
@@ -26,7 +28,8 @@ urlpatterns = [
     path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cms/", include("yoolink.cms.urls", namespace="cms")),
-    path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates"))
+    path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
+    path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
