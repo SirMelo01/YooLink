@@ -618,6 +618,34 @@ video {
   top: 50%;
 }
 
+.bottom-32 {
+  bottom: 8rem;
+}
+
+.bottom-9 {
+  bottom: 2.25rem;
+}
+
+.bottom-12 {
+  bottom: 3rem;
+}
+
+.bottom-28 {
+  bottom: 7rem;
+}
+
+.right-8 {
+  right: 2rem;
+}
+
+.right-5 {
+  right: 1.25rem;
+}
+
+.right-3 {
+  right: 0.75rem;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -994,6 +1022,10 @@ video {
   max-width: 976px;
 }
 
+.max-w-screen-xl {
+  max-width: 1440px;
+}
+
 .max-w-xl {
   max-width: 36rem;
 }
@@ -1028,11 +1060,6 @@ video {
 
 .-translate-y-1\/2 {
   --tw-translate-y: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.rotate-180 {
-  --tw-rotate: 180deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -1428,6 +1455,16 @@ video {
   padding-right: 0.5rem;
 }
 
+.px-24 {
+  padding-left: 6rem;
+  padding-right: 6rem;
+}
+
+.px-28 {
+  padding-left: 7rem;
+  padding-right: 7rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -1491,6 +1528,16 @@ video {
 .py-px {
   padding-top: 1px;
   padding-bottom: 1px;
+}
+
+.px-36 {
+  padding-left: 9rem;
+  padding-right: 9rem;
+}
+
+.px-32 {
+  padding-left: 8rem;
+  padding-right: 8rem;
 }
 
 .pb-10 {
@@ -2363,6 +2410,11 @@ video {
     -o-object-position: top;
        object-position: top;
   }
+
+  .xs\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
 }
 
 @media (min-width: 480px) {
@@ -2489,6 +2541,21 @@ video {
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
+
+  .sm\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .sm\:px-32 {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+
+  .sm\:px-12 {
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 
   .sm\:pb-4 {
@@ -2654,6 +2721,11 @@ video {
   .md\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .md\:px-32 {
+    padding-left: 8rem;
+    padding-right: 8rem;
   }
 
   .md\:pb-2 {
