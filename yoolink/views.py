@@ -8,4 +8,4 @@ def load_index(request):
     context = {
         'FAQ': faq,
     }
-    return render(request, 'pages/home.html', context=context)
+    return render(request, 'pages/index.html', context=context)
