@@ -1,11 +1,10 @@
 from django.contrib import admin
 
-from .models import fileentry, Galerie, FAQ
+from .models import fileentry, FAQ
 
 
 
 admin.site.register(fileentry)
-admin.site.register(Galerie)
 admin.site.register(FAQ)
 
 # Register your models here.
