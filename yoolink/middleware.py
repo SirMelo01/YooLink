@@ -8,7 +8,7 @@ class WwwRedirectMiddleware:
 
     def __call__(self, request):
         host = request.get_host().partition(":")[0]
-        if host == "yoolink.de":
-            return HttpResponsePermanentRedirect("https://www.yoolink.de" + request.path)
+        if host == "www.yoolink.de":
+            return HttpResponsePermanentRedirect("https://yoolink.de" + request.path)
         else:
             return self.get_response(request)
