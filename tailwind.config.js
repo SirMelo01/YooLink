@@ -4,6 +4,7 @@ module.exports = {
             "./yoolink/templates/pages/*.{html,js}",
             "./yoolink/templates/pages/cms/*.{html,js}",
             "./yoolink/templates/designs/*.{html,js}",
+            "./yoolink/templates/blog/*.{html,js}",
             ],
   theme: {
     screens: {

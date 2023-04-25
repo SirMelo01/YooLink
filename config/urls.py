@@ -29,6 +29,7 @@ urlpatterns = [
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cms/", include("yoolink.cms.urls", namespace="cms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
+    path("blog/", include("yoolink.blog.urls", namespace="blog")),
     #path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")))
     #path("images/favicons/", RedirectView.as_view(url=staticfiles_storage.url("images/favicons/")))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

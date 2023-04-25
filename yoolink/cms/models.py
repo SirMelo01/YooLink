@@ -41,6 +41,7 @@ class fileentry(models.Model):
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)
+    title_image = models.ImageField(upload_to='yoolink/', default="", blank=True)
     date = models.DateField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()

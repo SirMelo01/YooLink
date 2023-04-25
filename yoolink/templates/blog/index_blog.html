@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load compress static %}
+
+{% block title %}{{block.super}} | Blog{% endblock title %}
+
+{% block content %}
+    <div class="text-center pt-3"> 
+        <h1 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
+            Blog - YooLink
+        </h1>
+        <h2 class="mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto">
+            Unsere Blogbeiträge zu spanndenen Themen
+        </h2>
+
+    </div>
+
+
+  
+    <div aria-label="Articles" class="pb-8 lg:pb-24 pt-2 lg:pt-9 mx-2 lg:mx-24">
+        <div class="px-4 mx-auto max-w-screen-xl">
+            <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {% for blog in object_list %}
+                    <a href="{% url 'blog:blog-detail' blog.pk %}">
+                        <article class="max-w-xs overflow-hidden">
+                            <img src="{{ blog.title_image.url }}" class="h-40 mb-5 rounded-lg w-full object-cover object-center" alt="Image 1"><!--{% static 'images/designImg/filler.png' %}-->
+                            <h2 class="mb-2 text-xl font-bold leading-tight text-gray-900">
+                                {{ blog.title }}
+                            </h2>
+                            <p class="mb-4 font-light text-gray-500 dark:text-gray-400">{{ blog.body|slice:":150" }}...</p>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
