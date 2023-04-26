@@ -1,0 +1,325 @@
+{% load static i18n compress%}
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!--<link rel="icon" href="/favicon.ico">-->
+    <!--<link rel="icon" href="images/favicon/favicon-48.png">-->
+    <title>{% block title %}YooLink{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
+    <meta name="description"
+        content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Deinem Internetauftritt herauszuholen. Dich erwartet Transparenz, Sichtbarkeit und &amp ein junges dynamisches Team">
+    <link rel="canonical" href="https://yoolink.de{{ request.path }}">
+    <!--<meta name="keywords" content="Yoolink, Webdesign, Homepageerstellung, Agentur, Deggendorf, Internetauftritt">-->
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:description"
+        content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Deinem Internetauftritt herauszuholen. Dich erwartet Transparenz, Sichtbarkeit und &amp ein junges dynamisches Team">
+    <meta name="twitter:site" content="@YooLinkDE">
+    <meta name="twitter:creator" content="@YooLinkDE">
+    <meta name="twitter:label1" content="Verfasst von">
+    <meta name="twitter:data1" content="YooLink">
+    <meta name="twitter:label2" content="Zeit zum Lesen">
+    <meta name="twitter:data2" content="1 Minute">
+
+
+
+
+    {% compress css inline %}
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    {% endcompress css %}
+
+    {% compress js inline %}
+    <script defer src="{% static 'js/loadinit.js' %}"></script>
+    <!-- jQuery Bibliothek (https://jquery.com/)
+           Copyright jQuery Foundation and other contributors
+           Released under the MIT license
+           https://jquery.org/license/ -->
+    {% endcompress js %}
+    <script src="https://code.jquery.com/jquery-3.6.4.js"
+        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+
+
+
+    {% block css %}
+    {% endblock css %}
+
+    {% block javascript %}
+    {% endblock javascript %}
+
+</head>
+
+<body class="bg-white">
+    <!--Navbar Beginn-->
+
+    <div class="min-h-full">
+        <nav class="bg-gray-800">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <a href="{% url 'cms:cms' %}"><img class="h-8 w-8"
+                                    src="https://yoolink.de/static/images/LogoWeis.a4aa05371a4a.PNG"
+                                    alt="Your Company"></a>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                                <a href="{% url 'cms:cms' %}"
+                                    class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+                                    aria-current="page">CMS</a>
+                                <a href="/"
+                                    class="text-blue-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">Zur
+                                    Website</a>
+                                <a href="#"
+                                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Dokumentation</a>
+                                <a href="#"
+                                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Support</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-4 flex items-center md:ml-6">
+                            <button type="button"
+                                class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                <span class="sr-only">View notifications</span>
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                </svg>
+                            </button>
+
+                            <!-- Profile dropdown -->
+                            <div class="relative ml-3">
+                                <div>
+                                    <button type="button"
+                                        class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                        id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <span class="sr-only">Open user menu</span>
+                                        <img class="h-8 w-8 rounded-full"
+                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            alt="">
+                                    </button>
+                                </div>
+
+                                <!--
+                      Dropdown menu, show/hide based on menu state.
+      
+                      Entering: "transition ease-out duration-100"
+                        From: "transform opacity-0 scale-95"
+                        To: "transform opacity-100 scale-100"
+                      Leaving: "transition ease-in duration-75"
+                        From: "transform opacity-100 scale-100"
+                        To: "transform opacity-0 scale-95"
+                    -->
+                                <div class="absolute hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                    role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
+                                    tabindex="-1">
+                                    <!-- Active: "bg-gray-100", Not Active: "" -->
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem"
+                                        tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem"
+                                        tabindex="-1" id="user-menu-item-1">Settings</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem"
+                                        tabindex="-1" id="user-menu-item-2">Sign out</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="-mr-2 flex md:hidden">
+                        <!-- Mobile menu button -->
+                        <button type="button"
+                            class="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                            aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <!-- Menu open: "hidden", Menu closed: "block" -->
+                            <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                            <!-- Menu open: "block", Menu closed: "hidden" -->
+                            <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile menu, show/hide based on menu state. -->
+            <div class="md:hidden" id="mobile-menu">
+                <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                    <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                    <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                        aria-current="page">Dashboard</a>
+                    <a href="#"
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
+                    <a href="#"
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
+                    <a href="#"
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+                    <a href="#"
+                        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
+                </div>
+                <div class="border-t border-gray-700 pb-3 pt-4">
+                    <div class="flex items-center px-5">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full"
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                        </div>
+                        <div class="ml-3">
+                            <div class="text-base font-medium leading-none text-white">Tom Cook</div>
+                            <div class="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
+                        </div>
+                        <button type="button"
+                            class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <span class="sr-only">View notifications</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-3 space-y-1 px-2">
+                        <a href="#"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Your
+                            Profile</a>
+                        <a href="#"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Settings</a>
+                        <a href="#"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign
+                            out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex justify-between">
+                <a href="{% url 'cms:cms' %}"
+                    class="flex items-center justify-between text-3xl font-bold tracking-tight text-gray-900">
+                    <span>YooLink CMS</span>
+                    <span
+                        class="ml-2 px-2 py-1 text-sm font-semibold bg-yellow-400 text-yellow-800 rounded-full">v1.0</span>
+                </a>
+                <a href="{% url 'cms:images-view' %}"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Support</a>
+            </div>
+        </header>
+        <main>
+            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                <!-- Your content -->
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!--Cookies Beginn-->
+    {% block cookies %}
+    <div class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" id="menu-cookie">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                                </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 class="text-xl font-medium leading-6 text-gray-800" id="modal-title">
+                                    Cookie-Richtlinie
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500">
+                                        Diese Website verwendet Cookies. Weitere Informationen zu
+                                        den Cookie-Arten finden sich unter den jeweiligen
+                                        Kategorien. Dort lassen sich auch einzelne Cookies
+                                        aktivieren. Die Cookie-Einstellungen können jederzeit über
+                                        den Link im Footer dieser Website angepasst werden.
+                                    </p>
+                                    <div class="text-xs mt-5 mr-3">
+                                        <a href="{% url 'impressum' %}" class="mr-5">Impressum</a>
+                                        <a href="{% url 'datenschutz' %}">Datenschutz</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button onclick="acceptCookie()"
+                            class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-blue-900 text-white px-4 py-2 text-base font-medium shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition ease-linear duration-300">
+                            Bestätigen
+                        </button>
+                        <button onclick="refuseCookie()"
+                            class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm transition ease-linear duration-300">
+                            Ablehnen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock cookies %}
+    <!--Cookies End-->
+
+    <!--Footer Beginn-->
+    {% block footer %}
+    <footer class="bg-blue-900 shadow-2xl">
+        <div>
+            <div class="max-w-2xl mx-auto text-white py-10">
+                <div class="text-center">
+                    <h3 class="sm:text-3xl mb-1 text-white">
+                        Kontaktieren sie uns noch heute!
+                    </h3>
+                    <p>Ihr Team von YooLink</p>
+                </div>
+                <div class="mt-25 flex flex-col md:justify-between items-center text-xs md:text-sm text-black">
+                    <p class="order-2 md:order-1 mt-7 text-white">
+                        &copy; YooLink - Sebastian Rauch, 2023.
+                    </p>
+                    <div class="order-1 md:order-2 text-white mt-5">
+                        <span class="px-2">
+                            <a href="{% url 'home' %}">Home</a>
+                        </span>
+                        <span class="px-2 border-l">
+                            <a href="{% url 'impressum' %}">Impressum</a>
+                        </span>
+                        <span class="px-2 border-l">
+                            <a href="{% url 'datenschutz' %}">Datenschutz</a>
+                        </span>
+                        <span class="px-2 border-l">
+                            <a href="{% url 'cookies' %}">Cookies</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock footer %}
+    <!--Footer End-->
+
+    {% compress js inline %}
+    <script defer src="{% static 'js/base.js' %}"></script>
+    {% endcompress js %}
+    {% block javascriptend %}
+    {% endblock javascriptend %}
+
+</body>
+
+</html>

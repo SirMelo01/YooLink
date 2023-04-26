@@ -25,8 +25,6 @@ class FAQ(models.Model):
         return self.question
 
 ## Produktiv und funktioniert
-
-
 class fileentry(models.Model):
     file = models.ImageField(upload_to='yoolink/')
     uploaddate = models.DateTimeField(auto_now_add=True)
@@ -38,6 +36,18 @@ class fileentry(models.Model):
         self.file.storage.delete(self.file.name)
         super(fileentry, self).delete(*args, **kwargs)
 
+    def delete_model_only(self, *args, **kwargs):
+        super(fileentry, self).delete(*args, **kwargs) 
+
+class Galerie(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    images = models.ManyToManyField(fileentry)
+    created_at = models.DateTimeField(auto_now_add=True)
+    changed_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title  
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)

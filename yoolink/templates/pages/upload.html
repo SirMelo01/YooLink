@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'cmsbase.html' %}
 {% load static %}
 {% block title %} Seite X {% endblock %}
 
@@ -12,7 +12,12 @@
 {% block content %}
 
 <div class="container mx-auto mt-8">
+  <div class="flex justify-between">
     <h1 class="text-2xl ">CMS - Upload</h1>
+    <a href="{% url 'cms:images-view' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Alle Bilder ansehen
+    </a>
+  </div>
     <form action="{% url 'cms:post-upload' %}" method="POST" class="dropzone mt-8" id="my-dropzone">
         {% csrf_token %}
         <div class="fallback">
@@ -21,5 +26,34 @@
       </form>
 </div>
 
-
 {% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script>
+  var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+  Dropzone.autoDiscover = false;
+  $('.dropzone').dropzone({
+    addRemoveLinks: true,
+    removedfile: function(file) {
+      var name = file.name
+
+      $.ajax({
+        type: 'post',
+        url: 'delete/' + name + "/",
+        data: {csrfmiddlewaretoken: csrftoken,},
+        success: function(response) {
+          console.log(response)
+          if(response.error) {
+            return void 0;
+          }
+        }
+      });
+      var _ref;
+      return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+    }
+  })
+
+</script>
+{% endcompress js %}
+{% endblock javascriptend %}

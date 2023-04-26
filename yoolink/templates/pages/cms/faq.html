@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'cmsbase.html' %}
 {% load static compress %}
 {% block title %} Seite X {% endblock %}
 
@@ -11,7 +11,7 @@
 <div class="container mx-auto mt-8">
   <h1 class="text-2xl mb-5">FAQ - Overview</h1>
   <!-- Simple List -->
-  <div id="simpleList" class="list-group">
+  <div id="simpleList" class="list-group bg-slate-200 shadow-xl rounded-lg p-6 mb-6">
     {% csrf_token %}
     {% for faq in faqs %}
     <div class="list-group-item mb-4" data-id="{{ faq.id }}">

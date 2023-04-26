@@ -8,6 +8,7 @@ urlpatterns = [
     path("login/", views.Login_Cms, name="login"),
     # Images
     path('upload/', views.upload_view, name='upload'),
+    path('upload/delete/<str:name>/', views.delete_file_by_name, name='upload-delete'),
     path('upload/post', views.file_upload_view, name='post-upload'),
     path('images/', views.images_view, name='images-view'),
     path('images/delete/<int:id>/', views.delete_file, name='image-delete'),

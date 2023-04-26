@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.cms.models import fileentry, FAQ
+from yoolink.cms.models import fileentry, FAQ, Galerie
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -31,8 +31,13 @@ def upload(request):
     else:
         form = fileform()
 
-    context['form'] = form
-    return render(request, 'pages/cms.html', context)
+    data = {
+        "faq_count":  FAQ.objects.count(),
+        "file_count":  fileentry.objects.count(),
+        "galery_count":  Galerie.objects.count(),
+        'form': form
+    }
+    return render(request, 'pages/cms.html', data)
 
 
 
@@ -88,6 +93,25 @@ def delete_file(request, id):
     file = fileentry.objects.get(id=id)
     file.delete()
     return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
+
+# Delete File
+@login_required(login_url='login')
+def delete_file_by_name(request, name):
+    try:
+        cName = "yoolink/" + name
+        docs = fileentry.objects.filter(upload=cName)
+        for doc in docs:
+            doc.delete()
+        """if docs.count() == 1:
+            docs.first().delete()
+        else:
+            for doc in docs:
+                doc.delete_model_only()"""
+        return HttpResponse('')
+        # Do something with the document
+    except fileentry.DoesNotExist:
+        # Handle the case where the document does not exist
+        return JsonResponse({"error": "Dieses Image existiert nicht"})
 
 # Displays all your uploaded images
 @login_required(login_url='login')
