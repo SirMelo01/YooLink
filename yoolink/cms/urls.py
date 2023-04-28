@@ -17,4 +17,9 @@ urlpatterns = [
     path('faq/', views.faq_view, name='faq-view'),
     path('faq/update/', views.update_faq, name='faq-update'),
     path('faq/delete/<int:id>/', views.del_faq, name='faq-update'),
+    # Blog
+    path('blog/', views.blog_view, name='blog-view'),
+    path('blog/add/', views.add_blog, name='blog-add'),
+    path('blog/update/<int:pk>', views.update_blog, name='blog-update'),
+    path('blog/delete/<int:id>', views.delete_blog, name='blog-delete'),
 ]

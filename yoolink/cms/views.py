@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.cms.models import fileentry, FAQ, Galerie
+from yoolink.cms.models import fileentry, FAQ, Galerie, Blog
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -35,9 +35,10 @@ def upload(request):
         "faq_count":  FAQ.objects.count(),
         "file_count":  fileentry.objects.count(),
         "galery_count":  Galerie.objects.count(),
+        "blog_count": Blog.objects.count(),
         'form': form
     }
-    return render(request, 'pages/cms.html', data)
+    return render(request, 'pages/cms/cms.html', data)
 
 
 
@@ -52,7 +53,7 @@ def Login_Cms(request):
             user_authenticated = user.objects.get(username=user.get_username())
             
             login(request, user)
-            return redirect('pages/cms.html')
+            return redirect('pages/cms/cms.html')
         else:
             #messages.error(request, "Falsche Anmeldeinformationen. Bitte versuchen Sie es erneut.")
             return redirect('pages/home.html')
@@ -71,7 +72,7 @@ def upload_view(request):
     data = {
         
     }
-    return render(request, "pages/upload.html", data)
+    return render(request, "pages/cms/upload.html", data)
 
 # Uploads File (used by dropzone.js)
 @login_required(login_url='login')
@@ -243,3 +244,35 @@ def update_faq_order(request):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
+
+
+# --------------- [Blog] ---------------
+
+@login_required(login_url='login')
+def blog_view(request):
+    data = {
+        "blogs":  Blog.objects.all()
+    }
+    return render(request, "pages/cms/blog.html", data)
+
+
+@login_required(login_url='login')
+def add_blog(request):
+    data = {
+        "blogs":  Blog.objects.all()
+    }
+    return render(request, "pages/cms/add_blog.html", data)
+
+@login_required(login_url='login')
+def update_blog(request):
+    data = {
+        "blogs":  Blog.objects.all()
+    }
+    return render(request, "pages/cms/update_blog.html", data)
+
+@login_required(login_url='login')
+def delete_blog(request):
+    data = {
+        "blogs":  Blog.objects.all()
+    }
+    return render(request, "pages/cms/add_blog.html", data)

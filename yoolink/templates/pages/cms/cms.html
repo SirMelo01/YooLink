@@ -1,5 +1,9 @@
 {% extends "cmsbase.html" %}
 {% load compress static %}
+{% block title %} {{block.super}} | CMS{% endblock %}
+
+
+
 {% block content %}
 
 
@@ -46,6 +50,19 @@
                 class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end">Erstellen</a>
         </div>
     </div>
+    
+    <!-- Blog Card -->
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 text-white flex flex-col">
+        <h2 class="text-lg font-bold mb-4">Blogs</h2>
+        <p class="mb-4">Hier kannst du deine Blogs managen</p>
+        <p class="mb-4">Momentane Blogs: <strong>{{blog_count}}</strong></p>
+        <div class="flex-grow"></div>
+        <div class="flex justify-center items-center mt-12">
+            <a href="{% url 'cms:blog-view' %}" 
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+        </div>
+    </div>
+
 </div>
 
 
