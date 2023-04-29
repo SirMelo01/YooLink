@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.3.1 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -436,6 +436,9 @@ video {
   --tw-pan-y:  ;
   --tw-pinch-zoom:  ;
   --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
   --tw-ordinal:  ;
   --tw-slashed-zero:  ;
   --tw-numeric-figure:  ;
@@ -483,6 +486,9 @@ video {
   --tw-pan-y:  ;
   --tw-pinch-zoom:  ;
   --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
   --tw-ordinal:  ;
   --tw-slashed-zero:  ;
   --tw-numeric-figure:  ;
@@ -680,6 +686,11 @@ video {
 .my-12 {
   margin-top: 3rem;
   margin-bottom: 3rem;
+}
+
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .my-auto {
@@ -881,6 +892,10 @@ video {
 
 .h-3\.5 {
   height: 0.875rem;
+}
+
+.h-4 {
+  height: 1rem;
 }
 
 .h-40 {
@@ -1170,6 +1185,10 @@ video {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
 }
 
 .gap-10 {
@@ -1625,6 +1644,10 @@ video {
 
 .pb-56 {
   padding-bottom: 14rem;
+}
+
+.pb-6 {
+  padding-bottom: 1.5rem;
 }
 
 .pb-8 {
@@ -2805,6 +2828,10 @@ video {
     width: 50%;
   }
 
+  .md\:w-4\/12 {
+    width: 33.333333%;
+  }
+
   .md\:w-8 {
     width: 2rem;
   }
@@ -3049,6 +3076,10 @@ video {
     flex-direction: row;
   }
 
+  .lg\:justify-normal {
+    justify-content: normal;
+  }
+
   .lg\:justify-between {
     justify-content: space-between;
   }
@@ -3120,6 +3151,10 @@ video {
 
   .lg\:pt-9 {
     padding-top: 2.25rem;
+  }
+
+  .lg\:text-left {
+    text-align: left;
   }
 
   .lg\:text-4xl {
