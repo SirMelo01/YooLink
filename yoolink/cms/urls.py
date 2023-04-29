@@ -20,6 +20,6 @@ urlpatterns = [
     # Blog
     path('blog/', views.blog_view, name='blog-view'),
     path('blog/add/', views.add_blog, name='blog-add'),
-    path('blog/update/<int:pk>', views.update_blog, name='blog-update'),
-    path('blog/delete/<int:id>', views.delete_blog, name='blog-delete'),
+    path('blog/update/<int:id>/', views.update_blog, name='blog-update'),
+    path('blog/delete/<int:id>/', views.delete_blog, name='blog-delete'),
 ]

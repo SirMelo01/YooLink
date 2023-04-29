@@ -4,7 +4,9 @@
 
 
 {% block content %}
-
-add blog
+<form method="POST">
+    {% csrf_token %}
+    {{ blogform }}
+    <button>Post</button>
 
 {% endblock %}

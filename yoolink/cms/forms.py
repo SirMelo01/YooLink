@@ -1,5 +1,5 @@
 from django import forms
-from .models import fileentry
+from .models import fileentry, Blog
 
 class fileform(forms.ModelForm):
     label = ''                      ### This hides the label next to the "Browse..." button
@@ -9,3 +9,10 @@ class fileform(forms.ModelForm):
         widgets = {
             'file':                 ### This is what allows you to select multiple files
                 forms.ClearableFileInput(attrs={'multiple': True})}
+        
+class Blogform(forms.ModelForm):
+    label = ''
+    class Meta:
+        model = Blog
+        fields = ('__all__')
+        

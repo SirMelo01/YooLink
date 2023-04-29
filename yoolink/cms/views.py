@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.http import JsonResponse
 from django.http import HttpResponse
-from .forms import fileform
+from .forms import fileform, Blogform
 from django.conf import settings
 from PIL import Image
 from io import BytesIO
@@ -247,7 +247,6 @@ def update_faq_order(request):
 
 
 # --------------- [Blog] ---------------
-
 @login_required(login_url='login')
 def blog_view(request):
     data = {
@@ -255,12 +254,30 @@ def blog_view(request):
     }
     return render(request, "pages/cms/blog.html", data)
 
+# Delete Blog
+@login_required(login_url='login')
+def delete_blog(request, id):
+    if request.method == 'POST':
+        instance = get_object_or_404(Blog, id=id)
+        instance.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+
 
 @login_required(login_url='login')
 def add_blog(request):
+    blogform = Blogform
+    if request.method == 'POST':
+        if blogform.is_valid():
+            blogform.save()
+            
+
     data = {
-        "blogs":  Blog.objects.all()
+        "blogs":  Blog.objects.all(),
+        "blogform": blogform,
     }
+
     return render(request, "pages/cms/add_blog.html", data)
 
 @login_required(login_url='login')
@@ -270,9 +287,6 @@ def update_blog(request):
     }
     return render(request, "pages/cms/update_blog.html", data)
 
-@login_required(login_url='login')
-def delete_blog(request):
-    data = {
-        "blogs":  Blog.objects.all()
-    }
-    return render(request, "pages/cms/add_blog.html", data)
+
+
+

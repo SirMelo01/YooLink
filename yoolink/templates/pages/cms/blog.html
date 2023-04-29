@@ -5,14 +5,13 @@
 
 {% block content %}
 
-
-
-
 <div class="container mx-auto mt-8">
     <h1 class="text-2xl mb-5">Blog - Overview</h1>
-    <button id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
+    <a href="{% url 'cms:blog-add' %}" >
+    <button href="{% url 'cms:blog-add' %}" id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
         Hinzufügen
     </button>
+    </a>
     <!-- Simple List -->
     <div id="simpleList" class="list-group bg-slate-200 shadow-xl rounded-lg p-6 mb-6">
       {% csrf_token %}
@@ -56,3 +55,10 @@
   </div>
 
 {% endblock %}
+
+
+{% block javascriptend %}
+{% compress js inline %}
+  <script defer src="{% static 'js/blog.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}
