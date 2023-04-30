@@ -10,39 +10,32 @@ function toggleMenu() {
 }
 
 function cookieRefresh() {
-  if (
-    window.location.pathname !== "/impressum.html" &&
-    window.location.pathname !== "/datenschutz.html"
-  ) {
-    if (cookieselect == null) {
-      cookie.classList.add("block");
-      cookie.classList.remove("hidden");
-    } else {
-      cookie.classList.add("hidden");
-    }
+  if (cookieselect == null) {
+    cookie.classList.add("block");
+    cookie.classList.remove("hidden");
+  } else {
+    cookie.classList.add("hidden");
   }
 }
 
 function acceptCookie() {
-  // Dauer der Cookies noch einstellen (Johannes 29.01 meint 1 Jahr)
   document.cookie =
-    "Cookie-Consent=true; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Consent=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Map=true; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Map=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Fond=true; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Fond=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   location.reload();
   cookieRefresh();
 }
 
 function refuseCookie() {
-  // Dauer der Cookies noch einstellen (Johannes 29.01 meint 1 Jahr)
   document.cookie =
-    "Cookie-Consent=false; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Consent=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Map=false; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Map=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Fond=false; expires=" + new Date(9999, 0, 1).toUTCString();
+    "Cookie-Fond=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   location.reload();
   cookieRefresh();
 }
