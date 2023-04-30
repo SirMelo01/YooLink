@@ -30,10 +30,8 @@ if(cookiefontselect === "true"){
 }
 setTimeout(function(){
   if(cookieanalyticselect === "true"){
-    console.log(document.body)
-  
-    document.body.appendChild(analytic1);
-    document.body.appendChild(analytic2);
+    document.body.insertBefore(analytic1, document.body.firstChild);
+    document.body.insertBefore(analytic2, document.body.firstChild);
   }
 },2000)
 
