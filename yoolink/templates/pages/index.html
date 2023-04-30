@@ -522,14 +522,12 @@
   {% endblock FAQ %}
   <!--FAQ End-->
 
-
-  {% block javascriptend %}
-    {% compress js inline %}
-      <script defer src="{% static 'js/home.js' %}"></script>
-    {% endcompress js %}
-  {% endblock javascriptend %}
-
 {% endblock content %}
 
+{% block javascriptend %}
+{% compress js inline %}
+  <script defer src="{% static 'js/home.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}
 
 

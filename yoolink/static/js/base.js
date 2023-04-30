@@ -22,9 +22,9 @@ function acceptCookie() {
   document.cookie =
     "Cookie-Consent=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Map=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
+    "Cookie-Analytic=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Fond=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
+    "Cookie-Font=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   location.reload();
   cookieRefresh();
 }
@@ -33,9 +33,9 @@ function refuseCookie() {
   document.cookie =
     "Cookie-Consent=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Map=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
+    "Cookie-Analytic=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   document.cookie =
-    "Cookie-Fond=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
+    "Cookie-Font=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
   location.reload();
   cookieRefresh();
 }

@@ -13,9 +13,10 @@ font3.rel = "stylesheet";
 
 
 var cookieselect = getCookie("Cookie-Consent");
-var cookiefondselect = getCookie("Cookie-Fond");
+var cookiefontselect = getCookie("Cookie-Font");
+var cookieanalyticselect = getCookie("Cookie-Analytic")
 
-if(cookiefondselect === "true"){
+if(cookiefontselect === "true"){
   document.head.appendChild(font1);
   document.head.appendChild(font2);
   document.head.appendChild(font3);
