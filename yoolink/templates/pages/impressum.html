@@ -3,31 +3,45 @@
 {% block title %}{{block.super}} | Impressum{% endblock title %}
 
 {% block content %}
-
-  <div>
-    <h1 class="text-2xl md:text-2xl mb-2">
-      Impressum
-    </h1>
-    <p class="italic">Angaben gemäß § 5 TMG</p>
-    <p class="text-lg mt-3">Sebastian Rauch</p>
-    <p class="text-lg">Am Altbach 6</p>
-    <p class="text-lg">94491 Hengersberg</p>
-    <h2 class="text-xl mt-3">
-      Vertreten durch:
-    </h2>
-    <p class="text-lg">Sebastian Rauch</p>
-    <h2 class="text-xl mt-3 underline">
-      Kontakt:
-    </h2>
-    <p class="text-lg">Telefon: </p>
-    <p class="text-lg">E-mail: yoolink@t-online.de</p>
-    <h2 class="text-xl mt-3s">
-      Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
-    </h2>
-    <p class="text-lg">Sebastian Rauch</p>
-    <p class="text-lg">Am Altbach 6</p>
-    <p class="text-lg">94491 Hengersberg</p>
+<div class="flex flex-wrap  ml-3 justify-normal md:justify-evenly mt-12 ">
+    <div class="mr-5 ">
+     <h1 class="text-3xl text-blue-900">
+        Impressum
+      </h1>
+      <p class="italic">Angaben gemäß § 5 TMG</p>
+      <br>
+      <p class="text-md">Sebastian Rauch</p>
+      <p class="text-md">Am Altbach 6</p>
+      <p class="text-md">94491 Hengersberg</p>
+      <h2 class="text-md mt-3">
+        Vertreten durch:
+      </h2>
+      <p class="text-md">Sebastian Rauch</p>
+      <br>
+    </div>
+    <div class="mb-5 md:mb-0  md:ml-0  ">
+      <h2 class="text-3xl mb-2 text-blue-900">
+        Kontakt
+      </h2>
+      <p class="text-md">Telefon: </p>
+      <p class="text-md">E-mail: yoolink@t-online.de</p>
+      <h2 class="text-md mt-3s">
+        Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
+      </h2>
+      <p class="text-md">Sebastian Rauch</p>
+      <p class="text-md">Am Altbach 6</p>
+      <p class="text-md">94491 Hengersberg</p>
+    </div>
   </div>
-
-
+    <br>
+    <br>
+  <div class="hidden lg:block">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </div>
   {%endblock content%}
