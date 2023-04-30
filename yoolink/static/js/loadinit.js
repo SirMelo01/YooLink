@@ -30,11 +30,9 @@ if(cookiefontselect === "true"){
 }
 
 if(cookieanalyticselect === "true"){
-  $("body").append(analytic1);
-  $("body").append(analytic2);
-
-  //document.body.appendChild(analytic1);
-  //document.body.appendChild(analytic2);
+  console.log(document.body)
+  document.body.appendChild(analytic1);
+  document.body.appendChild(analytic2);
 }
 
 
