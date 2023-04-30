@@ -28,12 +28,15 @@ if(cookiefontselect === "true"){
   document.head.appendChild(font2);
   document.head.appendChild(font3);
 }
+setTimeout(function(){
+  if(cookieanalyticselect === "true"){
+    console.log(document.body)
+  
+    document.body.appendChild(analytic1);
+    document.body.appendChild(analytic2);
+  }
+},2000)
 
-if(cookieanalyticselect === "true"){
-  console.log(document.body)
-  document.body.appendChild(analytic1);
-  document.body.appendChild(analytic2);
-}
 
 
 //Cookies raussuchen per Name
