@@ -11,6 +11,13 @@ var font3 = document.createElement("link");
 font3.href = "https://fonts.googleapis.com/css2?family=Roboto&display=swap";
 font3.rel = "stylesheet";
 
+var analytic1 = document.createElement("script");
+analytic1.async = "";
+analytic1.src = "https://www.googletagmanager.com/gtag/js?id=G-ZYQPVZ3REE";
+
+var analytic2 = document.createElement("script");
+analytic2.innerHTML = "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-ZYQPVZ3REE');";
+
 
 var cookieselect = getCookie("Cookie-Consent");
 var cookiefontselect = getCookie("Cookie-Font");
@@ -20,6 +27,11 @@ if(cookiefontselect === "true"){
   document.head.appendChild(font1);
   document.head.appendChild(font2);
   document.head.appendChild(font3);
+}
+
+if(cookieanalyticselect === "true"){
+  document.body.appendChild(analytic1);
+  document.body.appendChild(analytic2);
 }
 
 
