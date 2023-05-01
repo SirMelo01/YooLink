@@ -3,9 +3,10 @@
 {% block title %} {{block.super}} | CMS | Fotos{% endblock %}
 
 {% block javascript %}
-
-<script src="{% static 'js/cms.js' %}"></script>
-<!-- Dropzone JS and CSS -->
+<!--
+Dropzone.js is available under the MIT License:
+https://www.dropzone.dev/
+-->
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 {% endblock %}

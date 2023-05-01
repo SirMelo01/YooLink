@@ -1,0 +1,81 @@
+{% extends 'cmsbase.html' %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS | Galerie{% endblock %}
+{% block javascript %}
+<!--
+Dropzone.js is available under the MIT License:
+https://www.dropzone.dev/
+-->
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+{% endblock %}
+{% block content %}
+
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl "><a href="{% url 'galerien' %}" class="text-blue-500">Galerien</a> / <span id="titleSpan">{{galery.title}}</span></h1>
+    <div>
+      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer" id="saveGalery">
+          Speichern
+      </a>
+      <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer" id="deleteGalery">
+          Löschen
+      </a>
+    </div>
+  </div>
+
+  <form action="" id="galeryForm">
+      {% csrf_token %}
+      <div class="flex mb-6 mt-6 w-1/2">
+          <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-center w-40" for="title">
+            Titel
+          </label>
+          <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" id="title" type="text" value="{{galery.title}}">
+        </div>
+        <div class="flex mb-6 mt-6 w-1/2">
+          <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-start w-40" for="title">
+            Beschreibung
+          </label>
+          <textarea rows="4" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" id="description" type="text">{{galery.description}}</textarea>
+        </div>
+        <div class="flex mb-6 mt-6 w-1/2">
+          <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-start w-32" for="title">
+            Aktiv
+          </label>
+          <input
+          class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+          type="checkbox"
+          role="switch"
+          id="activeSwitch" {% if galery.active %} checked {% endif %}/>
+        </div>
+  </form>
+
+  <form action="upload/" method="POST" class="dropzone mt-8" id="my-dropzone">
+      {% csrf_token %}
+      <div class="fallback">
+        <input name="file" type="file" multiple />
+      </div>
+  </form>
+
+  <div class="grid grid-cols-3 gap-4 mt-8">
+      {% for file in galery.images.all %}
+      <div class="relative">
+          <a href="{{file.upload.url}}"><img src="{{file.upload.url}}" alt="Image" class="h-64 w-full border rounded-lg shadow-lg"></a>
+          <span class="bg-red-700 text-white rounded-full p-2 absolute top-0 right-0 hover:cursor-pointer deleter"
+              id="{{file.id}}">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+          </span>
+      </div>
+      {% endfor %}
+  </div>    
+</div>
+
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script src="{% static 'js/cms/galery.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}

@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}YooLink{% endblock title %}</title>
+    <title>{% block title %}YooLink - CMS{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
     <meta name="description"
@@ -24,14 +24,14 @@
     <meta name="twitter:data2" content="1 Minute">
 
 
-
-
     {% compress css inline %}
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
     {% endcompress css %}
 
     {% compress js inline %}
     <script defer src="{% static 'js/loadinit.js' %}"></script>
+    <script src="{% static 'js/cms/cms.js' %}"></script>
     <!-- jQuery Bibliothek (https://jquery.com/)
            Copyright jQuery Foundation and other contributors
            Released under the MIT license

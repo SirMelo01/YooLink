@@ -20,11 +20,11 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 console.log(response);
-                alert("Success")
+                sendNotif("Das ausgewählte FAQ wurde erfolgreich gelöscht!", "success")
                 if (response.success) { $listItem.remove() }
             },
             error: function (xhr, status, error) {
-                console.log(xhr.responseText);
+                sendNotif("Fehler beim Löschen des FAQ's", "error")
             }
         });
     });
@@ -47,10 +47,10 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 console.log(response);
-                alert("Success")
+                sendNotif("Das ausgewählte FAQ wurde erfolgreich gespeichert!", "success")
             },
             error: function (xhr, status, error) {
-                console.log(xhr.responseText);
+                sendNotif("Fehler beim Speichern des FAQ's", "error")
             }
         });
     });
@@ -68,10 +68,10 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 console.log(response);
-                alert("Success")
+                sendNotif("Die Sortierung des FAQ's wurde erfolgreich gespeichert!", "success")
             },
             error: function (xhr, status, error) {
-                console.log(xhr.responseText);
+                sendNotif("Fehler beim Speichern der Sortierung", "error")
             }
         });
     });
@@ -83,14 +83,13 @@ $(document).ready(function () {
             type: 'GET',
             data: { "question": "Frage", "answer": "Antwort" },
             success: function (response) {
-                console.log(response);
-                alert("Success")
                 if (response.success) {
                     createFaq(response.id, response.answer, response.question)
+                    sendNotif("Ein FAQ wurde erfolgreich hinzugefügt!", "success")
                 }
             },
             error: function (xhr, status, error) {
-                console.log(xhr.responseText);
+                sendNotif("Fehler beim Hinzufügen eines neuen FAQ's", "error")
             }
         });
     });

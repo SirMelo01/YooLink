@@ -39,15 +39,30 @@ class fileentry(models.Model):
     def delete_model_only(self, *args, **kwargs):
         super(fileentry, self).delete(*args, **kwargs) 
 
+class GaleryImage(models.Model):
+    upload = models.ImageField(upload_to='yoolink/galery/',)
+    uploaddate = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.pk)
+    
+    def delete(self, *args, **kwargs):
+        self.upload.storage.delete(self.upload.name)
+        super(GaleryImage, self).delete(*args, **kwargs)
+
+    def delete_model_only(self, *args, **kwargs):
+        super(GaleryImage, self).delete(*args, **kwargs)
+
 class Galerie(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    images = models.ManyToManyField(fileentry)
+    title = models.CharField(max_length=100, default="Titel")
+    description = models.TextField(default="")
+    active = models.BooleanField(default=False)
+    images = models.ManyToManyField(GaleryImage)
     created_at = models.DateTimeField(auto_now_add=True)
     changed_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title  
+        return self.title
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)

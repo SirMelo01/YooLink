@@ -22,4 +22,12 @@ urlpatterns = [
     path('blog/add/', views.add_blog, name='blog-add'),
     path('blog/update/<int:id>/', views.update_blog, name='blog-update'),
     path('blog/delete/<int:id>/', views.delete_blog, name='blog-delete'),
+    # Galery
+    path('galerien/', views.galerien, name='galerien'),
+    path('galery/create/', views.create_galery, name='galery-create'),
+    path('galery/<int:id>/', views.galery_view, name='galery-view'),
+    path('galery/<int:id>/upload/', views.upload_galery_img, name='upload-galery-img'),
+    path('galery/<int:id>/save/', views.save_galery, name='galery-save'),
+    path('galery/delete-img/<int:id>/', views.delete_galery_img, name='delete-galery-img'),
+    path('galery/<int:id>/delete/', views.delete_galery, name='galery-delete'),
 ]

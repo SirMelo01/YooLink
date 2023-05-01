@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.cms.models import fileentry, FAQ, Galerie, Blog
+from yoolink.cms.models import fileentry, FAQ, Galerie, Blog, GaleryImage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from .forms import fileform, Blogform
 from django.conf import settings
@@ -287,6 +287,77 @@ def update_blog(request):
     }
     return render(request, "pages/cms/update_blog.html", data)
 
+
+# --------------- [GALERY] ---------------
+# Render Galery Detail View
+@login_required(login_url='login')
+def galery_view(request, id):
+    galery = get_object_or_404(Galerie, id=id)
+    return render(request, "pages/cms/galery/galery.html", {"galery": galery})
+
+# Render Galery Overview
+@login_required(login_url='login')
+def galerien(request):
+    return render(request, "pages/cms/galery/galerien.html", {"galerien": Galerie.objects.all()})
+
+# Create a galery
+@login_required(login_url='login')
+def create_galery(request):
+    galery = Galerie.objects.create()
+    # Generieren Sie die URL zur Detailseite des erstellten Modells
+    url = reverse('galery-view', args=[galery.id])
+    # Leiten Sie auf die Detailseite des neuen Modells weiter
+    return HttpResponseRedirect(url)
+
+# Update a galery
+@login_required(login_url='login')
+def save_galery(request, id):
+    galery = get_object_or_404(Galerie, id=id)
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        description = request.POST.get('description', '')
+        active = request.POST.get('active', False)
+        galery.title = title
+        galery.description = description
+        if active == "true":
+            active = True
+        else:
+            active = False
+        galery.active = active
+        galery.save()
+        return JsonResponse({"success": "Die Galerie wurde erfolgreich gespeichert"})
+    return JsonResponse({"error": "Fehler beim Speichern der Galerie"})
+
+# Upload Image for Galery
+@login_required(login_url='login')
+def upload_galery_img(request, id):
+    if request.method == 'POST':
+        my_file = request.FILES.get('file')
+        doc = GaleryImage.objects.create(upload=my_file)
+        galery = Galerie.objects.get(id=id)
+        galery.images.add(doc)
+        galery.save()
+        return HttpResponse('')
+    return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: POST)'})
+
+# Delete File
+@login_required(login_url='login')
+def delete_galery_img(request, id):
+    file = get_object_or_404(GaleryImage, id=id)
+    file.delete()
+    return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
+
+
+# Delete Galery
+@login_required(login_url='login')
+def delete_galery(request, id):
+    if request.method == 'POST':
+        galery = get_object_or_404(Galerie, id=id)
+        for img in galery.images.all():
+            img.delete()
+        galery.delete()
+        return JsonResponse({'success': 'Galerie wurde erfolgreich gelöscht'})
+    return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: POST)'})
 
 
 
