@@ -42,7 +42,11 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 
 ### Superuser erstellen:
         $ docker-compose -f production.yml run --rm django python manage.py createsuperuser
-        $ bestehender Superuser: Sepp PW: 1234Sepp1234
+        $ bestehender Superuser:
+
+### File Compress:
+        $ docker-compose -f production.yml run --rm django python manage.py collectstatic
+        $ docker-compose -f production.yml run --rm django python manage.py compress --force
 
 ### .django Manuell kopieren:
 -   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden
