@@ -8,8 +8,8 @@
     {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
     {% endcompress css %}
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
     <title>YooLink | Template-Portfolio</title>
+    <link rel="canonical" href="https://yoolink.de{{ request.path }}">
   </head>
   <body class="bg-slate-50">
     <style>
