@@ -100,7 +100,7 @@ def delete_file(request, id):
 def delete_file_by_name(request, name):
     try:
         cName = "yoolink/" + name
-        docs = fileentry.objects.filter(upload=cName)
+        docs = fileentry.objects.filter(file=cName)
         for doc in docs:
             doc.delete()
         """if docs.count() == 1:
@@ -333,7 +333,10 @@ def save_galery(request, id):
 def upload_galery_img(request, id):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
-        doc = GaleryImage.objects.create(upload=my_file)
+        resized_image = resize_image(my_file)
+        scaled_image = scale_image(resized_image)
+        compressed_image = compress_image(scaled_image)
+        doc = GaleryImage.objects.create(upload=compressed_image)
         galery = Galerie.objects.get(id=id)
         galery.images.add(doc)
         galery.save()
