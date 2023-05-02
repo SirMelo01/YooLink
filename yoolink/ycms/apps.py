@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CmsConfig(AppConfig):
+class YcmsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'yoolink.cms'
+    name = 'yoolink.ycms'

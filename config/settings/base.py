@@ -83,7 +83,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "yoolink.users",
     # Your stuff: custom apps go here
-    "yoolink.cms",
+    "yoolink.ycms",
     "yoolink.designtemplates",
     "yoolink.blog",
 ]

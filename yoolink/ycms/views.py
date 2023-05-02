@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.cms.models import fileentry, FAQ, Galerie, Blog, GaleryImage
+from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -305,7 +305,7 @@ def galerien(request):
 def create_galery(request):
     galery = Galerie.objects.create()
     # Generieren Sie die URL zur Detailseite des erstellten Modells
-    url = reverse('galery-view', args=[galery.id])
+    url = reverse('cms:galery-view', args=[galery.id])
     # Leiten Sie auf die Detailseite des neuen Modells weiter
     return HttpResponseRedirect(url)
 
@@ -358,6 +358,3 @@ def delete_galery(request, id):
         galery.delete()
         return JsonResponse({'success': 'Galerie wurde erfolgreich gelöscht'})
     return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: POST)'})
-
-
-
