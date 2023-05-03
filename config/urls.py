@@ -29,9 +29,7 @@ urlpatterns = [
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
-    #path("blog/", include("yoolink.blog.urls", namespace="blog")),
-    #path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")))
-    #path("images/favicons/", RedirectView.as_view(url=staticfiles_storage.url("images/favicons/")))
+    path("blog/", include("yoolink.blog.urls", namespace="blog")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
