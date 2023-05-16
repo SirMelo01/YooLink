@@ -77,3 +77,11 @@ class Blog(models.Model):
     
     def __str__(self):
         return self.title + ' | ' + str(self.author)
+    
+
+class Message(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=60)
+    message = models.CharField(max_length=600)
+    date = models.DateField()
+    seen = models.BooleanField(default=False)
