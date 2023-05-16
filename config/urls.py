@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include('django.contrib.auth.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap",),
     path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
+    path("kontakt/", TemplateView.as_view(template_name="pages/kontakt.html"), name="kontakt"),
     path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
