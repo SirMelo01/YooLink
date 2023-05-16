@@ -114,363 +114,388 @@
   <!--Wellen End-->
 
 
-  <!--ResponsiveDesign Beginn-->
-  {% block ResponsiveDesign %}
-  <section class="bg-blue-100 scroll-my-4" id="Responsive">
-    <div class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl">
-      <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
-        <div class="w-6xl mb-5">
-          <div>
+  <!--Background-->
+  <div class="bg-blue-100">
+
+    <!--ResponsiveDesign Beginn-->
+    {% block ResponsiveDesign %}
+    <section class="scroll-my-4" id="Responsive">
+      <div class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl">
+        <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
+          <div class="w-6xl mb-5">
+            <div>
+              <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+                    Responsive Design
+              </p>
+            </div>
+            <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none">
+              Eine Website optimiert für alle Geräte
+            </h2>
+            <p class="text-base text-gray-700 md:text-lg">
+              Moderne Webseiten sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsivem Webdesign passen sich Webseiten automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten.  
+            </p>
+            <br/>
+            <div class="flex">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
+              </svg>
+              <label class="relative inline-flex items-center mb-5 mx-3 cursor-pointer">
+                <input type="checkbox" value="" class="sr-only peer" onclick="toggleResponsive()"/>
+                <div class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"></div>
+              </label>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <!--Imageslider-->
+        <div class="container content-center px-1">
+          <!--Browser-->
+          <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
+            <img src="{% static 'images/MacBookPro16.png' %}" class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10" alt=""/>
+            <span id="slider">
+              <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" class="relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
+              <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" class="hidden relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
+            </span>
+          </div>
+          <!--Phone-->
+          <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
+            <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute h-full w-full object-contain z-10" alt=""/>
+            <span id="slider">
+              <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="relative h-full w-full object-contain" alt=""/>
+              <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="hidden relative h-full w-full object-contain" alt=""/>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock ResponsiveDesign %}
+    <!--ResponsiveDesign End-->
+
+
+    <!--Referenzen Beginn
+    {% block Referenzen %}
+    <section class="bg-blue-100">
+      <br/><br/><br/><br/><br/>
+      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+        <div class="flex flex-col mb-6 lg:justify-between lg:flex-row md:mb-8">
+          <h2 class="max-w-lg mb-5 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none md:mb-6 group">
+            <span class="inline-block mb-1 sm:mb-4">
+              Referenzen<br class="hidden md:block" />
+              der Kunden
+            </span>
+            <div class="h-1 ml-auto duration-300 origin-left transform bg-deep-purple-accent-400 scale-x-30 group-hover:scale-x-100"></div>
+          </h2>
+          <p class="text-gray-700 lg:text-md lg:max-w-md">
+            Gerne können Sie sich ein Bild von unseren erfolgreichen Projekten
+            machen und diese als Refernez oder Inspiration für die eigene
+            Website nuten.
+          </p>
+        </div>
+      <div class="grid gap-6 row-gap-5 mb-8 lg:grid-cols-4 sm:row-gap-6 sm:grid-cols-2">
+        <a href="/" aria-label="View Item">
+          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
+            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="{% static 'images/RSAutoglas-Logo.png' %}" alt=""/>
+            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
+              <p class="mb-4 text-lg font-bold text-gray-100">RS-Autoglas</p>
+              <p class="text-sm tracking-wide text-gray-300">RS-Autoglas ist ein....</p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
+            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
+            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
+              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
+            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
+            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
+              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+        <a href="/" aria-label="View Item">
+          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
+            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
+            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
+              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
+              <p class="text-sm tracking-wide text-gray-300">....</p>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+    {% endblock Referenzen %}
+    Referenzen End-->
+
+
+    <!--CMS Beginn-->
+    {% block CMSDetail %}
+    <section class="-scroll-my-14" id="Cms">
+      <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
+        <div class="relative isolate overflow-visible  px-6 pt-16 sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 lg:mt-20">
+          <!-- Foto-PC -->
+          <div class="relative h-auto m-8 -ml-24 w-2/3 overflow-hidden shadow-2xl rounded-md hidden lg:block">
+            <img class="absolute left-0 top-0 w-[45rem] max-w-none" src="{% static 'images/cms-screen.png' %}" alt="App screenshot">
+          </div>
+          <div class="mx-auto max-w-[30rem] text-center lg:mx-0 lg:flex-auto lg:py-16 lg:text-left">
             <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-                  Responsive Design
+              Dynamische Inhalte
+            </p>
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Content Management System</h2>
+            <p class="mt-6 text-lg leading-8">Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Webseite. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen.</p>
+            <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
+              <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">Angebot</a>
+              <a href="#" class="text-sm font-semibold leading-6">Erfahre mehr <span aria-hidden="true">→</span></a>
+            </div>
+            <!-- Foto-Mobil -->
+            <div class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
+              <img class="absolute  left-0 top-0 w-[50rem] max-w-none" src="{% static 'images/cms-screen.png' %}" alt="App screenshot">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock CMSDetail %}
+    <!--CMS End-->
+
+
+    <!--Pricing Beginn-->
+    {% block Pricing %}
+    <section class="scroll-my-4" id="Preise">
+      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+        <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
+          <div>
+            <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-gray-800 uppercase rounded-full bg-teal-accent-400">
+              Unsere Preise
             </p>
           </div>
-          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none">
-            Eine Website optimiert für alle Geräte
+          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-black sm:text-4xl md:mx-auto">
+            <span class="relative inline-block">
+              <span class="relative text-gray-800">Transparente Preise</span>
+            </span>
           </h2>
           <p class="text-base text-gray-700 md:text-lg">
-            Moderne Webseiten sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsivem Webdesign passen sich Webseiten automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten.  
-          </p>
-          <br/>
-          <div class="flex">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
-            </svg>
-            <label class="relative inline-flex items-center mb-5 mx-3 cursor-pointer">
-              <input type="checkbox" value="" class="sr-only peer" onclick="toggleResponsive()"/>
-              <div class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"></div>
-            </label>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <!--Imageslider-->
-      <div class="container content-center px-1">
-        <!--Browser-->
-        <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
-          <img src="{% static 'images/MacBookPro16.png' %}" class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10" alt=""/>
-          <span id="slider">
-            <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" class="relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
-            <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" class="hidden relative h-full w-full object-contain xs:object-top lg:object-center" alt=""/>
-          </span>
-        </div>
-        <!--Phone-->
-        <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
-          <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute h-full w-full object-contain z-10" alt=""/>
-          <span id="slider">
-            <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="relative h-full w-full object-contain" alt=""/>
-            <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="hidden relative h-full w-full object-contain" alt=""/>
-          </span>
-        </div>
-      </div>
-    </div>
-  </section>
-  {% endblock ResponsiveDesign %}
-  <!--ResponsiveDesign End-->
-
-
-  <!--Referenzen Beginn
-  {% block Referenzen %}
-  <section class="bg-blue-100">
-    <br/><br/><br/><br/><br/>
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-      <div class="flex flex-col mb-6 lg:justify-between lg:flex-row md:mb-8">
-        <h2 class="max-w-lg mb-5 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none md:mb-6 group">
-          <span class="inline-block mb-1 sm:mb-4">
-            Referenzen<br class="hidden md:block" />
-            der Kunden
-          </span>
-          <div class="h-1 ml-auto duration-300 origin-left transform bg-deep-purple-accent-400 scale-x-30 group-hover:scale-x-100"></div>
-        </h2>
-        <p class="text-gray-700 lg:text-md lg:max-w-md">
-          Gerne können Sie sich ein Bild von unseren erfolgreichen Projekten
-          machen und diese als Refernez oder Inspiration für die eigene
-          Website nuten.
-        </p>
-      </div>
-    <div class="grid gap-6 row-gap-5 mb-8 lg:grid-cols-4 sm:row-gap-6 sm:grid-cols-2">
-      <a href="/" aria-label="View Item">
-        <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-          <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="{% static 'images/RSAutoglas-Logo.png' %}" alt=""/>
-          <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-            <p class="mb-4 text-lg font-bold text-gray-100">RS-Autoglas</p>
-            <p class="text-sm tracking-wide text-gray-300">RS-Autoglas ist ein....</p>
-          </div>
-        </div>
-      </a>
-      <a href="/" aria-label="View Item">
-        <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-          <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-          <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-            <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-            <p class="text-sm tracking-wide text-gray-300">....</p>
-          </div>
-        </div>
-      </a>
-      <a href="/" aria-label="View Item">
-        <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-          <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-          <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-            <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-            <p class="text-sm tracking-wide text-gray-300">....</p>
-          </div>
-        </div>
-      </a>
-      <a href="/" aria-label="View Item">
-        <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-          <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-          <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-            <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-            <p class="text-sm tracking-wide text-gray-300">....</p>
-          </div>
-        </div>
-      </a>
-
-    </div>
-  </section>
-  {% endblock Referenzen %}
- Referenzen End-->
- <div class="bg-blue-100">
-  <br>
-  <br> 
-  <br>
-  <br>
-</div>
-  
-
-
-  <!--Pricing Beginn-->
-  {% block Pricing %}
- 
-
-  <section class="bg-blue-100 scroll-my-4" id="Preise">
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-      <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
-        <div>
-          <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-gray-800 uppercase rounded-full bg-teal-accent-400">
-            Unsere Preise
+            Was uns von anderen Anbietern unterscheidet, wir sind günstiger, moderener und individueller.
+            Mindestvertragslaufzeit ist ein Jahr, die Gebühren fallen im vorraus an.
           </p>
         </div>
-        <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-black sm:text-4xl md:mx-auto">
-          <span class="relative inline-block">
-            <span class="relative text-gray-800">Transparente Preise</span>
-          </span>
-        </h2>
-        <p class="text-base text-gray-700 md:text-lg">
-          Was uns von anderen Anbietern unterscheidet, wir sind günstiger, moderener und individueller.
-          Mindestvertragslaufzeit ist ein Jahr, die Gebühren fallen im vorraus an.
-        </p>
-      </div>
-      <div class="grid max-w-md gap-10 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
-        <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow">
-          <div class="text-center">
-            <div class="text-lg font-semibold">Standart </div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">20€</div>
-              <div class="text-gray-700">/ mo</div>
+        <div class="grid max-w-md gap-10 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
+          <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
+            <div class="text-center">
+              <div class="text-lg font-semibold">Standart </div>
+              <div class="flex items-center justify-center mt-2">
+                <div class="mr-1 text-5xl font-bold">20€</div>
+                <div class="text-gray-700">/ mo</div>
+              </div>
+              <div class="mt-2 space-y-3">
+                <div class="text-black text-lg">250€ Einmalzahlung</div>
+                <div class="text-gray-700">1-Domain</div>
+                <div class="text-gray-700">Cookies</div>
+                <div class="text-gray-700">Optimiert für alle Geräte</div>
+                <div class="text-gray-700">Datenschutz und Impressum</div>
+                <div class="text-gray-700">Funktionen: Karte, Galerie, etc.</div>
+              </div>
             </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">250€ Einmalzahlung</div>
-              <div class="text-gray-700">1-Domain</div>
-              <div class="text-gray-700">Cookies</div>
-              <div class="text-gray-700">Optimiert für alle Geräte</div>
-              <div class="text-gray-700">Datenschutz und Impressum</div>
-              <div class="text-gray-700">Funktionen: Karte, Galerie, etc.</div>
+            <div>
+              <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
+                Kontaktieren Sie uns
+              </a>
+              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
+                Dieses Angebot gilt für einfache Seiten, siehe Vorlagen.
+              </p>
+            </div>
+          </div>
+          <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
+            <div class="text-center">
+              <div class="text-lg font-semibold">Dynamische Seite </div>
+              <div class="flex items-center justify-center mt-2">
+                <div class="mr-1 text-5xl font-bold">30€</div>
+                <div class="text-gray-700">/ mo</div>
+              </div>
+              <div class="mt-2 space-y-3">
+                <div class="text-black text-lg">500€ Einmalzahlung</div>
+                <div class="text-gray-700">siehe Standart</div>
+                <div class="text-gray-700">+</div>
+                <div class="text-gray-700">Content Management System</div>
+                <div class="text-gray-700">Schulung für die Benutzung</div>
+
+              </div>
+            </div>
+            <div>
+              
+              <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
+                Kontaktieren Sie uns
+              </a>
+              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
+                Unser eigenes entwickeltes Content Managment System, individuell angepasst für Ihre Website.
+              </p>
+            </div>
+          </div>
+          <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
+            <div class="text-center">
+              <div class="text-lg font-semibold">Individuelles Angebot</div>
+              <div class="flex items-center justify-center mt-2">
+                <div class="mr-1 text-5xl font-bold">?€</div>
+                <div class="text-gray-700">/ mo</div>
+              </div>
+              <div class="mt-2 space-y-3">
+                <div class="text-black text-lg">?€ Einmalzahlung</div>
+                <div class="text-gray-700">Gerne erarbeiten wir</div>
+                <div class="text-gray-700">gemeinsam mit Ihnen</div>
+                <div class="text-gray-700">individuelle Softwarelösungen</div>
+                <div class="text-gray-700">und Eigenprogrammierungen</div>
+              </div>
+            </div>
+            <div>
+              <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
+                Kontaktieren Sie uns
+              </a>
+              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
+                Dieses Angebot gilt für komplexe und individuelle Lösugen.
+              </p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    {% endblock Pricing %}
+    <!--Pricing End-->
+
+
+
+    <!--Team Beginn-->
+    {% block Team %}
+    <section class="scroll-my-4" id="Team">
+      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+        <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
+          <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+            Unser Team
+          </p>
+          <p class="text-base text-gray-700 md:text-lg">
+            Wir sind drei Studenten im IT-Bereich und bringen alle eine Faszination und Leidenschaft für Web-Entwicklung mit.
+          </p>
+        </div>
+        <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:grid-cols-3 lg:max-w-screen-lg">
+          <div>
+            <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Sebastian.jpg' %}" alt="Person"/>
+            </div>
+            <div class="flex flex-col sm:text-center">
+              <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
+              <p class="mb-5 text-xs text-gray-800">Product Manager</p>
             </div>
           </div>
           <div>
-            <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-              Kontaktieren Sie uns
-            </a>
-            <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-              Dieses Angebot gilt für einfache Seiten, siehe Vorlagen.
-            </p>
-          </div>
-        </div>
-        <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow">
-          <div class="text-center">
-            <div class="text-lg font-semibold">Dynamische Seite </div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">30€</div>
-              <div class="text-gray-700">/ mo</div>
+            <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/johannes.JPG' %}" alt="Person"/>
             </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">500€ Einmalzahlung</div>
-              <div class="text-gray-700">siehe Standart</div>
-              <div class="text-gray-700">+</div>
-              <div class="text-gray-700">Content Management System</div>
-              <div class="text-gray-700">Schulung für die Benutzung</div>
-
+            <div class="flex flex-col sm:text-center">
+              <p class="text-lg font-bold text-blue-900">Johannes Rösner</p>
+              <p class="mb-5 text-xs text-gray-800">Design</p>
             </div>
           </div>
           <div>
-            
-            <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-              Kontaktieren Sie uns
-            </a>
-            <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-               Unser eigenes entwickeltes Content Managment System, individuell angepasst für Ihre Website.
-            </p>
-          </div>
-        </div>
-        <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 border rounded-2xl shadow-sm sm:items-center hover:shadow">
-          <div class="text-center">
-            <div class="text-lg font-semibold">Individuelles Angebot</div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">?€</div>
-              <div class="text-gray-700">/ mo</div>
+            <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Lennert.jpg' %}" alt="Person"/>
             </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">?€ Einmalzahlung</div>
-              <div class="text-gray-700">Gerne erarbeiten wir</div>
-              <div class="text-gray-700">gemeinsam mit Ihnen</div>
-              <div class="text-gray-700">individuelle Softwarelösungen</div>
-              <div class="text-gray-700">und Eigenprogrammierungen</div>
+            <div class="flex flex-col sm:text-center">
+              <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
+              <p class="mb-5 text-xs text-gray-800">Development</p>
             </div>
           </div>
-          <div>
-            <a href="/" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-              Kontaktieren Sie uns
-            </a>
-            <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-              Dieses Angebot gilt für komplexe und individuelle Lösugen.
-            </p>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-  </section>
-  {% endblock Pricing %}
-  <!--Pricing End-->
-
-
-
-  <!--Team Beginn-->
-  {% block Team %}
-  <section class="bg-blue-100 scroll-my-4" id="Team">
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-      <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
-        <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-          Unser Team
-        </p>
-        <p class="text-base text-gray-700 md:text-lg">
-          Wir sind drei Studenten im IT-Bereich und bringen alle eine Faszination und Leidenschaft für Web-Entwicklung mit.
-        </p>
-      </div>
-      <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:grid-cols-3 lg:max-w-screen-lg">
-        <div>
-          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-            <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Sebastian.jpg' %}" alt="Person"/>
-          </div>
-          <div class="flex flex-col sm:text-center">
-            <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
-            <p class="mb-5 text-xs text-gray-800">Product Manager</p>
-          </div>
-        </div>
-        <div>
-          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-            <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/johannes.JPG' %}" alt="Person"/>
-          </div>
-          <div class="flex flex-col sm:text-center">
-            <p class="text-lg font-bold text-blue-900">Johannes Rösner</p>
-            <p class="mb-5 text-xs text-gray-800">Design</p>
-          </div>
-        </div>
-        <div>
-          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-            <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Lennert.jpg' %}" alt="Person"/>
-          </div>
-          <div class="flex flex-col sm:text-center">
-            <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
-            <p class="mb-5 text-xs text-gray-800">Development</p>
-          </div>
         </div>
       </div>
-    </div>
-  </section>
-  {% endblock Team %}
-  <!--Team End-->
+    </section>
+    {% endblock Team %}
+    <!--Team End-->
 
 
 
-  <!--U-Boot Beginn-->
-  {% block UBoot %}
-  <section class="h-72">
-    <div class="seaContainer">
-      <div class="submarine__container">
-        <div class="light"></div>
-        <div class="submarine__periscope"></div>
-        <div class="submarine__periscope-glass"></div>
-        <div class="submarine__sail">
-          <div class="submarine__sail-shadow dark1"></div>
-          <div class="submarine__sail-shadow light1"></div>
-          <div class="submarine__sail-shadow dark2"></div>
+    <!--U-Boot Beginn-->
+    {% block UBoot %}
+    <section class="h-72">
+      <div class="seaContainer">
+        <div class="submarine__container">
+          <div class="light"></div>
+          <div class="submarine__periscope"></div>
+          <div class="submarine__periscope-glass"></div>
+          <div class="submarine__sail">
+            <div class="submarine__sail-shadow dark1"></div>
+            <div class="submarine__sail-shadow light1"></div>
+            <div class="submarine__sail-shadow dark2"></div>
+          </div>
+          <div class="submarine__body">
+            <div class="submarine__window one"></div>
+            <div class="submarine__window two"></div>
+            <div class="submarine__shadow-dark"></div>
+            <div class="submarine__shadow-light"></div>
+            <div class="submarine__shadow-arcLight"></div>
+          </div>
+          <div class="submarine__propeller">
+            <div class="propeller__perspective">
+              <div class="submarine__propeller-parts darkOne"></div>
+              <div class="submarine__propeller-parts lightOne"></div>
+            </div>
+          </div>
         </div>
-        <div class="submarine__body">
-          <div class="submarine__window one"></div>
-          <div class="submarine__window two"></div>
-          <div class="submarine__shadow-dark"></div>
-          <div class="submarine__shadow-light"></div>
-          <div class="submarine__shadow-arcLight"></div>
+        <div class="bubbles__container">
+          <span class="bubbles bubble-1"></span>
+          <span class="bubbles bubble-2"></span>
+          <span class="bubbles bubble-3"></span>
+          <span class="bubbles bubble-4"></span>
         </div>
-        <div class="submarine__propeller">
-          <div class="propeller__perspective">
-            <div class="submarine__propeller-parts darkOne"></div>
-            <div class="submarine__propeller-parts lightOne"></div>
+        <div class="ground__container">
+          <div class="ground ground1">
+            <span class="up-1"></span>
+            <span class="up-2"></span>
+            <span class="up-3"></span>
+            <span class="up-4"></span>
+            <span class="up-5"></span>
+            <span class="up-6"></span>
+            <span class="up-7"></span>
+            <span class="up-8"></span>
+            <span class="up-9"></span>
+            <span class="up-10"></span>
+          </div>
+          <div class="ground ground2">
+            <span class="up-1"></span>
+            <span class="up-2"></span>
+            <span class="up-3"></span>
+            <span class="up-4"></span>
+            <span class="up-5"></span>
+            <span class="up-6"></span>
+            <span class="up-7"></span>
+            <span class="up-8"></span>
+            <span class="up-9"></span>
+            <span class="up-10"></span>
+            <span class="up-11"></span>
+            <span class="up-12"></span>
+            <span class="up-13"></span>
+            <span class="up-14"></span>
+            <span class="up-15"></span>
+            <span class="up-16"></span>
+            <span class="up-17"></span>
+            <span class="up-18"></span>
+            <span class="up-19"></span>
+            <span class="up-20"></span>
           </div>
         </div>
       </div>
-      <div class="bubbles__container">
-        <span class="bubbles bubble-1"></span>
-        <span class="bubbles bubble-2"></span>
-        <span class="bubbles bubble-3"></span>
-        <span class="bubbles bubble-4"></span>
-      </div>
-      <div class="ground__container">
-        <div class="ground ground1">
-          <span class="up-1"></span>
-          <span class="up-2"></span>
-          <span class="up-3"></span>
-          <span class="up-4"></span>
-          <span class="up-5"></span>
-          <span class="up-6"></span>
-          <span class="up-7"></span>
-          <span class="up-8"></span>
-          <span class="up-9"></span>
-          <span class="up-10"></span>
-        </div>
-        <div class="ground ground2">
-          <span class="up-1"></span>
-          <span class="up-2"></span>
-          <span class="up-3"></span>
-          <span class="up-4"></span>
-          <span class="up-5"></span>
-          <span class="up-6"></span>
-          <span class="up-7"></span>
-          <span class="up-8"></span>
-          <span class="up-9"></span>
-          <span class="up-10"></span>
-          <span class="up-11"></span>
-          <span class="up-12"></span>
-          <span class="up-13"></span>
-          <span class="up-14"></span>
-          <span class="up-15"></span>
-          <span class="up-16"></span>
-          <span class="up-17"></span>
-          <span class="up-18"></span>
-          <span class="up-19"></span>
-          <span class="up-20"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-  {% endblock UBoot %}
-  <!--U-Boot End-->
+    </section>
+    {% endblock UBoot %}
+    <!--U-Boot End-->
 
-
+  </div>
 
   <!--FAQ Beginn-->
   {% block FAQ %}
@@ -529,5 +554,3 @@
   <script defer src="{% static 'js/home.js' %}"></script>
 {% endcompress js %}
 {% endblock javascriptend %}
-
-
