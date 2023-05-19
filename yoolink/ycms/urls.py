@@ -6,6 +6,7 @@ app_name = "cms"
 urlpatterns = [
     path("", views.upload, name="cms"),
     path("login/", views.Login_Cms, name="login"),
+    path('logout/', views.custom_logout, name='logout'),
     # Images
     path('upload/', views.upload_view, name='upload'),
     path('upload/delete/<str:name>/', views.delete_file_by_name, name='upload-delete'),

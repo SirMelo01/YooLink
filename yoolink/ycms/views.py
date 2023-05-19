@@ -40,7 +40,10 @@ def upload(request):
     }
     return render(request, 'pages/cms/cms.html', data)
 
-
+# Custom Logout function
+def custom_logout(request):
+    logout(request)
+    return redirect('home')
 
 def Login_Cms(request):
     admin = False
