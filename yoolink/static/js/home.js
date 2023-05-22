@@ -15,13 +15,19 @@ const arrow3 = document.querySelector("#arrow3");
 const content4 = document.querySelector("#content4");
 const arrow4 = document.querySelector("#arrow4");
 
+const responsive = document.querySelector("#Responsive");
+
 //Responsive Design
 
+
+//hier noch magin ändern 
 function toggleResponsive() {
   if (phone.classList.contains("hidden")) {
+    responsive.classList.remove("sm:-mb-48");
     browser.classList.add("hidden");
     phone.classList.remove("hidden");
   } else {
+    responsive.classList.add("sm:-mb-48");
     browser.classList.remove("hidden");
     phone.classList.add("hidden");
   }
