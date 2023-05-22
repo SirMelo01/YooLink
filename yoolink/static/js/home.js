@@ -23,11 +23,11 @@ const responsive = document.querySelector("#Responsive");
 //hier noch magin ändern 
 function toggleResponsive() {
   if (phone.classList.contains("hidden")) {
-    responsive.classList.remove("sm:-mb-48");
+    responsive.classList.remove("xs:-mb-48");
     browser.classList.add("hidden");
     phone.classList.remove("hidden");
   } else {
-    responsive.classList.add("sm:-mb-48");
+    responsive.classList.add("xs:-mb-48");
     browser.classList.remove("hidden");
     phone.classList.add("hidden");
   }
