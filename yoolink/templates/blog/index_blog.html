@@ -22,7 +22,7 @@
                 {% for blog in object_list %}
                     <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}">
                         <article class="max-w-xs overflow-hidden">
-                            <img src="{% if blog.title_image %}blog.title_image.url{% endif %}" class="h-40 mb-5 rounded-lg w-full object-cover object-center" alt="Image 1"><!--{% static 'images/designImg/filler.png' %}-->
+                            <img src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}" class="h-40 mb-5 rounded-lg w-full object-cover object-center" alt="Image 1"><!--{% static 'images/designImg/filler.png' %}-->
                             <h2 class="mb-2 text-xl font-bold leading-tight text-gray-900">
                                 {{ blog.title }}
                             </h2>
