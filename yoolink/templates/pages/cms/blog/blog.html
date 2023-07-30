@@ -32,20 +32,21 @@
           </div>
 
           <div class="w-3/10 inline-flex">
-            <a href="{% url 'blog:blog-detail' blog.pk %}" aria-label="Company" title="Company" class="items-center inline-flex">
+            <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}" aria-label="Company" title="Company" class="items-center inline-flex">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mt-1 w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                 </svg>
             </a>
-            <button
+            <a
+              href="{% url 'cms:blog-details' id=blog.id %}"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 update"
               type="button">
-              Updaten
-            </button>
+              <i class="bi bi-pencil-square"></i> Updaten
+            </a>
             <button
               class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete"
               type="button">
-              Löschen
+              <i class="bi bi-trash"></i> Löschen
             </button>
           </div>
         </div>
@@ -59,6 +60,6 @@
 
 {% block javascriptend %}
 {% compress js inline %}
-  <script defer src="{% static 'js/blog.js' %}"></script>
+  <script defer src="{% static 'js/cms/blog/blog-overview.js' %}"></script>
 {% endcompress js %}
 {% endblock javascriptend %}

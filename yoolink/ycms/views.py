@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,9 @@ from .forms import fileform, Blogform
 from django.conf import settings
 from PIL import Image
 from io import BytesIO
+from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
+
 
 
 @login_required(login_url='login')
@@ -196,7 +199,6 @@ def compress_image(image):
     return file
 
 
-
 # --------------- [FAQ] ---------------
 @login_required(login_url='login')
 def faq_view(request):
@@ -255,7 +257,7 @@ def blog_view(request):
     data = {
         "blogs":  Blog.objects.all()
     }
-    return render(request, "pages/cms/blog.html", data)
+    return render(request, "pages/cms/blog/blog.html", data)
 
 # Delete Blog
 @login_required(login_url='login')
@@ -263,32 +265,106 @@ def delete_blog(request, id):
     if request.method == 'POST':
         instance = get_object_or_404(Blog, id=id)
         instance.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+        return JsonResponse({'success': True}, status=200)
+    return JsonResponse({'success': False}, status=400)
 
+
+@login_required(login_url='login')
+def create_blog(request):
+    if request.method == 'POST':
+        # The request is a POST request
+        # Retrieve POST parameters
+        title = request.POST.get('title')
+        body = request.POST.get('body')
+        code = json.loads(request.POST.get('code'))
+        active = request.POST.get('active', False)
+        
+        title_image = request.FILES.get('title_image', '')
+    
+        #return JsonResponse({'title': title, 'body': body, 'code': code})
+
+        if title:
+            # Create
+            blog = Blog(title=title, body=body, code=code, author=request.user)
+            if active == "true":
+                blog.active = True
+            else:
+                blog.active = False
+            blog.save()
+            blog.title_image = title_image
+            blog.save()
+            return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
+
+        else:
+            return JsonResponse({'error': 'Error request. Title is empty.'}, status=400)
+
+        # Do something with the POST parameters (e.g., save them to the database)
+        # ...
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
+
+@login_required(login_url='login')
+def update_blog(request, id):
+    if request.method == 'POST':
+        # The request is a POST request
+        # Retrieve POST parameters
+        blog = get_object_or_404(Blog, id=id)
+
+        title = request.POST.get('title')
+        body = request.POST.get('body')
+        code = json.loads(request.POST.get('code'))
+        active = request.POST.get('active', False)
+        title_image = request.FILES.get('title_image', '')
+
+        if title:
+            # Create
+            blog.title = title
+            blog.body = body 
+            blog.code = code 
+            if active == "true":
+                blog.active = True
+            else:
+                blog.active = False
+            if title_image:
+                blog.title_image = title_image
+            blog.save()
+            return JsonResponse({'success': 'Blog successfully updated', 'blogId': blog.id}, status=201)
+
+        else:
+            return JsonResponse({'error': 'Error request. Title is empty.'}, status=400)
+
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
 
 @login_required(login_url='login')
 def add_blog(request):
-    blogform = Blogform
-    if request.method == 'POST':
-        if blogform.is_valid():
-            blogform.save()
             
-
     data = {
-        "blogs":  Blog.objects.all(),
-        "blogform": blogform,
+        "galerien": Galerie.objects.all()
     }
 
-    return render(request, "pages/cms/add_blog.html", data)
+    return render(request, "pages/cms/blog/add_blog.html", data)
 
 @login_required(login_url='login')
-def update_blog(request):
-    data = {
-        "blogs":  Blog.objects.all()
-    }
-    return render(request, "pages/cms/update_blog.html", data)
+def blog_details(request, id):
+    
+    blog = get_object_or_404(Blog, id=id)
+
+    data = {"blog": blog,"galerien": Galerie.objects.all()}
+
+    return render(request, "pages/cms/blog/blog_update.html", data)
+
+@login_required(login_url='login')
+def blog_code(request, id):
+    
+    blog = get_object_or_404(Blog, id=id)
+
+    data = {"code": blog.code, "success": "true"}
+
+    return JsonResponse(data)
 
 
 # --------------- [GALERY] ---------------
@@ -297,6 +373,22 @@ def update_blog(request):
 def galery_view(request, id):
     galery = get_object_or_404(Galerie, id=id)
     return render(request, "pages/cms/galery/galery.html", {"galery": galery})
+
+@login_required(login_url='login')
+def get_galery_images(request):
+    id = request.GET.get("galeryId")
+    galery = get_object_or_404(Galerie, id=id)
+    if galery.images:
+        images_list = []
+        for image in galery.images.all():
+            image_dict = {
+                'upload_url': image.upload.url,
+                'uploaddate': image.uploaddate,
+            }
+            images_list.append(image_dict)
+        return JsonResponse({"images": images_list}, status=200)
+    return JsonResponse({}, status=400)
+    
 
 # Render Galery Overview
 @login_required(login_url='login')
@@ -364,3 +456,61 @@ def delete_galery(request, id):
         galery.delete()
         return JsonResponse({'success': 'Galerie wurde erfolgreich gelöscht'})
     return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: POST)'})
+
+
+# --------------- [Image Helper] ---------------
+# get all images
+@login_required(login_url='login')
+def all_images(request):
+    if request.method == 'GET':
+        images = fileentry.objects.all()
+        # Liste zur Speicherung der Bild-URLs erstellen
+        image_urls = []
+
+        # URLs für jedes fileentry-Objekt erstellen
+        for entry in images:
+            # URL für das Bild erstellen
+            image_url = entry.file.url
+
+            # URL zur Liste hinzufügen
+            image_urls.append(image_url)
+
+        # JSON-Antwort mit den Bild-URLs senden
+        return JsonResponse({'image_urls': image_urls})
+    return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: GET)'})
+
+# --------------- [Galery Helper] ---------------
+# get all galerys
+@login_required(login_url='login')
+def all_galerien(request):
+    if request.method == 'GET':
+        galerien = Galerie.objects.all()
+        galerien_list = []
+        
+        for galerie in galerien:
+            images = galerie.images.all()  # Retrieve all related images for the galerie
+            
+            # Serialize each image object separately
+            serialized_images = serializers.serialize('json', images)
+            deserialized_images = serializers.deserialize('json', serialized_images)
+            image_list = []
+            
+            # Loop through deserialized image objects to extract required fields
+            for obj in deserialized_images:
+                image = obj.object
+                image_list.append({
+                    'url': image.upload.url,
+                    # Add other image fields as needed
+                })
+            
+            galerien_list.append({
+                'title': galerie.title,
+                'description': galerie.description,
+                'active': galerie.active,
+                'images': image_list
+                # Add other galerie fields as needed
+            })
+        
+        return JsonResponse({'galerien': galerien_list}, safe=False)
+    
+    return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: GET)'})

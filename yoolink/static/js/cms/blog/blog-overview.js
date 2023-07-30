@@ -5,8 +5,9 @@ $(document).ready(function () {
         // Code for handling the click event on the "delete" button
         var $listItem = $(this).closest('.list-group-item')
         var id = $listItem.attr('data-id')
+        sendNotif("Blog wird gelöscht...Bitte warten", "notice")
         $.ajax({
-            url: 'delete/' + id + "/",
+            url: id + "/delete/",
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: csrftoken,
@@ -15,10 +16,14 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 alert("Success")
-                if (response.success) { $listItem.remove() }
+                if (response.success) { 
+                    $listItem.remove() 
+                    sendNotif('Dieser Blog wurde erfolgreich gelöscht', 'success')
+                }
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);
+                sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
             }
         });
     });

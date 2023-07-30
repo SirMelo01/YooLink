@@ -7,6 +7,7 @@ import os
 from PIL import Image
 from django.db.models.signals import post_save
 from yoolink.users.models import User
+from django.utils.text import slugify
 
 
 ## Produktiv und funktioniert
@@ -32,6 +33,7 @@ class FAQ(models.Model):
 class fileentry(models.Model):
     file = models.ImageField(upload_to='yoolink/')
     uploaddate = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=200, default="Bildtitel")
 
     def __str__(self):
         return os.path.basename(self.file.name)
@@ -46,6 +48,7 @@ class fileentry(models.Model):
 class GaleryImage(models.Model):
     upload = models.ImageField(upload_to='yoolink/galery/',)
     uploaddate = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=200, default="Bildtitel")
 
     def __str__(self):
         return str(self.pk)
@@ -68,15 +71,34 @@ class Galerie(models.Model):
     def __str__(self):
         return self.title
 
+def upload_to_blog_image(instance, filename):
+    return f"yoolink/blogs/{instance.id}/{filename}"
+def default_code():
+    return dict()
 class Blog(models.Model):
     title = models.CharField(max_length=255)
-    title_image = models.ImageField(upload_to='yoolink/', default="", blank=True)
-    date = models.DateField()
+    slug = models.SlugField(unique=True, default='default-slug')
+    title_image = models.ImageField(upload_to=upload_to_blog_image, default="", blank=True)
+    date = models.DateField(auto_now_add=True)  # Automatically set on creation
+    last_updated = models.DateField(auto_now=True)  # Automatically updated on save
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(default="This Blog is empty")
+    code = models.JSONField(default=default_code)
+    active = models.BooleanField(default=False)
+
+    def delete(self, *args, **kwargs):
+        self.title_image.storage.delete(self.title_image.name)
+        super(Blog, self).delete(*args, **kwargs)
     
     def __str__(self):
         return self.title + ' | ' + str(self.author)
+    
+    def save(self, *args, **kwargs):
+        # Slugify the title and store it in the slug field
+        self.slug = slugify(self.title)
+
+        # Call the parent class's save method to actually save the model
+        super(Blog, self).save(*args, **kwargs)
     
 
 class Message(models.Model):

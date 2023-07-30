@@ -1,0 +1,456 @@
+{% extends 'cmsbase.html' %}
+{% load static compress %}
+{% block title %} {{block.super}} | CMS | Blog | Add{% endblock %}
+
+{% block javascript %}
+<!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+<script src="{% static 'js/cms/sortable/sortable.js' %}"></script>
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
+<link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
+</link>
+<script type="text/javascript" src="{% static 'js/cms/blog/nicEdit.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+<!--<form method="POST">
+    {% csrf_token %}
+    {{ blogform }}
+    <button>Post</button>-->
+
+<!-- **************** Preview-Modal **************** -->
+<!-- Will be opened if the user clicks on one of the info buttons -->
+<div class="fixed lg:min-w-[42rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+    id="previewModal" data-prismjs-copy-timeout="500">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl max-h-full">
+        <!-- Modal header -->
+        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
+                Preview
+            </h3>
+            <button type="button" id="closeModal"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="defaultModal">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <!--<div class="px-6">
+            <address class="flex items-center mb-6 not-italic">
+                <div class="inline-flex items-center mr-3 text-sm text-gray-900">
+                    <img class="mr-4 w-16 h-16 rounded-full objec-cover"
+                        src="{% static 'images/designImg/profil.webp' %}" alt="">
+                    <div>
+                        <div rel="author" class="text-xl font-bold text-gray-900">Nutzer</div>
+                        <p class="text-base font-light text-gray-500">5. August 2000</p>
+                    </div>
+                </div>
+            </address>
+        </div>-->
+        <div class="p-6 space-y-6 max-h-[45rem] overflow-auto" id="previewBody">
+            
+        </div>
+
+    </div>
+</div>
+
+<!-- **************** Image-Select-Modal **************** -->
+<!-- Will be opened if the user clicks on one of the info buttons -->
+<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+    id="imageModal">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+        <!-- Modal header -->
+        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
+                Bildauswahl
+            </h3>
+            <button type="button" id="closeImageModal"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="defaultModal">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div class="p-6">
+            <div class="w-full max-w-5xl p-2 grid grid-cols-4 gap-3 overflow-auto overflow-x-hidden max-h-[40rem]"
+                id="possibleImages">
+                <img src="https://img.anime2you.de/2023/03/solo-leveling.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://sm.ign.com/t/ign_jp/gallery/t/the-best-a/the-best-anime-series-on-netflix-right-now_v9u2.1080.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://www.gratistodo.com/wp-content/uploads/2021/07/One-Piece-Wallpapers-4.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://th.bing.com/th/id/OIP.udzwy2Z4ibI0ez3yRnzxQAHaLH?pid=ImgDet&rs=1"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://img.anime2you.de/2023/03/solo-leveling.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://img.anime2you.de/2023/03/solo-leveling.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+                <img src="https://img.anime2you.de/2023/03/solo-leveling.jpg"
+                    class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">
+            </div>
+        </div>
+        
+        
+        <!-- Actions -->
+        <div class="flex justify-center py-4">
+            <button id="reloadImages"
+                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Neu
+                Laden</button>
+            <a href="{% url 'cms:upload' %}" target="_blank"
+                class="bg-green-500 hover:cursor-pointer hover:bg-green-700 text-base text-white font-bold py-2 px-4 rounded-xl ml-3">Hinzufügen</a>
+        </div>
+        <!-- URL Image -->
+        <div class="border-t border-gray-500 flex justify-center py-4">
+            <div class="relative h-10 w-96 mr-3">
+                <input
+                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                    placeholder=" " id="imgURL" />
+                <label
+                    class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    Externe Bild-URL
+                </label>
+            </div>
+            <button id="useExternImageURL"
+                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Externes Bild nutzen</button>
+        </div>
+        <!-- Modal footer -->
+        <div class="border-t border-gray-500 flex justify-between py-4">
+            <div class="grid grid-cols-4 gap-3 mr-4">
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="imgHeight" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Höhe
+                    </label>
+                </div>
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="imgWidth" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Breite
+                    </label>
+                </div>
+                <div class="relative h-10 w-full col-span-2">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="imgText" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Bildtext
+                    </label>
+                </div>
+            </div>
+            <button id="selectImg" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
+                Übernehmen
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- **************** Youtube-Select-Modal **************** -->
+<!-- Will be opened if the user clicks on one of the info buttons -->
+<div class="fixed lg:min-w-[40rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+    id="youtubeModal">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+        <!-- Modal header -->
+        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-xl font-semibold text-gray-900">
+                Youtube-Video
+            </h3>
+            <button type="button" id="closeYoutubeModal"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="defaultModal">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <!-- URL Image -->
+        <div class="border-t border-gray-500 flex justify-center py-4">
+            <div class="relative h-10 w-full mr-3">
+                <input
+                    class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                    placeholder=" " id="youtubeURL" />
+                <label
+                    class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    Youtube Video URL
+                </label>
+            </div>
+            <button id="useYoutubeURL"
+                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Benutzen</button>
+        </div>
+        <!-- Modal footer -->
+        <div class="border-t border-gray-500 flex justify-between py-4">
+            <div class="grid grid-cols-4 gap-3 mr-4">
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="youtubeHeight" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Höhe
+                    </label>
+                </div>
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="youtubeWidth" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Breite
+                    </label>
+                </div>
+                <div class="relative h-10 w-full col-span-2">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="youtubeText" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Videotext
+                    </label>
+                </div>
+            </div>
+            <button id="selectYoutube" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
+                Übernehmen
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- **************** Galery-Select-Modal **************** -->
+<!-- Will be opened if the user clicks on one of the info buttons -->
+<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+    id="galleryModal">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+        <!-- Modal header -->
+        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
+                Galerieauswahl
+            </h3>
+            <button type="button" id="closeGaleryModal"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="defaultModal">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div class="p-6">
+            <div class="w-full max-w-5xl p-2 grid grid-cols-3 gap-3 overflow-auto overflow-x-hidden max-h-[40rem]"
+                id="possibleGalerien">
+                {% for gallery in galerien %}
+                <div
+                    galeryId="{{gallery.id}}"
+                    class="border border-gray-200 shadow-xl rounded-2xl h-full w-full p-4 hover:cursor-pointer hover:shadow-blue-300 pGalery">
+                    <h1 class="text-xl font-semibold mb-2">{{gallery.title}}</h1>
+                    <p class="max-h-[8rem] overflow-auto">{{gallery.description}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Actions -->
+        <div class="border-t border-gray-500 flex justify-center py-4">
+            <button id="reloadGalerien"
+                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Neu
+                Laden</button>
+            <a href="{% url 'cms:galery-create' %}" target="_blank"
+                class="bg-green-500 hover:cursor-pointer hover:bg-green-700 text-base text-white font-bold py-2 px-4 rounded-xl ml-3">Hinzufügen</a>
+        </div>
+        <!-- Modal footer -->
+        <div class="border-t border-gray-500 flex justify-between py-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="galeryHeight" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Höhe
+                    </label>
+                </div>
+                <div class="relative h-10 w-full">
+                    <input
+                        class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                        placeholder=" " id="galeryWidth" />
+                    <label
+                        class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Breite
+                    </label>
+                </div>
+            </div>
+            <button id="selectGalery" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
+                Übernehmen
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- **************** Content **************** -->
+
+<div class="w-full border border-gray-200 rounded-2xl flex p-4 mb-3">
+    <button id="addTitle" class="px-4 py-2 mx-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+        <i class="bi bi-fonts"></i> Überschrift I
+    </button>
+    <button id="addTitle2" class="px-4 py-2 mx-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+        <i class="bi bi-fonts"></i> Überschrift II
+    </button>
+    <button id="addTitle3" class="px-4 py-2 mx-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+        <i class="bi bi-fonts"></i> Überschrift III
+    </button>
+    <button id="addText" class="px-4 py-2 mx-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700">
+        <i class="bi bi-card-text"></i> Text
+    </button>
+    <button id="addImage"
+        class="px-4 py-2 mx-3 bg-violet-600 text-white font-semibold rounded-lg hover:bg-violet-700">
+        <i class="bi bi-image"></i> Bild
+    </button>
+    <button id="addVideo"
+        class="px-4 py-2 mx-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">
+        <i class="bi bi-youtube"></i> Video
+    </button>
+    <button id="addCode"
+        class="px-4 py-2 mx-3 bg-fuchsia-600 text-white font-semibold rounded-lg hover:bg-fuchsia-700">
+        <i class="bi bi-code-slash"></i> Code
+    </button>
+    <button id="addGalerie"
+        class="px-4 py-2 mx-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700">
+        <i class="bi bi-images"></i> Galerie
+    </button>
+</div>
+
+<div class="grid grid-cols-3 gap-4">
+    <div class="nested-sortable w-full p-4 border border-gray-200 shadow-xl rounded-2xl min-h-[10rem] col-span-2" id="blogContent">
+
+        <!-- Text -->
+        <div class="relative" element-type="textArea">
+            <span
+                class="absolute top-0 right-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#051AFF"
+                class="bi bi-arrows-move absolute top-0 right-1/2 inline-block rounded-full not-sortable font-bold text-xl z-40 hover:cursor-pointer handle"
+                viewBox="0 0 24 24">
+                <path fill-rule="evenodd"
+                    d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z" />
+            </svg>
+            <textarea id="textArea1"
+                class="textArea w-full px-4 py-2 my-3 rounded-2xl border border-gray-300 focus:outline-none focus:border-blue-500 min-h-[5rem]"
+                rows="4" placeholder="Text">
+            </textarea>
+        </div>
+
+    </div>
+    <!-- XXX -->
+    <div class="border border-gray-200 shadow-xl rounded-xl p-4 h-fit max-h-fit">
+        <div class="flex justify-between">
+            {% csrf_token %}
+            <button id="preview"
+                class="px-4 py-2 mx-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600">
+                <i class="bi bi-eye"></i> Preview
+            </button>
+            <button id="createBlog"
+                class="px-4 py-2 mx-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600">
+                <i class="bi bi-plus-circle"></i> Erstellen
+            </button>
+        </div>
+
+        <div class="p-4">
+            <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg mt-6 mb-2">Blog Titel</label>
+            <input type="text"
+                    id="blogTitle"
+                    class="text-lg w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative"
+                    placeholder="Titel">
+        </div>
+        
+
+        <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg px-4">Titelbild</label>
+        <div class="extraOutline p-4 bg-white w-full bg-whtie m-auto rounded-lg">
+            <div class="file_upload p-5 relative border-4 border-dotted border-gray-300 rounded-lg w-full bg-cover"
+                id="fileUpload">
+                <svg class="text-indigo-500 w-24 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <div class="input_field flex flex-col w-max mx-auto text-center">
+                    <label>
+                        <input id="titleImgUpload" class="text-sm cursor-pointer w-36 hidden" type="file" accept="image/jpg,image/png,image/jpeg,image/gif" />
+                        <div
+                            class="text bg-indigo-600 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-indigo-500">
+                            Auswählen</div>
+                    </label>
+
+                    <!--<div class="title text-indigo-500 uppercase" id="fileText">Keine ausgewählt</div>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg">Blog Layout</label>
+            <p class="mt-2 mb-4 text-sm">Wähle ein Layout-Format für den gesamten Blog</p>
+            <div class="relative h-10 w-72 min-w-[200px]">
+                <select id="blogLayout" class="peer z-40 h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50">
+                  <option value="left">Linksbündig</option>
+                  <option value="center">Center</option>
+                  <option value="right">Rechtsbündig</option>
+                </select>
+                <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                  Layout auswählen
+                </label>
+              </div>
+        </div>
+
+        <div class="flex justify-center w-full mb-6 mt-6">
+            <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-start w-32" for="title">
+                Aktiv
+            </label>
+            <input
+                checked
+                class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+                type="checkbox" role="switch" id="activeSwitch" />
+        </div>
+
+
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms/blog/blog.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+{% endcompress js %}
+<script src="{% static 'js/prism/prism.js' %}" data-manual></script>
+
+{% endblock javascriptend %}

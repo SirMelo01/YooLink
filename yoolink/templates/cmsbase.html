@@ -27,11 +27,13 @@
     {% compress css inline %}
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
     <script src="https://code.jquery.com/jquery-3.6.4.js"
         integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
-    {% compress js inline %}
+        
+        {% compress js inline %}
     <script defer src="{% static 'js/loadinit.js' %}"></script>
     <script src="{% static 'js/cms.js' %}"></script>
     <!-- jQuery Bibliothek (https://jquery.com/)

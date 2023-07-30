@@ -1,34 +1,85 @@
 {% extends "base.html" %}
 {% load compress static %}
 
+{% block javascript %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
+<link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block title %}{{block.super}} | Blog | {{ blog.title }}{% endblock title %}
 
 {% block content %}
 
 <main class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white">
     <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">
-        <article class="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue">
+        <article class="space-y-6 mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue">
             <header class="mb-4 lg:mb-6 not-format">
                 <address class="flex items-center mb-6 not-italic">
                     <div class="inline-flex items-center mr-3 text-sm text-gray-900">
-                        <img class="mr-4 w-16 h-16 rounded-full objec-cover" src="{% static 'images/designImg/profil.webp' %}" alt="">
+                        <img class="mr-4 w-16 h-16 rounded-full objec-cover"
+                            src="{% static 'images/designImg/profil.webp' %}" alt="">
                         <div>
                             <div rel="author" class="text-xl font-bold text-gray-900">{{ blog.author }}</div>
-                            <p class="text-base font-light text-gray-500"><time pubdate datetime="{{ blog.date }}" title="{{ blog.date }}">{{ blog.date }}</time></p>
+                            <p class="text-base font-light text-gray-500"><time pubdate datetime="{{ blog.date }}"
+                                    title="{{ blog.date }}">{{ blog.date }}</time></p>
                         </div>
                     </div>
                 </address>
-                <h1 class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{{ blog.title }}</h1>
+                <!--<h1 class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{{ blog.title }}</h1>-->
             </header>
-            {{ blog.body }}
-            <br/><br/><br/><br/>
-            <a href="{% url 'blog:blog' %}" class="bg-blue-900 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md">
+            {{ blog.body | safe }}
+            <br /><br /><br /><br />
+            <a href="{% url 'blog:blog' %}"
+                class="bg-blue-900 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md">
                 Zurück
             </a>
         </article>
-        
+
     </div>
-  </main>
-  
+</main>
+
 
 {% endblock content %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+<script src="{% static 'js/prism/prism.js' %}" data-manual></script>
+<script>
+    $(document).ready(function () {
+        $('.carousel').slick({
+            dots: true,  // Display navigation dots
+            arrows: true,  // Display navigation arrows
+            infinite: true,  // Enable infinite looping
+            slidesToShow: 1,  // Number of slides to show at once
+            slidesToScroll: 1,  // Number of slides to scroll at a time
+            autoplay: true,
+            autoplaySpeed: 3000,
+            // Add any other configuration options as needed
+        });
+
+        // Bind Next function to the Next button
+        // Bind Next function to the Next button of each carousel
+        $('.next-button').on('click', function () {
+            var carousel = $(this).closest('.carousel-container').find('.carousel');
+            carousel.slick('slickNext');
+        });
+
+        // Bind Previous function to the Previous button of each carousel
+        $('.prev-button').on('click', function () {
+            var carousel = $(this).closest('.carousel-container').find('.carousel');
+            carousel.slick('slickPrev');
+        });
+
+        // Load Carousels
+        setTimeout(function () {
+            Prism.highlightAll();
+        }, 500)
+
+    });
+</script>
+{% endcompress js %}
+
+{% endblock javascriptend %}
