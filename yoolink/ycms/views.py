@@ -291,7 +291,10 @@ def create_blog(request):
             else:
                 blog.active = False
             blog.save()
-            blog.title_image = title_image
+            resized_image = resize_image(title_image)
+            scaled_image = scale_image(resized_image)
+            compressed_image = compress_image(scaled_image)
+            blog.title_image = compressed_image
             blog.save()
             return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
 
@@ -328,7 +331,10 @@ def update_blog(request, id):
             else:
                 blog.active = False
             if title_image:
-                blog.title_image = title_image
+                resized_image = resize_image(title_image)
+                scaled_image = scale_image(resized_image)
+                compressed_image = compress_image(scaled_image)
+                blog.title_image = compressed_image
             blog.save()
             return JsonResponse({'success': 'Blog successfully updated', 'blogId': blog.id}, status=201)
 
