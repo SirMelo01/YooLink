@@ -247,7 +247,10 @@ $(document).ready(function () {
             },
             success: function (response) {
                 // Handle the success response here
-                console.log("Request successful!");
+                if(response.error) {
+                    sendNotif(response.error, "error")
+                    return;
+                }
                 console.log(response)
                 sendNotif("Der Blog wurde erfolgreich gespeichert", "success")
             },

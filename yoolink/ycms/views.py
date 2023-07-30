@@ -275,6 +275,10 @@ def create_blog(request):
         # The request is a POST request
         # Retrieve POST parameters
         title = request.POST.get('title')
+
+        if Blog.objects.filter(title=title).exists():
+            return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
+
         body = request.POST.get('body')
         code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)
@@ -299,7 +303,7 @@ def create_blog(request):
             return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
 
         else:
-            return JsonResponse({'error': 'Error request. Title is empty.'}, status=400)
+            return JsonResponse({'error': 'Der Titel darf nicht leer sein!'}, status=400)
 
         # Do something with the POST parameters (e.g., save them to the database)
         # ...
@@ -316,6 +320,8 @@ def update_blog(request, id):
         blog = get_object_or_404(Blog, id=id)
 
         title = request.POST.get('title')
+        if blog.title != title and Blog.objects.filter(title=title).exists():
+            return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
         body = request.POST.get('body')
         code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)

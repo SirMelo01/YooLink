@@ -519,13 +519,17 @@ $(document).ready(function () {
             },
             success: function (response) {
                 // Handle the success response here
-                console.log("Request successful!");
+                if(response.error) {
+                    sendNotif(response.error, "error")
+                    return;
+                }
                 console.log(response)
                 window.location.href = '/cms/blog/' + response.blogId + "/";
             },
             error: function (xhr, status, error) {
                 // Handle the error response here
                 console.error("Request failed:", error);
+                sendNotif("Es kam zu einem unerwarteten Fehler. Versuche es später nochmal")
             }
         });
     })
