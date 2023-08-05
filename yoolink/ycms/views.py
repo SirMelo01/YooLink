@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage
+from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage, TextContent
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -100,6 +100,20 @@ def delete_file(request, id):
     file = fileentry.objects.get(id=id)
     file.delete()
     return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
+
+@login_required(login_url='login')
+def update_file(request, id):
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        place = request.POST.get('place', '')
+        file = fileentry.objects.get(id=id)
+        if title:
+            file.title = title
+        if place:
+            file.place = place
+        file.save()
+        return JsonResponse({"success": "File wurde erfolgreich bearbeitet"})
+    return JsonResponse({"error": "Etwas ist schief gelaufen. Versuche es später nochmal"})
 
 # Delete File
 @login_required(login_url='login')
@@ -526,3 +540,76 @@ def all_galerien(request):
         return JsonResponse({'galerien': galerien_list}, safe=False)
     
     return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: GET)'})
+
+
+# Seiten
+@login_required(login_url='login')
+def content_view(request):
+    return render(request, "pages/cms/content/content.html", {})
+
+# Seiten
+@login_required(login_url='login')
+def site_view_main(request):
+    return render(request, "pages/cms/content/sites/MainSite.html", {})
+
+# Main Site - Hero Section
+@login_required(login_url='login')
+def site_view_main_hero(request):
+    data = {}
+    if TextContent.objects.filter(name="main_hero").exists():
+        data["textContent"] = TextContent.objects.get(name='main_hero')
+    return render(request, "pages/cms/content/sites/mainsite/HeroContent.html", data)
+
+@login_required(login_url='login')
+def site_view_main_responsive(request):
+    data = {}
+    if TextContent.objects.filter(name="main_responsive").exists():
+        data["textContent"] = TextContent.objects.get(name='main_responsive')
+    return render(request, "pages/cms/content/sites/mainsite/ResponsiveContent.html", data)
+
+@login_required(login_url='login')
+def site_view_main_cms(request):
+    data = {}
+    if TextContent.objects.filter(name="main_cms").exists():
+        data["textContent"] = TextContent.objects.get(name='main_cms')
+    return render(request, "pages/cms/content/sites/mainsite/CmsContent.html", data)
+
+@login_required(login_url='login')
+def site_view_main_price(request):
+    data = {}
+    if TextContent.objects.filter(name="main_price").exists():
+        data["textContent"] = TextContent.objects.get(name='main_price')
+    return render(request, "pages/cms/content/sites/mainsite/PriceContent.html", data)
+
+@login_required(login_url='login')
+def site_view_main_team(request):
+    data = {}
+    if TextContent.objects.filter(name="main_team").exists():
+        data["textContent"] = TextContent.objects.get(name='main_team')
+    return render(request, "pages/cms/content/sites/mainsite/TeamContent.html", data)
+
+
+@login_required(login_url='login')
+def saveTextContent(request):
+    if request.method == 'POST':
+        header = request.POST.get('header', '')
+        title = request.POST.get('title', '')
+        description = request.POST.get('description', '')
+        buttonText = request.POST.get('buttonText', '')
+        # Model-Name: z.B. main_hero
+        name = request.POST.get('name', '')
+        if TextContent.objects.filter(name=name).exists():
+            # Create Model
+            textContent = TextContent.objects.get(name=name)
+            textContent.header = header
+            textContent.title = title
+            textContent.description = description
+            textContent.buttonText = buttonText
+            textContent.save()
+            return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
+        else:
+            textContent = TextContent.objects.create(name=name, header=header, title=title, description=description, buttonText=buttonText)
+            textContent.save()
+            return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=201)
+           
+    return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)

@@ -51,16 +51,14 @@
         <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
           <div class="text-center"> 
             <h1 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
-              Webdesign Agentur - YooLink
+              {{heroText.header}}
             </h1>
           </div>
           <h2 class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
-            Webdesign für Ihren professionellen Internetauftritt
+            {{heroText.title}}
           </h2>
           <p class="text-base text-gray-800 md:text-lg">
-            Verbessern Sie Ihre digitale Präsenz und steigern Sie Ihren Umsatz mit einer neuen Website von YooLink!
-            Durch eine ansprechende Ästhetik, intuitive Navigation und relevantem Inhalt erstellen wir als Webdesign
-            Agentur einen Internetauftritt, der Ihr Unternehmen auf innovative Weise präsentiert.
+            {{heroText.description}}
           </p>
         </div>
       </div>
@@ -124,17 +122,14 @@
           <div class="w-6xl mb-5">
             <div>
               <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-                Eine Website optimiert für alle Geräte
+                {{responsiveText.header}}
               </h3>
             </div>
             <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none">
-              Responsive Design
+              {{responsiveText.title}}
             </h2>
             <p class="text-base text-gray-700 md:text-lg ">
-              Moderne Websites sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsive Webdesign
-              passen sich Websites automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten.
-              Wir als Web Agentur haben umfangreiche Erfahrung im Entwerfen und Entwickeln von responsive Websites, die sowohl auf dem 
-              Desktop als auch auf mobilen Geräten beeindrucken.
+              {{responsiveText.description}}
             </p>
             <br/>
             <div class="flex">
@@ -250,24 +245,19 @@
           </div>
           <div class="mx-auto max-w-[30rem] lg:mx-0 lg:flex-auto lg:py-16 lg:text-left">
             <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-              Dynamische Inhalte
+             {{cmsText.header}}
             </h3>
-            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Content Management System</h2>
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{cmsText.title}}</h2>
             <p class="mt-6 text-base md:text-lg text-gray-700">
-              Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung
-              Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten
-              und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen 
-              die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.
-
-              
+              {{cmsText.description}}
             </p>
             <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
-              <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">Angebot</a>
+              <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">{{cmsText.buttonText}}</a>
               <a href="#" class="text-sm font-semibold leading-6">Erfahre mehr <span aria-hidden="true">→</span></a>
             </div>
             <!-- Foto-Mobil -->
             <div class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
-              <img class="absolute  left-0 top-0 w-[50rem] max-w-none" src="{% static 'images/cms-screen.png' %}" alt="CMS App screenshot">
+              <img class="absolute  left-0 top-0 w-[50rem] max-w-none" src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}" alt="CMS App screenshot">
             </div>
           </div>
         </div>
@@ -284,17 +274,16 @@
         <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
           <div>
             <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-gray-800 uppercase rounded-full bg-teal-accent-400">
-              Unsere Preise
+              {{priceText.header}}
             </h3>
           </div>
           <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-black sm:text-4xl md:mx-auto">
             <span class="relative inline-block">
-              <span class="relative text-gray-800">Transparente Preise</span>
+              <span class="relative text-gray-800">{{priceText.title}}</span>
             </span>
           </h2>
           <p class="text-base text-gray-700 md:text-lg">
-            Was unterscheidet YooLink von anderen Webdesign Agenturen? Wir sind günstiger, moderner und individueller.
-            Mindestvertragslaufzeit ist ein Jahr, die Gebühren fallen im Voraus an.
+            {{priceText.description}}
           </p>
         </div>
         <div class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
@@ -388,18 +377,16 @@
       <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
         <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
           <h2 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-            Unser Team
+            {{teamText.header}}
           </h2>
           <p class="text-base text-gray-700 md:text-lg">
-            Wir sind drei Studenten im IT-Bereich und bringen alle eine Faszination und Leidenschaft für Web-Entwicklung mit.
-            Zusammen sind wir das Webdesign Team YooLink aus Deggendorf.
-            Wir freuen uns gemeinsam mit Ihnen eine Lösung zu erstellen.
+            {{teamText.description}}
           </p>
         </div>
         <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:grid-cols-3 lg:max-w-screen-lg">
           <div>
             <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Sebastian.jpg' %}" alt="Sebastian Rauch"/>
+              <img class="absolute object-cover w-full h-full rounded-xl" src="{% static 'images/Sebastian.jpg' %}" alt="Sebastian Rauch"/>
             </div>
             <div class="flex flex-col sm:text-center">
               <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
@@ -408,7 +395,7 @@
           </div>
           <div>
             <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/johannes.JPG' %}" alt="Johannes Rösner"/>
+              <img class="absolute object-cover w-full h-full rounded-xl" src="{% static 'images/johannes.JPG' %}" alt="Johannes Rösner"/>
             </div>
             <div class="flex flex-col sm:text-center">
               <p class="text-lg font-bold text-blue-900">Johannes Rösner</p>
@@ -417,7 +404,7 @@
           </div>
           <div>
             <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-              <img class="absolute object-cover w-full h-full rounded" src="{% static 'images/Lennert.jpg' %}" alt="Lennert Meißner"/>
+              <img class="absolute object-cover w-full h-full rounded-xl" src="{% static 'images/Lennert.jpg' %}" alt="Lennert Meißner"/>
             </div>
             <div class="flex flex-col sm:text-center">
               <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>

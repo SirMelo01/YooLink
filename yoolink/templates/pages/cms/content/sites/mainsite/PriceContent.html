@@ -1,0 +1,51 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS - Seiteninhalt {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mx-auto mt-8">
+    <div class="flex justify-between">
+        <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
+                href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> / <span>Preis</span></h1>
+        <div>
+            {% csrf_token %}
+            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+                id="saveTextData" name="main_price">
+                Speichern
+            </a>
+        </div>
+    </div>
+
+
+    <div class="mt-8 flex justify-center w-full">
+        <div class="flex items-center max-w-4xl md:px-8">
+            <div class="max-w-2xl mb-10 md:mx-auto sm:text-center lg:max-w-4xl md:mb-12">
+                <input
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-72 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="header" type="text" value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}UNSERE PREISE{% endif %}">
+                <input
+                    class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="title" type="text" value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Transparente Preise{% endif %}">
+                <textarea rows="7"
+                    class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}Was unterscheidet YooLink von anderen Webdesign Agenturen? Wir sind günstiger, moderner und individueller. Mindestvertragslaufzeit ist ein Jahr, die Gebühren fallen im Voraus an.
+                    {% endif %}
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+
+    {% block javascriptend %}
+    {% compress js inline %}
+    <script defer src="{% static 'js/cms.js' %}"></script>
+    <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+    {% endcompress js %}
+    {% endblock javascriptend %}
+
+
+
+    {% endblock content %}

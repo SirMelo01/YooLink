@@ -1,0 +1,83 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS - Seiteninhalt {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container mx-auto mt-8">
+    <div class="flex justify-between">
+        <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
+                href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> / <span>Responsive</span></h1>
+        <div>
+            {% csrf_token %}
+            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+                id="saveTextData" name="main_responsive">
+                Speichern
+            </a>
+        </div>
+    </div>
+
+    <section class="scroll-my-4 -mb-0 xs:-mb-48 lg:-mb-0 mt-8" id="Responsive">
+        <div class="grid grid-cols-2 gap-4 lg:pt-16">
+            <div class="mb-5 lg:mb-0 h-full">
+                <div class="w-6xl mb-5 flex flex-col justify-center items-center">
+                    <input
+                        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-2/3 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        id="header" type="text"
+                        value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}EINE WEBSITE OPTIMIERT FÜR ALLE GERÄTE{% endif %}">
+                    <input
+                        class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        id="title" type="text"
+                        value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Responsive Design{% endif %}">
+                    <textarea rows="8"
+                        class="bg-gray-200 h-full rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}Moderne Websites sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsive Webdesign passen sich Websites automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten. Wir als Web Agentur haben umfangreiche Erfahrung im Entwerfen und Entwickeln von responsive Websites, die sowohl auf dem Desktop als auch auf mobilen Geräten beeindrucken.
+                        {% endif %}
+                    </textarea>
+
+                </div>
+            </div>
+            <!--Imageslider-->
+            <div class="container content-center px-1">
+                <!--Browser-->
+                <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
+                    <img src="{% static 'images/MacBookPro16.png' %}"
+                        class="absolute xs:object-top lg:object-center w-full object-contain z-10"
+                        alt="MacBookPro16 Bezel" />
+                    <span id="slider">
+                        <img src="{% static 'images/MacBook-RSAutoglas1.png' %}"
+                            class="relative w-full object-contain xs:object-top lg:object-center"
+                            alt="MacBookPro16 Bezel RS-Autoglas" />
+                        <img src="{% static 'images/MacBook-RSAutoglas2.png' %}"
+                            class="hidden relative w-full object-contain xs:object-top lg:object-center"
+                            alt="MacBookPro16 Bezel RS-Autoglas" />
+                    </span>
+                </div>
+                <!--Phone-->
+                <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
+                    <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute w-full object-contain z-10"
+                        alt="iPhone-Frame Bezel" />
+                    <span id="slider">
+                        <img src="{% static 'images/iPhone-RSAutoglas.png' %}"
+                            class="relative w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas" />
+                        <img src="{% static 'images/iPhone-RSAutoglas.png' %}"
+                            class="hidden relative w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    {% block javascriptend %}
+    {% compress js inline %}
+    <script defer src="{% static 'js/cms.js' %}"></script>
+    <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+    {% endcompress js %}
+    {% endblock javascriptend %}
+
+
+
+    {% endblock content %}

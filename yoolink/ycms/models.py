@@ -34,6 +34,7 @@ class fileentry(models.Model):
     file = models.ImageField(upload_to='yoolink/')
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
+    place = models.CharField(max_length=60, default="")
 
     def __str__(self):
         return os.path.basename(self.file.name)
@@ -107,3 +108,12 @@ class Message(models.Model):
     message = models.CharField(max_length=600)
     date = models.DateField()
     seen = models.BooleanField(default=False)
+
+
+class TextContent(models.Model):
+    name = models.CharField(max_length=50, default="", unique=True)
+    header = models.CharField(max_length=50, default="")
+    title = models.CharField(max_length=70, default="")
+    description = models.CharField(max_length=700, default="")
+    buttonText = models.CharField(max_length=60, default="")
+
