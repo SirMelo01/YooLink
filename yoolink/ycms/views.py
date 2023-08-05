@@ -441,14 +441,15 @@ def save_galery(request, id):
     if request.method == 'POST':
         title = request.POST.get('title', '')
         description = request.POST.get('description', '')
-        active = request.POST.get('active', False)
+        
         galery.title = title
         galery.description = description
-        if active == "true":
-            active = True
-        else:
-            active = False
-        galery.active = active
+        place = request.POST.get('place', 'nothing')
+        if Galerie.objects.filter(place=place).exists():
+            extra = Galerie.objects.get(place=place)
+            extra.place = "nothing"
+            extra.save()
+        galery.place = place
         galery.save()
         return JsonResponse({"success": "Die Galerie wurde erfolgreich gespeichert"})
     return JsonResponse({"error": "Fehler beim Speichern der Galerie"})

@@ -28,7 +28,7 @@ $('#galeryForm').submit(function (e) {
         csrfmiddlewaretoken: csrftoken,
         "title": $('#title').val(),
         "description": $('#description').val(),
-        "active": $('#activeSwitch').prop('checked')
+        "place": $('#place').val()
     }
     $.ajax({
         type: 'post',
