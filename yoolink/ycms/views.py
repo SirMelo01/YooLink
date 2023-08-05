@@ -110,7 +110,11 @@ def update_file(request, id):
         if title:
             file.title = title
         if place:
-            file.place = place
+            if fileentry.objects.exists(place=place):
+                extra = fileentry.objects.get(place=place)
+                extra.place = "nothing"
+                extra.save()
+            file.place = place 
         file.save()
         return JsonResponse({"success": "File wurde erfolgreich bearbeitet"})
     return JsonResponse({"error": "Etwas ist schief gelaufen. Versuche es später nochmal"})

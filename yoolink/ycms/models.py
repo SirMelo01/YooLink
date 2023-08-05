@@ -34,7 +34,7 @@ class fileentry(models.Model):
     file = models.ImageField(upload_to='yoolink/')
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
-    place = models.CharField(max_length=60, default="")
+    place = models.CharField(max_length=60, default="", unique=True)
 
     def __str__(self):
         return os.path.basename(self.file.name)
