@@ -110,7 +110,7 @@ def update_file(request, id):
         if title:
             file.title = title
         if place:
-            if fileentry.objects.exists(place=place):
+            if fileentry.objects.filter(place=place).exists():
                 extra = fileentry.objects.get(place=place)
                 extra.place = "nothing"
                 extra.save()
