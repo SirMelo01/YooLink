@@ -1,6 +1,10 @@
-var currentSlideId = 1;
-var sliderElement = document.getElementById("slider");
-var totalSlides = sliderElement.childElementCount;
+var currentDesktopSlideId = 1;
+var currentHandySlideId = 1;
+// Slider
+var desktopSliderElement = document.getElementById("desktopSlider");
+var totalDesktopSlides = desktopSliderElement.childElementCount;
+var handySliderElement = document.getElementById("handySlider");
+var totalHandySlides = handySliderElement.childElementCount;
 let myInterval = setInterval(next, 7000);
 
 const browser = document.querySelector("#browser");
@@ -51,18 +55,30 @@ $(document).ready(function() {
 
 // Image slider
 function next() {
-  if (currentSlideId < totalSlides) {
-    currentSlideId++;
-    showSlide();
+  if (phone.classList.contains("hidden")) {
+    // Desktop is shown
+    if (currentDesktopSlideId < totalDesktopSlides) {
+      currentDesktopSlideId++;
+      showSlide("desktopSlider");
+    } else {
+      currentDesktopSlideId = 1;
+      showSlide("desktopSlider");
+    }
   } else {
-    currentSlideId = 1;
-    showSlide();
+    if (currentHandySlideId < totalHandySlides) {
+      currentHandySlideId++;
+      showSlide("handySlider");
+    } else {
+      currentHandySlideId = 1;
+      showSlide("handySlider");
+    }
   }
+  
   clearInterval(myInterval);
   myInterval = setInterval(next, 7000);
 }
 
-function prev() {
+/*function prev() {
   if (currentSlideId > 1) {
     currentSlideId--;
     showSlide();
@@ -72,18 +88,35 @@ function prev() {
   }
   clearInterval(myInterval);
   myInterval = setInterval(next, 7000);
-}
+}*/
 
-function showSlide() {
-  slides = document.getElementById("slider").getElementsByTagName("img");
-  for (let index = 0; index < totalSlides; index++) {
-    const element = slides[index];
-    if (currentSlideId == index + 1) {
-      element.classList.add("animate-fade-in-down");
-      element.classList.remove("hidden");
-    } else {
-      element.classList.add("hidden");
-      element.classList.remove("animate-fade-in-down");
+function showSlide(id) {
+
+  if(id === 'desktopSlider') {
+    slides = document.getElementById(id).getElementsByTagName("img");
+    for (let index = 0; index < totalDesktopSlides; index++) {
+      const element = slides[index];
+      if (currentDesktopSlideId == index + 1) {
+        element.classList.add("animate-fade-in-down");
+        element.classList.remove("hidden");
+      } else {
+        element.classList.add("hidden");
+        element.classList.remove("animate-fade-in-down");
+      }
+    }
+  } else {
+    slides = document.getElementById(id).getElementsByTagName("img");
+    for (let index = 0; index < totalHandySlides; index++) {
+      const element = slides[index];
+      if (currentHandySlideId == index + 1) {
+        element.classList.add("animate-fade-in-down");
+        element.classList.remove("hidden");
+      } else {
+        element.classList.add("hidden");
+        element.classList.remove("animate-fade-in-down");
+      }
     }
   }
+
+  
 }

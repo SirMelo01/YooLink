@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from yoolink.ycms.models import FAQ, Message, TextContent, fileentry
+from yoolink.ycms.models import FAQ, Message, TextContent, fileentry, Galerie, GaleryImage
 import datetime
 from django.http import HttpResponseRedirect
 
@@ -11,6 +11,7 @@ def load_index(request):
         'FAQ': faq,
     }
 
+    # Text Contents
     if TextContent.objects.filter(name="main_hero").exists():
         context["heroText"] = TextContent.objects.get(name='main_hero')
 
@@ -25,6 +26,16 @@ def load_index(request):
 
     if TextContent.objects.filter(name="main_team").exists():
         context["teamText"] = TextContent.objects.get(name='main_team')
+
+    # Galery
+    if Galerie.objects.filter(place='main_hero').exists():
+        context["heroImages"] = Galerie.objects.get(place='main_hero').images.all()
+        
+    if Galerie.objects.filter(place='main_responsive_desktop').exists():
+        context['responsiveDesktopImages'] = Galerie.objects.get(place='main_responsive_desktop').images.all()
+        
+    if Galerie.objects.filter(place='main_responsive_handy').exists():
+        context['responsiveHandyImages'] = Galerie.objects.get(place='main_responsive_handy').images.all()
 
     # Images
     if fileentry.objects.filter(place='main_cms').exists():
