@@ -584,7 +584,6 @@ $(document).ready(function () {
     // Open Image Modal
     $('.edit-img').click(function () {
         // Send ajax to get all images
-        $('#imageModal').toggleClass("hidden");
         $editImg = $(this).siblings('img');
 
         height = typeof $editImg[0].style !== 'undefined' && $editImg[0].style.height ? $editImg[0].style.height : $editImg.height();
@@ -595,9 +594,10 @@ $(document).ready(function () {
 
         $('#imgText').val($editImg.attr('title'))
 
-        if ($("#myDiv").is(":empty")) {
+        if ($("#possibleImages").is(":empty")) {
             loadImages()
         }
+        $('#imageModal').toggleClass("hidden");
     });
 
     /** -------- BEGIN - Youtube-Video -------- */
@@ -787,7 +787,7 @@ $(document).ready(function () {
                 if (response.image_urls && response.image_urls.length != 0) {
                     $('#possibleImages').empty()
                     response.image_urls.forEach(function (url) {
-                        const $elem = $('<img src="' + url + '" class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">')
+                        const $elem = $('<img src="' + url.url + '" class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">')
                         // Add Event Handler for selection
                         $elem.click(function () {
                             if ($editImg) {

@@ -25,8 +25,22 @@ $(document).ready(function () {
         if ($('#buttonText').length > 0) {
             requestData.buttonText = $('#buttonText').val();
         }
-        
 
+        // Check images
+        images = []
+        $('.content-image').each(function() {
+            // Check id
+            imgId = $(this).attr('imgId');
+            key = $(this).attr('key');
+            if(imgId && key) {
+                images.push({
+                    "id": imgId,
+                    "key": key
+                })
+            }
+        });
+        requestData.images = JSON.stringify(images);
+        
         // Make the AJAX call
         $.ajax({
             type: "POST", // or "GET" depending on your server-side script

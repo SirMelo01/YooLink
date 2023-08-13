@@ -496,15 +496,18 @@ def all_images(request):
     if request.method == 'GET':
         images = fileentry.objects.all()
         # Liste zur Speicherung der Bild-URLs erstellen
-        image_urls = []
+        image_urls = [] 
 
         # URLs für jedes fileentry-Objekt erstellen
         for entry in images:
             # URL für das Bild erstellen
             image_url = entry.file.url
-
+            data = {
+                "url": image_url,
+                "id": entry.id
+            }
             # URL zur Liste hinzufügen
-            image_urls.append(image_url)
+            image_urls.append(data)
 
         # JSON-Antwort mit den Bild-URLs senden
         return JsonResponse({'image_urls': image_urls})
@@ -577,6 +580,8 @@ def site_view_main_cms(request):
     data = {}
     if TextContent.objects.filter(name="main_cms").exists():
         data["textContent"] = TextContent.objects.get(name='main_cms')
+    if fileentry.objects.filter(place='main_cms').exists():
+        data["cmsImage"] = fileentry.objects.get(place='main_cms')
     return render(request, "pages/cms/content/sites/mainsite/CmsContent.html", data)
 
 @login_required(login_url='login')
@@ -591,6 +596,7 @@ def site_view_main_team(request):
     data = {}
     if TextContent.objects.filter(name="main_team").exists():
         data["textContent"] = TextContent.objects.get(name='main_team')
+
     return render(request, "pages/cms/content/sites/mainsite/TeamContent.html", data)
 
 
@@ -603,6 +609,15 @@ def saveTextContent(request):
         buttonText = request.POST.get('buttonText', '')
         # Model-Name: z.B. main_hero
         name = request.POST.get('name', '')
+
+        images = json.loads(request.POST.get('images', '[]'))
+
+        for image in images:
+            if fileentry.objects.filter(id=image["id"]).exists():
+                file = fileentry.objects.get(id=image["id"])
+                file.place = image['key']
+                file.save()
+
         if TextContent.objects.filter(name=name).exists():
             # Create Model
             textContent = TextContent.objects.get(name=name)

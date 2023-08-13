@@ -25,10 +25,6 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f local.yml run --rm django python manage.py collectstatic
         $ docker-compose -f local.yml run --rm django python manage.py compress --force
 
-
-
-
-
 ## Production:
         $ in der Console erst mal in Ordner YooLink gehen: cd YooLink/
 

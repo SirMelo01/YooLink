@@ -5,6 +5,7 @@
 {% block content %}
 
 
+{% include "pages/cms/components/ImageSelectModal.html" %}
 
 <div class="container mx-auto mt-8">
     <div class="flex justify-between">
@@ -21,13 +22,16 @@
 
 
     <div class="flex justify-center w-full">
-        <div
-            class="relative isolate overflow-visible pt-16 md:pt-24 lg:flex lg:gap-x-20 lg:pt-0 lg:mt-20 w-full">
+        <div class="relative isolate overflow-visible pt-16 md:pt-24 lg:flex lg:gap-x-20 lg:pt-0 lg:mt-20 w-full">
             <!-- Foto-PC -->
             <div
                 class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-full overflow-hidden shadow-2xl rounded-md hidden lg:block">
-                <img class="absolute left-0 top-0 w-[45rem] max-w-none" src="{% static 'images/cms-screen.png' %}"
-                    alt="CMS App screenshot">
+                <img class="absolute left-0 top-0 w-[45rem] max-w-none content-image"
+                    key="main_cms"
+                    imgId="{% if cmsImage %}{{cmsImage.id}}{% endif %}"
+                    src="{% if cmsImage %}{{ cmsImage.file.url }}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
+                    alt="Image">
+                <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img"><i class="bi bi-pencil-square"></i></span>
             </div>
             <div class="lg:mx-0 lg:flex-auto lg:py-16 lg:text-left justify-center flex w-full flex-col items-center">
                 <input
@@ -58,7 +62,13 @@
         {% block javascriptend %}
         {% compress js inline %}
         <script defer src="{% static 'js/cms.js' %}"></script>
+        <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
         <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+        <script defer>
+            $(document).ready(function () {
+                loadImages(false);
+            })
+        </script>
         {% endcompress js %}
         {% endblock javascriptend %}
 
