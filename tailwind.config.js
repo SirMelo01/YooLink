@@ -10,6 +10,7 @@ module.exports = {
             "./yoolink/templates/pages/cms/content/*.{html,js}",
             "./yoolink/templates/pages/cms/content/sites/*.{html,js}",
             "./yoolink/templates/pages/cms/content/sites/**/*.{html,js}",
+            "./yoolink/templates/pages/cms/blog/*.{html,js}",
             "./yoolink/static/js/cms/**/*.js"
             ],
   theme: {
