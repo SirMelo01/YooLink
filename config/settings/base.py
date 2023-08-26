@@ -172,7 +172,7 @@ DEFAULT_FILE_STORAGE = 'config.settings.cdn.backends.MediaRootS3Boto3Storage'
 AWS_ACCESS_KEY_ID='DO00HJFLRWJCM3RQ6ANW'
 AWS_SECRET_ACCESS_KEY = env(
     "DIGITAL_OCEAN_SECRET_KEY",
-    #default="sLTs3mPUprd3bNcafCVkzcdORA1VFqQn9zHYhGZUhks",
+    default="sLTs3mPUprd3bNcafCVkzcdORA1VFqQn9zHYhGZUhks",
 )
 AWS_STORAGE_BUCKET_NAME='yoolink-django'
 AWS_S3_ENDPOINT_URL='https://fra1.digitaloceanspaces.com/'
