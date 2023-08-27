@@ -626,9 +626,12 @@ def saveTextContent(request):
                     file.place = image['key']
                     file.save()
 
+        customKeys = []
+
         # Custom Text Update
         for custom in customText:
             key = custom['key']
+            customKeys.append(key)
             if TextContent.objects.filter(name=key).exists():
                 inputs = custom['inputs']
                 textContent = TextContent.objects.get(name=key)
@@ -638,20 +641,25 @@ def saveTextContent(request):
                 textContent.description = inputs.get('description', textContent.description)
                 textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
                 textContent.save()
+            else:
+                inputs = custom['inputs']
+                textContent = TextContent.objects.create(name=key, header=inputs.get('header', ''), title=inputs.get('title', ''), description=inputs.get('description', ''), buttonText=inputs.get('buttonText', ''))
+                textContent.save()
 
         # Normal Text update
-        if TextContent.objects.filter(name=name).exists():
-            # Create Model
-            textContent = TextContent.objects.get(name=name)
-            textContent.header = header
-            textContent.title = title
-            textContent.description = description
-            textContent.buttonText = buttonText
-            textContent.save()
-            return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
-        else:
-            textContent = TextContent.objects.create(name=name, header=header, title=title, description=description, buttonText=buttonText)
-            textContent.save()
-            return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=201)
+        if not name in customKeys:
+            if TextContent.objects.filter(name=name).exists():
+                # Create Model
+                textContent = TextContent.objects.get(name=name)
+                textContent.header = header
+                textContent.title = title
+                textContent.description = description
+                textContent.buttonText = buttonText
+                textContent.save()
+                return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
+            else:
+                textContent = TextContent.objects.create(name=name, header=header, title=title, description=description, buttonText=buttonText)
+                textContent.save()
+                return JsonResponse({'success': 'Element wurde erfolgreich erstellt'}, status=201)
            
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)
