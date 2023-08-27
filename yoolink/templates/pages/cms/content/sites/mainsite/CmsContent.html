@@ -26,33 +26,37 @@
             <!-- Foto-PC -->
             <div
                 class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-full overflow-hidden shadow-2xl rounded-md hidden lg:block">
-                <img class="absolute left-0 top-0 w-[45rem] max-w-none content-image"
-                    key="main_cms"
+                <img class="absolute left-0 top-0 w-[45rem] max-w-none content-image" key="main_cms"
                     imgId="{% if cmsImage %}{{cmsImage.id}}{% endif %}"
                     src="{% if cmsImage %}{{ cmsImage.file.url }}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
                     alt="Image">
-                <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img"><i class="bi bi-pencil-square"></i></span>
+                <span
+                    class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img"><i
+                        class="bi bi-pencil-square"></i></span>
             </div>
             <div class="lg:mx-0 lg:flex-auto lg:py-16 lg:text-left justify-center flex w-full flex-col items-center">
-                <input
-                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-1/3 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="header" type="text"
-                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Dynamische Inhalte{% endif %}">
-                <input
-                    class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="title" type="text"
-                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Content Management System{% endif %}">
-                <textarea rows="8"
-                    class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %} Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.  
-                {% endif %}
-                </textarea>
-                <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start mb-5">
-                    <input id="buttonText"
-                        value="{% if textContent and textContent.buttonText %}{{textContent.buttonText}}{% else %}Angebot{% endif %}"
-                        class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm"></input>
-                    <a href="#" class="text-sm font-semibold leading-6">Erfahre mehr <span
-                            aria-hidden="true">→</span></a>
+                <div class="text-content" key="main_cms">
+                    <input
+                        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-1/3 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        inputType="header" type="text"
+                        value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Dynamische Inhalte{% endif %}">
+                    <input
+                        class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        inputType="title" type="text"
+                        value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Content Management System{% endif %}">
+                    <textarea rows="8"
+                        class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        inputType="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %} Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.  
+                    {% endif %}
+                    </textarea>
+
+                    <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start mb-5">
+                        <input inputType="buttonText"
+                            value="{% if textContent and textContent.buttonText %}{{textContent.buttonText}}{% else %}Angebot{% endif %}"
+                            class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm"></input>
+                        <a href="#" class="text-sm font-semibold leading-6">Erfahre mehr <span
+                                aria-hidden="true">→</span></a>
+                    </div>
                 </div>
                 <!-- Foto-Mobil -->
             </div>

@@ -610,14 +610,30 @@ def saveTextContent(request):
         # Model-Name: z.B. main_hero
         name = request.POST.get('name', '')
 
+        customText = json.loads(request.POST.get('customText', '[]'))
         images = json.loads(request.POST.get('images', '[]'))
 
+        # Checks Images and updates their key
         for image in images:
             if fileentry.objects.filter(id=image["id"]).exists():
                 file = fileentry.objects.get(id=image["id"])
                 file.place = image['key']
                 file.save()
 
+        # Custom Text Update
+        for custom in customText:
+            key = custom['key']
+            if TextContent.objects.filter(name=key).exists():
+                inputs = custom['inputs']
+                textContent = TextContent.objects.get(name=key)
+                # Set Values
+                textContent.header = inputs.get('header', textContent.header)
+                textContent.title = inputs.get('title', textContent.title)
+                textContent.description = inputs.get('description', textContent.description)
+                textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
+                textContent.save()
+
+        # Normal Text update
         if TextContent.objects.filter(name=name).exists():
             # Create Model
             textContent = TextContent.objects.get(name=name)

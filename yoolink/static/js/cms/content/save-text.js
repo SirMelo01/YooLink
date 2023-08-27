@@ -5,6 +5,36 @@ $(document).ready(function () {
         var requestData = {
             name: $(this).attr('name'),
         };
+        var customText = []
+        
+        $('.text-content').each(function() {
+            // Retrieve and print the textContent of the current element
+            var $inputs = $(this).find('input, textarea'); // Find input and textarea elements within the current .text-content
+            var key = $(this).attr("key");
+            
+            var inputList = {}
+            $inputs.each(function() { 
+                var inputValue = $(this).val(); // Get the value of the input element
+                var inputType = $(this).attr('inputType');
+                /**
+                 * Input Types:
+                 * header -> Header
+                 * title -> Title
+                 * description -> Description
+                 * buttonText -> Button Text
+                 */
+                
+                if (inputValue.trim() !== '' && inputType.trim() !== '') {
+                    inputList[inputType] = inputValue
+                }
+            });
+                customText.push({
+                    "key": key,
+                    "inputs": inputList
+                });
+        });
+
+        requestData.customText = JSON.stringify(customText);
         
         // Check if the element with ID 'header' exists before adding it to requestData
         if ($('#header').length > 0) {
@@ -40,6 +70,7 @@ $(document).ready(function () {
             }
         });
         requestData.images = JSON.stringify(images);
+        
         
         // Make the AJAX call
         $.ajax({
