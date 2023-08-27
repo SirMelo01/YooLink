@@ -617,8 +617,14 @@ def saveTextContent(request):
         for image in images:
             if fileentry.objects.filter(id=image["id"]).exists():
                 file = fileentry.objects.get(id=image["id"])
-                file.place = image['key']
-                file.save()
+                key = image['key']
+                if key:
+                    if fileentry.objects.filter(place=key).exists():
+                        extra = fileentry.objects.get(place=key)
+                        extra.place = "nothing"
+                        extra.save()
+                    file.place = image['key']
+                    file.save()
 
         # Custom Text Update
         for custom in customText:
