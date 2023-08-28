@@ -661,5 +661,6 @@ def saveTextContent(request):
                 textContent = TextContent.objects.create(name=name, header=header, title=title, description=description, buttonText=buttonText)
                 textContent.save()
                 return JsonResponse({'success': 'Element wurde erfolgreich erstellt'}, status=201)
-           
+        return JsonResponse({'success': 'Elemente wurden erfolgreich gespeichert'}, status=200)
+
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)
