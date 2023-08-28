@@ -29,7 +29,12 @@
                 </address>
                 <!--<h1 class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{{ blog.title }}</h1>-->
             </header>
+            {% if blog.active %}
             {{ blog.body | safe }}
+            {% else %}
+            <p>Dieser Blog ist nicht aktiv!</p>
+            {% endif %}
+            
             <br /><br /><br /><br />
             <a href="{% url 'blog:blog' %}"
                 class="bg-blue-900 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md">
