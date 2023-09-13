@@ -591,6 +591,13 @@ def site_view_main_responsive(request):
     data = {}
     if TextContent.objects.filter(name="main_responsive").exists():
         data["textContent"] = TextContent.objects.get(name='main_responsive')
+
+    if Galerie.objects.filter(place='main_responsive_desktop').exists():
+        data['responsiveDesktopImages'] = Galerie.objects.get(place='main_responsive_desktop').images.all()
+        
+    if Galerie.objects.filter(place='main_responsive_handy').exists():
+        data['responsiveHandyImages'] = Galerie.objects.get(place='main_responsive_handy').images.all()
+
     return render(request, "pages/cms/content/sites/mainsite/ResponsiveContent.html", data)
 
 @login_required(login_url='login')

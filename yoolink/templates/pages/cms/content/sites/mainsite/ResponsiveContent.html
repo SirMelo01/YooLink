@@ -2,9 +2,17 @@
 {% load compress static %}
 {% block title %} {{block.super}} | CMS - Seiteninhalt {% endblock %}
 
+<!-- Needed for Galery (Slick) -->
+{% block javascript %}
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
+{% endblock %}
+
 {% block content %}
 
-
+{% include "pages/cms/components/GalerySelectModal.html" %}
 
 <div class="container mx-auto mt-8">
     <div class="flex justify-between">
@@ -68,6 +76,62 @@
                 </div>
             </div>
         </div>
+        <div class="grid grid-cols-4 gap-4 lg:pt-4">
+            <!-- Responsive Desktop -->
+            <div class="col-span-3">
+                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Desktop-Modus </label>
+                <div class="flex flex-col justify-center w-full items-center">
+                    <div class="galery-container relative justify-center max-w-3xl w-full mt-4" galery-id="-1" key="main_responsive_desktop">
+                        <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"><i class="bi bi-pencil-square"></i></span>
+                        <div class="carousel rounded-lg">
+                            {% if responsiveDesktopImages %}
+                                {% for img in responsiveDesktopImages %}
+                                <div>
+                                    <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96" />
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div>
+                                <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" 
+                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                            </div>
+                            <div>
+                                <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" 
+                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Responsive Handy -->
+            <div>
+                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Handy-Modus </label>
+                <div class="flex flex-col justify-center w-full items-center">
+                    <div class="galery-container relative justify-center max-w-3xl w-full mt-4" galery-id="-1" key="main_responsive_handy">
+                        <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"><i class="bi bi-pencil-square"></i></span>
+                        <div class="carousel rounded-lg">
+                            {% if responsiveHandyImages %}
+                                {% for img in responsiveHandyImages %}
+                                <div>
+                                    <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96" />
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div>
+                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" 
+                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                            </div>
+                            <div>
+                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" 
+                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
 
@@ -75,6 +139,26 @@
     {% compress js inline %}
     <script defer src="{% static 'js/cms.js' %}"></script>
     <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+    <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
+    <!-- Needed for Galery -->
+    <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+    <script>
+        $('.carousel').slick({
+        dots: true,  // Display navigation dots
+        arrows: true,  // Display navigation arrows
+        infinite: true,  // Enable infinite looping
+        slidesToShow: 1,  // Number of slides to show at once
+        slidesToScroll: 1,  // Number of slides to scroll at a time
+        autoplay: true,
+        autoplaySpeed: 3000,
+        // Add any other configuration options as needed
+    });
+    </script>
+    <script defer>
+        $(document).ready(function () {
+            loadGalerien(false);
+        })
+    </script>
     {% endcompress js %}
     {% endblock javascriptend %}
 

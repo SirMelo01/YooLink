@@ -680,6 +680,10 @@ video {
   grid-column: span 2 / span 2;
 }
 
+.col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
 .-m-4 {
   margin: -1rem;
 }
@@ -4239,8 +4243,16 @@ video {
     padding-top: 1.5rem;
   }
 
+  .lg\:pt-8 {
+    padding-top: 2rem;
+  }
+
   .lg\:pt-9 {
     padding-top: 2.25rem;
+  }
+
+  .lg\:pt-4 {
+    padding-top: 1rem;
   }
 
   .lg\:text-left {
