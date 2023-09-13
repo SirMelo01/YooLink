@@ -8,6 +8,34 @@
 {% endblock %}
 {% block content %}
 
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 px-5 lg:min-w-[10rem] lg:px-0 hidden" id="editModal">
+  <div class="max-h-full w-full max-w-4xl rounded-lg bg-white p-4 shadow-lg">
+    <!-- Modal header -->
+    <div class="flex items-start justify-between rounded-t border-b p-4 dark:border-gray-600">
+      <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">Bild bearbeiten</h3>
+      <button type="button" id="closeModal" class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+        <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
+    </div>
+    <div class="max-h-[45rem] space-y-6 overflow-auto p-6" id="previewBody">
+      <!-- Bild-Text -->
+
+      <div class="mb-6 mt-6 flex w-full flex-col space-y-3">
+        <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Frage </label>
+        <textarea rows="4" class="w-full appearance-none rounded border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="question" type="text" placeholder="Stelle hier die Frage"></textarea>
+      </div>
+      <div class="mb-6 mt-6 flex w-full flex-col space-y-3">
+        <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Antwort </label>
+        <textarea rows="4" class="w-full appearance-none rounded border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="answer" type="text" placeholder="Antworte hier auf die Frage"></textarea>
+      </div>
+      <button id="updateSingleFAQ" faq-id="-1" class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700">Übernehmen</button>
+    </div>
+  </div>
+</div>
+
 <div class="container mx-auto mt-8">
   <h1 class="text-2xl mb-5">FAQ - Overview</h1>
   <!-- Simple List -->
@@ -32,9 +60,9 @@
         </div>
         <div class="w-1/5">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline update"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline edit-faq"
             type="button">
-            Sichere
+            Anzeigen
           </button>
           <button
             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete"
@@ -47,10 +75,10 @@
     {% endfor %}
   </div>
 
-  <button id="save-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    Sichere Reihenfolge
+  <button id="save-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    Speichern
   </button>
-  <button id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+  <button id="add-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
     Hinzufügen
   </button>
 </div>

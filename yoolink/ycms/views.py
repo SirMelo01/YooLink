@@ -259,14 +259,16 @@ def del_faq(request, id):
 @login_required(login_url='login')
 def update_faq_order(request):
     if request.method == 'POST':
-        faq_ids = request.POST.getlist('faq_ids[]')
-        for i, faq_id in enumerate(faq_ids):
-            faq = FAQ.objects.get(id=faq_id)
-            faq.order = i + 1
-            faq.save()
+        faqs = json.loads(request.POST.get('faqs', '[]'))
+        for i, faq in enumerate(faqs):
+            realFaq = FAQ.objects.get(id=faq['id'])
+            realFaq.order = i + 1
+            realFaq.question = faq['question']
+            realFaq.answer = faq['answer']
+            realFaq.save()
         return JsonResponse({'success': True})
 
-    return JsonResponse({'success': False})
+    return JsonResponse({'error': True})
 
 
 # --------------- [Blog] ---------------
@@ -419,6 +421,18 @@ def get_galery_images(request):
         return JsonResponse({"images": images_list}, status=200)
     return JsonResponse({}, status=400)
     
+@login_required(login_url='login')
+def update_galery_image(request, id):
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        file = GaleryImage.objects.get(id=id)
+        if title:
+            file.title = title
+            file.save()
+            return JsonResponse({"success": "Bild wurde erfolgreich gespeichert"})
+        return JsonResponse({"error": "Bitte gebe einen Titel ein!"})
+    return JsonResponse({"error": "Etwas ist schief gelaufen. Versuche es später nochmal"})
+
 
 # Render Galery Overview
 @login_required(login_url='login')
@@ -538,6 +552,7 @@ def all_galerien(request):
                 })
             
             galerien_list.append({
+                'id': galerie.pk,
                 'title': galerie.title,
                 'description': galerie.description,
                 'active': galerie.active,
@@ -566,6 +581,9 @@ def site_view_main_hero(request):
     data = {}
     if TextContent.objects.filter(name="main_hero").exists():
         data["textContent"] = TextContent.objects.get(name='main_hero')
+    if Galerie.objects.filter(place='main_hero').exists():
+        data["heroImages"] = Galerie.objects.get(place='main_hero').images.all()
+        
     return render(request, "pages/cms/content/sites/mainsite/HeroContent.html", data)
 
 @login_required(login_url='login')
@@ -612,6 +630,7 @@ def saveTextContent(request):
 
         customText = json.loads(request.POST.get('customText', '[]'))
         images = json.loads(request.POST.get('images', '[]'))
+        galerien = json.loads(request.POST.get('galerien', '[]'))
 
         # Checks Images and updates their key
         for image in images:
@@ -623,8 +642,20 @@ def saveTextContent(request):
                         extra = fileentry.objects.get(place=key)
                         extra.place = "nothing"
                         extra.save()
-                    file.place = image['key']
+                    file.place = key
                     file.save()
+
+        for galery in galerien:
+            if Galerie.objects.filter(id=galery['id']).exists():
+                galerie = Galerie.objects.get(id=galery['id'])
+                key = galery['key']
+                if key:
+                    if Galerie.objects.filter(place=key).exists():
+                        extra = Galerie.objects.get(place=key)
+                        extra.place = "nothing"
+                        extra.save()
+                    galerie.place = key
+                    galerie.save()
 
         # Custom Text Update
         for custom in customText:

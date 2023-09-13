@@ -30,6 +30,7 @@ urlpatterns = [
     path('blog/<int:id>/update/', views.update_blog, name='blog-update'),
     # Galery
     path('galerien/', views.galerien, name='galerien'),
+    path('galery/images/update/<int:id>/', views.update_galery_image, name='galery-update-img'),
     path('galery/create/', views.create_galery, name='galery-create'),
     path('galery/getImages/', views.get_galery_images, name='galery-get-images'),
     path('galery/<int:id>/', views.galery_view, name='galery-view'),

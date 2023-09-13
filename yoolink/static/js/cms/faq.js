@@ -56,19 +56,29 @@ $(document).ready(function () {
     });
     // Save order
     $('#save-btn').click(function () {
-        var faq_ids = [];
+        var faqs = [];
         $('#simpleList .list-group-item').each(function () {
-            faq_ids.push($(this).attr('data-id'));
+            var question = $(this).find('.question').val()
+            var answer = $(this).find('.answer').val()
+            var id = $(this).attr('data-id')
+            faqs.push({
+                id: id,
+                question: question,
+                answer: answer
+            })
         });
-        console.log(faq_ids)
+
         $.ajax({
             url: 'sort/',
             type: 'POST',
-            data: { 'faq_ids[]': faq_ids, csrfmiddlewaretoken: csrftoken, },
+            data: { 'faqs': JSON.stringify(faqs), csrfmiddlewaretoken: csrftoken},
             dataType: 'json',
             success: function (response) {
-                console.log(response);
-                sendNotif("Die Sortierung des FAQ's wurde erfolgreich gespeichert!", "success")
+                if(response.success) {
+                    sendNotif("Das FAQ wurde erfolgreich gespeichert!", "success")
+                } else {
+                    sendNotif("Das FAQ konnte nicht gespeichert werden", "error")
+                }  
             },
             error: function (xhr, status, error) {
                 sendNotif("Fehler beim Speichern der Sortierung", "error")
@@ -93,6 +103,53 @@ $(document).ready(function () {
             }
         });
     });
+
+    /* Edit Modal Functions */
+    $('#closeModal').click(function() {
+        $('#editModal').addClass("hidden");
+    });
+
+    $('.edit-faq').click(function() {
+        const $faq = $(this).closest('.list-group-item');
+        const id = $faq.attr('data-id');
+        const question = $faq.find('.question').val();
+        const answer = $faq.find('.answer').val();
+
+        // Add Data to Modal
+        $('#question').val(question);
+        $('#answer').val(answer);
+        $('#updateSingleFAQ').attr('faq-id', id);
+
+        // Save it
+        $('#editModal').removeClass("hidden");
+    });
+
+    $('#updateSingleFAQ').click(function() {
+        const question = $('#question').val();
+        const answer = $('#answer').val();
+        
+        if(question != '' && answer != '') {
+            const id = $(this).attr('faq-id');
+            if(id==="-1") {
+                sendNotif("Etwas ist schief gelaufen. Versuche es nochmal!", "error");
+            } else {
+                var element = $('[data-id="'+ id +'"]');
+                if(element) {
+                    element.find(".question").val(question);
+                    element.find(".answer").val(answer);
+                    $('#save-btn').click();
+                } else {
+                    sendNotif("Etwas ist schief gelaufen. Versuche es nochmal!", "error");
+                }
+            }
+        } else {
+            sendNotif("Bitte trage bei beiden etwas ein!", "error");
+            return;
+        }
+        $('#editModal').addClass("hidden");
+
+    })
+
 });
 function createFaq(id, answer, question) {
     // create the element
@@ -116,7 +173,21 @@ function createFaq(id, answer, question) {
     });
     answerElement.append(answerInput);
     var buttonElement = $('<div>').addClass('w-1/5');
-    var updateButton = $('<button>').addClass('bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline update').attr('type', 'button').text('Sichere');
+    var updateButton = $('<button>').addClass('bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline edit-faq').attr('type', 'button').text('Anzeigen');
+    updateButton.click(function() {
+        const $faq = $(this).closest('.list-group-item');
+        const id = $faq.attr('data-id');
+        const question = $faq.find('.question').val();
+        const answer = $faq.find('.answer').val();
+
+        // Add Data to Modal
+        $('#question').val(question);
+        $('#answer').val(answer);
+        $('#updateSingleFAQ').attr('faq-id', id);
+
+        // Save it
+        $('#editModal').removeClass("hidden");
+    });
     var deleteButton = $('<button>').addClass('bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete').attr('type', 'button').text('Lösche');
     buttonElement.append(updateButton, deleteButton);
     innerElement.append(questionElement, answerElement, buttonElement);

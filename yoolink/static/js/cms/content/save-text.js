@@ -70,6 +70,21 @@ $(document).ready(function () {
             }
         });
         requestData.images = JSON.stringify(images);
+
+        galerien = []
+        $('.galery-container').each(function() {
+            galeryId = $(this).attr('galery-id');
+            key = $(this).attr('key');
+            if(galeryId && key) {
+                if(galeryId != "-1") {
+                    galerien.push({
+                       "id": galeryId,
+                       "key": key 
+                    })
+                }
+            }
+        });
+        requestData.galerien = JSON.stringify(galerien);
         
         
         // Make the AJAX call

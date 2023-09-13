@@ -2,9 +2,17 @@
 {% load compress static %}
 {% block title %} {{block.super}} | CMS - Seiteninhalt {% endblock %}
 
+<!-- Needed for Galery (Slick) -->
+{% block javascript %}
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
+{% endblock %}
+
 {% block content %}
 
-
+{% include "pages/cms/components/GalerySelectModal.html" %}
 
 <div class="container mx-auto mt-8">
     <div class="flex justify-between">
@@ -25,10 +33,12 @@
             <div class="max-w-2xl mb-10 md:mx-auto sm:text-center lg:max-w-4xl md:mb-12">
                 <input
                     class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-72 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="header" type="text" value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Webdesign Agentur - YooLink{% endif %}">
+                    id="header" type="text"
+                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Webdesign Agentur - YooLink{% endif %}">
                 <input
                     class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="title" type="text" value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Webdesign Agentur - YooLink{% endif %}">
+                    id="title" type="text"
+                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Webdesign Agentur - YooLink{% endif %}">
                 <textarea rows="7"
                     class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}
@@ -43,11 +53,70 @@
         </div>
     </div>
 
+    <div class="flex flex-col justify-center w-full items-center">
+        <div class="galery-container relative justify-center max-w-3xl w-full mt-4" galery-id="-1" key="main_hero">
+            <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-galery"><i class="bi bi-pencil-square"></i></span>
+            <div class="carousel rounded-lg">
+                {% if heroImages %}
+                    {% for img in heroImages %}
+                    <div>
+                        <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96" />
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div>
+                    <img src="{% static 'images/Template1.png' %}" 
+                        alt="Template Design" class="w-full rounded-xl h-96"/>
+                </div>
+                <div>
+                    <img src="{% static 'images/Template2.png' %}" 
+                        alt="Template Design" class="w-full rounded-xl h-96"/>
+                </div>
+                <div>
+                    <img src="{% static 'images/Template3.png' %}" 
+                        alt="Template Design" class="w-full rounded-xl h-96"/>
+                </div>
+                {% endif %}
+            </div>
+    
+        </div>
+    
+        <div class="flex justify-center w-full mt-5">
+            <a href="#" aria-label="Sign up" title="Sign up"
+                class="inline-flex items-center justify-center h-12 px-6 font-medium  text-white transition duration-200 rounded">
+                <input id="buttonText"
+                    value="{% if textContent and textContent.buttonText %}{{textContent.buttonText}}{% else %}Webdesign-Vorlagen{% endif %}"
+                    class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm"></input>
+            </a>
+        </div>
+    </div>
+    
+
 
     {% block javascriptend %}
     {% compress js inline %}
     <script defer src="{% static 'js/cms.js' %}"></script>
     <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+    <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
+    <!-- Needed for Galery -->
+    <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+    <script>
+        $('.carousel').slick({
+        dots: true,  // Display navigation dots
+        arrows: true,  // Display navigation arrows
+        infinite: true,  // Enable infinite looping
+        slidesToShow: 1,  // Number of slides to show at once
+        slidesToScroll: 1,  // Number of slides to scroll at a time
+        autoplay: true,
+        autoplaySpeed: 3000,
+        // Add any other configuration options as needed
+    });
+    </script>
+    <script defer>
+        $(document).ready(function () {
+            loadGalerien(false);
+        })
+    </script>
     {% endcompress js %}
     {% endblock javascriptend %}
 
