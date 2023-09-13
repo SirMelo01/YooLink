@@ -20,6 +20,7 @@
         <div class="px-4 mx-auto max-w-screen-xl">
             <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {% for blog in object_list %}
+                    {% if blog.active %}
                     <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}">
                         <article class="max-w-xs overflow-hidden">
                             <img src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}" class="h-40 mb-5 rounded-lg w-full object-cover object-center" alt="Image 1"><!--{% static 'images/designImg/filler.png' %}-->
@@ -29,6 +30,7 @@
                             <!--<p class="mb-4 font-light text-gray-500 dark:text-gray-400">{{ blog.body|slice:":150"|safe }}...</p>-->
                         </article>
                     </a>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

@@ -208,7 +208,7 @@ $(document).ready(function () {
         const content = receiveContent($blockContent)
         // Load to previewBody
         const $directCodeContainer = $('<div>')
-        const $modalBody = $('<div>')
+        const $modalBody = $('<div class"space-y-6">')
         const blogLayout = $('#blogLayout').val()
         if (blogLayout.includes('center')) {
             $modalBody.addClass('flex flex-col items-center')
