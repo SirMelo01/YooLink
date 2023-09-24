@@ -150,12 +150,11 @@
                         sendNotif(response.error, "error")
                     }
                     $('#editModal').addClass('hidden')
-                    
-                   
+                      
                 },
                 error: function (error) {
                     // Funktion, die ausgeführt wird, wenn ein Fehler auftritt
-                    sendNotif("Beim Löschen des Bildes ist etwas schief gelaufen", "error")
+                    sendNotif("Beim Speichern des Bildes ist etwas schief gelaufen", "error")
                 }
             });
         });

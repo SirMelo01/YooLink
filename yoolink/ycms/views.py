@@ -109,7 +109,7 @@ def update_file(request, id):
         file = fileentry.objects.get(id=id)
         if title:
             file.title = title
-        if place:
+        if place and not place == 'nothing':
             if fileentry.objects.filter(place=place).exists():
                 extra = fileentry.objects.get(place=place)
                 extra.place = "nothing"
@@ -459,10 +459,11 @@ def save_galery(request, id):
         galery.title = title
         galery.description = description
         place = request.POST.get('place', 'nothing')
-        if Galerie.objects.filter(place=place).exists():
-            extra = Galerie.objects.get(place=place)
-            extra.place = "nothing"
-            extra.save()
+        if not place == 'nothing':
+            if Galerie.objects.filter(place=place).exists():
+                extra = Galerie.objects.get(place=place)
+                extra.place = "nothing"
+                extra.save()
         galery.place = place
         galery.save()
         return JsonResponse({"success": "Die Galerie wurde erfolgreich gespeichert"})
