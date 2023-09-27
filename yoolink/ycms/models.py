@@ -89,6 +89,7 @@ class Blog(models.Model):
     body = models.TextField(default="This Blog is empty")
     code = models.JSONField(default=default_code)
     active = models.BooleanField(default=False)
+    description = models.TextField(default="")
 
     def delete(self, *args, **kwargs):
         self.title_image.storage.delete(self.title_image.name)
@@ -117,6 +118,6 @@ class TextContent(models.Model):
     name = models.CharField(max_length=50, default="", unique=True)
     header = models.CharField(max_length=50, default="")
     title = models.CharField(max_length=70, default="")
-    description = models.CharField(max_length=700, default="")
+    description = models.TextField(default="")
     buttonText = models.CharField(max_length=60, default="")
 

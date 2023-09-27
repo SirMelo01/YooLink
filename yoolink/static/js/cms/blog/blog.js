@@ -459,11 +459,27 @@ $(document).ready(function () {
             sendNotif("Bitte wähle ein Titelbild aus!", "error")
             return;
         }
-
+        
         var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
         // Get Code
         const $blockContent = $('#blogContent')
+        // Select the first element with attr("element-type") = 'textArea' within elements with class 'relative' in 'blockContent'
+        var $firstTextArea = $blockContent.children('.relative').find('.textArea').first();
+        if ($firstTextArea.length == 0){
+            sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            return;
+        }
+        var firstTextAreaId = $firstTextArea.attr('id')
+        var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
+        console.log(firstTextAreaContent)
+        // Überprüfen, ob ein Element gefunden wurde
+        if (firstTextAreaContent.trim() === '') {
+            // Ein Element wurde gefunden
+            // Du kannst hier weiter mit 'firstTextArea' arbeiten
+            sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            return;
+        }
         const content = receiveContent($blockContent)
         // Load to previewBody
         const $directCodeContainer = $('<div>')
@@ -501,6 +517,7 @@ $(document).ready(function () {
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
         formData.append('title_image', title_image, "blogTitleImage");
+        formData.append('description', firstTextAreaContent);
 
         console.log(formData);
 
