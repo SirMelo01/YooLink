@@ -47,7 +47,6 @@ $(document).ready(function () {
     var imageUrl = "{% static 'js/cms/blog/nicEditorIcons.gif' %}";
 
     // Now you can use `imageUrl` in your JavaScript code
-    console.log(imageUrl);
 
     // NicEditor (TextFields)
     myNicEditor = new nicEditor({
@@ -56,38 +55,6 @@ $(document).ready(function () {
 
     loadSlick()
     loadNicEditors()
-
-    function initializeSortable() {
-        var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
-        console.log(nestedSortables)
-
-        // Loop through each nested sortable element
-        for (var i = 0; i < nestedSortables.length; i++) {
-            new Sortable(nestedSortables[i], {
-                group: {
-                    name: 'groupFilter',
-                    put: ["groupListAuswahlFall", "groupListOprtaions", "groupFilter"]
-                },
-                animation: 150,
-                fallbackOnBody: true,
-                filter: ".not-sortable",
-                handle: ".handle",
-
-                // Element dragging ended
-                onEnd: function (/**Event*/evt) {
-                    let itemEl = evt.item;  // dragged HTMLElement
-                    let to = evt.to;    // target list
-                    let from = evt.from;  // previous list
-                    let oldIndex = evt.oldIndex;  // element's old index within old parent
-                    let newIndex = evt.newIndex;  // element's new index within new parent
-                    let oldDraggableIndex = evt.oldDraggableIndex; // element's old index within old parent, only counting draggable elements
-                    let newDraggableIndex = evt.newDraggableIndex; // element's new index within new parent, only counting draggable elements
-                    let clone = evt.clone // the clone element
-                    let pullMode = evt.pullMode;  // when item is in another sortable: `"clone"` if cloning, `true` if moving
-                }
-            });
-        }
-    }
 
     function initializeSimpleSortable() {
         new Sortable(document.getElementById('blogContent'), {
@@ -105,7 +72,6 @@ $(document).ready(function () {
         // Check if the pressed key is Tab (key code 9)
         if (event.keyCode === 9) {
             event.preventDefault(); // Prevent the default behavior (jumping to the next element)
-            console.log("TextArea KeyDown TAB")
             // Insert a tab character at the current cursor position
             const start = this.selectionStart;
             const end = this.selectionEnd;
@@ -709,6 +675,7 @@ $(document).ready(function () {
     $('#possibleImages img').click(function () {
         if ($editImg) {
             $editImg.attr('src', $(this).attr('src'));
+            //$editImg.attr('imgId', )
             //$('#imageModal').toggleClass("hidden");
             sendNotif('Neues Bild ausgewählt', 'success')
         }
@@ -1005,7 +972,8 @@ function receiveContent(blockContent) {
                         "title": $video.attr('title'),
                         "frameborder": "0",
                         "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
-                        "allowfullscreen": "True"
+                        "allowfullscreen": "True",
+                        "class": "my-8"
 
                     },
 
@@ -1141,8 +1109,6 @@ function getWebElement(jsonElem) {
         } else {
             elem.html(replaceLinks(jsonElem.value))
         }
-
-
     }
 
     // Füge die Attribute dem Element hinzu
