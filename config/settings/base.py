@@ -175,12 +175,12 @@ AWS_SECRET_ACCESS_KEY = env(
     default="sLTs3mPUprd3bNcafCVkzcdORA1VFqQn9zHYhGZUhks",
 )
 # Save Images in Cache and enable public access
-""" AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=300",
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
     "ACL": "public-read"
 }
 # No Auth URL, so just .../media/image.png
-AWS_QUERYSTRING_AUTH = False """
+AWS_QUERYSTRING_AUTH = False
 AWS_STORAGE_BUCKET_NAME='yoolink-django'
 AWS_S3_ENDPOINT_URL='https://fra1.digitaloceanspaces.com/'
 AWS_LOCATION = 'https://yoolink-django.fra1.digitaloceanspaces.com/'
