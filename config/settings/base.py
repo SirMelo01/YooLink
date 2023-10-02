@@ -169,10 +169,10 @@ MEDIA_URL = "/media/"
 
 
 DEFAULT_FILE_STORAGE = 'config.settings.cdn.backends.MediaRootS3Boto3Storage'
-AWS_ACCESS_KEY_ID='DO00HJFLRWJCM3RQ6ANW'
+AWS_ACCESS_KEY_ID='DO00H2NXTAXBZ89DMKPK'
 AWS_SECRET_ACCESS_KEY = env(
     "DIGITAL_OCEAN_SECRET_KEY",
-    default="sLTs3mPUprd3bNcafCVkzcdORA1VFqQn9zHYhGZUhks",
+    default="6gOdmTCnqhEsFvtb0kFKJCibvYkKyKqjC5k6kfMCGsc",
 )
 # Save Images in Cache and enable public access
 AWS_S3_OBJECT_PARAMETERS = {
@@ -181,9 +181,9 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 # No Auth URL, so just .../media/image.png
 AWS_QUERYSTRING_AUTH = False
-AWS_STORAGE_BUCKET_NAME='yoolink-django'
+AWS_STORAGE_BUCKET_NAME='yoolink'
 AWS_S3_ENDPOINT_URL='https://fra1.digitaloceanspaces.com/'
-AWS_LOCATION = 'https://yoolink-django.fra1.digitaloceanspaces.com/'
+AWS_LOCATION = 'https://yoolink.fra1.digitaloceanspaces.com/'
 
 
 
