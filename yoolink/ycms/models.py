@@ -8,6 +8,7 @@ from PIL import Image
 from django.db.models.signals import post_save
 from yoolink.users.models import User
 from django.utils.text import slugify
+from django.utils import timezone
 
 
 ## Produktiv und funktioniert
@@ -30,8 +31,16 @@ class FAQ(models.Model):
         return self.question
 
 ## Produktiv und funktioniert
+def unique_image_name(instance, filename):
+    """
+    Generate a unique filename by appending a timestamp.
+    """
+    timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    base, ext = os.path.splitext(filename)
+    return f"yoolink/images/{slugify(base)}_{timestamp}{ext}"
+
 class fileentry(models.Model):
-    file = models.ImageField(upload_to='yoolink/')
+    file = models.ImageField(upload_to=unique_image_name)
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
     place = models.CharField(max_length=60, default="")
@@ -46,10 +55,17 @@ class fileentry(models.Model):
     def delete_model_only(self, *args, **kwargs):
         super(fileentry, self).delete(*args, **kwargs) 
 
-def upload_to_galery_image(instance, filename):
-    return f"yoolink/galery/{instance.id}/{filename}"
+
+def unique_galeryimage_name(instance, filename):
+    """
+    Generate a unique filename by appending a timestamp.
+    """
+    timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    base, ext = os.path.splitext(filename)
+    return f"yoolink/galeryImages/{slugify(base)}_{timestamp}{ext}"
+
 class GaleryImage(models.Model):
-    upload = models.ImageField(upload_to=upload_to_galery_image,)
+    upload = models.ImageField(upload_to=unique_galeryimage_name,)
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
 
