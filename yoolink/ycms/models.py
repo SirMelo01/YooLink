@@ -56,7 +56,7 @@ class fileentry(models.Model):
         super(fileentry, self).delete(*args, **kwargs) 
 
 
-def unique_galeryimage_name(instance, filename):
+def upload_to_galery_image(instance, filename):
     """
     Generate a unique filename by appending a timestamp.
     """
@@ -65,7 +65,7 @@ def unique_galeryimage_name(instance, filename):
     return f"yoolink/galeryImages/{slugify(base)}_{timestamp}{ext}"
 
 class GaleryImage(models.Model):
-    upload = models.ImageField(upload_to=unique_galeryimage_name,)
+    upload = models.ImageField(upload_to=upload_to_galery_image)
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
 
