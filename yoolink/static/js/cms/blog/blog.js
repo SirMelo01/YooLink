@@ -32,10 +32,7 @@ function loadSlick() {
 
 function loadNicEditors() {
     $('.textArea').each(function () {
-        console.log("Jeysfs")
-        console.log($(this))
         if ($(this).attr("id")) {
-            console.log($(this).attr("id"))
             myNicEditor.panelInstance($(this).attr("id"), { hasPanel: true })
         }
     })
@@ -50,7 +47,7 @@ $(document).ready(function () {
 
     // NicEditor (TextFields)
     myNicEditor = new nicEditor({
-        //buttonList : ['fontSize','bold','italic','underline','strikeThrough','subscript','superscript'] 
+        buttonList : ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'fontFormat', 'forecolor', 'bgcolor', 'link', 'unlink'] 
     })
 
     loadSlick()
@@ -59,7 +56,8 @@ $(document).ready(function () {
     function initializeSimpleSortable() {
         new Sortable(document.getElementById('blogContent'), {
             handle: '.handle', // handle's class
-            animation: 150
+            animation: 150,
+            forceFallback: true
         })
     }
 
@@ -183,7 +181,6 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        console.log(textAreaId)
         myNicEditor.panelInstance(textAreaId, { hasPanel: true })
         sendNotif("Eine Text-Box wurde hinzugefügt", "success")
         scrollToBottom()
@@ -367,7 +364,6 @@ $(document).ready(function () {
 
     $('#titleImgUpload').change(function () {
         // Get the uploaded file
-        console.log("Image Upload")
         var file = this.files[0];
 
         // Check if a file is selected
@@ -409,7 +405,7 @@ $(document).ready(function () {
 
     // Save Blog
     $('#createBlog').click(function () {
-        console.log("Create Blog")
+        enableSpinner($(this))
         // Get the CSRF token from the hidden input field
 
         // Check for errors
@@ -418,11 +414,13 @@ $(document).ready(function () {
 
         if (title === "" || title === undefined) {
             sendNotif("Bitte gebe einen Titel für den Blog (rechts) ein.", "error")
+            disableSpinner($(this))
             return;
         }
 
         if (files.length == 0) {
             sendNotif("Bitte wähle ein Titelbild aus!", "error")
+            disableSpinner($(this))
             return;
         }
         
@@ -434,16 +432,17 @@ $(document).ready(function () {
         var $firstTextArea = $blockContent.children('.relative').find('.textArea').first();
         if ($firstTextArea.length == 0){
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            disableSpinner($(this))
             return;
         }
         var firstTextAreaId = $firstTextArea.attr('id')
         var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
-        console.log(firstTextAreaContent)
         // Überprüfen, ob ein Element gefunden wurde
         if (firstTextAreaContent.trim() === '') {
             // Ein Element wurde gefunden
             // Du kannst hier weiter mit 'firstTextArea' arbeiten
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            disableSpinner($(this))
             return;
         }
         const content = receiveContent($blockContent)
@@ -459,20 +458,13 @@ $(document).ready(function () {
             $modalBody.removeClass('flex flex-col items-center items-end')
         }
         $modalBody.append($('<h1 id="previewTitle" class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl">').text($('#blogTitle').val()))
-        console.log($('#blogTitle').val())
         //$modalBody.append($copy)
         content.forEach(function (element) {
             // Führe eine Aktion für jedes Element aus
-            console.log("Name: " + element.name)
             const $elem = (element.name !== "galery") ? getWebElement(element) : getGaleryElement(element)
-            console.log($elem);
             $modalBody.append($elem);
         });
         $directCodeContainer.append($modalBody)
-
-
-        console.log(typeof content)
-
 
         const title_image = files[0]
 
@@ -484,9 +476,6 @@ $(document).ready(function () {
         formData.append('active', $('#activeSwitch').is(':checked'));
         formData.append('title_image', title_image, "blogTitleImage");
         formData.append('description', firstTextAreaContent);
-
-        console.log(formData);
-
 
         // Send the Ajax POST request //
         $.ajax({
@@ -506,13 +495,17 @@ $(document).ready(function () {
                     sendNotif(response.error, "error")
                     return;
                 }
-                console.log(response)
                 window.location.href = '/cms/blog/' + response.blogId + "/";
             },
             error: function (xhr, status, error) {
                 // Handle the error response here
                 console.error("Request failed:", error);
                 sendNotif("Es kam zu einem unerwarteten Fehler. Versuche es später nochmal")
+                $('#createBlog').prop("disabled", false);
+                $(this).find('svg').addClass('hidden');
+            },
+            complete: function(result, status) {
+                disableSpinner($('#createBlog'))
             }
         });
     })
@@ -520,7 +513,6 @@ $(document).ready(function () {
 
     // Click on preview Button (Test)
     $('#preview').click(function () {
-        console.log("PREVIEWWWWWWW")
 
         // receive block content
         const $blockContent = $('#blogContent')
@@ -542,18 +534,14 @@ $(document).ready(function () {
         $modalBody.empty()
         // Add Title
         $modalBody.append($('<h1 class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl">').text($('#blogTitle').val()))
-        console.log($('#blogTitle').val())
         //$modalBody.append($copy)
         content.forEach(function (element) {
             // Führe eine Aktion für jedes Element aus
-            console.log("Name: " + element.name)
             const $elem = (element.name !== "galery") ? getWebElement(element) : getGaleryElement(element)
-            console.log($elem);
             $modalBody.append($elem);
         });
 
         $('#previewModal').toggleClass("hidden")
-
 
         // Load Carousels
         setTimeout(function () {
@@ -649,7 +637,6 @@ $(document).ready(function () {
 
     })
 
-
     // Reload Images
     $('#reloadImages').click(function () {
         loadImages();
@@ -662,7 +649,6 @@ $(document).ready(function () {
 
     // Text Field - Toggle Editor
     $('.toggle-text-editor').click(function () {
-        console.log("Heyoo")
 
         $textSibling = $(this).siblings("textarea")
         if (myNicEditor.nicInstances)
@@ -698,7 +684,6 @@ $(document).ready(function () {
             dataType: "json", // The data type you expect to receive from the server
             success: function (data) {
                 // This function will be executed if the request is successful
-                console.log("Data received:", data);
                 if (data.images.length > 0) {
                     const c = $editSlider.find('.slick-slide:not(.slick-cloned)')
                     for (let i = c.length - 1; i >= 0; i--) {
@@ -849,6 +834,18 @@ $(document).ready(function () {
         // ...
     })
 
+    $('.modal').each(function () {
+        const modal = $(this);
+        const modalContainer = modal.find('.modal-container');
+  
+        // Close the modal when clicking outside of it (by targeting the parent modal)
+        $(document).mouseup(function (e) {
+            if (!modalContainer.is(e.target) && modalContainer.has(e.target).length === 0) {
+                modal.addClass('hidden');
+          }
+        });
+      });
+
 });
 
 /**
@@ -862,7 +859,6 @@ function receiveContent(blockContent) {
     blockContent.children('.relative').each(function () {
         // Check for type of div
         const elementType = $(this).attr("element-type");
-        console.log(elementType)
 
         switch (elementType) {
             case "title-1":
@@ -965,7 +961,6 @@ function receiveContent(blockContent) {
                     "name": "video",
                     "type": "iframe",
                     "attributes": {
-                        "class": "rounded-2xl",
                         "width": width,
                         "height": height,
                         "src": $video.attr('src'),
@@ -973,7 +968,7 @@ function receiveContent(blockContent) {
                         "frameborder": "0",
                         "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
                         "allowfullscreen": "True",
-                        "class": "my-8"
+                        "class": "my-8 rounded-2xl"
 
                     },
 
@@ -1006,7 +1001,7 @@ function receiveContent(blockContent) {
                     "type": "div",
                     "attributes": {
                         "id": $(this).attr("galery-id"),
-                        "class": "carousel rounded-lg",
+                        "class": "carousel rounded-lg !w-full",
                     },
                     "css": {
                         "height": height,
@@ -1018,7 +1013,6 @@ function receiveContent(blockContent) {
                 break;
         }
     });
-    //console.log(content)
     return content;
 }
 
@@ -1061,25 +1055,6 @@ function loadCarousels() {
     });
 
 
-}
-
-// Convert all Links in String to <a>
-function convertURLsToLinks(text) {
-    var urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/g;
-
-    var elements = text.split('<br>'); // Also split ' '
-
-    elements.forEach(function (element, index) {
-        elements[index] = element.replace(urlRegex, function (url) {
-            if (url.startsWith("http")) {
-                return '<a href="' + url + '">' + url + '</a>';
-            } else {
-                return '<a href="http://' + url + '">' + url + '</a>';
-            }
-        });
-    });
-
-    return elements.join('<br>');
 }
 
 function replaceLinks(text) {
@@ -1128,4 +1103,24 @@ function getWebElement(jsonElem) {
     }
 
     return elem;
+}
+
+/**
+ * Disable Button Spinner
+ * @param {*} $elem 
+ */
+function disableSpinner($elem) {
+    $elem.prop("disabled", false);
+    $elem.find('svg').addClass('hidden');
+    $elem.find('.bi').removeClass('hidden');
+}
+
+/**
+ * Enable Button Spinner
+ * @param {*} $elem 
+ */
+function enableSpinner($elem) {
+    $elem.prop("disabled", true);
+    $elem.find('svg').removeClass('hidden');
+    $elem.find('.bi').addClass('hidden');
 }

@@ -21,6 +21,42 @@
     opacity: 0;
 }
 
+/* Link and Bullet points edit */
+
+.nicEdit-main a, #previewModal a {
+    color: rgb(59, 130, 246);
+}
+
+.nicEdit-main a:hover, #previewModal a:hover {
+    cursor: pointer;
+    color: rgb(37, 99, 235);
+}
+
+
+.nicEdit-main li, #previewModal li {
+    margin-bottom: 0.75rem !important;
+}
+.nicEdit-main ul, #previewModal ul {
+    display: block !important;
+    list-style-type: disc !important;
+    margin-block-start: 1em !important;
+    margin-block-end: 1em !important;
+    padding-inline-start: 40px !important;
+}
+
+.nicEdit-main ol, #previewModal ol {
+    display: block !important;
+    list-style-type: decimal !important;
+    margin-block-start: 1em !important;
+    margin-block-end: 1em !important;
+    padding-inline-start: 40px !important;
+}
+
+.nicEdit-main {
+    padding: 0.5rem;
+}
+
+
 @keyframes fade-in {
     from {
         visibility: hidden;

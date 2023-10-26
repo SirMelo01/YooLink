@@ -2,7 +2,6 @@ $(document).ready(function () {
     /* UPDATE */
 
     function loadUpdateDetails() {
-        const $prevContent = $('#previewBody')
         const $blogContent = $('#blogContent')
         
         const delSpan = $('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>')
@@ -17,7 +16,6 @@ $(document).ready(function () {
             url: 'getCode/',
             success: function(data) {
               // Handle the success response
-              console.log(data); // The JSON data received from the blog_code view
               $.each(data.code, function(index, element) {
                 const $container = $('<div class="relative">')
                 switch (element.name) {
@@ -111,8 +109,9 @@ $(document).ready(function () {
                         $container.append(delSpan.clone()).append(moveHandle.clone())
                         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-youtube"><i class="bi bi-pencil-square"></i></span>'))
                         $('<iframe/>', element.attributes).appendTo($container)
-                        $container.height(element.attributes.height)
+                        $container.height(element.attributes.height+20)
                         $container.width(element.attributes.width)
+                        $container.find('iframe').removeClass("my-8").addClass("rounded-2xl")
                         // Click event handler for the span with class del-elem
                         $container.find('.del-elem').click(function () {
                             $(this).parent().remove()
@@ -137,7 +136,6 @@ $(document).ready(function () {
                         $container.append(delSpan.clone()).append(moveHandle.clone())
                         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-slider"><i class="bi bi-pencil-square"></i></span>'))
                         const $carouselContainer = $('<div class="carousel rounded-lg">')
-                        console.log("-----------XX---------")
                         $container.css("height", element.css.height).css("width", element.css.width)
                         $(element.images).each(function(index, elementX) {
                             const $divContainer = $('<div>')
@@ -147,7 +145,6 @@ $(document).ready(function () {
                             }).css("height", element.css.height).css("width", element.css.width).appendTo($divContainer)
                             $carouselContainer.append($divContainer)
                         })
-                        console.log($carouselContainer.find('img'))
                         $container.append($carouselContainer)
                         $container.find('.del-elem').click(function () {
                             $(this).parent().remove()
@@ -165,9 +162,6 @@ $(document).ready(function () {
                             $('#galeryWidth').val(width)
                             $('#galleryModal').toggleClass("hidden");
                         });
-                        console.log("Container:")
-                        console.log($container)
-                        console.log($container.html())
                         $blogContent.append($container)
                         break;
                     // Add more cases for other types if needed
@@ -191,14 +185,16 @@ $(document).ready(function () {
     loadUpdateDetails()
     // Initialize your carousel with configuration options
 
-
     $('#updateBlog').click(function() {
         // Check for errors
+        enableSpinner($(this))
+
         const title = $('#blogTitle').val()
         var files = $('#titleImgUpload').prop("files");
 
         if (title === "" || title === undefined) {
-            sendNotif("Bitte gebe einen Titel für den Blog (rechts) ein.", "error")
+            sendNotif("Bitte gebe einen Titel für den Blog (rechts) ein.", "error");
+            disableSpinner($(this))
             return;
         }
         
@@ -209,16 +205,17 @@ $(document).ready(function () {
         var $firstTextArea = $blockContent.children('.relative').find('.textArea').first();
         if ($firstTextArea.length == 0){
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            disableSpinner($(this))
             return;
         }
         var firstTextAreaId = $firstTextArea.attr('id')
         var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
-        console.log(firstTextAreaContent)
         // Überprüfen, ob ein Element gefunden wurde
         if (firstTextAreaContent.trim() === '') {
             // Ein Element wurde gefunden
             // Du kannst hier weiter mit 'firstTextArea' arbeiten
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
+            disableSpinner($(this))
             return;
         }
         const content = receiveContent($blockContent)
@@ -236,9 +233,7 @@ $(document).ready(function () {
         $modalBody.append($('<h1 class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl">').text($('#blogTitle').val()))
         content.forEach(function (element) {
             // Führe eine Aktion für jedes Element aus
-            console.log("Name: " + element.name)
             const $elem = (element.name !== "galery") ? getWebElement(element) : getGaleryElement(element)
-            console.log($elem);
             $modalBody.append($elem);
         });
         $directCodeContainer.append($modalBody)
@@ -268,14 +263,17 @@ $(document).ready(function () {
                     sendNotif(response.error, "error")
                     return;
                 }
-                console.log(response)
                 sendNotif("Der Blog wurde erfolgreich gespeichert", "success")
             },
             error: function (xhr, status, error) {
                 // Handle the error response here
                 console.error("Request failed:", error);
                 sendNotif("Es kam zu einem unerwarten Fehler. Versuche es später nochmal", "error")
+            },
+            complete: function(result, status) {
+                disableSpinner($('#updateBlog'))
             }
         });
+        
     }) 
 })

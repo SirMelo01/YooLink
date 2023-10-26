@@ -2,14 +2,18 @@
 $editImg = null;
 $editSlider = null;
 $(document).ready(function () {
+
+    const $imageModal = $('#imageModal');
+    const $galeryModal = $('#galeryModal');
+
     $('.edit-img').click(function() {
         
         $editImg = $(this).siblings('img');
-        $('#imageModal').removeClass("hidden");
+        $imageModal.removeClass("hidden");
     });
 
     $('#closeImageModal').click(function() {
-        $('#imageModal').addClass("hidden");
+        $imageModal.addClass("hidden");
     });
 
     $('#reloadImages').click(function() {
@@ -25,12 +29,27 @@ $(document).ready(function () {
     });
 
     $('#closeGaleryModal').click(function() {
-        $('#galeryModal').addClass("hidden");
+        $galeryModal.addClass("hidden");
     });
 
     $('.edit-galery').click(function() {
         $editSlider = $(this).siblings('.carousel');
-        $('#galeryModal').removeClass("hidden");
+        $galeryModal.removeClass("hidden");
+    });
+
+    const $imageModalContainer = $imageModal.find('.modal-container');
+    const $galeryModalContainer = $galeryModal.find('.modal-container');
+
+    $(document).mouseup(function (e) {
+        if (
+            !$imageModalContainer.is(e.target) &&
+            $imageModalContainer.has(e.target).length === 0 &&
+            !$galeryModalContainer.is(e.target) &&
+            $galeryModalContainer.has(e.target).length === 0
+          ) {
+            $imageModal.addClass('hidden');
+            $galeryModal.addClass('hidden');
+          }
     });
 
 })

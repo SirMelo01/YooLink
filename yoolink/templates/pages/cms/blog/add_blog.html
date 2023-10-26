@@ -23,9 +23,9 @@
 
 <!-- **************** Preview-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[42rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed lg:min-w-[42rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
     id="previewModal" data-prismjs-copy-timeout="500">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl max-h-full">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl max-h-full modal-container">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -65,9 +65,9 @@
 
 <!-- **************** Image-Select-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
     id="imageModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -156,9 +156,9 @@
 
 <!-- **************** Youtube-Select-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[40rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed lg:min-w-[40rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
     id="youtubeModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900">
@@ -231,9 +231,9 @@
 
 <!-- **************** Galery-Select-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
     id="galleryModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full">
+    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -364,8 +364,11 @@
                 <i class="bi bi-eye"></i> Preview
             </button>
             <button id="createBlog"
-                class="px-4 py-2 mx-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600">
-                <i class="bi bi-plus-circle"></i> Erstellen
+                class="px-4 py-2 mx-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 flex items-center">
+                <i class="bi bi-plus-circle mr-1"></i> <svg class="mr-3 h-5 w-5 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg> Erstellen
             </button>
         </div>
 

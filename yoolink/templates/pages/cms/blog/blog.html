@@ -6,14 +6,14 @@
 {% block content %}
 
 <div class="container mx-auto mt-8">
-    <h1 class="text-2xl mb-5">Blog - Overview</h1>
+    <h1 class="text-2xl mb-5 hover:cursor">Blog - Overview</h1>
     <a href="{% url 'cms:blog-add' %}" >
     <button href="{% url 'cms:blog-add' %}" id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
         Hinzufügen
     </button>
     </a>
     <!-- Simple List -->
-    <div id="simpleList" class="list-group bg-slate-200 shadow-xl rounded-lg p-6 mb-6">
+    <div id="simpleList" class="list-group space-y bg-slate-200 shadow-xl rounded-lg p-6 mb-6">
       {% csrf_token %}
       {% for blog in blogs %}
       <div class="list-group-item mb-4" data-id="{{ blog.id }}">
@@ -32,7 +32,7 @@
           </div>
 
           <div class="w-3/10 inline-flex">
-            <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}" aria-label="Company" title="Company" class="items-center inline-flex">
+            <a target="_blank" href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}" aria-label="Company" title="Company" class="items-center inline-flex">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mt-1 w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                 </svg>

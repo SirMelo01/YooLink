@@ -275,7 +275,7 @@ def update_faq_order(request):
 @login_required(login_url='login')
 def blog_view(request):
     data = {
-        "blogs":  Blog.objects.all()
+        "blogs":  Blog.objects.all().order_by('-date')
     }
     return render(request, "pages/cms/blog/blog.html", data)
 

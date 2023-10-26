@@ -1080,6 +1080,10 @@ video {
   min-height: 100%;
 }
 
+.\!w-full {
+  width: 100% !important;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -1342,6 +1346,16 @@ video {
 
 .animate-fade-in-down {
   animation: fade-in-down 1.2s ease-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 .cursor-pointer {
@@ -2435,6 +2449,14 @@ video {
 
 .opacity-100 {
   opacity: 1;
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-75 {
+  opacity: 0.75;
 }
 
 .opacity-95 {

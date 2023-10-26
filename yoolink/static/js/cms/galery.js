@@ -137,4 +137,12 @@ $(document).ready(function () {
     $('#closeModal').click(function () {
         $('#editModal').addClass('hidden')
     });
+
+    const modalContainer = $('.modal-container');
+    const editModal = $('#editModal');
+    $(document).mouseup(function (e) {
+        if (!modalContainer.is(e.target) && modalContainer.has(e.target).length === 0) {
+            editModal.addClass('hidden');
+        }
+    });
 });
