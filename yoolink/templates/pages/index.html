@@ -54,10 +54,10 @@
               {{heroText.header}}
             </h1>
           </div>
-          <h2 class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
+          <h2 class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
             {{heroText.title}}
           </h2>
-          <p class="text-base text-gray-800 md:text-lg">
+          <p class="text-base leading-7 text-gray-600 md:text-lg">
             {{heroText.description}}
           </p>
         </div>
@@ -86,7 +86,7 @@
           </div>
         </figure>
         <div class="items-center justify-center mx-auto bg-blue-900 rounded-2xl mt-12">
-          <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Sign up" title="Sign up"
+          <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Webdesign-Vorlagen" title="Webdesign-Vorlagen"
         class="inline-flex items-center justify-center h-12 px-6 font-medium  text-white transition duration-200 rounded">
         Webdesign-Vorlagen
       </a>
@@ -133,10 +133,10 @@
                 {{responsiveText.header}}
               </h3>
             </div>
-            <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none">
+            <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
               {{responsiveText.title}}
             </h2>
-            <p class="text-base text-gray-700 md:text-lg ">
+            <p class="text-base leading-7 text-gray-600 md:text-lg ">
               {{responsiveText.description}}
             </p>
             <br/>
@@ -276,8 +276,8 @@
             <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
              {{cmsText.header}}
             </h3>
-            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{cmsText.title}}</h2>
-            <p class="mt-6 text-base md:text-lg text-gray-700">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">{{cmsText.title}}</h2>
+            <p class="mt-6 text-base leading-7 md:text-lg text-gray-600">
               {{cmsText.description}}
             </p>
             <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
@@ -296,19 +296,55 @@
     <!--CMS End-->
 
 
+    <!--Skills Beginn-->
+    {% block Skills %}
+    <section class="scroll-my-4" id="Skills">
+      <div class="pb-20 sm:pb-32 pt-20 sm:pt-20">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+          <div class="mx-auto max-w-2xl lg:text-center">
+            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+              KNOW-HOW
+             </h3>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Fähigkeiten & Kenntnisse</h2>
+            <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum an Fähigkeiten und Kompetenzen, um Ihre digitalen Projekte zum Erfolg zu führen. Unser Skillset umfasst die neuesten Technologien, um funktionale und benutzerfreundliche Websites zu gestalten.</p>
+          </div>
+          <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
+            <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16">
+              <div class="relative">
+                <dt class="text-base font-semibold leading-7 text-gray-900">Designkonzept</dt>
+                <dd class="mt-2 text-base leading-7 text-gray-600">Unser Designkonzept basiert auf der Idee, dass jede Website einzigartig sein sollte, um die Identität Ihres Unternehmens bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte Lösungen, die auf Ihre speziellen Anforderungen zugeschnitten sind. Unsere Designs sind benutzerorientiert, um eine bestmögliche Erfahrung auf Ihrer Website sicherzustellen</dd>
+              </div>
+              <div class="relative">
+                <dt class="text-base font-semibold leading-7 text-gray-900">SEO Strategien</dt>
+                <dd class="mt-2 text-base leading-7 text-gray-600">Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und nutzen Blogs als leistungsstarkes Werkzeug, um organischen Traffic zu generieren. Unsere Strategien umfassen Keyword-Recherche, mobile Optimierung und die Erstellung hochwertiger Blog-Inhalte. Durch unser CMS-System können Sie Blogs jeder Zeit selber erstellen und anpassen.</dd>
+              </div>
+              <div class="relative">
+                <dt class="text-base font-semibold leading-7 text-gray-900">Technischen Fähigkeiten</dt>
+                <dd class="mt-2 text-base leading-7 text-gray-600">Unsere technischen Fähigkeiten bilden das Fundament unserer Dienstleistungen. Von der Frontend-Entwicklung bis zur Backend-Programmierung sind wir in der Lage, Websites zu gestalten, die nicht nur visuell ansprechend sind, sondern auch reibungslos funktionieren und den neuesten technischen Standards entsprechen.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock Skills %}
+    <!--Skills End-->
+
+
+
     <!--Pricing Beginn-->
     {% block Pricing %}
     <section class="scroll-my-4" id="Preise">
       <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
         <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
           <div>
-            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-gray-800 uppercase rounded-full bg-teal-accent-400">
+            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
               {{priceText.header}}
             </h3>
           </div>
-          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-black sm:text-4xl md:mx-auto">
+          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto">
             <span class="relative inline-block">
-              <span class="relative text-gray-800">{{priceText.title}}</span>
+              <span class="relative text-gray-900">{{priceText.title}}</span>
             </span>
           </h2>
           <p class="text-base text-gray-700 md:text-lg">
@@ -408,7 +444,7 @@
           <h2 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
             {{teamText.header}}
           </h2>
-          <p class="text-base text-gray-700 md:text-lg">
+          <p class="text-base leading-8 text-gray-600 md:text-lg">
             {{teamText.description}}
           </p>
         </div>
