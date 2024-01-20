@@ -53,7 +53,7 @@
 
 <div class="container mx-auto mt-8">
   <div class="flex justify-between">
-    <h1 class="text-2xl "><a href="{% url 'cms:galerien' %}" class="text-blue-500">Galerien</a> / <span
+    <h1 class="text-2xl"><a href="{% url 'cms:galerien' %}" class="text-blue-500">Galerien</a> / <span
         id="titleSpan">{{galery.title}}</span></h1>
     <div>
       <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
@@ -66,7 +66,6 @@
       </a>
     </div>
   </div>
-
   <form action="" id="galeryForm">
     {% csrf_token %}
     <div class="flex mb-6 mt-6 w-1/2">

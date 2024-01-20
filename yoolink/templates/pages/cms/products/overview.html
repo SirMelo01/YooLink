@@ -1,0 +1,54 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS - Produkte {% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
+    <!-- Produkte -->
+    <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
+        <!-- Produkt Detail -->
+        <div class="flex w-full rounded-2xl bg-blue-100 shadow-xl h-fit">
+          <img class="w-48 rounded-l-2xl" src="https://www.kovinc.de/wp-content/uploads/2021/02/schweissen-fuer-einsteiger.jpg" alt="" srcset="" />
+          <div class="p-3 space-y-2">
+            <h2 class="text-xl font-medium">Blaue Super Direktionale Schweißmaschine</h2>
+            <div class="max-h-16 overflow-y-scroll">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore fugiat doloremque quis praesentium earum officia repudiandae corporis aspernatur officiis facilis, illum adipisci fugit, quasi non dolorum in veritatis deleniti optio!
+            </div>
+            <div class="flex justify-end px-2">
+              <a href="{% url 'cms:images-view' %}"
+                      class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded mr-2">Löschen</a>
+              <a href="{% url 'cms:images-view' %}"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Verwalten</a>
+            </div>
+          </div>
+        </div>
+        <!-- Produkt Detail -->
+        <div class="flex w-full rounded-2xl bg-blue-100 shadow-xl h-fit">
+          <img class="w-48 rounded-l-2xl" src="https://www.kovinc.de/wp-content/uploads/2021/02/schweissen-fuer-einsteiger.jpg" alt="" srcset="" />
+          <div class="p-3 space-y-2">
+            <h2 class="text-xl font-medium">Blaue Super Direktionale Schweißmaschine</h2>
+            <div class="max-h-16 overflow-y-scroll">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore fugiat doloremque quis praesentium earum officia repudiandae corporis aspernatur officiis facilis, illum adipisci fugit, quasi non dolorum in veritatis deleniti optio!
+            </div>
+            <div class="flex justify-end px-2">
+              <a href="{% url 'cms:images-view' %}"
+                      class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded mr-2">Löschen</a>
+              <a href="{% url 'cms:images-view' %}"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Verwalten</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</div>
+
+
+
+  {% block javascriptend %}
+    {% compress js inline %}
+      <script defer src="{% static 'js/cms.js' %}"></script>
+    {% endcompress js %}
+  {% endblock javascriptend %}
+
+{% endblock content %}
