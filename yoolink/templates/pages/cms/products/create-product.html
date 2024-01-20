@@ -1,0 +1,158 @@
+{% extends 'cmsbase.html' %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS | Produkt erstellen{% endblock %}
+{% block javascript %}
+{% load compress static %}
+<script src="{% static 'js/libs/dropzone.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/cms/libs/dropzone.min.css' %}" type="text/css" />
+{% endblock %}
+{% block content %}
+
+<div class="container mx-auto mt-8">
+    <!-- Header -->
+    <div class="flex justify-between">
+      <h1 class="text-2xl "><a href="{% url 'cms:galerien' %}" class="text-blue-500">Produkte</a> / <span
+          id="titleSpan">{{product.title}}</span></h1>
+      <div>
+        <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+          id="createProduct">
+          Erstellen
+        </a>
+      </div>
+    </div>
+    <!-- Form -->
+    <div class="container mx-auto mt-8 max-w-5xl px-3 lg:px-0">
+      <!-- Header -->
+      <div class="flex justify-between">
+        <h1 class="text-2xl"><a href="{% url 'cms:galerien' %}" class="text-blue-500">Produkte</a> / <span id="titleSpan">{{product.title}}</span></h1>
+        <div>
+          <a class="mr-6 rounded bg-green-500 px-4 py-2 font-bold text-white hover:cursor-pointer hover:bg-green-700" id="createProduct"> Speichern </a>
+          <a class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:cursor-pointer hover:bg-red-700" id="updateProduct"> Löschen </a>
+        </div>
+      </div>
+      <!-- Form -->
+      <form action="" id="galeryForm" class="mt-8">
+        <!--{% csrf_token %}-->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Titel </label>
+            <input class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="title" type="text" value="" />
+            <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Beschreibung </label>
+            <textarea rows="4" class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="description" type="text"></textarea>
+            <div class="mb-6 mt-6 flex w-full justify-between">
+              <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Aktiv </label>
+              <input checked class="checked:focus:border-primary mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]" type="checkbox" role="switch" id="activeSwitch" />
+              <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> In Stock </label>
+              <input checked class="checked:focus:border-primary mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]" type="checkbox" role="switch" id="activeSwitch" />
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block w-40 self-center pb-3 font-bold text-gray-500 md:mb-0" for="title"> Titelbild </label>
+            <div class="flex gap-4">
+              <div class="extraOutline m-auto w-full rounded-lg bg-white">
+                <div class="file_upload relative w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover p-5" id="fileUpload">
+                  <svg class="mx-auto mb-4 w-24 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <div class="input_field mx-auto flex w-max flex-col text-center">
+                    <label>
+                      <input id="titleImgUpload" class="hidden w-36 cursor-pointer text-sm" type="file" accept="image/jpg,image/png,image/jpeg,image/gif" />
+                      <div class="text cursor-pointer rounded border border-gray-300 bg-indigo-600 p-1 px-3 font-semibold text-white hover:bg-indigo-500">Auswählen</div>
+                    </label>
+    
+                    <!--<div class="title text-indigo-500 uppercase" id="fileText">Keine ausgewählt</div>-->
+                  </div>
+                </div>
+              </div>
+              <div class="extraOutline m-auto w-full rounded-lg bg-white">
+                <div class="file_upload relative h-48 w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover p-5 flex justify-center items-center">
+                  <img src="https://www.kiebel.de/out/pictures/generated/product/12/220_285_90/60d3d2ab7b9851a8ea19cfdd3e1b8c62.png" alt="" class="h-full" >
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Hersteller Autocomplete  -->
+          <div class="space-y-4">
+            <div class="relative">
+              <div class="mb-1 flex justify-between">
+                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Hersteller </label>
+                <button class="rounded-lg bg-blue-400 p-1 text-sm text-white hover:bg-blue-500">Erstellen</button>
+              </div>
+              <input id="autocomplete-input" type="text" class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" placeholder="Suche nach Hersteller..." />
+              <div id="autocomplete-hersteller-list" class="absolute left-0 z-10 mt-2 hidden max-h-44 w-64 overflow-y-scroll rounded-lg border bg-white shadow-lg">
+                <!-- Autocomplete options will be added here dynamically -->
+              </div>
+            </div>
+            <!-- Hersteller Autocomplete  -->
+            <div class="relative">
+              <div class="mb-1 flex justify-between">
+                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Kategorien </label>
+                <button class="rounded-lg bg-blue-400 p-1 text-sm text-white hover:bg-blue-500">Erstellen</button>
+              </div>
+              <div class="flex justify-between">
+                <input id="autocomplete-input" type="text" class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" placeholder="Suche nach Kategorie..." />
+                <div id="autocomplete-hersteller-list" class="absolute left-0 z-10 mt-2 hidden max-h-44 w-64 overflow-y-scroll rounded-lg border bg-white shadow-lg">
+                  <!-- Autocomplete options will be added here dynamically -->
+                </div>
+                <button class="ml-2 rounded-lg bg-green-400 p-1 text-base font-semibold text-white hover:bg-green-500">Hinzufügen</button>
+              </div>
+            </div>
+            <!-- Kategorien Liste -->
+            <div id="added-countries-list" class="flex flex-wrap gap-1">
+              <!-- Added countries will be displayed here -->
+              <span class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5">
+                Schweißmaschine
+                <span class="cursor-pointer text-lg font-semibold text-red-500">&times;</span>
+              </span>
+              <!-- Weitere Spans hier einfügen -->
+              <span class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5">
+                Maschine
+                <span class="cursor-pointer text-lg font-semibold text-red-500">&times;</span>
+              </span>
+              <span class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5">
+                Uhr
+                <span class="cursor-pointer text-lg font-semibold text-red-500">&times;</span>
+              </span>
+              <span class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5">
+                Fahrzeug
+                <span class="cursor-pointer text-lg font-semibold text-red-500">&times;</span>
+              </span>
+            </div>
+          </div>
+    
+          <div>
+            <div class="mb-6 mt-2 flex w-full items-center space-x-7 px-4">
+              <div>
+                <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Preis </label>
+                <input class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="title" type="number" value="" placeholder="205,20" />
+              </div>
+              <div>
+                <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Reduzierter Preis </label>
+                <input class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="title" type="number" value="" placeholder="200" />
+              </div>
+    
+              <input class="checked:focus:border-primary mr-2 mt-4 h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]" type="checkbox" role="switch" id="activeSwitch" />
+            </div>
+          </div>
+        </div>
+    
+        <div class="mb-6 mt-6"></div>
+      </form>
+    </div>
+    
+    
+
+
+
+
+</div>
+
+
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script src="{% static 'js/cms/products.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}

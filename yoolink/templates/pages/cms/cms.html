@@ -11,7 +11,7 @@
 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
     <!-- Image Manage Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">Bilder</h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Bilder <i class="bi bi-image"></i></h2>
         <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
         <p class="mb-4">Momentane Bilder: <strong>{{file_count}}</strong></p>
         <div class="flex-grow"></div>
@@ -26,7 +26,7 @@
     
     <!-- FAQ Manage Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">FAQ</h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">FAQ <i class="bi bi-question-lg"></i></h2>
         <p class="mb-4">Hier kannst du dein FAQ customizen</p>
         <p class="mb-4">Momentane FAQ's: <strong>{{faq_count}}</strong></p>
         <div class="flex-grow"></div>
@@ -38,7 +38,7 @@
 
     <!-- Galerie Creator -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">Galerien</h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Galerien <i class="bi bi-images"></i></h2>
         <p class="mb-4">Hier kannst du deine Galieren managen</p>
         <p class="mb-4">Momentane Galerien: <strong>{{galery_count}}</strong></p>
         <div class="flex-grow"></div>
@@ -53,7 +53,7 @@
     
     <!-- Blog Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">Blogs</h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Blogs <i class="bi bi-blockquote-right"></i></h2>
         <p class="mb-4">Hier kannst du deine Blogs managen</p>
         <p class="mb-4">Momentane Blogs: <strong>{{blog_count}}</strong></p>
         <div class="flex-grow"></div>
@@ -65,13 +65,26 @@
 
     <!-- Seiten Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">Seiten</h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Seiten <i class="bi bi-body-text"></i></h2>
         <p class="mb-4">Hier kannst du deinen Seiteninhalt verwalten (Text, Bilder etc.)</p>
         <p class="mb-4">Seiten: <strong>1</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-12">
             <a href="{% url 'cms:sites' %}" 
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+        </div>
+    </div>
+
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Produkte <i class="bi bi-shop"></i></h2>
+        <p class="mb-4">Hier kannst du deine Produkte verwalten</p>
+        <div class="flex-grow"></div>
+        <div class="flex justify-center items-center mt-12">
+            <a href="{% url 'cms:images-view' %}"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+            <div class="flex-grow"></div>
+            <a href="{% url 'cms:upload' %}"
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end">Erstellen</a>
         </div>
     </div>
 
