@@ -48,4 +48,11 @@ urlpatterns = [
     path('seiten/hauptseite/CMS/', views.site_view_main_cms, name='site_hauptseite_cms'),
     path('seiten/hauptseite/Preis/', views.site_view_main_price, name='site_hauptseite_price'),
     path('seiten/hauptseite/Team/', views.site_view_main_team, name='site_hauptseite_team'),
+    # Products
+    path('products/', views.product_view, name='products'),
+    path('products/search/', views.product_search, name='product_search'),
+    path('products/create/', views.product_create_view, name='product-create'),
+    path('products/create/upload', views.product_create, name='product-create-upload'),
+    path('products/<int:product_id>/<slug:slug>/', views.product_detail, name='product-detail'),
+    path('products/<int:product_id>/<slug:slug>/update', views.product_detail, name='product-detail-update'),
 ]

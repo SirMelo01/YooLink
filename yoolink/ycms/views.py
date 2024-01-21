@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage, TextContent
+from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -39,6 +39,7 @@ def upload(request):
         "file_count":  fileentry.objects.count(),
         "galery_count":  Galerie.objects.count(),
         "blog_count": Blog.objects.count(),
+        "product_count": Product.objects.count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -707,3 +708,172 @@ def saveTextContent(request):
         return JsonResponse({'success': 'Elemente wurden erfolgreich gespeichert'}, status=200)
 
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)
+
+
+"""
+Products
+"""
+@login_required(login_url='login')
+def product_view(request):
+    return render(request, "pages/cms/products/overview.html", {"products": Product.objects.all()})
+
+@login_required(login_url='login')
+def product_create_view(request):
+    return render(request, "pages/cms/products/create-product.html", {})
+
+@login_required(login_url='login')
+def product_detail(request, product_id, slug):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, "pages/cms/products/edit-product.html", {"product": product})
+
+@login_required(login_url="login")
+def product_search(request):
+    query = request.GET.get('q')
+    if query:
+        products = Product.objects.filter(title__icontains=query)
+    else:
+        products = Product.objects.all()
+
+    data = []
+    for product in products:
+        data.append({
+            'title': product.title,
+            'description': product.description,
+            'price': product.price,
+            'discount_price': product.discount_price if product.is_reduced else None,
+            'image_url': 'https://www.kovinc.de/wp-content/uploads/2021/02/schweissen-fuer-einsteiger.jpg',
+            # Add other fields as needed
+        })
+
+    return JsonResponse({'products': data})
+
+@login_required(login_url='login')
+def product_create(request):
+    if request.method == 'POST':
+        # The request is a POST request
+        # Retrieve POST parameters
+        title = request.POST.get('title')
+
+        if Product.objects.filter(title=title).exists():
+            return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
+
+        description = request.POST.get('description', '')
+        hersteller = request.POST.get('hersteller', '')
+        active = request.POST.get('isActive', False)
+        inStock = request.POST.get('isInStock', False)
+        isReduced = request.POST.get('isReduced', False)
+        price_str = request.POST.get('price', '0')
+        reduced_price_str = request.POST.get('reducedPrice', price_str)
+        # Remove commas and convert to float
+        price = float(price_str.replace(',', ''))
+        reduced_price = price
+        if reduced_price_str:
+            reduced_price = float(reduced_price_str.replace(',', ''))
+
+        title_image = request.FILES.get('title_image', '')
+
+        # Now you can use 'price' and 'reduced_price' as numeric values in your if condition
+        if title and price > 0:
+            # Create
+            product = Product(
+                title=title, 
+                description=description, 
+                price=price,
+                discount_price=reduced_price)
+            if active == "true":
+                product.is_active = True
+            else:
+                product.is_active = False
+            if inStock == "true":
+                product.is_in_stock = True
+            else:
+                product.is_in_stock = False
+            if isReduced == "true":
+                product.is_reduced = True
+            else:
+                product.is_reduced = False
+            product.save()
+            """resized_image = resize_image(title_image)
+            scaled_image = scale_image(resized_image)
+            compressed_image = compress_image(scaled_image)
+            product.title_image = compressed_image
+            product.save()"""
+            return JsonResponse({'success': 'Product successfully created', 'productId': product.id, 'slug': product.slug}, status=201)
+
+        else:
+            return JsonResponse({'error': 'Der Titel darf nicht leer sein und der Preis muss größer 0 sein!'}, status=400)
+
+        # Do something with the POST parameters (e.g., save them to the database)
+        # ...
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
+
+@login_required(login_url='login')
+def product_update(request, product_id, slug):
+    if request.method == 'POST':
+        # The request is a POST request
+        # Retrieve POST parameters
+        title = request.POST.get('title')
+
+        if Product.objects.filter(title=title).exists():
+            return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
+
+        if not Product.objects.filter(id=product_id).exists():
+            return JsonResponse({'error': 'Dieses Produkt existiert nicht.'}, status=400)
+
+        description = request.POST.get('description', '')
+        hersteller = request.POST.get('hersteller', '')
+        active = request.POST.get('isActive', False)
+        inStock = request.POST.get('isInStock', False)
+        isReduced = request.POST.get('isReduced', False)
+        price_str = request.POST.get('price', '0')
+        reduced_price_str = request.POST.get('reducedPrice', price_str)
+        # Remove commas and convert to float
+        price = float(price_str.replace(',', ''))
+        reduced_price = price
+        if reduced_price_str:
+            reduced_price = float(reduced_price_str.replace(',', ''))
+
+        title_image = request.FILES.get('title_image', '')
+
+        # Now you can use 'price' and 'reduced_price' as numeric values in your if condition
+        if title and price > 0:
+            # Create
+            product = Product.objects.get(id=product_id)
+            product.title = title
+            product.description = description
+            product.price = price 
+            product.discount_price = reduced_price
+
+            if active == "true":
+                product.is_active = True
+            else:
+                product.is_active = False
+            if inStock == "true":
+                product.is_in_stock = True
+            else:
+                product.is_in_stock = False
+            if isReduced == "true":
+                product.is_reduced = True
+            else:
+                product.is_reduced = False
+            product.save()
+            if title_image:
+                """resized_image = resize_image(title_image)
+                scaled_image = scale_image(resized_image)
+                compressed_image = compress_image(scaled_image)
+                product.title_image = compressed_image
+                product.save()"""
+            return JsonResponse({'success': 'Product successfully updated', 'productId': product.id, 'slug': product.slug}, status=201)
+
+        else:
+            return JsonResponse({'error': 'Der Titel darf nicht leer sein und der Preis muss größer 0 sein!'}, status=400)
+
+        # Do something with the POST parameters (e.g., save them to the database)
+        # ...
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
