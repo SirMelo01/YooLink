@@ -54,5 +54,5 @@ urlpatterns = [
     path('products/create/', views.product_create_view, name='product-create'),
     path('products/create/upload', views.product_create, name='product-create-upload'),
     path('products/<int:product_id>/<slug:slug>/', views.product_detail, name='product-detail'),
-    path('products/<int:product_id>/<slug:slug>/update', views.product_detail, name='product-detail-update'),
+    path('products/<int:product_id>/<slug:slug>/update', views.product_update, name='product-detail-update'),
 ]

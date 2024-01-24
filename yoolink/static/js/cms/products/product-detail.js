@@ -292,7 +292,9 @@ $(document).ready(function () {
         disableSpinner($('#createProduct'));
         if(response.success) {
           sendNotif("Das Produkt wurde erfolgreich erstellt", "success");
-          window.location.href = '/cms/products/' + response.productId + "/" + response.slug + "/";
+          setTimeout(() => {
+            window.location.href = '/cms/products/' + response.productId + "/" + response.slug + "/";
+          }, 2000)
         } else {
           sendNotif("Etwas lief schief. " + response.error, "error");
         }

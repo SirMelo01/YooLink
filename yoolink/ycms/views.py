@@ -817,11 +817,11 @@ def product_update(request, product_id, slug):
         # Retrieve POST parameters
         title = request.POST.get('title')
 
-        if Product.objects.filter(title=title).exists():
-            return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
-
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'error': 'Dieses Produkt existiert nicht.'}, status=400)
+        product = Product.objects.get(id=product_id)    
+        if title != product.title and Product.objects.filter(title=title).exists():
+            return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
 
         description = request.POST.get('description', '')
         hersteller = request.POST.get('hersteller', '')
@@ -841,7 +841,6 @@ def product_update(request, product_id, slug):
         # Now you can use 'price' and 'reduced_price' as numeric values in your if condition
         if title and price > 0:
             # Create
-            product = Product.objects.get(id=product_id)
             product.title = title
             product.description = description
             product.price = price 
