@@ -5,25 +5,23 @@
 {% block content %}
 
 
-<div class="my-2 flex justify-between">
-  <a href="{% url 'cms:product-create' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer">
+<div class="my-2 space-x-8 flex justify-between">
+  <a href="{% url 'cms:product-create' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">
   Produkt erstellen
   </a>
-  <div class="flex space-x-2">
     <input
-      class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+      class="bg-gray-200 grow w-24 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
       id="inline-full-name" type="text" value="" placeholder="Suche nach einem Gerät...">
       <button id="searchProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer">
         Suchen
       </button>
-  </div>
 </div>
 
 <!-- Produkte -->
 <div id="productGrid" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 mt-7">
   <!-- Produkt Detail -->
   {% for product in products %}
-  <div class="flex h-fit w-full rounded-2xl bg-blue-100 shadow-xl relative">
+  <div class="flex h-full w-full rounded-2xl bg-blue-100 shadow-xl relative">
     {% if product.is_reduced %}
     <span
     class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded-full z-40">{{product.discount_price}}€</span>
@@ -33,11 +31,11 @@
     {% endif %}
     
     <img class="w-36 rounded-l-2xl hidden sm:block"
-      src="https://www.kovinc.de/wp-content/uploads/2021/02/schweissen-fuer-einsteiger.jpg" alt="" srcset="" />
-    <div class="space-y-2 p-3">
-      <h2 class="text-xl font-medium">{{ product.title }}</h2>
-      <div class="h-16 max-h-16 overflow-y-scroll">{{ product.description }}</div>
-      <div class="flex justify-end px-2">
+      src="{{ product.title_image.url }}" alt="" srcset="" />
+    <div class="space-y-2 p-3 flex flex-col h-full">
+      <h2 class="text-xl font-medium flex-none">{{ product.title }}</h2>
+      <div class="h-16 max-h-full overflow-y-scroll grow">{{ product.description }}</div>
+      <div class="flex justify-end px-2 flex-none">
         <a href="{% url 'cms:product-detail' product_id=product.id slug=product.slug %}"
           class="rounded bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-700">Verwalten</a>
       </div>

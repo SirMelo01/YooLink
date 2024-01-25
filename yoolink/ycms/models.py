@@ -101,7 +101,7 @@ def default_code():
     return dict()
 class Blog(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, default='default-slug')
+    slug = models.SlugField(unique=True, default='default-slug', max_length=255)
     title_image = models.ImageField(upload_to=upload_to_blog_image, default="", blank=True)
     date = models.DateField(auto_now_add=True)  # Automatically set on creation
     last_updated = models.DateField(auto_now=True)  # Automatically updated on save
@@ -138,7 +138,7 @@ class Category(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=255)
     website = models.CharField(max_length=200) 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=255)
     
     def save(self, *args, **kwargs):
         # Slugify the title and store it in the slug field
@@ -156,10 +156,11 @@ def upload_to_product_image(instance, filename):
 class Product(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     title_image = models.ImageField(upload_to=upload_to_product_image, default="", blank=True)
+    gallery = models.ForeignKey(Galerie, on_delete=models.SET_NULL, blank=True, null=True)
     is_reduced = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_in_stock = models.BooleanField(default=True)

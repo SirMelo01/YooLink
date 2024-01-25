@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, FAQ, Galerie, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import fileentry, FAQ, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -12,7 +12,7 @@ from PIL import Image
 from io import BytesIO
 from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
+from django.db import transaction
 
 
 @login_required(login_url='login')
@@ -765,10 +765,10 @@ def product_create(request):
         price_str = request.POST.get('price', '0')
         reduced_price_str = request.POST.get('reducedPrice', price_str)
         # Remove commas and convert to float
-        price = float(price_str.replace(',', ''))
+        price = float(price_str.replace(',', '.'))
         reduced_price = price
         if reduced_price_str:
-            reduced_price = float(reduced_price_str.replace(',', ''))
+            reduced_price = float(reduced_price_str.replace(',', '.'))
 
         title_image = request.FILES.get('title_image', '')
 
@@ -793,11 +793,11 @@ def product_create(request):
             else:
                 product.is_reduced = False
             product.save()
-            """resized_image = resize_image(title_image)
+            resized_image = resize_image(title_image)
             scaled_image = scale_image(resized_image)
             compressed_image = compress_image(scaled_image)
             product.title_image = compressed_image
-            product.save()"""
+            product.save()
             return JsonResponse({'success': 'Product successfully created', 'productId': product.id, 'slug': product.slug}, status=201)
 
         else:
@@ -824,23 +824,57 @@ def product_update(request, product_id, slug):
             return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
 
         description = request.POST.get('description', '')
+        # Create hersteller and selected_categories
         hersteller = request.POST.get('hersteller', '')
+        selected_categories_json = request.POST.get('selected_categories')
+        selected_categories = json.loads(selected_categories_json) if selected_categories_json else []
+
         active = request.POST.get('isActive', False)
         inStock = request.POST.get('isInStock', False)
         isReduced = request.POST.get('isReduced', False)
         price_str = request.POST.get('price', '0')
         reduced_price_str = request.POST.get('reducedPrice', price_str)
         # Remove commas and convert to float
-        price = float(price_str.replace(',', ''))
+        price = float(price_str.replace(',', '.'))
         reduced_price = price
         if reduced_price_str:
-            reduced_price = float(reduced_price_str.replace(',', ''))
+            reduced_price = float(reduced_price_str.replace(',', '.'))
 
         title_image = request.FILES.get('title_image', '')
+        gallery = request.POST.get('galeryId', '')
 
         # Now you can use 'price' and 'reduced_price' as numeric values in your if condition
         if title and price > 0:
             # Create
+            # Create or get Brand by hersteller and associate it with the product
+            if hersteller:
+                brand, created = Brand.objects.get_or_create(name=hersteller, defaults={'website': ''})
+                product.brand = brand
+
+            # Handle categories
+            with transaction.atomic():
+                # Create or get Brand by hersteller and associate it with the product
+                if hersteller:
+                    brand, created = Brand.objects.get_or_create(name=hersteller, defaults={'website': ''})
+                    product.brand = brand
+
+                # Handle categories
+                product.categories.clear()  # Clear existing categories
+
+                for category_name in selected_categories:
+                    category, created = Category.objects.get_or_create(name=category_name)
+                    product.categories.add(category)
+
+                # Save the product
+                product.save()
+
+            if gallery:
+                galleryModel = get_object_or_404(Galerie, id=int(gallery))
+                if galleryModel:
+                    product.gallery = galleryModel
+                else:
+                    return JsonResponse({'error': 'Die angegebene Galerie konnte nicht gefunden werden'}, status=400)
+
             product.title = title
             product.description = description
             product.price = price 
@@ -860,11 +894,11 @@ def product_update(request, product_id, slug):
                 product.is_reduced = False
             product.save()
             if title_image:
-                """resized_image = resize_image(title_image)
+                resized_image = resize_image(title_image)
                 scaled_image = scale_image(resized_image)
                 compressed_image = compress_image(scaled_image)
                 product.title_image = compressed_image
-                product.save()"""
+                product.save()
             return JsonResponse({'success': 'Product successfully updated', 'productId': product.id, 'slug': product.slug}, status=201)
 
         else:
@@ -876,3 +910,13 @@ def product_update(request, product_id, slug):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
+
+@login_required(login_url='login')
+def get_categories(request):
+    categories = list(Category.objects.values_list('name', flat=True))
+    return JsonResponse({'categories': categories})
+
+@login_required(login_url='login')
+def get_brands(request):
+    brands = list(Brand.objects.values_list('name', flat=True))
+    return JsonResponse({'brands': brands})

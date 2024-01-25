@@ -55,4 +55,6 @@ urlpatterns = [
     path('products/create/upload', views.product_create, name='product-create-upload'),
     path('products/<int:product_id>/<slug:slug>/', views.product_detail, name='product-detail'),
     path('products/<int:product_id>/<slug:slug>/update', views.product_update, name='product-detail-update'),
+    path('products/get_categories/', views.get_categories, name='get-categories'),
+    path('products/get_brands/', views.get_brands, name='get-brands'),
 ]

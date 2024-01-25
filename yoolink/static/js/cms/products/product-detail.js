@@ -1,18 +1,39 @@
 var imageData = null;
 var newImage = false;
+let categories = [
+   /* ... add more options ... */
+];
+// Update the function to fetch categories
 $(document).ready(function () {
+  $.ajax({
+    url: '/cms/products/get_categories/',  // Update with your actual URL
+    type: 'GET',
+    dataType: 'json',
+    success: function (response) {
+        categories = response.categories;
+        $('.added-category .category-name').each(function () {
+          const categoryName = $(this).text();
+          addedCategories.push(categoryName)
+          const index = categories.indexOf(categoryName);
+          if (index !== -1) {
+            categories.splice(index, 1);
+          }
+        });
+        updateAutocompleteCategoryList(false);
+    },
+    error: function (error) {
+        console.error('Error fetching categories:', error);
+        sendNotif("Etwas konnte nicht geladen werden. Bitte lade die Seite neu")
+    }
+});
   const categoryInput = $('#autocomplete-category-input');
   const autocompleteCategoryList = $('#autocomplete-category-list');
   const addCategoryBtn = $('#addCategory');
   const addedCategoryList = $('#added-category-list');
 
-  let categories = [
-    'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', /* ... add more options ... */
-  ];
-
   // Event listener for input focus, click, and input change
   categoryInput.on('focus click input', function () {
-    updateAutocompleteCategoryList();
+    updateAutocompleteCategoryList(true);
   });
 
   // Event listener for add category button
@@ -39,6 +60,7 @@ $(document).ready(function () {
   addedCategoryList.on('click', '.remove-category-btn', function () {
     const categoryToRemove = $(this).parent().data('category');
     // Remove the category from the added categories list
+    console.log("Remove 1")
     removeCategory(categoryToRemove);
     // Add the category back to the autocomplete list
     addCategoryToAutocomplete(categoryToRemove);
@@ -50,10 +72,11 @@ $(document).ready(function () {
     }
   });
 
-  function updateAutocompleteCategoryList() {
+  function updateAutocompleteCategoryList(show) {
     const query = categoryInput.val().toLowerCase();
-    const matchedCategories = categories.filter(category => category.toLowerCase().includes(query));
-
+    console.log(categories)
+    const matchedCategories = categories.filter(category => category.toLowerCase().includes(query.toLowerCase())
+  );
     // Clear previous options
     autocompleteCategoryList.html('');
 
@@ -70,7 +93,7 @@ $(document).ready(function () {
     });
 
     // Show/hide the autocomplete list
-    autocompleteCategoryList.toggleClass('hidden', matchedCategories.length === 0);
+    if(show) autocompleteCategoryList.toggleClass('hidden', matchedCategories.length === 0);
   }
 
   function addCategory(category) {
@@ -80,22 +103,24 @@ $(document).ready(function () {
 
   function removeCategory(category) {
     const index = addedCategories.indexOf(category);
+    console.log("Remove Category: " + index)
     if (index !== -1) {
       addedCategories.splice(index, 1);
+      console.log("Render Added Categories")
       renderAddedCategories();
     }
   }
 
   function addCategoryToAutocomplete(category) {
     categories.push(category);
-    updateAutocompleteCategoryList();
+    updateAutocompleteCategoryList(true);
   }
 
   function removeCategoryFromAutocomplete(category) {
     const index = categories.indexOf(category);
     if (index !== -1) {
       categories.splice(index, 1);
-      updateAutocompleteCategoryList();
+      updateAutocompleteCategoryList(true);
     }
   }
 
@@ -190,6 +215,12 @@ $(document).ready(function () {
     formData.append('hersteller', $('#autocomplete-hersteller-input').val())
     formData.append('price', $('#price').val());
     formData.append('reducedPrice', $('#reducedPrice').val());
+    formData.append('selected_categories', JSON.stringify(addedCategories));
+    console.log(JSON.stringify(addedCategories))
+    const galeryId = $('#productGalery').attr('galery-id')
+    if(galeryId && parseInt(galeryId)>0) {
+      formData.append('galeryId', galeryId)
+    }
     if(files && files[0]) {
       formData.append('title_image', files[0], "productTitleImage");
     }
@@ -270,6 +301,12 @@ $(document).ready(function () {
     formData.append('price', $('#price').val());
     formData.append('reducedPrice', $('#reducedPrice').val());
     formData.append('title_image', title_image, "productTitleImage");
+    formData.append('selected_categories', JSON.stringify(addedCategories));
+    const galeryId = $('#productGalery').attr('galery-id')
+    if(galeryId && parseInt(galeryId)>0) {
+      formData.append('galeryId', galeryId)
+    }
+    console.log(JSON.stringify(addedCategories))
 
     console.log(formData);
 
@@ -289,11 +326,11 @@ $(document).ready(function () {
         // Handle success
         console.log(response);
         // redirect to detail page
-        disableSpinner($('#createProduct'));
         if(response.success) {
           sendNotif("Das Produkt wurde erfolgreich erstellt", "success");
           setTimeout(() => {
             window.location.href = '/cms/products/' + response.productId + "/" + response.slug + "/";
+            disableSpinner($('#createProduct'));
           }, 2000)
         } else {
           sendNotif("Etwas lief schief. " + response.error, "error");
