@@ -32,9 +32,9 @@
     
     <img class="w-36 rounded-l-2xl hidden sm:block"
       src="{{ product.title_image.url }}" alt="" srcset="" />
-    <div class="space-y-2 p-3 flex flex-col h-full">
+    <div class="space-y-2 p-3 flex flex-col h-full overflow-hidden">
       <h2 class="text-xl font-medium flex-none">{{ product.title }}</h2>
-      <div class="h-16 max-h-full overflow-y-scroll grow">{{ product.description }}</div>
+      <div class="h-16 max-h-full grow overflow-x-hidden overflow-y-auto">{{ product.description }}</div>
       <div class="flex justify-end px-2 flex-none">
         <a href="{% url 'cms:product-detail' product_id=product.id slug=product.slug %}"
           class="rounded bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-700">Verwalten</a>

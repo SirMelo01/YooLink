@@ -188,6 +188,7 @@ $(document).ready(function () {
     $('#updateProductForm').submit();
   })
 
+  const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
   // Update Product Form
   $('#updateProductForm').on("submit", function(event) {
     enableSpinner($('#updateProduct'))
@@ -204,7 +205,6 @@ $(document).ready(function () {
       return;
     }
 
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
     var formData = new FormData(this);
     // Add additional fields to FormData
     formData.append('title', $('#title').val());
@@ -261,6 +261,39 @@ $(document).ready(function () {
     });
 
   })
+  
+  $('#deleteProduct').click(function() {
+    $('#deleteModal').removeClass('hidden')
+  })
+
+  $('.close-delete-modal').click(() => {
+    $('#deleteModal').addClass('hidden')
+  })
+
+  // Delete Product
+  $('#deleteConfirm').click(function() {
+    $.ajax({
+      url: "delete",
+      type: 'POST',
+      data: {
+          csrfmiddlewaretoken: csrfToken,
+      },
+      dataType: 'json',
+      success: function (response) {
+          console.log(response);
+          if (response.error) { 
+            sendNotif(response.error, 'error')
+          } else {
+            sendNotif("Das Produkt wurde erfolgreich gelöscht", 'success')
+            window.location.href = '/cms/products/';
+          }
+      },
+      error: function (xhr, status, error) {
+          console.log(xhr.responseText);
+          sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
+      }
+  });
+  })
 
   // Create Product Form
   $('#createProductForm').on("submit", function (event) {
@@ -275,9 +308,6 @@ $(document).ready(function () {
       sendNotif("Bitte wähle ein Titelbild aus!", "error")
       return;
     }
-
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
 
     // Validate required fields
     var requiredFields = ['#title', '#description', '#price'];

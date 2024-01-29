@@ -201,6 +201,7 @@ class OrderItem(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('OPEN', 'Offen'),
+        ('SHIPPED', 'Versendet'),
         ('PAID', 'Bezahlt'),
         ('COMPLETED', 'Abgeschlossen'),
     ]
@@ -208,12 +209,20 @@ class Order(models.Model):
     items = models.ManyToManyField(OrderItem)
     buyer_email = models.EmailField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    def get_status_display(self):
+        return dict(self.STATUS_CHOICES)[self.status]
 
     def total(self):
         return sum(item.subtotal() for item in self.items.all())
 
     def __str__(self):
         return f"Order - {self.buyer_email} - {self.status}"
+    
+    def total_quantity(self):
+        return sum(item.quantity for item in self.items.all())
 
 
 class Review(models.Model):
@@ -232,10 +241,11 @@ Messages
 """
 
 class Message(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=70)
+    title = models.CharField(max_length=100, null=True)
     email = models.EmailField(max_length=60)
     message = models.CharField(max_length=600)
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True, null=True)
     seen = models.BooleanField(default=False)
 
 

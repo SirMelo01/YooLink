@@ -1,8 +1,9 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, FAQ, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import fileentry, FAQ, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Sum, F, DecimalField
 from django.urls import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
@@ -13,7 +14,12 @@ from io import BytesIO
 from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
-
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAdminUser
+from django.core.mail import send_mail
+from .serializers import OrderSerializer
 
 @login_required(login_url='login')
 def upload(request):
@@ -920,3 +926,285 @@ def get_categories(request):
 def get_brands(request):
     brands = list(Brand.objects.values_list('name', flat=True))
     return JsonResponse({'brands': brands})
+
+@login_required(login_url='login')
+def product_delete(request, product_id, slug):
+    if request.method == 'POST':
+        instance = get_object_or_404(Product, id=product_id)
+        instance.delete()
+        return JsonResponse({'success': True}, status=200)
+    return JsonResponse({'success': False}, status=400)
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def search_products(request):
+    name_query = request.GET.get('name')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    manufacturer = request.GET.get('manufacturer')
+    category = request.GET.get('category')
+    is_active = True  # Must be True
+    is_in_stock = request.GET.get('is_in_stock', True)
+    is_reduced = request.GET.get('is_reduced')
+
+    products = Product.objects.filter(is_active=is_active, is_in_stock=is_in_stock)
+
+    if is_reduced:
+        #products = products.filter(is_reduced__icontains=name_query)
+        pass
+
+    if name_query:
+        products = products.filter(title__icontains=name_query)
+
+    if min_price:
+        products = products.filter(price__gte=min_price)
+
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    if manufacturer:
+        products = products.filter(brand__name__icontains=manufacturer)
+
+    if category:
+        products = products.filter(categories__name__icontains=category)
+
+    data = list(products.values())
+    return JsonResponse(data, safe=False)
+
+
+"""
+Orders
+"""
+
+@login_required(login_url='login')
+def order_view(request):
+    # Count of all orders
+    total_orders = Order.objects.count()
+
+    # Umsatz (total revenue)
+    desired_statuses = ['COMPLETED', 'PAID']
+
+    # Calculate total revenue for orders with the desired statuses
+    total_revenue = Order.objects.filter(status__in=desired_statuses).aggregate(
+        total_revenue=Sum('items__unit_price')
+    )['total_revenue'] or 0
+    # Number of clients
+    total_clients = Order.objects.values('buyer_email').distinct().count()
+
+    # Open orders (not closed/paid)
+    open_orders = Order.objects.filter(status='OPEN').count()
+
+    # Most bought products
+    most_bought_products = OrderItem.objects.values(
+    'product__title',
+    'product__title_image',
+).annotate(
+    total_quantity=Sum('quantity'),
+    total_cash=Sum(F('quantity') * F('unit_price'), output_field=DecimalField())
+).order_by('-total_quantity')[:5]
+
+    # Biggest buyers
+    biggest_buyers = Order.objects.values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
+
+    all_orders = Order.objects.all().order_by('-created_at')
+
+    context = {
+        'total_orders': total_orders,
+        'total_revenue': total_revenue,
+        'total_clients': total_clients,
+        'open_orders': open_orders,
+        'most_bought_products': most_bought_products,
+        'biggest_buyers': biggest_buyers,
+        'all_orders': all_orders,
+    }
+
+    return render(request, "pages/cms/orders/overview.html", context)
+
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def update_order_status(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    new_status = request.data.get('status')
+    order.status = new_status
+    order.save()
+    return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst'}, status=status.HTTP_200_OK)
+
+# views.py
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_review(request, review_id):
+    # Implement logic to delete the review
+    return Response({'success': 'Review wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+
+# views.py
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_order(request, order_id):
+    # Implement logic to delete the order
+    return Response({'success': 'Auftrag wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+
+# views.py
+from django.core.serializers import serialize
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_order_by_id(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    
+    order_serializer = OrderSerializer(order)
+    
+    return Response(order_serializer.data, status=status.HTTP_200_OK)
+
+# views.py
+from django.db.models import Q
+from datetime import timezone, timedelta
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_orders(request):
+    status_filter = request.GET.get('status')
+    buyer_email_filter = request.GET.get('buyer_email')
+    last_period_filter = request.GET.get('last_period')
+
+    orders = Order.objects.all()
+
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+
+    if buyer_email_filter:
+        orders = orders.filter(buyer_email=buyer_email_filter)
+
+    if last_period_filter:
+        if last_period_filter == '1_year':
+            start_date = timezone.now() - timedelta(days=365)
+        elif last_period_filter == '30_days':
+            start_date = timezone.now() - timedelta(days=30)
+        elif last_period_filter == '1_week':
+            start_date = timezone.now() - timedelta(weeks=1)
+        elif last_period_filter == '1_day':
+            start_date = timezone.now() - timedelta(days=1)
+        else:
+            return Response({'error': 'Invalid last_period parameter'}, status=status.HTTP_400_BAD_REQUEST)
+
+        orders = orders.filter(created_at__gte=start_date)
+
+    data = list(orders.values()) if orders.exists() else []
+    return JsonResponse(data, safe=False)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def create_order(request):
+    product_id = request.data.get('product_id')
+    quantity = request.data.get('quantity')
+    buyer_email = request.data.get('email')
+    buyer_name = request.data.get('name')
+    if not buyer_email or not buyer_name:
+        return Response({'error': 'Es wurde keine Email oder Name angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
+    if not quantity or not product_id:
+        return Response({'error': 'Es wurde kein Produkt angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
+    # Check if the product exists
+    product = get_object_or_404(Product, id=product_id)
+
+    # Check if the product is discounted
+    is_discounted = product.is_reduced
+    unit_price = product.discount_price if is_discounted else product.price
+
+    # Create order item
+    order_item = OrderItem.objects.create(
+        product=product,
+        quantity=quantity,
+        is_discounted=is_discounted,
+        unit_price=unit_price
+    )
+
+    # Create order
+    order = Order.objects.create(buyer_email=buyer_email)
+    order.items.add(order_item)
+    order.save()
+
+    # Send confirmation emails (use your preferred method)
+    subject = f"Ihr Auftrag {order.id}"
+    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihre Bestellung bei uns. Wir freuen uns, Ihnen mitzuteilen, dass Ihr Auftrag mit der Auftragsnummer {order.id} erfolgreich eingegangen ist. Unten finden Sie die Details Ihrer Bestellung:\n\n"
+
+    # Add details of each ordered item
+    for item in order.items.all():
+        message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
+
+    message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
+    message += "Wir werden Ihre Bestellung so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
+    message += "Vielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\nYooLink"
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [buyer_email],
+        fail_silently=False,
+    )
+
+    # Email an Unternehmen
+    dashboard_url = settings.DASHBOARD_URL
+
+    subject_company = "Neue Bestellung eingegangen"
+    message_company = f"Hallo Team,\n\nEine neue Bestellung ist eingegangen. Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten.\n\n"
+    message_company += f"Sie können die Bestellung hier einsehen: {dashboard_url}cms/orders/{order.id}/\n\n"
+    message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
+
+    
+    # Replace 'your_company_email' with the actual email address of your company
+    send_mail(
+        subject_company,
+        message_company,
+        settings.EMAIL_HOST_USER,
+        [settings.EMAIL_OWNER],  # Add additional recipients if needed
+        fail_silently=False,
+    )
+
+    return Response({'order_id': order.id}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def email_send(request):
+    message = request.data.get('message')
+    email = request.data.get('email')
+    title = request.data.get('title')
+    name = request.data.get('name', 'Unbekannt')
+    
+    if not message or not email or not title or not name:
+        return Response({'error': 'Es fehlen Parameter bei der Anfrage'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # Hier könntest du den Namen des Anfragenden hinzufügen, wenn dieser verfügbar ist
+    # z.B., angenommen, dass der Name in den Anfrage-Daten als 'name' vorhanden ist
+    
+    
+    # Email an Unternehmen
+    dashboard_url = settings.DASHBOARD_URL
+    existing_message = Message.objects.filter(name=name, message=message, email=email, title=title).first()
+
+    if existing_message:
+        # Return an error response indicating that a similar message already exists
+        response_data = {'error': 'A similar message already exists.'}
+        return JsonResponse(response_data, status=400)
+    message = Message.objects.create(name=name,message=message,email=email,title=title)
+
+    subject_company = "Neue Nachricht in Ihrem CMS"
+    message_company = f"Hallo Team,\n\n{ name } ({ email }) hat eine neue Anfrage gesendet:\n\n"
+    message_company += f"Betreff: { title }\n\n"
+    message_company += f"Nachricht: { message }\n\n"
+    message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
+    message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
+
+    # Replace 'your_company_email' with the actual email address of your company
+    send_mail(
+        subject_company,
+        message_company,
+        settings.EMAIL_HOST_USER,
+        [settings.EMAIL_OWNER],  # Add additional recipients if needed
+        fail_silently=False,
+    )
+
+    return Response({'success': True}, status=status.HTTP_200_OK)

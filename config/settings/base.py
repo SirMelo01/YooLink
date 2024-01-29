@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = BASE_DIR / "yoolink"
 env = environ.Env()
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(BASE_DIR / ".env"))
@@ -171,7 +171,7 @@ MEDIA_URL = "/media/"
 DEFAULT_FILE_STORAGE = 'config.settings.cdn.backends.MediaRootS3Boto3Storage'
 AWS_ACCESS_KEY_ID='DO00H2NXTAXBZ89DMKPK'
 AWS_SECRET_ACCESS_KEY = env(
-    "DIGITAL_OCEAN_SECRET_KEY",
+    "DIGITAL_OCEAN_SECRET_KEY", 
     default="6gOdmTCnqhEsFvtb0kFKJCibvYkKyKqjC5k6kfMCGsc",
 )
 # Save Images in Cache and enable public access
@@ -245,8 +245,17 @@ EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND",
     default="django.core.mail.backends.smtp.EmailBackend",
 )
+EMAIL_HOST = env("DJANGO_EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT", default=465)
+# EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
+
+EMAIL_OWNER = 'yoolink@t-online.de'
+DASHBOARD_URL = 'https://yoolink.de/'
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -343,10 +352,10 @@ STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
+    #DEFAULT_AUTHENTICATION_CLASSES": (
+    #    "rest_framework.authentication.SessionAuthentication",
+    #    "rest_framework.authentication.TokenAuthentication",
+    #),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

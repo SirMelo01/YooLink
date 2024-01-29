@@ -48,6 +48,27 @@
 
 {% include "pages/cms/components/GalerySelectModal.html" %}
 
+<!-- Delete Modal -->
+<div id="deleteModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 lg:min-w-[10rem] hidden">
+  <div class="modal-container max-h-full  rounded-lg bg-white shadow-lg p-6">
+    <!-- Modal header -->
+    <div class="flex items-start justify-between rounded-t">
+      <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">Löschen bestätigen</h3>
+      <button type="button" class="ml-auto close-delete-modal inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+        <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
+    </div>
+    <!-- Actions -->
+    <div class="flex justify-center mt-10">
+      <button class="rounded-xl close-delete-modal bg-gray-700 px-4 py-2 text-base font-bold text-white hover:bg-gray-800">Abbrechen</button>
+      <button id="deleteConfirm" class="ml-3 rounded-xl bg-red-500 px-4 py-2 text-base font-bold text-white hover:cursor-pointer hover:bg-red-700">Löschen bestätigen</button>
+    </div>
+  </div>
+</div>
+
 <!-- Form -->
 <div class="container mx-auto mt-8 max-w-6xl px-3 lg:px-0">
   <!-- Header -->
@@ -56,14 +77,18 @@
         id="titleSpan">{{product.title}} </span></h1>
     <div class="flex">
       <a class="mr-6 rounded flex items-center bg-green-500 px-4 py-2 font-bold text-white hover:cursor-pointer hover:bg-green-700"
-        id="updateProduct"> <i class="bi bi-plus-circle mr-2"></i> <svg class="mr-3 h-5 w-5 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        id="updateProduct"> <i class="bi bi-plus-circle mr-2"></i> <svg
+          class="mr-3 h-5 w-5 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg> Speichern </a>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg> Speichern </a>
       <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
-          id="deleteProduct">
-          Löschen
-        </a>
+        id="deleteProduct">
+        Löschen
+      </a>
     </div>
   </div>
   <!-- Form -->
@@ -119,13 +144,32 @@
           <div class="extraOutline m-auto w-full rounded-lg bg-white">
             <div
               class="file_upload relative h-48 w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover flex justify-center items-center">
-              <img
-                id="productImage"
-                src="https://www.kiebel.de/out/pictures/generated/product/12/220_285_90/60d3d2ab7b9851a8ea19cfdd3e1b8c62.png"
+              <img id="productImage"
+                src="{{product.title_image.url}}"
                 alt="" class="h-full rounded-xl">
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="mb-6 mt-2 flex w-full items-center space-x-7 px-4">
+        <div>
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Preis </label>
+          <input
+            class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+            id="price" type="text" value="{{product.price}}" placeholder="205,20" required />
+        </div>
+        <div>
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Reduzierter
+            Preis </label>
+          <input
+            class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+            id="reducedPrice" type="text" value="{{ product.discount_price }}" placeholder="200" />
+        </div>
+
+        <input {% if product.is_reduced %}checked{% endif %}
+          class="checked:focus:border-primary mr-2 mt-4 h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+          type="checkbox" role="switch" id="reducedSwitch" />
       </div>
 
       <!-- Hersteller Autocomplete  -->
@@ -136,8 +180,8 @@
             </label>
           </div>
           <input id="autocomplete-hersteller-input" type="text"
-          class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-          value="{% if product.brand %}{{ product.brand.name }}{% endif %}" placeholder="Hersteller">
+            class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+            value="{% if product.brand %}{{ product.brand.name }}{% endif %}" placeholder="Hersteller">
           <div id="autocomplete-hersteller-list"
             class="absolute autocomplete-list left-0 z-10 mt-2 hidden max-h-44 w-64 overflow-y-scroll rounded-lg border bg-white shadow-lg">
             <!-- Autocomplete options will be added here dynamically -->
@@ -165,53 +209,35 @@
         <div id="added-category-list" class="flex flex-wrap gap-1">
           <!-- Added countries will be displayed here -->
           {% for category in product.categories.all %}
-              <div data-category="{{ category.name }}"  class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5 added-category">
-                  <span class="category-name">{{ category.name }}</span>
-                  <span class="cursor-pointer pl-2 text-lg font-semibold text-red-500 remove-category-btn">&times;</span>
-              </div>
+          <div data-category="{{ category.name }}"
+            class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5 added-category">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="cursor-pointer pl-2 text-lg font-semibold text-red-500 remove-category-btn">&times;</span>
+          </div>
           {% endfor %}
         </div>
       </div>
 
       <div>
-        <div class="mb-6 mt-2 flex w-full items-center space-x-7 px-4">
-          <div>
-            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Preis </label>
-            <input
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              id="price" type="text" value="{{product.price}}" placeholder="205,20" required />
-          </div>
-          <div>
-            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Reduzierter
-              Preis </label>
-            <input
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              id="reducedPrice" type="text" value="{{ product.discount_price }}" placeholder="200" />
-          </div>
-
-          <input
-            {% if product.is_reduced %}checked{% endif %}
-            class="checked:focus:border-primary mr-2 mt-4 h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="reducedSwitch" />
-        </div>
         <div>
           <div class="flex items-center justify-between px-4">
             <div>
-              <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Galerie </label>
-
+              <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Galerie
+              </label>
             </div>
-            <button type="button" class="bg-blue-500 edit-galery hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">
+            <button type="button"
+              class="bg-blue-500 edit-galery hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">
               Ändern
             </button>
           </div>
           <div id="productGalery" class="carousel mx-20 rounded-lg">
-           {% if product.gallery %}
-           {% for image in product.gallery.images %}
-           <div>
-            <img src="{image.file.url}" class="w-full rounded-xl" style="height: 16rem;">
-           </div>
-           {% endfor %}
-           {% endif %}
+            {% if product.gallery %}
+            {% for image in product.gallery.images %}
+            <div>
+              <img src="{image.upload.url}" class="w-full rounded-xl" style="height: 16rem;">
+            </div>
+            {% endfor %}
+            {% endif %}
           </div>
         </div>
       </div>
@@ -233,7 +259,7 @@
 <!-- Needed for Galery -->
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 <script>
-    $('.carousel').slick({
+  $('.carousel').slick({
     dots: true,  // Display navigation dots
     arrows: true,  // Display navigation arrows
     infinite: true,  // Enable infinite looping
@@ -242,12 +268,12 @@
     autoplay: true,
     autoplaySpeed: 3000,
     // Add any other configuration options as needed
-});
+  });
 </script>
 <script defer>
-    $(document).ready(function () {
-        loadGalerien(false);
-    })
+  $(document).ready(function () {
+    loadGalerien(false);
+  })
 </script>
 {% endcompress js %}
 {% endblock javascriptend %}

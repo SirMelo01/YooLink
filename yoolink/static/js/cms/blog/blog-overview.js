@@ -15,7 +15,6 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 console.log(response);
-                alert("Success")
                 if (response.success) { 
                     $listItem.remove() 
                     sendNotif('Dieser Blog wurde erfolgreich gelöscht', 'success')

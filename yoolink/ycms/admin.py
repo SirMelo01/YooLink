@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Galerie, GaleryImage, FAQ, Product, fileentry, Blog, Message, TextContent
+from .models import Galerie, GaleryImage, FAQ, Product, fileentry, Blog, Message, TextContent, Order, OrderItem, Review, Brand, Category
 
 # Register your models here.
 
@@ -12,3 +12,8 @@ admin.site.register(Blog)
 admin.site.register(Message)
 admin.site.register(TextContent)
 admin.site.register(Product)
+admin.site.register(Category)
+admin.site.register(Brand)
+admin.site.register(OrderItem)
+admin.site.register(Order)
+admin.site.register(Review)

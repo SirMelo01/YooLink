@@ -51,10 +51,30 @@ urlpatterns = [
     # Products
     path('products/', views.product_view, name='products'),
     path('products/search/', views.product_search, name='product_search'),
+    # USER API Based search
+    path('products/client/search/', views.search_products, name='product_client_search'),
     path('products/create/', views.product_create_view, name='product-create'),
     path('products/create/upload', views.product_create, name='product-create-upload'),
     path('products/<int:product_id>/<slug:slug>/', views.product_detail, name='product-detail'),
     path('products/<int:product_id>/<slug:slug>/update', views.product_update, name='product-detail-update'),
+    path('products/<int:product_id>/<slug:slug>/delete', views.product_delete, name='product-detail-delete'),
     path('products/get_categories/', views.get_categories, name='get-categories'),
     path('products/get_brands/', views.get_brands, name='get-brands'),
+    # Orders
+    path('orders/', views.order_view, name='order-overview'),
+    # GET all orders by filter (as JSON)
+    path('orders/filter/', views.get_orders, name='order-api'),
+    # TODO: Still JSON Response. Change it to render view response
+    path('orders/<int:order_id>/', views.get_order_by_id, name='get_order_by_id'),
+    path('orders/<int:order_id>/update_order_status/', views.update_order_status, name='update_order_status'),
+    path('orders/<int:order_id>/delete/', views.delete_order, name='delete_order'),
+    # USER API BASED ENDPOINTS
+    path('orders/create/', views.create_order, name='create_order'),
+
+    # Reviews
+    path('reviews/<int:review_id>/delete_reviews/', views.delete_review, name='delete_review'),
+
+    # Email
+    path('email/request/', views.email_send, name='send-email'),
+
 ]
