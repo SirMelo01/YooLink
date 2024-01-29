@@ -235,7 +235,7 @@
               {% if product.gallery.images %}
                 {% for image in product.gallery.images.all %}
                 <div>
-                  <img src="{image.upload.url}" class="w-full rounded-xl" style="height: 16rem;">
+                  <img src="{{image.upload.url}}" class="w-full rounded-xl" style="height: 16rem;">
                 </div>
                 {% endfor %}
               {% endif %}
