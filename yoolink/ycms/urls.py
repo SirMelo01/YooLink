@@ -61,6 +61,8 @@ urlpatterns = [
     path('products/get_categories/', views.get_categories, name='get-categories'),
     path('products/get_brands/', views.get_brands, name='get-brands'),
     # Orders
+    path('api/order/verify/', views.verify_order, name='api-order-verify'),
+    path('order/verify/', views.order_verify_view, name='order-verify'),
     path('orders/', views.order_view, name='order-overview'),
     # GET all orders by filter (as JSON)
     path('orders/filter/', views.get_orders, name='order-api'),

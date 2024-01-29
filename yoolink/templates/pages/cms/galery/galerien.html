@@ -32,7 +32,7 @@
           </div>
           <hr class="w-full">
           <div class="p-3 grid grid-cols-4 gap-3 mt-2 flex-1 overflow-auto max-h-50">
-            {% for image in galery.images %}
+            {% for image in galery.images.all %}
             <img class="rounded-2xl w-full h-20" src="{{image.upload.url}}" title="{{image.upload.title}}" alt="{{image.upload.title}}">
             {% endfor %}
           </div>

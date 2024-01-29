@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from yoolink.users.models import User
 from django.utils.text import slugify
 from django.utils import timezone
+import uuid
 
 
 ## Produktiv und funktioniert
@@ -208,9 +209,16 @@ class Order(models.Model):
 
     items = models.ManyToManyField(OrderItem)
     buyer_email = models.EmailField()
+    buyer_address = models.TextField(default='')
+    verified = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    def delete(self, *args, **kwargs):
+        self.items.all().delete()
+        super(Order, self).delete(*args, **kwargs)
 
     def get_status_display(self):
         return dict(self.STATUS_CHOICES)[self.status]
@@ -229,7 +237,7 @@ class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user_name = models.CharField(max_length=255)
     email = models.EmailField()
-    comment = models.TextField()
+    comment = models.TextField(default='')
     rating = models.PositiveIntegerField(default=5)  # Assuming a rating out of 5
 
     def __str__(self):
@@ -256,3 +264,16 @@ class TextContent(models.Model):
     description = models.TextField(default="")
     buttonText = models.CharField(max_length=60, default="")
 
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=255, default='')
+    full_name = models.CharField(max_length=255, default='')
+    company_name = models.CharField(max_length=255, default='')
+    tel_number = models.CharField(max_length=18, default='')
+    fax_number = models.CharField(max_length=18, default='')
+    mobile_number = models.CharField(max_length=18, default='')
+    website = models.URLField(blank=True, default='')
+
+    def __str__(self):
+        return f"{self.full_name}'s Einstellungen"

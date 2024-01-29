@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, FAQ, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import fileentry, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -20,6 +20,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail
 from .serializers import OrderSerializer
+from yoolink.users.models import User
 
 @login_required(login_url='login')
 def upload(request):
@@ -1008,7 +1009,7 @@ def order_view(request):
     # Biggest buyers
     biggest_buyers = Order.objects.values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
 
-    all_orders = Order.objects.all().order_by('-created_at')
+    all_orders = Order.objects.filter(verified=True).order_by('-created_at')
 
     context = {
         'total_orders': total_orders,
@@ -1035,18 +1036,25 @@ def update_order_status(request, order_id):
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
 def delete_review(request, review_id):
-    # Implement logic to delete the review
-    return Response({'success': 'Review wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+    try:
+        review = Review.objects.get(pk=review_id)
+        review.delete()
+        return Response({'success': 'Review wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+    except Review.DoesNotExist:
+        return Response({'error': 'Bewertung nicht gefunden'}, status=status.HTTP_404_NOT_FOUND)
 
 # views.py
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
 def delete_order(request, order_id):
-    # Implement logic to delete the order
-    return Response({'success': 'Auftrag wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+    try:
+        order = Order.objects.get(pk=order_id)
+        order.delete()
+        return Response({'success': 'Auftrag wurde erfolgreich gelöscht'}, status=status.HTTP_200_OK)
+    except Order.DoesNotExist:
+        return Response({'error': 'Auftrag nicht gefunden'}, status=status.HTTP_404_NOT_FOUND)
 
 # views.py
-from django.core.serializers import serialize
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
@@ -1107,7 +1115,7 @@ def create_order(request):
         return Response({'error': 'Es wurde kein Produkt angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
     # Check if the product exists
     product = get_object_or_404(Product, id=product_id)
-
+    user_settings = User.objects.filter(is_staff=True).first()
     # Check if the product is discounted
     is_discounted = product.is_reduced
     unit_price = product.discount_price if is_discounted else product.price
@@ -1125,17 +1133,31 @@ def create_order(request):
     order.items.add(order_item)
     order.save()
 
+    # User Data
+    full_name = user_settings.full_name
+    company_name = user_settings.company_name
+    phone_number = user_settings.tel_number
+    fax_number = user_settings.fax_number
+    mobile_number = user_settings.mobile_number
+    website = user_settings.website
+
     # Send confirmation emails (use your preferred method)
     subject = f"Ihr Auftrag {order.id}"
-    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihre Bestellung bei uns. Wir freuen uns, Ihnen mitzuteilen, dass Ihr Auftrag mit der Auftragsnummer {order.id} erfolgreich eingegangen ist. Unten finden Sie die Details Ihrer Bestellung:\n\n"
+    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Wir freuen uns, Ihnen mitzuteilen, dass Ihr Auftrag mit der Auftragsnummer {order.id} erfolgreich eingegangen ist. Unten finden Sie die Details Ihrem Auftrag:\n\n"
 
     # Add details of each ordered item
     for item in order.items.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
+
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
-    message += "Wir werden Ihre Bestellung so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
-    message += "Vielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\nYooLink"
+    #message += "Wir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
+    dashboard_url = settings.DASHBOARD_URL
+    url = dashboard_url + "order/verify/?token=" + order.uuid + "&order_id=" + order.id
+    message += f"\nBitte bestätigen sie ihren Auftrag hier: {url}"
+    message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
+    message += f"\n{company_name}\nTel. {phone_number}\nFax {fax_number}\nHandy {mobile_number}\n{website}"
+    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
 
     send_mail(
         subject,
@@ -1145,25 +1167,86 @@ def create_order(request):
         fail_silently=False,
     )
 
-    # Email an Unternehmen
-    dashboard_url = settings.DASHBOARD_URL
 
-    subject_company = "Neue Bestellung eingegangen"
-    message_company = f"Hallo Team,\n\nEine neue Bestellung ist eingegangen. Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten.\n\n"
-    message_company += f"Sie können die Bestellung hier einsehen: {dashboard_url}cms/orders/{order.id}/\n\n"
-    message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
+    return Response({'success': True}, status=status.HTTP_201_CREATED)
 
+
+@login_required(login_url='login')
+def order_verify_view(request):
+    token = request.GET.get('token')
+    order_id = request.GET.get('order_id')
+    order = get_object_or_404(Order, id=order_id, uuid=token)
+    return render(request, "pages/cms/orders/verify.html", {"order": order})
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def verify_order(request):
+    orderId = request.data.get('orderId')
+    uuid = request.data.get('uuid')
+    address = request.data.get('address')
+
+    if not orderId or not uuid:
+        return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     
-    # Replace 'your_company_email' with the actual email address of your company
-    send_mail(
-        subject_company,
-        message_company,
-        settings.EMAIL_HOST_USER,
-        [settings.EMAIL_OWNER],  # Add additional recipients if needed
-        fail_silently=False,
-    )
+    if not address:
+        return JsonResponse({'error': 'Die Adresse muss angegeben sein'}, status=400)
 
-    return Response({'order_id': order.id}, status=status.HTTP_201_CREATED)
+    # Check if the order exists
+    order = get_object_or_404(Order, id=orderId, uuid=uuid)
+    user_settings = User.objects.filter(is_staff=True).first()
+    if not user_settings:
+        return JsonResponse({'error': 'There is no staff user!.'}, status=400)
+    # Check if the order is not already verified
+    if not order.verified:
+        # Set the order as verified
+        order.verified = True
+        order.save()
+        # User Data
+        full_name = user_settings.full_name
+        company_name = user_settings.company_name
+        phone_number = user_settings.tel_number
+        fax_number = user_settings.fax_number
+        mobile_number = user_settings.mobile_number
+        website = user_settings.website
+        # Send confirmation emails (use your preferred method)
+        subject = f"Bestätigung Auftrag {order.id}"
+        message = f"Vielen Dank für die Bestätigung Ihres Auftrags bei {company_name}."
+        message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
+        message += f"Vielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
+        message += f"\n{company_name}\nTel. {phone_number}\nFax {fax_number}\nHandy {mobile_number}\n{website}"
+        message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
+
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [order.buyer_email],
+            fail_silently=False,
+        )
+
+        # Email an Unternehmen
+        dashboard_url = settings.DASHBOARD_URL
+
+        subject_company = "Neue Bestellung eingegangen"
+        message_company = f"Hallo Team,\n\nEine neue Bestellung ist eingegangen. Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten.\n\n"
+        message_company += f"Sie können die Bestellung hier einsehen: {dashboard_url}cms/orders/{order.id}/\n\n"
+        message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
+
+        
+        # Replace 'your_company_email' with the actual email address of your company
+        send_mail(
+            subject_company,
+            message_company,
+            settings.EMAIL_HOST_USER,
+            [settings.EMAIL_OWNER],  # Add additional recipients if needed
+            fail_silently=False,
+        )
+
+        return JsonResponse({'success': 'Order successfully verified.'})
+    else:
+        return JsonResponse({'error': 'Order is already verified.'}, status=400)
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1187,7 +1270,7 @@ def email_send(request):
 
     if existing_message:
         # Return an error response indicating that a similar message already exists
-        response_data = {'error': 'A similar message already exists.'}
+        response_data = {'error': 'Sie haben diese Nachricht bereits gesendet'}
         return JsonResponse(response_data, status=400)
     message = Message.objects.create(name=name,message=message,email=email,title=title)
 

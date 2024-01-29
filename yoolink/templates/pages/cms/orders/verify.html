@@ -1,0 +1,53 @@
+{% extends "base.html" %} {% load compress static %}
+
+{% block title %}{{block.super}} | Kontakt{% endblock title %}
+
+{% block content %}
+
+  <section class="bg-blue-100 -mt-5">
+    <div class="py-10 lg:py-16 px-4 mx-auto max-w-screen-md">
+      <h2 class="mb-10 max-w-lg text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
+        Nehmen Sie Kontakt auf
+      </h2>
+
+
+      {% if error %}
+        <p class="mb-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Lassen Sie uns wissen, wie wir Ihnen helfen können. Wir werden Sie so schnell wie möglich kontaktieren.</p>
+      {% else %}
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+          <p class="font-bold">Vielen Dank für die Nachricht!</p>
+          <p>Wir kommen so schnell wie möglich auf Sie zu!</p>
+        </div>
+      {% endif %}
+
+      <form action="/cms/api/order/verify/" method="POST" class="space-y-8">
+        {% csrf_token%}
+        <div>
+          <label for="uuid" class="block mb-2 text-lg text-gray-900">Token</label>
+          <input disabled name="uuid" type="text" id="uuid" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+        </div>
+        <div>
+          <label for="orderId" class="block mb-2 text-lg text-gray-900">Auftrags Nr.</label>
+          <input disabled name="orderId" type="text" id="orderId" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+        </div>
+        <div>
+            <label for="orderId" class="block mb-2 text-lg text-gray-900">Ihre Adresse</label>
+            <input name="address" type="text" id="address" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+          </div>
+        <div class="max-w-fit bg-blue-300 rounded-2xl mt-12">
+          <button type="submit" class="inline-flex items-center h-12 px-6 text-white rounded">Absenden</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+{%endblock content%}
+
+
+
+
+
+
+
+
+

@@ -10,7 +10,6 @@
         Nehmen Sie Kontakt auf
       </h2>
 
-      {% csrf_token%}
 
       {% if success == False%}
         <p class="mb-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Lassen Sie uns wissen, wie wir Ihnen helfen können. Wir werden Sie so schnell wie möglich kontaktieren.</p>
@@ -21,7 +20,7 @@
         </div>
       {% endif %}
 
-      <form action="" method="POST" class="space-y-8">
+      <form action="/cms/email/request/" method="POST" class="space-y-8">
         {% csrf_token%}
         <div>
           <label for="name" class="block mb-2 text-lg text-gray-900">Name</label>
@@ -30,6 +29,10 @@
         <div>
           <label for="email" class="block mb-2 text-lg text-gray-900">E-Mail Adresse</label>
           <input name="email" type="email" id="email" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+        </div>
+        <div>
+          <label for="title" class="block mb-2 text-lg text-gray-900">Anliegen</label>
+          <input name="title" type="name" id="name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
         </div>
         <div class="sm:col-span-2">
           <label for="message" class="block mb-2 text-lg text-gray-900">Nachricht</label>

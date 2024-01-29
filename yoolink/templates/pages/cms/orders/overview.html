@@ -98,7 +98,7 @@
                     <a href="">
                         <tr class="mb-2 rounded-2xl py-4 hover:cursor-pointer hover:bg-blue-50">
                             <td class="flex">
-                                <img class="mr-2 w-10 rounded-xl" src="{{ product.product__title_image }}" alt="" /> 
+                                <img class="mr-2 w-10 rounded-xl" src="{{ product.product__title_image.url }}" alt="" /> 
                                 {{product.product__title }}</td>
                             <td>{{ product.total_quantity }}</td>
                             <td>{{ product.total_cash }}€</td>
@@ -155,7 +155,7 @@
                 <p class="rounded-2xl bg-yellow-400 px-2 text-sm font-medium text-gray-700">{{ order.get_status_display }}</p>
             </div>
             <div class="flex flex-col items-center justify-center">
-                <a href="#"
+                <a href="/cms/orders/{{order.id}}/"
                     class="rounded bg-blue-500 px-2 py-1 font-bold text-white hover:cursor-pointer hover:bg-blue-700">
                     Verwalten </a>
             </div>
