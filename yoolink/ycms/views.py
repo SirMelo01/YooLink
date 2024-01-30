@@ -980,6 +980,11 @@ Orders
 """
 
 @login_required(login_url='login')
+def order_detail_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, "pages/cms/orders/detail.html", {'order': order})
+
+@login_required(login_url='login')
 def order_view(request):
     # Count of all orders
     total_orders = Order.objects.count()

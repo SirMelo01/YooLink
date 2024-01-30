@@ -64,10 +64,11 @@ urlpatterns = [
     path('api/order/verify/', views.verify_order, name='api-order-verify'),
     path('order/verify/', views.order_verify_view, name='order-verify'),
     path('orders/', views.order_view, name='order-overview'),
+    path('orders/<int:order_id>/', views.order_detail_view, name='order-detail-view'),
     # GET all orders by filter (as JSON)
     path('orders/filter/', views.get_orders, name='order-api'),
     # TODO: Still JSON Response. Change it to render view response
-    path('orders/<int:order_id>/', views.get_order_by_id, name='get_order_by_id'),
+    path('api/orders/<int:order_id>/', views.get_order_by_id, name='get_order_by_id'),
     path('orders/<int:order_id>/update_order_status/', views.update_order_status, name='update_order_status'),
     path('orders/<int:order_id>/delete/', views.delete_order, name='delete_order'),
     # USER API BASED ENDPOINTS
