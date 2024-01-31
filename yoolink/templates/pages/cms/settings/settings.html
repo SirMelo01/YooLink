@@ -16,6 +16,7 @@
       </div>
       
       <form action="" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
+        {% csrf_token %}
         <div class="my-2">
           <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> E-Mail </label>
           <input value="{{settings.email}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="email" type="text"  placeholder="sam.smith@gmail.com" />
@@ -54,48 +55,6 @@
 
 {% block javascriptend %}
 {% compress js inline %}
-<script>
-    $(document).ready(function() {
-        // Handle form submission through AJAX
-        $('#updateSettings').on('click', function() {
-            var email = $('#email').val();
-            var full_name = $('#full_name').val();
-            var company_name = $('#company_name').val();
-            var tel_number = $('#tel_number').val();
-            var fax_number = $('#fax_number').val();
-            var mobile_number = $('#mobile_number').val();
-            var website = $('#website').val();
-    
-            // AJAX request to update user settings
-            $.ajax({
-                type: 'POST',
-                url: 'update/',  // Update with the actual URL
-                data: {
-                    'email': email,
-                    'full_name': full_name,
-                    'company_name': company_name,
-                    'tel_number': tel_number,
-                    'fax_number': fax_number,
-                    'mobile_number': mobile_number,
-                    'website': website,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    // Handle success, if needed
-                    console.log(response);
-                    if(response.success) {
-                        sendNotif(response.success, 'success')
-                    } else {
-                        sendNotif(response.error ? response.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
-                    }
-                },
-                error: function(error) {
-                    // Handle error, if needed
-                    sendNotif(error.error ? error.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
-                }
-            });
-        });
-    });
-    </script>
+<script src="{% static 'js/cms/settings/settings.js' %}"></script>
 {% endcompress js %}
 {% endblock javascriptend %}

@@ -1178,7 +1178,7 @@ def create_order(request):
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
     #message += "Wir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
     dashboard_url = settings.DASHBOARD_URL
-    url = dashboard_url + "order/verify/?token=" + order.uuid + "&order_id=" + order.id
+    url = dashboard_url + "order/verify/?token=" + str(order.uuid) + "&order_id=" + str(order.id)
     message += f"\nBitte bestätigen sie ihren Auftrag hier: {url}"
     message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}\nTel. {phone_number}\nFax {fax_number}\nHandy {mobile_number}\n{website}"
