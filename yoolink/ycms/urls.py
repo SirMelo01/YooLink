@@ -79,5 +79,9 @@ urlpatterns = [
 
     # Email
     path('email/request/', views.email_send, name='send-email'),
+    
+    # Settings
+    path('settings/', views.user_settings_view, name='settings-view'),
+    path('settings/update/', views.user_settings_update, name='settings-update'),
 
 ]

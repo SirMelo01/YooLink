@@ -765,7 +765,11 @@ def product_create(request):
             return JsonResponse({'error': 'Ein Produkt mit diesem Titel existiert bereits!'}, status=400)
 
         description = request.POST.get('description', '')
+        # Create hersteller and selected_categories
         hersteller = request.POST.get('hersteller', '')
+        selected_categories_json = request.POST.get('selected_categories')
+        selected_categories = json.loads(selected_categories_json) if selected_categories_json else []
+        
         active = request.POST.get('isActive', False)
         inStock = request.POST.get('isInStock', False)
         isReduced = request.POST.get('isReduced', False)
@@ -778,7 +782,8 @@ def product_create(request):
             reduced_price = float(reduced_price_str.replace(',', '.'))
 
         title_image = request.FILES.get('title_image', '')
-
+        gallery = request.POST.get('galeryId', '')
+        
         # Now you can use 'price' and 'reduced_price' as numeric values in your if condition
         if title and price > 0:
             # Create
@@ -799,6 +804,28 @@ def product_create(request):
                 product.is_reduced = True
             else:
                 product.is_reduced = False
+            # Brand
+            if hersteller:
+                brand, created = Brand.objects.get_or_create(name=hersteller, defaults={'website': ''})
+                product.brand = brand
+            # Categories
+            with transaction.atomic():
+                # Create or get Brand by hersteller and associate it with the product
+
+                for category_name in selected_categories:
+                    category, created = Category.objects.get_or_create(name=category_name)
+                    product.categories.add(category)
+
+                # Save the product
+                product.save()
+            # Gallery
+            if gallery:
+                galleryModel = get_object_or_404(Galerie, id=int(gallery))
+                if galleryModel:
+                    product.gallery = galleryModel
+                else:
+                    return JsonResponse({'error': 'Die angegebene Galerie konnte nicht gefunden werden'}, status=400)
+ 
             product.save()
             resized_image = resize_image(title_image)
             scaled_image = scale_image(resized_image)
@@ -809,11 +836,6 @@ def product_create(request):
 
         else:
             return JsonResponse({'error': 'Der Titel darf nicht leer sein und der Preis muss größer 0 sein!'}, status=400)
-
-        # Do something with the POST parameters (e.g., save them to the database)
-        # ...
-
-        return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
@@ -861,9 +883,6 @@ def product_update(request, product_id, slug):
             # Handle categories
             with transaction.atomic():
                 # Create or get Brand by hersteller and associate it with the product
-                if hersteller:
-                    brand, created = Brand.objects.get_or_create(name=hersteller, defaults={'website': ''})
-                    product.brand = brand
 
                 # Handle categories
                 product.categories.clear()  # Clear existing categories
@@ -911,10 +930,6 @@ def product_update(request, product_id, slug):
         else:
             return JsonResponse({'error': 'Der Titel darf nicht leer sein und der Preis muss größer 0 sein!'}, status=400)
 
-        # Do something with the POST parameters (e.g., save them to the database)
-        # ...
-
-        return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
@@ -1120,7 +1135,12 @@ def create_order(request):
         return Response({'error': 'Es wurde kein Produkt angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
     # Check if the product exists
     product = get_object_or_404(Product, id=product_id)
-    user_settings = User.objects.filter(is_staff=True).first()
+    # Corrected code to get user settings for staff user
+    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+
+    # Check if a staff user with settings exists
+    if user_settings is None:
+        return Response({'error': 'No staff user with settings found'}, status=status.HTTP_404_NOT_FOUND)
     # Check if the product is discounted
     is_discounted = product.is_reduced
     unit_price = product.discount_price if is_discounted else product.price
@@ -1296,3 +1316,37 @@ def email_send(request):
     )
 
     return Response({'success': True}, status=status.HTTP_200_OK)
+
+# Settings
+@login_required(login_url='login')
+def user_settings_view(request):
+    # Retrieve the UserSettings for the currently logged-in user or any specific user
+    user_settings = UserSettings.objects.get(user=request.user)
+
+    context = {
+        'settings': user_settings,
+        # Other context variables if needed
+    }
+
+    return render(request, 'pages/cms/settings/settings.html', context)
+
+@login_required(login_url='login')
+def user_settings_update(request):
+    if request.method == 'POST':
+        user_settings = UserSettings.objects.get(user=request.user)
+
+        # Update user settings based on the received data
+        user_settings.email = request.POST.get('email', '')
+        user_settings.full_name = request.POST.get('full_name', '')
+        user_settings.company_name = request.POST.get('company_name', '')
+        user_settings.tel_number = request.POST.get('tel_number', '')
+        user_settings.fax_number = request.POST.get('fax_number', '')
+        user_settings.mobile_number = request.POST.get('mobile_number', '')
+        user_settings.website = request.POST.get('website', '')
+
+        # Save the updated user settings
+        user_settings.save()
+
+        return JsonResponse({'success': 'Die Einstellungen wurden erfolgreich gespeichert'})
+    else:
+        return JsonResponse({'error': 'Die Einstellungen konnten nicht gespeichert werden'})

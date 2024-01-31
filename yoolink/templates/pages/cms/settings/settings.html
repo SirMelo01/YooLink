@@ -1,0 +1,101 @@
+{% extends 'cmsbase.html' %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS | Galerie{% endblock %}
+{% block javascript %}
+{% load compress static %}
+{% endblock %}
+{% block content %}
+
+<div class="container mx-auto mt-6 max-w-5xl px-2">
+    <h1 class="text-2xl font-semibold">Profil Einstellungen</h1>
+    <p class="text-slate-700">Ändere dein Profil und deine Einstellungen</p>
+    <div class="mt-5 w-full rounded-2xl bg-blue-50 p-3 shadow-lg">
+      <div class="flex justify-between">
+        <h2 class="text-xl font-medium">Allgemeine Informationen</h2>
+        <button id="updateSettings" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">Speichern</button>
+      </div>
+      
+      <form action="" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> E-Mail </label>
+          <input value="{{settings.email}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="email" type="text"  placeholder="sam.smith@gmail.com" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Voller Name </label>
+          <input value="{{settings.full_name}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="full_name" type="text"  placeholder="Sam Smith" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Unternehmensname </label>
+          <input value="{{settings.company_name}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="company_name" type="text"  placeholder="Sam Smith GmbH" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Telefonnummer </label>
+          <input value="{{settings.tel_number}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="tel_number" type="text"  placeholder="04541 5562346" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Fax Nummer </label>
+          <input value="{{settings.fax_number}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="fax_number" type="text"  placeholder="04541 5562346" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Mobilnummer </label>
+          <input value="{{settings.mobile_number}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="mobile_number" type="text"  placeholder="04541 5562346" />
+        </div>
+        <div class="my-2">
+          <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-1" for="title"> Website </label>
+          <input value="{{settings.website}}" class="w-full appearance-none rounded-xl border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none" id="website" type="text"  placeholder="https://sam-smith.de" />
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script>
+    $(document).ready(function() {
+        // Handle form submission through AJAX
+        $('#updateSettings').on('click', function() {
+            var email = $('#email').val();
+            var full_name = $('#full_name').val();
+            var company_name = $('#company_name').val();
+            var tel_number = $('#tel_number').val();
+            var fax_number = $('#fax_number').val();
+            var mobile_number = $('#mobile_number').val();
+            var website = $('#website').val();
+    
+            // AJAX request to update user settings
+            $.ajax({
+                type: 'POST',
+                url: 'update/',  // Update with the actual URL
+                data: {
+                    'email': email,
+                    'full_name': full_name,
+                    'company_name': company_name,
+                    'tel_number': tel_number,
+                    'fax_number': fax_number,
+                    'mobile_number': mobile_number,
+                    'website': website,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // Handle success, if needed
+                    console.log(response);
+                    if(response.success) {
+                        sendNotif(response.success, 'success')
+                    } else {
+                        sendNotif(response.error ? response.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
+                    }
+                },
+                error: function(error) {
+                    // Handle error, if needed
+                    sendNotif(error.error ? error.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
+                }
+            });
+        });
+    });
+    </script>
+{% endcompress js %}
+{% endblock javascriptend %}
