@@ -1002,23 +1002,23 @@ def order_detail_view(request, order_id):
 @login_required(login_url='login')
 def order_view(request):
     # Count of all orders
-    total_orders = Order.objects.count()
+    total_orders = Order.objects.filter(verified=True).count()
 
     # Umsatz (total revenue)
     desired_statuses = ['COMPLETED', 'PAID']
 
     # Calculate total revenue for orders with the desired statuses
-    total_revenue = Order.objects.filter(status__in=desired_statuses).aggregate(
+    total_revenue = Order.objects.filter(status__in=desired_statuses, verified=True).aggregate(
         total_revenue=Sum('items__unit_price')
     )['total_revenue'] or 0
     # Number of clients
-    total_clients = Order.objects.values('buyer_email').distinct().count()
+    total_clients = Order.objects.filter(verified=True).values('buyer_email').distinct().count()
 
     # Open orders (not closed/paid)
-    open_orders = Order.objects.filter(status='OPEN').count()
+    open_orders = Order.objects.filter(status='OPEN', verified=True).count()
 
     # Most bought products
-    most_bought_products = OrderItem.objects.values(
+    most_bought_products = OrderItem.objects.filter(verified=True).values(
     'product__title',
     'product__title_image',
 ).annotate(
@@ -1027,7 +1027,7 @@ def order_view(request):
 ).order_by('-total_quantity')[:5]
 
     # Biggest buyers
-    biggest_buyers = Order.objects.values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
+    biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
 
     all_orders = Order.objects.filter(verified=True).order_by('-created_at')
 
@@ -1178,10 +1178,22 @@ def create_order(request):
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
     #message += "Wir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
     dashboard_url = settings.DASHBOARD_URL
-    url = dashboard_url + "order/verify/?token=" + str(order.uuid) + "&order_id=" + str(order.id)
+    url = dashboard_url + "cms/order/verify/?token=" + str(order.uuid) + "&order_id=" + str(order.id)
     message += f"\nBitte bestätigen sie ihren Auftrag hier: {url}"
     message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
-    message += f"\n{company_name}\nTel. {phone_number}\nFax {fax_number}\nHandy {mobile_number}\n{website}"
+    message += f"\n{company_name}"
+
+    if phone_number and phone_number != "0":
+        message += f"\nTel. {phone_number}"
+
+    if fax_number and fax_number != "0":
+        message += f"\nFax {fax_number}"
+
+    if mobile_number and mobile_number != "0":
+        message += f"\nHandy {mobile_number}"
+
+    if website:
+        message += f"\n{website}"
     message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
 
     send_mail(
@@ -1208,9 +1220,9 @@ def order_verify_view(request):
 @authentication_classes([])
 @permission_classes([])
 def verify_order(request):
-    orderId = request.data.get('orderId')
-    uuid = request.data.get('uuid')
-    address = request.data.get('address')
+    orderId = request.POST.get('orderId')
+    uuid = request.POST.get('uuid')
+    address = request.POST.get('address')
 
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
