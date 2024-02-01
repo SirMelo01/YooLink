@@ -1232,7 +1232,7 @@ def verify_order(request):
 
     # Check if the order exists
     order = get_object_or_404(Order, id=orderId, uuid=uuid)
-    user_settings = User.objects.filter(is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
     if not user_settings:
         return JsonResponse({'error': 'There is no staff user!.'}, status=400)
     # Check if the order is not already verified
