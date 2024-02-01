@@ -1019,7 +1019,7 @@ def order_view(request):
 
     # Most bought products
     most_bought_products = OrderItem.objects.filter(
-    product__orders__verified=True  # Filter based on the related Order's verified field
+    product__order__verified=True  # Filter based on the related Order's verified field
     ).values(
         'product__title',
         'product__title_image',
