@@ -1018,13 +1018,15 @@ def order_view(request):
     open_orders = Order.objects.filter(status='OPEN', verified=True).count()
 
     # Most bought products
-    most_bought_products = OrderItem.objects.filter(verified=True).values(
-    'product__title',
-    'product__title_image',
-).annotate(
-    total_quantity=Sum('quantity'),
-    total_cash=Sum(F('quantity') * F('unit_price'), output_field=DecimalField())
-).order_by('-total_quantity')[:5]
+    most_bought_products = OrderItem.objects.filter(
+    product__orders__verified=True  # Filter based on the related Order's verified field
+    ).values(
+        'product__title',
+        'product__title_image',
+    ).annotate(
+        total_quantity=Sum('quantity'),
+        total_cash=Sum(F('quantity') * F('unit_price'), output_field=DecimalField())
+    ).order_by('-total_quantity')[:5]
 
     # Biggest buyers
     biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
