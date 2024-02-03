@@ -12,10 +12,11 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
 
 from django.contrib.sitemaps.views import sitemap
-from yoolink.sitemaps import StaticViewSitemap
+from yoolink.sitemaps import StaticViewSitemap, BlogSitemap
 
 sitemaps = {
-    'static': StaticViewSitemap
+    'static': StaticViewSitemap,
+    'blog': BlogSitemap,
 }
 
 urlpatterns = [

@@ -10,6 +10,7 @@ from yoolink.users.models import User
 from django.utils.text import slugify
 from django.utils import timezone
 import uuid
+from django.urls import reverse
 
 
 ## Produktiv und funktioniert
@@ -125,6 +126,10 @@ class Blog(models.Model):
 
         # Call the parent class's save method to actually save the model
         super(Blog, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("blog:blog-detail", kwargs={"pk": self.pk, "slug_title": self.slug})
+    
     
 
 """ 
