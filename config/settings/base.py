@@ -78,7 +78,6 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
-    'paypal.standard.ipn',
 ]
 
 LOCAL_APPS = [
@@ -257,8 +256,6 @@ EMAIL_TIMEOUT = 5
 EMAIL_OWNER = 'yoolink@t-online.de'
 DASHBOARD_URL = 'https://yoolink.de/'
 
-PAYPAL_TEST = True
-PAYPAL_RECEIVER_EMAIL = 'sb-2db6b29501244@business.example.com'
 
 # ADMIN
 # ------------------------------------------------------------------------------

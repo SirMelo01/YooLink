@@ -1361,7 +1361,6 @@ def api_order_error(request, order_id):
     
     return JsonResponse({'error': 'This is the order payment error route. Something went wrong while trying to pay for the order'})
 
-from paypal.standard.forms import PayPalPaymentsForm
 def checkout_view(request):
     order_id = request.session.get('order_id')
     if not order_id:
@@ -1387,25 +1386,12 @@ def checkout_view(request):
     # What you want the button to do.
     host = request.get_host()
 
-    paypal_dict = {
-        "business": settings.PAYPAL_RECEIVER_EMAIL,
-        "amount": order.total,
-        "item_name": "Auftrag #" + str(order.id),
-        "invoice": str(order.uuid),
-        "currency_code": 'EUR',
-        "notify_url": 'https://{}{}'.format(host, reverse('paypal_ipn')),
-        "return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-success', kwargs={'order_id': order.id})),
-        "cancel_return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-error', kwargs={'order_id': order.id})),
-    }
-
     # Create the instance.
-    form = PayPalPaymentsForm(initial=paypal_dict)
 
     context = {
         'cart_items': cart_items, 
         'total_price': total_price,
         'order': order,
-        'form': form
     }
     return render(request, "pages/cms/orders/checkout.html", context)
 
@@ -1432,25 +1418,10 @@ def checkout_view_id(request, order_id):
     # What you want the button to do.
     host = request.get_host()
 
-    paypal_dict = {
-        "business": settings.PAYPAL_RECEIVER_EMAIL,
-        "amount": order.total,
-        "item_name": "Auftrag #" + str(order.id),
-        "invoice": str(order.uuid),
-        "currency_code": 'EUR',
-        "notify_url": 'https://{}{}'.format(host, reverse('paypal_ipn')),
-        "return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-success', kwargs={'order_id': order.id})),
-        "cancel_return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-error', kwargs={'order_id': order.id})),
-    }
-
-    # Create the instance.
-    form = PayPalPaymentsForm(initial=paypal_dict)
-
     context = {
         'cart_items': cart_items, 
         'total_price': total_price,
         'order': order,
-        'form': form
     }
     return render(request, "pages/cms/orders/checkout.html", context)
 
