@@ -1152,7 +1152,7 @@ def add_to_cart(request, product_id):
         order_item.save()
     else:
         request.session['cart_amount'] = int(cart_amount) + 1
-    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id})
+    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
 
 @api_view(['GET'])
 @authentication_classes([])
