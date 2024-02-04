@@ -1152,7 +1152,7 @@ def add_to_cart(request, product_id):
         order_item.save()
     else:
         request.session['cart_amount'] = int(cart_amount) + 1
-    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt'})
+    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id})
 
 @api_view(['GET'])
 @authentication_classes([])
@@ -1174,7 +1174,7 @@ def cart_items(request):
     else:
         cart_items = []
 
-    return JsonResponse({'cart_items': cart_items, 'total_price': total_price})
+    return JsonResponse({'cart_items': cart_items, 'total_price': total_price, 'order_session_id': order_id})
 
 @api_view(['POST'])
 @authentication_classes([])
