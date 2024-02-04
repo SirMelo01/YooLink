@@ -202,8 +202,9 @@ class OrderItem(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('OPEN', 'Offen'),
-        ('SHIPPED', 'Versendet'),
         ('PAID', 'Bezahlt'),
+        ('READY_FOR_PICKUP', 'Bereit zur Abholung'),
+        ('SHIPPED', 'Versendet'),
         ('COMPLETED', 'Abgeschlossen'),
     ]
 

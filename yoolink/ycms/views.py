@@ -21,6 +21,7 @@ from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail
 from .serializers import OrderSerializer
 from yoolink.users.models import User
+from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation
 
 @login_required(login_url='login')
 def upload(request):
@@ -47,6 +48,7 @@ def upload(request):
         "galery_count":  Galerie.objects.count(),
         "blog_count": Blog.objects.count(),
         "product_count": Product.objects.count(),
+        "order_count": Order.objects.filter(varified=True).count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -1045,7 +1047,7 @@ def order_view(request):
 
 @api_view(['PATCH'])
 @permission_classes([IsAdminUser])
-def update_order_status(request, order_id):
+def update_order_status_admin(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     new_status = request.data.get('status')
     order.status = new_status
@@ -1120,6 +1122,378 @@ def get_orders(request):
 
     data = list(orders.values()) if orders.exists() else []
     return JsonResponse(data, safe=False)
+
+# USER Endpoints
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    order_id = request.session.get('order_id')
+    cart_amount = request.session.get('cart_amount')
+    if not cart_amount:
+        cart_amount = 0
+    order = None
+    if not order_id:
+        order = Order.objects.create(buyer_email='')
+        request.session['order_id'] = order.id
+    else:
+        order = Order.objects.get(id=order_id)
+
+    order_item, created = OrderItem.objects.get_or_create(
+        order=order,
+        product=product,
+        is_discounted=product.is_reduced,
+        unit_price=product.discount_price if product.is_reduced else product.price
+    )
+    if not created:
+        order_item.quantity += 1
+        order_item.save()
+    else:
+        request.session['cart_amount'] = int(cart_amount) + 1
+    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt'})
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def cart_items(request):
+    order_id = request.session.get('order_id')
+    if not order_id:
+        return JsonResponse({"error": "There is no Cart yet. Add Items to it first."})
+    order = Order.objects.get(id=order_id) if order_id else None
+    total_price = 0.0
+    if order:
+        cart_items = [{
+            'product_title': item.product.title,
+            'quantity': item.quantity,
+            'price': float(item.get_price()),
+            'subtotal': float(item.subtotal())
+        } for item in order.items.all()]
+        total_price = float(order.total())
+    else:
+        cart_items = []
+
+    return JsonResponse({'cart_items': cart_items, 'total_price': total_price})
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def remove_from_cart(request, order_item_id):
+    order_item = get_object_or_404(OrderItem, id=order_item_id)
+    order_id = request.session.get('order_id', None)
+
+    if order_id and order_item in Order.objects.get(id=order_id).items.all():
+        Order.objects.get(id=order_id).items.remove(order_item)
+        return JsonResponse({'success': 'Produkt wurde erfolgreich vom Warenkorb entfernt'})
+    
+    return JsonResponse({'error': 'Etwas ist schiefgelaufen. Versuche es später erneut'})
+        
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def update_quantity(request, order_item_id):
+    order_item = get_object_or_404(OrderItem, id=order_item_id)
+    new_quantity = int(request.POST.get('quantity', 1))
+    order_id = request.session.get('order_id')
+    order = Order.objects.get(id=order_id) if order_id else None
+
+    if not order:
+        return JsonResponse({'error': 'Order not found in session'})
+    # Überprüfe, ob das Produkt reduziert ist und ob die Menge nicht mehr geändert werden kann
+    if order_item.product.is_reduced and not order_item.is_discounted:
+        return JsonResponse({'error': 'Quantity cannot be updated for this product'})
+
+    order_item.quantity = new_quantity
+    order_item.save()
+
+    return JsonResponse({'success': 'Quantity updated successfully'})
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def update_cart_items(request):
+    order_id = request.session.get('order_id')
+    order = Order.objects.get(id=order_id) if order_id else None
+
+    if not order:
+        return JsonResponse({'error': 'Order not found in session'})
+
+    cart_items_data = request.data.get('cart_items', [])
+    
+    for item_data in cart_items_data:
+        order_item_id = item_data.get('order_item_id')
+        new_quantity = item_data.get('quantity')
+
+        order_item = get_object_or_404(OrderItem, id=order_item_id, order=order)
+
+        # Only update quantity if it's different from the original one
+        if order_item and new_quantity is not None and new_quantity != order_item.quantity:
+            order_item.quantity = new_quantity
+            order_item.save()
+
+    # Update total price in the session
+    request.session['cart_total_price'] = float(order.total())
+
+    return JsonResponse({'success': 'Cart items updated successfully'})
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def verify_cart(request):
+    buyer_email = request.POST.get('buyer_email')
+    buyer_name = request.POST.get('buyer_name')
+
+    if not buyer_email or not buyer_name:
+        return JsonResponse({'error': 'Buyer email and buyer name are required parameters'}, status=400)
+
+    order_id = request.session.get('order_id')
+    order = Order.objects.get(id=order_id) if order_id else None
+
+    if not order or order.status != 'OPEN' or order.verified:
+        request.session['order_id'] = None  # Clear session order
+        return JsonResponse({'error': 'Invalid order for verification'}, status=400)
+
+    # Check linked prices for OrderItems
+    for item in order.items.all():
+        if (item.product.is_reduced and not item.is_discounted) or (not item.product.is_reduced and item.is_discounted):
+            return JsonResponse({'error': f'Invalid price configuration for {item.product.title}'}, status=400)
+
+    # Update Order Data
+    order.buyer_email = buyer_email
+    # order.buyer_name = buyer_name
+    order.save()
+
+    # Generate verification link
+    token = str(order.uuid)
+    verification_url = request.scheme + '://' + request.get_host() + reverse('cms:verify_order') + f'?token={token}&order_id={order_id}'
+    # Send confirmation email with verification link
+    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    full_name = user_settings.full_name
+    company_name = user_settings.company_name
+    phone_number = user_settings.tel_number
+    fax_number = user_settings.fax_number
+    mobile_number = user_settings.mobile_number
+    website = user_settings.website
+
+    subject = f"Ihr Auftrag {order.id}"
+    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Ihr Auftrag mit der Auftragsnummer {order.id} wurde erfolgreich bestätigt. Hier sind die Details Ihres Auftrags:\n\n"
+
+    for item in order.items.all():
+        message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
+
+    message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
+    message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. Bitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
+    message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
+    message += f"\n{company_name}"
+
+    if phone_number and phone_number != "0":
+        message += f"\nTel. {phone_number}"
+
+    if fax_number and fax_number != "0":
+        message += f"\nFax {fax_number}"
+
+    if mobile_number and mobile_number != "0":
+        message += f"\nHandy {mobile_number}"
+
+    if website:
+        message += f"\n{website}"
+    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [buyer_email],
+        fail_silently=False,
+    )
+
+    return JsonResponse({'success': 'Order verification email sent successfully'})
+
+@api_view(['PATCH'])
+@authentication_classes([])
+@permission_classes([])
+def update_shipping_address(request, order_id):
+    new_shipping_address = request.POST.get('shipping_address')
+
+    if not new_shipping_address:
+        return JsonResponse({'error': 'New shipping address is required'}, status=400)
+
+    order = get_object_or_404(Order, id=order_id)
+
+    if not order.verified:
+        return JsonResponse({'error': 'Product is not verified yet. Please check your emails'}, status=400)
+
+    # Update shipping address
+    order.buyer_address = new_shipping_address
+    order.save()
+
+    return JsonResponse({'success': 'Shipping address updated successfully'})
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def api_order_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if not order:
+        return JsonResponse({'error': 'The order does not exist'}, status=400)
+    old_status = order.status
+    if old_status != 'OPEN':
+        return JsonResponse({'error': 'The order was already checked-out'}, status=400)
+    
+    order.status = 'PAID'
+    order.save()
+    send_payment_confirmation(order)
+    return JsonResponse({'success': f'The payment for the order #{order.id} was successful. You should get a confirmation email to the following email soon: {order.buyer_email}'})
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def api_order_error(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if not order:
+        return JsonResponse({'error': 'The order does not exist'}, status=400)
+    old_status = order.status
+    if old_status != 'OPEN':
+        return JsonResponse({'error': 'The order was already checked-out'}, status=400)
+    
+    return JsonResponse({'error': 'This is the order payment error route. Something went wrong while trying to pay for the order'})
+
+from paypal.standard.forms import PayPalPaymentsForm
+def checkout_view(request):
+    order_id = request.session.get('order_id')
+    if not order_id:
+        return JsonResponse({"error": "There is no Cart yet. Add Items to it first."}, status=400)
+    order = Order.objects.get(id=order_id) if order_id else None
+    if not order.verified:
+        return JsonResponse({"error": "The order is not yet verified"}, status=400)
+    if order.status != 'OPEN':
+        return JsonResponse({"error": "The order is not open anymore"}, status=400)
+
+    total_price = 0.0
+    if order:
+        cart_items = [{
+            'product_title': item.product.title,
+            'quantity': item.quantity,
+            'price': float(item.get_price()),
+            'subtotal': float(item.subtotal())
+        } for item in order.items.all()]
+        total_price = float(order.total())
+    else:
+        cart_items = []
+
+    # What you want the button to do.
+    host = request.get_host()
+
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": order.total,
+        "item_name": "Auftrag #" + str(order.id),
+        "invoice": str(order.uuid),
+        "currency_code": 'EUR',
+        "notify_url": 'https://{}{}'.format(host, reverse('paypal_ipn')),
+        "return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-success', kwargs={'order_id': order.id})),
+        "cancel_return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-error', kwargs={'order_id': order.id})),
+    }
+
+    # Create the instance.
+    form = PayPalPaymentsForm(initial=paypal_dict)
+
+    context = {
+        'cart_items': cart_items, 
+        'total_price': total_price,
+        'order': order,
+        'form': form
+    }
+    return render(request, "pages/cms/orders/checkout.html", context)
+
+# Check Out View with id
+def checkout_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if not order.verified:
+        return JsonResponse({"error": "The order is not yet verified"}, status=400)
+    if order.status != 'OPEN':
+        return JsonResponse({"error": "The order is not open anymore"}, status=400)
+
+    total_price = 0.0
+    if order:
+        cart_items = [{
+            'product_title': item.product.title,
+            'quantity': item.quantity,
+            'price': float(item.get_price()),
+            'subtotal': float(item.subtotal())
+        } for item in order.items.all()]
+        total_price = float(order.total())
+    else:
+        cart_items = []
+
+    # What you want the button to do.
+    host = request.get_host()
+
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": order.total,
+        "item_name": "Auftrag #" + str(order.id),
+        "invoice": str(order.uuid),
+        "currency_code": 'EUR',
+        "notify_url": 'https://{}{}'.format(host, reverse('paypal_ipn')),
+        "return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-success', kwargs={'order_id': order.id})),
+        "cancel_return": 'https://{}{}'.format(host, reverse('cms:api-order-payment-error', kwargs={'order_id': order.id})),
+    }
+
+    # Create the instance.
+    form = PayPalPaymentsForm(initial=paypal_dict)
+
+    context = {
+        'cart_items': cart_items, 
+        'total_price': total_price,
+        'order': order,
+        'form': form
+    }
+    return render(request, "pages/cms/orders/checkout.html", context)
+
+
+@api_view(['PATCH'])
+@authentication_classes([])
+@permission_classes([])
+def update_order_status_by_user(request, order_id):
+    new_status = request.PATCH.get('new_status')
+
+    if not new_status:
+        return JsonResponse({'error': 'New status is required'}, status=400)
+
+    order = get_object_or_404(Order, id=order_id)
+    old_status = order.status
+
+    # Check if the new status is allowed based on the old status
+     # Check if the new status is allowed based on the old status
+    allowed_status_transitions = {
+        'OPEN': ['PAID', 'READY_FOR_PICKUP'],
+    }
+
+    if new_status not in allowed_status_transitions.get(old_status, []):
+        return JsonResponse({'error': f'Invalid status transition from {old_status} to {new_status}'}, status=400)
+
+   
+    # Update order status
+    order.status = new_status
+    order.save()
+
+    # Send confirmation emails based on status change
+    if old_status == 'OPEN' and new_status in ['PAID', 'READY_FOR_PICKUP']:
+        if new_status == 'PAID':
+            send_payment_confirmation(order)
+        elif new_status == 'READY_FOR_PICKUP':
+            send_ready_for_pickup_confirmation(order)
+        else:
+             return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
+    else:
+        return JsonResponse({'error': 'Something went wrong!'})
+
+    return JsonResponse({'success': 'Order status updated successfully'})
+
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1208,7 +1582,6 @@ def create_order(request):
     return Response({'success': True}, status=status.HTTP_201_CREATED)
 
 
-@login_required(login_url='login')
 def order_verify_view(request):
     token = request.GET.get('token')
     order_id = request.GET.get('order_id')
@@ -1223,7 +1596,7 @@ def verify_order(request):
     orderId = request.POST.get('orderId')
     uuid = request.POST.get('uuid')
     address = request.POST.get('address')
-
+    payment = request.POST.get('payment')
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     
@@ -1244,6 +1617,7 @@ def verify_order(request):
         full_name = user_settings.full_name
         company_name = user_settings.company_name
         phone_number = user_settings.tel_number
+        email = user_settings.email
         fax_number = user_settings.fax_number
         mobile_number = user_settings.mobile_number
         website = user_settings.website
@@ -1277,7 +1651,7 @@ def verify_order(request):
             subject_company,
             message_company,
             settings.EMAIL_HOST_USER,
-            [settings.EMAIL_OWNER],  # Add additional recipients if needed
+            [email],  # Add additional recipients if needed
             fail_silently=False,
         )
 
@@ -1317,13 +1691,13 @@ def email_send(request):
     message_company += f"Nachricht: { message }\n\n"
     message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
     message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
-
+    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
     # Replace 'your_company_email' with the actual email address of your company
     send_mail(
         subject_company,
         message_company,
         settings.EMAIL_HOST_USER,
-        [settings.EMAIL_OWNER],  # Add additional recipients if needed
+        [user_settings.email],  # Add additional recipients if needed
         fail_silently=False,
     )
 

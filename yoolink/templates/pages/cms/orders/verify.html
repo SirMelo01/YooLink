@@ -4,42 +4,144 @@
 
 {% block content %}
 
-  <section class="bg-blue-100 -mt-5">
-    <div class="py-10 lg:py-16 px-4 mx-auto max-w-screen-md">
-      <h2 class="mb-10 max-w-lg text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto text-center">
-        Nehmen Sie Kontakt auf
-      </h2>
-
-
-      {% if error %}
-        <p class="mb-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Lassen Sie uns wissen, wie wir Ihnen helfen können. Wir werden Sie so schnell wie möglich kontaktieren.</p>
-      {% else %}
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
-          <p class="font-bold">Vielen Dank für die Nachricht!</p>
-          <p>Wir kommen so schnell wie möglich auf Sie zu!</p>
-        </div>
-      {% endif %}
-
-      <form id="orderForm" action="" method="POST" class="space-y-8">
-        {% csrf_token%}
-        <div>
-          <label for="uuid" class="block mb-2 text-lg text-gray-900">Token</label>
-          <input value="{{order.uuid}}" disabled name="uuid" type="text" id="uuid" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-        </div>
-        <div>
-          <label for="orderId" class="block mb-2 text-lg text-gray-900">Auftrags Nr.</label>
-          <input value="{{order.id}}" disabled name="orderId" type="text" id="orderId" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
-        </div>
-        <div>
-            <label for="address" class="block mb-2 text-lg text-gray-900">Ihre Adresse</label>
-            <input name="address" type="text" id="address" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+<section class="bg-blue-50 w-full h-full">
+  <div class="container mx-auto h-screen max-w-screen-xl p-3">
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-2 rounded-2xl bg-white p-2 shadow-lg">
+        <h2 class="text-xl font-medium">Auftrag #{{order.id}}</h2>
+        <hr class="my-2">
+        <div class="mt-5">
+          <div class="flex items-center justify-between rounded-2xl border px-3">
+            <div class="flex items-center">
+              <img
+                src="https://nzxt.com/assets/cms/34299/1692877804-player-three-base-ww-07-24-23-hero-white-nobadge.png?auto=format&fit=max&w=1200"
+                class="h-16 w-16 rounded-2xl" alt="" />
+              <p class="font-semibold">Ghost Super Elite Gaming PC</p>
+            </div>
+            <input
+              class="block w-16 appearance-none rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
+              id="grid-zip" type="number" placeholder="2" />
+            <p class="text-lg font-semibold">1.000€</p>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                class="bi bi-trash text text-red-600 hover:cursor-pointer" viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg></span>
           </div>
-        <div class="max-w-fit bg-blue-300 rounded-2xl mt-12">
-          <button type="submit" class="inline-flex items-center h-12 px-6 text-white rounded">Auftrag verifizieren</button>
         </div>
-      </form>
+      </div>
+      <div>
+        <div class="rounded-2xl bg-white px-4 py-2 shadow-lg">
+          <h2 class="text-xl font-medium">Bestellübersicht</h2>
+          <hr class="my-2">
+          <div class="mt-5">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Rabatt</span>
+              <span>00.00€</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Lieferung</span>
+              <span>5.00€</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Umsatzsteuer</span>
+              <span>18.00€</span>
+            </div>
+            <hr class="my-2" />
+            <div class="flex justify-between">
+              <span class="text-lg font-semibold text-slate-500">Gesamt</span>
+              <span class="text-lg font-semibold">{{order.total}}€</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5 rounded-2xl bg-white px-4 py-2 shadow-lg">
+          <h2 class="text-xl font-medium">Adresse</h2>
+          <hr class="my-2">
+          <form class="mt-4 w-full max-w-lg">
+            <div class="-mx-3 mb-4 flex flex-wrap">
+              <div class="mb-6 w-full px-3 md:mb-0 md:w-1/2">
+                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700" for="grid-first-name">
+                  Name </label>
+                <input
+                  class="mb-3 block w-full appearance-none rounded border bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:bg-white focus:outline-none"
+                  id="grid-first-name" type="text" placeholder="Jane" />
+              </div>
+              <div class="w-full px-3 md:w-1/2">
+                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700" for="grid-last-name">
+                  Nachname </label>
+                <input
+                  class="block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
+                  id="grid-last-name" type="text" placeholder="Doe" />
+              </div>
+            </div>
+            <div class="mb-6 w-full md:mb-0">
+              <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700" for="grid-first-name">
+                Lieferadresse (Straße + Hausnummer) </label>
+              <input
+                class="mb-3 block w-full appearance-none rounded border bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:bg-white focus:outline-none"
+                id="grid-first-name" type="text" placeholder="Lieferweg 12" />
+            </div>
+            <div class="-mx-3 mb-2 flex flex-wrap">
+              <div class="mb-6 w-full px-3 md:mb-0 md:w-1/2">
+                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700" for="grid-city">PLZ +
+                  Stadt </label>
+                <input
+                  class="block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
+                  id="grid-city" type="text" placeholder="20095 Hamburg" />
+              </div>
+  
+              <div class="m, mb-6 w-full px-3 md:mb-0 md:w-1/2">
+                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700" for="grid-state"> Land
+                </label>
+                <div class="relative">
+                  <select
+                    class="block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-2 py-2 pr-8 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
+                    id="grid-state">
+                    <option>Deutschland</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="rounded-2xl bg-white px-4 py-2 shadow-lg mt-5">
+          <h2 class="text-xl font-medium">Bezahlmethode</h2>
+          <hr class="my-2">
+          <div class="mt-5">
+            <div class="flex justify-center space-x-5 my-5">
+              <span class="rounded-xl bg-slate-100 py-2 px-4 flex justify-center items-center border border-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                  class="bi bi-paypal text-blue-500 hover:cursor-pointer" viewBox="0 0 16 16">
+                  <path
+                    d="M14.06 3.713c.12-1.071-.093-1.832-.702-2.526C12.628.356 11.312 0 9.626 0H4.734a.7.7 0 0 0-.691.59L2.005 13.509a.42.42 0 0 0 .415.486h2.756l-.202 1.28a.628.628 0 0 0 .62.726H8.14c.429 0 .793-.31.862-.731l.025-.13.48-3.043.03-.164.001-.007a.35.35 0 0 1 .348-.297h.38c1.266 0 2.425-.256 3.345-.91q.57-.403.993-1.005a4.94 4.94 0 0 0 .88-2.195c.242-1.246.13-2.356-.57-3.154a2.7 2.7 0 0 0-.76-.59l-.094-.061ZM6.543 8.82a.7.7 0 0 1 .321-.079H8.3c2.82 0 5.027-1.144 5.672-4.456l.003-.016q.326.186.548.438c.546.623.679 1.535.45 2.71-.272 1.397-.866 2.307-1.663 2.874-.802.57-1.842.815-3.043.815h-.38a.87.87 0 0 0-.863.734l-.03.164-.48 3.043-.024.13-.001.004a.35.35 0 0 1-.348.296H5.595a.106.106 0 0 1-.105-.123l.208-1.32z" />
+                </svg>
+              </span>
+              <span
+                class="rounded-xl bg-slate-100 py-2 px-4 flex justify-center items-center text-orange-500 hover:cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-shop mr-3"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h1v-5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5h6V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5M4 15h3v-5H4zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm3 0h-2v3h2z" />
+                </svg>
+                <p class="font-semibold">Abholen</p>
+              </span>
+            </div>
+            <button class="rounded-lg p-2 bg-blue-500 text-white w-full hover:bg-blue-600">Abschließen</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
+
+
 
 {%endblock content%}
 {% block javascriptend %}
@@ -47,11 +149,3 @@
 <script src="{% static 'js/cms/orders/order-verify.js' %}"></script>
 {% endcompress js %}
 {% endblock javascriptend %}
-
-
-
-
-
-
-
-

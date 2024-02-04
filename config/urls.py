@@ -28,6 +28,7 @@ urlpatterns = [
     path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
     path("kontakt/", view=kontaktform, name="kontakt"),
     path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
+    path('paypal/', include("paypal.standard.ipn.urls")),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),

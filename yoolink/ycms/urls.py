@@ -60,7 +60,25 @@ urlpatterns = [
     path('products/<int:product_id>/<slug:slug>/delete', views.product_delete, name='product-detail-delete'),
     path('products/get_categories/', views.get_categories, name='get-categories'),
     path('products/get_brands/', views.get_brands, name='get-brands'),
-    # Orders
+    
+    # ** START - Orders **
+
+    path('api/cart/add/<int:product_id>/', views.add_to_cart, name='api-cart-add'),
+    path('api/cart/', views.cart_items, name='api-cart'),
+    path('api/cart/<int:order_item_id>/remove/', views.remove_from_cart, name='api-cart-remove'),
+    path('api/cart/<int:order_item_id>/update-quantity/', views.update_quantity, name='api-cart-update-quantity'),
+    path('api/cart/update/', views.update_cart_items, name='api-cart-update'),
+    path('api/cart/verify/', views.verify_cart, name='api-cart-verify'),
+    path('api/order/<int:order_id>/update-shipping-address/', views.update_shipping_address, name='api-order-update-shipping-address'),
+    path('api/order/<int:order_id>/update-order-status/', views.update_order_status_by_user, name='api-order-update-status'),
+
+    # PAYPAL endpoints
+    path('api/order/<int:order_id>/payment/success/', views.api_order_success, name='api-order-payment-success'),
+    path('api/order/<int:order_id>/payment/error/', views.api_order_error, name='api-order-payment-error'),
+    path('checkout/', views.checkout_view, name='checkout-view'),
+    path('checkout/<int:order_id>/', views.checkout_view, name='checkout-view-id'),
+
+    # Other Order Stuff
     path('api/order/verify/', views.verify_order, name='api-order-verify'),
     path('order/verify/', views.order_verify_view, name='order-verify'),
     path('orders/', views.order_view, name='order-overview'),
@@ -69,10 +87,12 @@ urlpatterns = [
     path('orders/filter/', views.get_orders, name='order-api'),
     # TODO: Still JSON Response. Change it to render view response
     path('api/orders/<int:order_id>/', views.get_order_by_id, name='get_order_by_id'),
-    path('orders/<int:order_id>/update_order_status/', views.update_order_status, name='update_order_status'),
+    path('orders/<int:order_id>/update_order_status/', views.update_order_status_admin, name='update_order_status'),
     path('orders/<int:order_id>/delete/', views.delete_order, name='delete_order'),
     # USER API BASED ENDPOINTS
     path('orders/create/', views.create_order, name='create_order'),
+
+    # ** END - Orders **
 
     # Reviews
     path('reviews/<int:review_id>/delete_reviews/', views.delete_review, name='delete_review'),
