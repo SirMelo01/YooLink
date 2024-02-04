@@ -1,6 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import reverse
 from django.utils import timezone
+from yoolink.ycms.models import Blog
 #from django.urls import reverse
 
 
@@ -11,6 +12,7 @@ class StaticViewSitemap(Sitemap):
             'home',
             'impressum', 'datenschutz', 'cookies', 
             'designtemplates:designtemplates', 'designtemplates:portfolio', 'designtemplates:handwerksbtrieb',
+            'blog:blog'
             ]
     
     def lastmod(self, item):
@@ -18,3 +20,11 @@ class StaticViewSitemap(Sitemap):
     
     def location(self, item):
         return reverse(item)
+    
+class BlogSitemap(Sitemap):
+     changefreq = "weekly"
+     def items(self):
+          return Blog.objects.filter(active=True)
+     
+     def lastmod(self, obj):
+          return obj.last_updated
