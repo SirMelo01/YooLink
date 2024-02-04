@@ -48,7 +48,7 @@ def upload(request):
         "galery_count":  Galerie.objects.count(),
         "blog_count": Blog.objects.count(),
         "product_count": Product.objects.count(),
-        "order_count": Order.objects.filter(varified=True).count(),
+        "order_count": Order.objects.filter(verified=True).count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -1410,7 +1410,7 @@ def checkout_view(request):
     return render(request, "pages/cms/orders/checkout.html", context)
 
 # Check Out View with id
-def checkout_view(request, order_id):
+def checkout_view_id(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if not order.verified:
         return JsonResponse({"error": "The order is not yet verified"}, status=400)

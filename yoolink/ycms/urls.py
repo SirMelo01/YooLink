@@ -76,7 +76,7 @@ urlpatterns = [
     path('api/order/<int:order_id>/payment/success/', views.api_order_success, name='api-order-payment-success'),
     path('api/order/<int:order_id>/payment/error/', views.api_order_error, name='api-order-payment-error'),
     path('checkout/', views.checkout_view, name='checkout-view'),
-    path('checkout/<int:order_id>/', views.checkout_view, name='checkout-view-id'),
+    path('checkout/<int:order_id>/', views.checkout_view_id, name='checkout-view-id'),
 
     # Other Order Stuff
     path('api/order/verify/', views.verify_order, name='api-order-verify'),
