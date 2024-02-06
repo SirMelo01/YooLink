@@ -216,7 +216,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)  # ForeignKey to Order
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, default=1)  # ForeignKey to Order
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     is_discounted = models.BooleanField(default=False)  # Flag to indicate if it's a discounted item
