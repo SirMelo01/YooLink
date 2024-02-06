@@ -1132,6 +1132,9 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     order_id = request.session.get('order_id')
     cart_amount = request.session.get('cart_amount')
+    product_amount = request.POST.get('amount')
+    if not product_amount:
+        return JsonResponse({'error': 'Bitte gebe die Produktanzahl (amount) an!'}, status=400)
     if not cart_amount:
         cart_amount = 0
     order = None
@@ -1148,21 +1151,33 @@ def add_to_cart(request, product_id):
         unit_price=product.discount_price if product.is_reduced else product.price
     )
     if not created:
-        order_item.quantity += 1
+        order_item.quantity += product_amount
         order_item.save()
+        return JsonResponse({'success': f'Anzahl dieses Produkts wurde erweitert auf {order_item.quantity}', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
+
     else:
         request.session['cart_amount'] = int(cart_amount) + 1
-    return JsonResponse({'success': 'Produkt wurde erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
+        order_item.quantity = product_amount
+        order_item.save()
+        return JsonResponse({'success': f'Produkt wurde {product_amount}x erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
 
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
 def cart_items(request):
     order_id = request.session.get('order_id')
+    cart_amount = request.session.get('cart_amount', 0.0)
     if not order_id:
         return JsonResponse({"error": "There is no Cart yet. Add Items to it first."})
-    order = Order.objects.get(id=order_id) if order_id else None
+    
+    if not Order.objects.filter(id=order_id).exists():
+        request.session['cart_amount'] = 0
+        request.session['order_id'] = None
+        return JsonResponse({"error": "Diese Order wurde gelöscht und wird jetzt zurückgesetzt."})
+    
+    order = Order.objects.get(id=order_id)
     total_price = 0.0
+    cart_items = []
     if order:
         cart_items = [{
             'product_title': item.product.title,
@@ -1171,10 +1186,10 @@ def cart_items(request):
             'subtotal': float(item.subtotal())
         } for item in order.items.all()]
         total_price = float(order.total())
-    else:
-        cart_items = []
+        return JsonResponse({'cart_items': cart_items, 'cart_amount': cart_amount, 'total_price': total_price, 'order_session_id': order_id, 'order_id': order.id})
+    return JsonResponse({'error': 'There is no matching order'})
 
-    return JsonResponse({'cart_items': cart_items, 'total_price': total_price, 'order_session_id': order_id})
+
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1249,6 +1264,15 @@ def verify_cart(request):
         return JsonResponse({'error': 'Buyer email and buyer name are required parameters'}, status=400)
 
     order_id = request.session.get('order_id')
+    
+    if not order_id:
+        return JsonResponse({"error": "There is no Cart yet. Add Items to it first."})
+    
+    if not Order.objects.filter(id=order_id).exists():
+        request.session['cart_amount'] = 0
+        request.session['order_id'] = None
+        return JsonResponse({"error": "Diese Order wurde gelöscht und wird jetzt zurückgesetzt."})
+    
     order = Order.objects.get(id=order_id) if order_id else None
 
     if not order or order.status != 'OPEN' or order.verified:
@@ -1267,7 +1291,7 @@ def verify_cart(request):
 
     # Generate verification link
     token = str(order.uuid)
-    verification_url = request.scheme + '://' + request.get_host() + reverse('cms:verify_order') + f'?token={token}&order_id={order_id}'
+    verification_url = request.scheme + '://' + request.get_host() + reverse('cms:order-verify') + f'?token={token}&order_id={order_id}'
     # Send confirmation email with verification link
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()
     full_name = user_settings.full_name
