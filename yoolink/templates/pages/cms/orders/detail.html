@@ -67,7 +67,7 @@
             <div>
               <h3 class="text-lg font-medium">Auftrag</h3>
               <p class="text-sm text-slate-500">UUID: <span class="text-black">{{order.uuid}}</span></p>
-              <p class="text-sm text-slate-500">Anzahl Produkte: <span class="text-black">{{order.items.count}}</span></p>
+              <p class="text-sm text-slate-500">Anzahl Produkte: <span class="text-black">{{order.orderitem_set.count}}</span></p>
               <p class="text-sm text-slate-500">Anzahl Items: <span class="text-black">{{order.total_quantity}}</span></p>
               <p class="text-sm text-slate-500">Summe: <span class="text-green-700 font-semibold">{{order.total}}€</span></p>
             </div>
@@ -77,7 +77,7 @@
       <!-- Order Item Table -->
       <div class="mt-8 max-h-screen space-y-2 overflow-auto rounded-2xl bg-white p-2 shadow-lg">
         <h2 class="text-lg font-medium">Produkte</h2>
-        {% for item in order.items.all %}
+        {% for item in order.orderitem_set.all %}
         <div class="flex w-full justify-between rounded-2xl bg-slate-50 p-2">
           <div>
             <p class="text-sm text-gray-500">Produkt:</p>

@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderItemSerializer
 from yoolink.users.models import User
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation
 
@@ -1150,16 +1150,17 @@ def add_to_cart(request, product_id):
         is_discounted=product.is_reduced,
         unit_price=product.discount_price if product.is_reduced else product.price
     )
+    orderitem_serializer = OrderItemSerializer(order_item)
     if not created:
         order_item.quantity += product_amount
         order_item.save()
-        return JsonResponse({'success': f'Anzahl dieses Produkts wurde erweitert auf {order_item.quantity}', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
+        return JsonResponse({'success': f'Anzahl dieses Produkts wurde erweitert auf {order_item.quantity}', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid), 'order_item': orderitem_serializer.data})
 
     else:
         request.session['cart_amount'] = int(cart_amount) + 1
         order_item.quantity = product_amount
         order_item.save()
-        return JsonResponse({'success': f'Produkt wurde {product_amount}x erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid)})
+        return JsonResponse({'success': f'Produkt wurde {product_amount}x erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid), 'order_item': orderitem_serializer.data})
 
 @api_view(['GET'])
 @authentication_classes([])
@@ -1184,11 +1185,10 @@ def cart_items(request):
             'quantity': item.quantity,
             'price': float(item.get_price()),
             'subtotal': float(item.subtotal())
-        } for item in order.items.all()]
+        } for item in order.orderitem_set.all()]
         total_price = float(order.total())
         return JsonResponse({'cart_items': cart_items, 'cart_amount': cart_amount, 'total_price': total_price, 'order_session_id': order_id, 'order_id': order.id})
     return JsonResponse({'error': 'There is no matching order'})
-
 
 
 @api_view(['POST'])
@@ -1198,11 +1198,12 @@ def remove_from_cart(request, order_item_id):
     order_item = get_object_or_404(OrderItem, id=order_item_id)
     order_id = request.session.get('order_id', None)
 
-    if order_id and order_item in Order.objects.get(id=order_id).items.all():
-        Order.objects.get(id=order_id).items.remove(order_item)
+     # Check if the OrderItem is associated with the correct Order
+    if order_id and order_item.order_id == order_id:
+        order_item.delete()
         return JsonResponse({'success': 'Produkt wurde erfolgreich vom Warenkorb entfernt'})
-    
-    return JsonResponse({'error': 'Etwas ist schiefgelaufen. Versuche es später erneut'})
+    else:
+        return JsonResponse({'error': 'OrderItem does not belong to the current order'})
         
 @api_view(['POST'])
 @authentication_classes([])
@@ -1216,13 +1217,17 @@ def update_quantity(request, order_item_id):
     if not order:
         return JsonResponse({'error': 'Order not found in session'})
     # Überprüfe, ob das Produkt reduziert ist und ob die Menge nicht mehr geändert werden kann
-    if order_item.product.is_reduced and not order_item.is_discounted:
-        return JsonResponse({'error': 'Quantity cannot be updated for this product'})
+        # Check if the OrderItem is associated with the correct Order
+    if order_id and order_item.order_id == order_id:
+        # Überprüfe, ob das Produkt reduziert ist und ob die Menge nicht mehr geändert werden kann
+        if order_item.product.is_reduced and not order_item.is_discounted:
+            return JsonResponse({'error': 'Quantity cannot be updated for this product'})
 
-    order_item.quantity = new_quantity
-    order_item.save()
-
-    return JsonResponse({'success': 'Quantity updated successfully'})
+        order_item.quantity = new_quantity
+        order_item.save()
+        return JsonResponse({'success': 'Quantity updated successfully'})
+    else:
+        return JsonResponse({'error': 'OrderItem does not belong to the current order'})
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1280,7 +1285,7 @@ def verify_cart(request):
         return JsonResponse({'error': 'Invalid order for verification'}, status=400)
 
     # Check linked prices for OrderItems
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         if (item.product.is_reduced and not item.is_discounted) or (not item.product.is_reduced and item.is_discounted):
             return JsonResponse({'error': f'Invalid price configuration for {item.product.title}'}, status=400)
 
@@ -1304,7 +1309,7 @@ def verify_cart(request):
     subject = f"Ihr Auftrag {order.id}"
     message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Ihr Auftrag mit der Auftragsnummer {order.id} wurde erfolgreich bestätigt. Hier sind die Details Ihres Auftrags:\n\n"
 
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
@@ -1402,7 +1407,7 @@ def checkout_view(request):
             'quantity': item.quantity,
             'price': float(item.get_price()),
             'subtotal': float(item.subtotal())
-        } for item in order.items.all()]
+        } for item in order.orderitem_set.all()]
         total_price = float(order.total())
     else:
         cart_items = []
@@ -1434,7 +1439,7 @@ def checkout_view_id(request, order_id):
             'quantity': item.quantity,
             'price': float(item.get_price()),
             'subtotal': float(item.subtotal())
-        } for item in order.items.all()]
+        } for item in order.orderitem_set.all()]
         total_price = float(order.total())
     else:
         cart_items = []
@@ -1516,6 +1521,7 @@ def create_order(request):
 
     # Create order item
     order_item = OrderItem.objects.create(
+        order=order,
         product=product,
         quantity=quantity,
         is_discounted=is_discounted,
@@ -1524,7 +1530,6 @@ def create_order(request):
 
     # Create order
     order = Order.objects.create(buyer_email=buyer_email)
-    order.items.add(order_item)
     order.save()
 
     # User Data
@@ -1540,7 +1545,7 @@ def create_order(request):
     message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Wir freuen uns, Ihnen mitzuteilen, dass Ihr Auftrag mit der Auftragsnummer {order.id} erfolgreich eingegangen ist. Unten finden Sie die Details Ihrem Auftrag:\n\n"
 
     # Add details of each ordered item
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
 

@@ -8,7 +8,7 @@ def send_payment_confirmation(order: Order):
     subject = f"Ihr Auftrag {order.id} wurde bezahlt"
     message = f"Vielen Dank! Ihr Auftrag mit der Auftragsnummer {order.id} wurde erfolgreich bezahlt. Die Produkte werden in Kürze an Sie versandt.\n\nDetails Ihres Auftrags:\n"
     
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n"
@@ -40,7 +40,7 @@ def send_ready_for_pickup_confirmation(order: Order):
     subject = f"Ihr Auftrag {order.id} ist bereit zur Abholung"
     message = f"Ihr Auftrag mit der Auftragsnummer {order.id} ist bereit zur Abholung. Die Produkte können während der Öffnungszeiten abgeholt und bezahlt werden.\n\nDetails Ihres Auftrags:\n"
     
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n"
@@ -72,7 +72,7 @@ def send_shipping_confirmation(order : Order, user_settings: UserSettings):
     subject = f"Ihre Produkte sind auf dem Weg"
     message = f"Ihre Produkte aus dem Auftrag {order.id} sind auf dem Weg zu Ihnen. Vielen Dank für Ihren Einkauf!\n\nDetails Ihres Auftrags:\n"
     
-    for item in order.items.all():
+    for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
     message += f"\nGesamtpreis: {order.total():.2f} Euro\n"

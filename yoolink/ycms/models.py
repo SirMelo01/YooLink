@@ -185,8 +185,38 @@ class Product(models.Model):
         # Call the parent class's save method to actually save the model
         super(Product, self).save(*args, **kwargs)
 
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('OPEN', 'Offen'),
+        ('PAID', 'Bezahlt'),
+        ('READY_FOR_PICKUP', 'Bereit zur Abholung'),
+        ('SHIPPED', 'Versendet'),
+        ('COMPLETED', 'Abgeschlossen'),
+    ]
+
+    buyer_email = models.EmailField()
+    buyer_address = models.TextField(default='')
+    verified = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    def get_status_display(self):
+        return dict(self.STATUS_CHOICES)[self.status]
+
+    def total(self):
+        return sum(item.subtotal() for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
+
+    def __str__(self):
+        return f"Order #{self.pk} - {self.buyer_email} - {self.status}"
+
+    def total_quantity(self):
+        return sum(item.quantity for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
+
 
 class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)  # ForeignKey to Order
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     is_discounted = models.BooleanField(default=False)  # Flag to indicate if it's a discounted item
@@ -203,40 +233,6 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.title} - {self.quantity} units - {'Discounted' if self.is_discounted else 'Normal'}"
-
-class Order(models.Model):
-    STATUS_CHOICES = [
-        ('OPEN', 'Offen'),
-        ('PAID', 'Bezahlt'),
-        ('READY_FOR_PICKUP', 'Bereit zur Abholung'),
-        ('SHIPPED', 'Versendet'),
-        ('COMPLETED', 'Abgeschlossen'),
-    ]
-
-    items = models.ManyToManyField(OrderItem)
-    buyer_email = models.EmailField()
-    buyer_address = models.TextField(default='')
-    verified = models.BooleanField(default=False)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-
-    def delete(self, *args, **kwargs):
-        self.items.all().delete()
-        super(Order, self).delete(*args, **kwargs)
-
-    def get_status_display(self):
-        return dict(self.STATUS_CHOICES)[self.status]
-
-    def total(self):
-        return sum(item.subtotal() for item in self.items.all())
-
-    def __str__(self):
-        return f"Order #{self.pk} - {self.buyer_email} - {self.status}"
-    
-    def total_quantity(self):
-        return sum(item.quantity for item in self.items.all())
 
 
 class Review(models.Model):
@@ -283,3 +279,24 @@ class UserSettings(models.Model):
 
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"
+
+class OpeningHours(models.Model):
+    DAY_CHOICES = [
+        ('MON', 'Montag'),
+        ('TUE', 'Dienstag'),
+        ('WED', 'Mittwoch'),
+        ('THU', 'Donnerstag'),
+        ('FRI', 'Freitag'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='opening_hours')
+    day = models.CharField(max_length=3, choices=DAY_CHOICES)
+    is_open = models.BooleanField(default=False)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    has_lunch_break = models.BooleanField(default=False)
+    lunch_break_start = models.TimeField(blank=True, null=True)
+    lunch_break_end = models.TimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Opening hours for {self.user.username} on {self.get_day_display()}"

@@ -7,14 +7,12 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
     class Meta:
         model = OrderItem
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
+    order_items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
