@@ -1011,7 +1011,7 @@ def order_view(request):
 
     # Calculate total revenue for orders with the desired statuses
     total_revenue = Order.objects.filter(status__in=desired_statuses, verified=True).aggregate(
-        total_revenue=Sum('items__unit_price')
+        total_revenue=Sum('orderitem__unit_price')
     )['total_revenue'] or 0
     # Number of clients
     total_clients = Order.objects.filter(verified=True).values('buyer_email').distinct().count()
@@ -1029,7 +1029,7 @@ def order_view(request):
 ).order_by('-total_quantity')[:5]
 
     # Biggest buyers
-    biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(total_spent=Sum('items__unit_price')).order_by('-total_spent')[:5]
+    biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(total_spent=Sum('orderitem__unit_price')).order_by('-total_spent')[:5]
 
     all_orders = Order.objects.filter(verified=True).order_by('-created_at')
 
