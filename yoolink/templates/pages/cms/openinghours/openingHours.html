@@ -1,0 +1,53 @@
+{% extends 'cmsbase.html' %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS | Öffnungszeiten{% endblock %}
+{% block content %}
+
+<div class="container mt-12 mx-auto flex max-w-2xl items-center justify-center">
+    <div class="w-full rounded-2xl bg-blue-50 py-4 px-2">
+        <div class="flex justify-between px-2">
+            <h2 class="text-2xl font-semibold self-center">Öffnungszeiten</h2>
+            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
+                id="saveOpeningHours">
+                Speichern
+            </a>
+        </div>
+        <hr class="my-2" />
+        <div class="flex flex-col space-y-3">
+            {% csrf_token %}
+
+            {% for opening_hour in opening_hours %}
+            <!-- Montag - Tag-Div -->
+            <div id="{{ opening_hour.day }}" class="flex w-full justify-between rounded-2xl bg-white p-2">
+                <h4 class="text-lg text-center self-center w-24 font-medium text-slate-500">{{ opening_hour.get_day }}</h4>
+                <label class="relative inline-flex cursor-pointer items-center">
+                    <input type="checkbox" value="" class="peer sr-only open-switch" {% if opening_hour and opening_hour.is_open %}checked{% endif %} />
+                    <div
+                        class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[9px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800">
+                    </div>
+                    <span class="ms-3 font-medium text-gray-900 dark:text-gray-400">Offen</span>
+                </label>
+                <div class="flex">
+                    <input
+                        class="start-date w-16 appearance-none rounded border-2 border-gray-200 bg-gray-200 p-2 text-center leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+                        id="title" type="text" value="{{opening_hour.start_time}}" placeholder="08:00"  />
+                    <span class="text-center flex self-center mx-2 text-slate-600 font-bold text-lg">-</span>
+                    <input
+                        class="end-date w-16 appearance-none rounded border-2 border-gray-200 bg-gray-200 p-2 text-center leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+                        id="title" type="text" value="{{opening_hour.end_time}}" placeholder="13:00" />
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script src="{% static 'js/cms/openinghours/script.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}

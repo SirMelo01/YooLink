@@ -1,6 +1,7 @@
 import json
+import re
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import fileentry, OpeningHours, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -1715,7 +1716,13 @@ def email_send(request):
 @login_required(login_url='login')
 def user_settings_view(request):
     # Retrieve the UserSettings for the currently logged-in user or any specific user
-    user_settings = UserSettings.objects.get(user=request.user)
+    
+    if not UserSettings.objects.filter(user=request.user):
+        UserSettings.objects.create(
+            user = request.user
+        )
+    
+    user_settings = UserSettings.objects.get(user=request.user) 
 
     context = {
         'settings': user_settings,
@@ -1744,3 +1751,56 @@ def user_settings_update(request):
         return JsonResponse({'success': 'Die Einstellungen wurden erfolgreich gespeichert'})
     else:
         return JsonResponse({'error': 'Die Einstellungen konnten nicht gespeichert werden'})
+    
+
+"""
+Opening Hours
+"""
+
+@login_required(login_url='login')
+def opening_hours_view(request):
+    # Retrieve the UserSettings for the currently logged-in user or any specific user
+
+    for day_abbr, _ in OpeningHours.DAY_CHOICES:
+        if not OpeningHours.objects.filter(user=request.user, day=day_abbr):
+            OpeningHours.objects.create(user=request.user, day=day_abbr)
+
+    opening_hours = OpeningHours.objects.filter(user=request.user)
+
+    context = {
+        'opening_hours': opening_hours
+        # Other context variables if needed
+    }
+
+    return render(request, 'pages/cms/openinghours/openingHours.html', context)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def opening_hours_update(request):
+    opening_hours_data = request.POST.get('opening_hours')
+    opening_hours = json.loads(opening_hours_data)
+
+    errors = []
+    for item in opening_hours:
+        day = item['day']
+        is_open = bool(item['isOpen'])  # Convert to boolean
+        start_time = item['startTime']
+        end_time = item['endTime']
+        
+        if is_open and (not start_time or not end_time or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', start_time) or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', end_time)):
+            errors.append(f"Ungültiges Format für Öffnungszeiten am {day}")
+            continue
+
+        opening_hour = OpeningHours.objects.get(user=request.user, day=day)
+        opening_hour.is_open = is_open
+        if start_time:
+            opening_hour.start_time = start_time
+        if end_time:
+            opening_hour.end_time = end_time
+        opening_hour.save()
+
+    if errors:
+        return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)
+    else:
+        return JsonResponse({'success': 'Öffnungszeiten erfolgreich aktualisiert'})

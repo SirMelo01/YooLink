@@ -103,5 +103,9 @@ urlpatterns = [
     # Settings
     path('settings/', views.user_settings_view, name='settings-view'),
     path('settings/update/', views.user_settings_update, name='settings-update'),
+    
+    # Opening Hours
+    path('openinghours/', views.opening_hours_view, name='openinghours-view'),
+    path('openinghours/update/', views.opening_hours_update, name='openinghours-update'),
 
 ]

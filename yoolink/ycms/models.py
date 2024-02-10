@@ -301,16 +301,20 @@ class OpeningHours(models.Model):
         ('WED', 'Mittwoch'),
         ('THU', 'Donnerstag'),
         ('FRI', 'Freitag'),
+        ('SAT', 'Samstag'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='opening_hours')
-    day = models.CharField(max_length=3, choices=DAY_CHOICES)
+    day = models.CharField(max_length=3, choices=DAY_CHOICES, unique=True)
     is_open = models.BooleanField(default=False)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.TimeField(default='08:00')  # Set default start time to 8 o'clock
+    end_time = models.TimeField(default='14:00')    # Set default end time to 14 o'clock
     has_lunch_break = models.BooleanField(default=False)
     lunch_break_start = models.TimeField(blank=True, null=True)
     lunch_break_end = models.TimeField(blank=True, null=True)
+
+    def get_day(self):
+        return dict(self.DAY_CHOICES)[self.day]
 
     def __str__(self):
         return f"Opening hours for {self.user.username} on {self.get_day_display()}"
