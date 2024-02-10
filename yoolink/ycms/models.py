@@ -193,6 +193,10 @@ class Order(models.Model):
         ('SHIPPED', 'Versendet'),
         ('COMPLETED', 'Abgeschlossen'),
     ]
+    PAYMENT_CHOICES = [
+        ('INVOICE', 'Rechnung'),
+        ('PICKUP', 'Zahlung bei Abholung'),
+    ]
 
     buyer_email = models.EmailField()
     buyer_address = models.TextField(default='')
@@ -200,13 +204,23 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    payment = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='INVOICE')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_status_display(self):
         return dict(self.STATUS_CHOICES)[self.status]
+    
+    def get_payment_display(self):
+        return dict(self.PAYMENT_CHOICES)[self.payment]
 
     def total(self):
         return sum(item.subtotal() for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
+
+    def total_with_tax(self):
+        return self.total() + self.calculate_tax()
+
+    def calculate_tax(self):
+        return self.total() * 0.19
 
     def __str__(self):
         return f"Order #{self.pk} - {self.buyer_email} - {self.status}"

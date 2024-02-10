@@ -1049,10 +1049,12 @@ def order_view(request):
 @permission_classes([IsAdminUser])
 def update_order_status_admin(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    new_status = request.data.get('status')
-    order.status = new_status
-    order.save()
-    return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst'}, status=status.HTTP_200_OK)
+    new_status = request.POST.get('status')
+    if new_status:
+        order.status = new_status
+        order.save()
+        return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst'}, status=status.HTTP_200_OK)
+    return Response({'error': 'Es wurde kein Status mitgegeben!'}, status=status.HTTP_400_BAD_REQUEST)
 
 # views.py
 @api_view(['DELETE'])
@@ -1130,6 +1132,12 @@ def get_orders(request):
 @permission_classes([])
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    
+    if not product.is_active:
+        return JsonResponse({'error': 'Dieses Produkt wird aktuell nicht mehr verkauft'}, status=400)
+    if not product.is_in_stock:
+        return JsonResponse({'error': 'Dieses Produkt ist aktuell nicht mehr im Lager verfügbar. Schauen Sie später nochmal vorbei'}, status=400)
+
     order_id = request.session.get('order_id')
     cart_amount = request.session.get('cart_amount')
     product_amount = request.POST.get('amount')
@@ -1152,13 +1160,13 @@ def add_to_cart(request, product_id):
     )
     orderitem_serializer = OrderItemSerializer(order_item)
     if not created:
-        order_item.quantity += product_amount
+        order_item.quantity += int(product_amount)
         order_item.save()
         return JsonResponse({'success': f'Anzahl dieses Produkts wurde erweitert auf {order_item.quantity}', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid), 'order_item': orderitem_serializer.data})
 
     else:
         request.session['cart_amount'] = int(cart_amount) + 1
-        order_item.quantity = product_amount
+        order_item.quantity = int(product_amount)
         order_item.save()
         return JsonResponse({'success': f'Produkt wurde {product_amount}x erfolgreich zum Warenkorb hinzugefügt', 'order_session_id': request.session['order_id'], 'order_id': order.id, 'uuid': str(order.uuid), 'order_item': orderitem_serializer.data})
 
@@ -1459,7 +1467,7 @@ def checkout_view_id(request, order_id):
 @authentication_classes([])
 @permission_classes([])
 def update_order_status_by_user(request, order_id):
-    new_status = request.PATCH.get('new_status')
+    new_status = request.data.get('new_status')
 
     if not new_status:
         return JsonResponse({'error': 'New status is required'}, status=400)

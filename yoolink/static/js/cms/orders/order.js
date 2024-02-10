@@ -4,7 +4,7 @@ $(document).ready(function () {
         $.ajax({
             url: 'update_order_status/',
             type: 'POST',
-            data: { 'status': 'OPEN' },
+            data: { 'status': $('#status').val() },
             contentType: false,
             processData: false,
             dataType: "json",
@@ -27,7 +27,6 @@ $(document).ready(function () {
             error: function (error) {
                 // Handle error
                 console.error(error);
-                disableSpinner($('#updateProduct'));
                 sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
 
             }

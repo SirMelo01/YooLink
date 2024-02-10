@@ -69,6 +69,7 @@
               <p class="text-sm text-slate-500">UUID: <span class="text-black">{{order.uuid}}</span></p>
               <p class="text-sm text-slate-500">Anzahl Produkte: <span class="text-black">{{order.orderitem_set.count}}</span></p>
               <p class="text-sm text-slate-500">Anzahl Items: <span class="text-black">{{order.total_quantity}}</span></p>
+              <p class="text-sm text-slate-500">Bezahlmethode: <span class="text-black font-semibold">{{order.get_payment_display}}</span></p>
               <p class="text-sm text-slate-500">Summe: <span class="text-green-700 font-semibold">{{order.total}}€</span></p>
             </div>
           </div>
