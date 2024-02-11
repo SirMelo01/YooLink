@@ -19,15 +19,23 @@ $(document).ready(function () {
             return;
         }
 
+        const $payment = $(".active")
+        if($payment.length < 1 || $payment.length > 1) {
+            disableSpinner($('#verifyOrder'));
+            sendNotif("Es wurde keine Bezahlmethode ausgewählt", "error")
+            return;
+        }
+
         // Create a new FormData object
         var formData = new FormData();
-        formData.append('buyer_name', $('#buyerName').val())
-        formData.append('buyer_prename', $('#buyerVorname').val())
-        formData.append('address', $('#address').val())
-        formData.append('city', $('#city').val())
-        formData.append('country', $('#country').val())
-        formData.append('token', $('#orderToken').val())
-        formData.append('order_id', $('#orderId').val())
+        formData.append('buyer_name', $('#buyerName').val());
+        formData.append('buyer_prename', $('#buyerVorname').val());
+        formData.append('address', $('#address').val());
+        formData.append('city', $('#city').val());
+        formData.append('country', $('#country').val());
+        formData.append('token', $('#orderToken').val());
+        formData.append('order_id', $('#orderId').val());
+        formData.append('payment', $payment.val())
 
         // Verify Cart Post Request
         $.ajax({
@@ -97,13 +105,13 @@ $(document).ready(function () {
     });
 
     $('#invoice').click(() => {
-        $(this).addClass('border-2 border-orange-500')
-        $('#pickup').removeClass('border-2 border-blue-500')
+        $(this).addClass('border-2 border-orange-500 active')
+        $('#pickup').removeClass('border-2 border-blue-500 active')
     })
 
     $('#pickup').click(() => {
-        $('invoice').removeClass('border-2 border-orange-500')
-        $(this).addClass('border-2 border-blue-500')
+        $('invoice').removeClass('border-2 border-orange-500 active')
+        $(this).addClass('border-2 border-blue-500 active')
     })
 
 });
