@@ -811,6 +811,7 @@ def product_create(request):
             if hersteller:
                 brand, created = Brand.objects.get_or_create(name=hersteller, defaults={'website': ''})
                 product.brand = brand
+            product.save()
             # Categories
             with transaction.atomic():
                 # Create or get Brand by hersteller and associate it with the product
@@ -1190,6 +1191,7 @@ def cart_items(request):
     cart_items = []
     if order:
         cart_items = [{
+            'order_item_id': item.id,
             'product_title': item.product.title,
             'quantity': item.quantity,
             'price': float(item.get_price()),
@@ -1605,7 +1607,6 @@ def verify_order(request):
     orderId = request.POST.get('orderId')
     uuid = request.POST.get('uuid')
     address = request.POST.get('address')
-    payment = request.POST.get('payment')
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     
@@ -1621,6 +1622,7 @@ def verify_order(request):
     if not order.verified:
         # Set the order as verified
         order.verified = True
+        order.buyer_address = address
         order.save()
         # User Data
         full_name = user_settings.full_name

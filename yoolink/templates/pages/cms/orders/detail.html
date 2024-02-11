@@ -6,6 +6,7 @@
 
 
 <div class="container mx-auto mt-8 max-w-5xl px-4">
+    {% csrf_token %}
     <div class="flex justify-between">
       <h1 class="text-xl"><a href="{% url 'cms:order-overview' %}" class="text-blue-500">Aufträge</a> / <span id="titleSpan">{{order.id}}</span></h1>
       <div>

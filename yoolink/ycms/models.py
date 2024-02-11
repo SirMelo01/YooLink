@@ -11,7 +11,7 @@ from django.utils.text import slugify
 from django.utils import timezone
 import uuid
 from django.urls import reverse
-
+from decimal import Decimal
 
 ## Produktiv und funktioniert
 
@@ -220,7 +220,7 @@ class Order(models.Model):
         return self.total() + self.calculate_tax()
 
     def calculate_tax(self):
-        return self.total() * 0.19
+        return self.total() * Decimal('0.19')
 
     def __str__(self):
         return f"Order #{self.pk} - {self.buyer_email} - {self.status}"
@@ -302,6 +302,7 @@ class OpeningHours(models.Model):
         ('THU', 'Donnerstag'),
         ('FRI', 'Freitag'),
         ('SAT', 'Samstag'),
+        ('SUN', 'Sonntag'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='opening_hours')
