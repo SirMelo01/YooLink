@@ -1,5 +1,6 @@
+var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 $(document).ready(function () {
-    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
     $('#updateStatus').click(function () {
         var formData = new FormData();
         const status = $('#status').val()
@@ -10,7 +11,7 @@ $(document).ready(function () {
         formData.append('status', status)
         $.ajax({
             url: 'update_order_status/',
-            type: 'POST',
+            type: 'PATCH',
             data: formData,
             contentType: false,
             processData: false,
