@@ -1202,6 +1202,31 @@ def cart_items(request):
     return JsonResponse({'error': 'There is no matching order'})
 
 
+def cart_view(request):
+    order_id = request.session.get('order_id')
+
+    last_url = request.META.get('HTTP_REFERER')
+
+    if not order_id:
+        return render(request, "pages/errors/error.html", {
+            "error": "Du hast noch keine Ware im Warenkorb. Füge zuerst welche hinzu.",
+            "saveLink": last_url if last_url else '/'
+        })
+    
+    if not Order.objects.filter(id=order_id).exists():
+        request.session['cart_amount'] = 0
+        request.session['order_id'] = None
+        return render(request, "pages/errors/error.html", {
+            "error": "Dein Warenkorb ist nicht mehr gültig und wurde zurückgesetzt. Bitte füge Ware erneut hinzu.",
+            "saveLink": last_url if last_url else '/'
+        })
+
+    order = Order.objects.get(id=order_id)
+    
+    return render(request, "pages/cms/orders/cart.html", {"order": order})
+
+
+
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -1212,6 +1237,8 @@ def remove_from_cart(request, order_item_id):
      # Check if the OrderItem is associated with the correct Order
     if order_id and order_item.order_id == order_id:
         order_item.delete()
+        cart_amount = request.session.get('cart_amount', 0)
+        request.session['cart_amount'] = int(cart_amount) + 1
         return JsonResponse({'success': 'Produkt wurde erfolgreich vom Warenkorb entfernt'})
     else:
         return JsonResponse({'error': 'OrderItem does not belong to the current order'})
@@ -1248,18 +1275,19 @@ def update_cart_items(request):
     order = Order.objects.get(id=order_id) if order_id else None
 
     if not order:
-        return JsonResponse({'error': 'Order not found in session'})
+        return JsonResponse({'error': 'Order not found in session'}, status=status.HTTP_404_NOT_FOUND)
 
-    cart_items_data = request.data.get('cart_items', [])
+    cart_items_data_json = request.POST.get('cart_items', '[]')
+    cart_items_data = json.loads(cart_items_data_json)
     
     for item_data in cart_items_data:
         order_item_id = item_data.get('order_item_id')
-        new_quantity = item_data.get('quantity')
+        new_quantity = int(item_data.get('quantity', '0'))
 
         order_item = get_object_or_404(OrderItem, id=order_item_id, order=order)
 
         # Only update quantity if it's different from the original one
-        if order_item and new_quantity is not None and new_quantity != order_item.quantity:
+        if order_item and new_quantity is not None and new_quantity > 0 and new_quantity != order_item.quantity:
             order_item.quantity = new_quantity
             order_item.save()
 
@@ -1604,9 +1632,13 @@ def order_verify_view(request):
 @authentication_classes([])
 @permission_classes([])
 def verify_order(request):
-    orderId = request.POST.get('orderId')
-    uuid = request.POST.get('uuid')
+    orderId = request.POST.get('order_id')
+    uuid = request.POST.get('token')
     address = request.POST.get('address')
+    city = request.POST.get('city')
+    country = request.POST.get('country')
+    prename = request.POST.get('buyer_prename')
+    name = request.POST.get('buyer_name')
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     

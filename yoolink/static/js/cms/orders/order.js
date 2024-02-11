@@ -40,4 +40,44 @@ $(document).ready(function () {
             }
         })
     })
+
+    $('#deleteOrder').click(function() {
+        $('#deleteModal').removeClass('hidden')
+      })
+    
+    $('.close-delete-modal').click(() => {
+        $('#deleteModal').addClass('hidden')
+    })
+
+    // Delete Product
+  $('#deleteConfirm').click(function () {
+    $('#deleteOrder').prop('disabled', true);
+    $.ajax({
+      url: "delete/",
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: csrfToken,
+      },
+      dataType: 'json',
+      success: function (response) {
+        console.log(response);
+        if (response.error) {
+          sendNotif(response.error, 'error')
+          $('#deleteOrder').prop('disabled', false);
+        } else {
+          sendNotif("Die Order wurde erfolgreich gelöscht. Warte auf Umleiten...", 'success')
+          setTimeout(() => {
+            window.location.href = '/cms/orders/';
+          }, 2000)
+         
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.responseText);
+        $('#deleteOrder').prop('disabled', false);
+        sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
+      }
+    });
+  })
+
 });

@@ -1,7 +1,7 @@
 var imageData = null;
 var newImage = false;
 let categories = [
-   /* ... add more options ... */
+  /* ... add more options ... */
 ];
 // Update the function to fetch categories
 $(document).ready(function () {
@@ -10,22 +10,22 @@ $(document).ready(function () {
     type: 'GET',
     dataType: 'json',
     success: function (response) {
-        categories = response.categories;
-        $('.added-category .category-name').each(function () {
-          const categoryName = $(this).text();
-          addedCategories.push(categoryName)
-          const index = categories.indexOf(categoryName);
-          if (index !== -1) {
-            categories.splice(index, 1);
-          }
-        });
-        updateAutocompleteCategoryList(false);
+      categories = response.categories;
+      $('.added-category .category-name').each(function () {
+        const categoryName = $(this).text();
+        addedCategories.push(categoryName)
+        const index = categories.indexOf(categoryName);
+        if (index !== -1) {
+          categories.splice(index, 1);
+        }
+      });
+      updateAutocompleteCategoryList(false);
     },
     error: function (error) {
-        console.error('Error fetching categories:', error);
-        sendNotif("Etwas konnte nicht geladen werden. Bitte lade die Seite neu")
+      console.error('Error fetching categories:', error);
+      sendNotif("Etwas konnte nicht geladen werden. Bitte lade die Seite neu")
     }
-});
+  });
   const categoryInput = $('#autocomplete-category-input');
   const autocompleteCategoryList = $('#autocomplete-category-list');
   const addCategoryBtn = $('#addCategory');
@@ -76,7 +76,7 @@ $(document).ready(function () {
     const query = categoryInput.val().toLowerCase();
     console.log(categories)
     const matchedCategories = categories.filter(category => category.toLowerCase().includes(query.toLowerCase())
-  );
+    );
     // Clear previous options
     autocompleteCategoryList.html('');
 
@@ -93,7 +93,7 @@ $(document).ready(function () {
     });
 
     // Show/hide the autocomplete list
-    if(show) autocompleteCategoryList.toggleClass('hidden', matchedCategories.length === 0);
+    if (show) autocompleteCategoryList.toggleClass('hidden', matchedCategories.length === 0);
   }
 
   function addCategory(category) {
@@ -190,7 +190,7 @@ $(document).ready(function () {
 
   const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
   // Update Product Form
-  $('#updateProductForm').on("submit", function(event) {
+  $('#updateProductForm').on("submit", function (event) {
     enableSpinner($('#updateProduct'))
     event.preventDefault();
     console.log("Update Product Form");
@@ -218,13 +218,13 @@ $(document).ready(function () {
     formData.append('selected_categories', JSON.stringify(addedCategories));
     console.log(JSON.stringify(addedCategories))
     const galeryId = $('#productGalery').attr('galery-id')
-    if(galeryId && parseInt(galeryId)>0) {
+    if (galeryId && parseInt(galeryId) > 0) {
       formData.append('galeryId', galeryId)
     }
-    if(files && files[0]) {
+    if (files && files[0]) {
       formData.append('title_image', files[0], "productTitleImage");
     }
-    
+
     console.log(formData);
 
     $.ajax({
@@ -243,13 +243,13 @@ $(document).ready(function () {
         console.log(response);
         // redirect to detail page
         disableSpinner($('#updateProduct'));
-        if(response.success) {
+        if (response.success) {
           sendNotif("Das Produkt wurde erfolgreich gespeichert", "success")
         } else {
           sendNotif(response.error, "error")
         }
-        
-        
+
+
       },
       error: function (error) {
         // Handle error
@@ -261,8 +261,8 @@ $(document).ready(function () {
     });
 
   })
-  
-  $('#deleteProduct').click(function() {
+
+  $('#deleteProduct').click(function () {
     $('#deleteModal').removeClass('hidden')
   })
 
@@ -271,28 +271,31 @@ $(document).ready(function () {
   })
 
   // Delete Product
-  $('#deleteConfirm').click(function() {
+  $('#deleteConfirm').click(function () {
     $.ajax({
       url: "delete",
       type: 'POST',
       data: {
-          csrfmiddlewaretoken: csrfToken,
+        csrfmiddlewaretoken: csrfToken,
       },
       dataType: 'json',
       success: function (response) {
-          console.log(response);
-          if (response.error) { 
-            sendNotif(response.error, 'error')
-          } else {
-            sendNotif("Das Produkt wurde erfolgreich gelöscht", 'success')
+        console.log(response);
+        if (response.error) {
+          sendNotif(response.error, 'error')
+        } else {
+          sendNotif("Das Produkt wurde erfolgreich gelöscht. Warte aufs Umleiten...", 'success')
+          window.location.href = '/cms/products/';
+          setTimeout(() => {
             window.location.href = '/cms/products/';
-          }
+          }, 2000)
+        }
       },
       error: function (xhr, status, error) {
-          console.log(xhr.responseText);
-          sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
+        console.log(xhr.responseText);
+        sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
       }
-  });
+    });
   })
 
   // Create Product Form
@@ -333,7 +336,7 @@ $(document).ready(function () {
     formData.append('title_image', title_image, "productTitleImage");
     formData.append('selected_categories', JSON.stringify(addedCategories));
     const galeryId = $('#productGalery').attr('galery-id')
-    if(galeryId && parseInt(galeryId)>0) {
+    if (galeryId && parseInt(galeryId) > 0) {
       formData.append('galeryId', galeryId)
     }
     console.log(JSON.stringify(addedCategories))
@@ -356,7 +359,7 @@ $(document).ready(function () {
         // Handle success
         console.log(response);
         // redirect to detail page
-        if(response.success) {
+        if (response.success) {
           sendNotif("Das Produkt wurde erfolgreich erstellt", "success");
           setTimeout(() => {
             window.location.href = '/cms/products/' + response.productId + "/" + response.slug + "/";
@@ -365,7 +368,7 @@ $(document).ready(function () {
         } else {
           sendNotif("Etwas lief schief. " + response.error, "error");
         }
-        
+
       },
       error: function (error) {
         // Handle error
@@ -384,15 +387,15 @@ $(document).ready(function () {
 function isFormValid(requiredFields) {
   var isValid = true;
 
-    for (var i = 0; i < requiredFields.length; i++) {
-      var field = $(requiredFields[i]);
-      if (field.val().trim() === '') {
-        sendNotif("Bitte fülle alle Pflichtfelder aus!", "error");
-        isValid = false;
-        break;
-      }
+  for (var i = 0; i < requiredFields.length; i++) {
+    var field = $(requiredFields[i]);
+    if (field.val().trim() === '') {
+      sendNotif("Bitte fülle alle Pflichtfelder aus!", "error");
+      isValid = false;
+      break;
     }
-    return isValid;
+  }
+  return isValid;
 }
 
 /**

@@ -3,37 +3,58 @@ $(document).ready(function () {
     /**
      * Verify Cart (Send Email to buyer)
      */
-    $('#verifyOrder').click(function () {
-        enableSpinner($('#verifyOrder'));
+    $('#verifyCart').click(function () {
+        enableSpinner($('#verifyCart'));
         var orderItemCount = $(".order-item").length;
         if (orderItemCount === 0) {
-            disableSpinner($('#verifyOrder'));
+            disableSpinner($('#verifyCart'));
             sendNotif("Der Einkaufswagen ist leer. Bitte lade die Seite neu oder gehe zur Startseite.", "error")
             return;
         }
         // Check if Form is Valid
-        var requiredFields = ['#buyerVorname', '#buyerName', '#address', '#country', '#city'];
+        var requiredFields = ['#buyerVorname', '#buyerName', '#buyerEmail'];
         var isValid = isFormValid(requiredFields);
         if (!isValid) {
-            disableSpinner($('#verifyOrder'));
+            disableSpinner($('#verifyCart'));
+            return;
+        }
+        if (!isValidEmail($('#buyerEmail').val())) {
+            sendNotif("Bitte gebe eine gültige Email ein!", "error")
+            disableSpinner($('#verifyCart'));
             return;
         }
 
-        // Create a new FormData object
-        var formData = new FormData();
-        formData.append('buyer_name', $('#buyerName').val())
-        formData.append('buyer_prename', $('#buyerVorname').val())
-        formData.append('address', $('#address').val())
-        formData.append('city', $('#city').val())
-        formData.append('country', $('#country').val())
-        formData.append('token', $('#orderToken').val())
-        formData.append('order_id', $('#orderId').val())
 
-        // Verify Cart Post Request
+        // Update Quantity of Products first (if there were any changes)
+        // Initialize an empty array to store the cart items
+        var cartItems = [];
+
+        // Iterate through each element with the class "order-item"
+        $(".order-item").each(function () {
+            // Extract order item ID from the "order-item-id" attribute
+            var orderItemId = $(this).attr("order-item-id");
+
+            // Extract quantity from the input field value
+            var quantity = $(this).find(".item-quantity").val();
+
+            // Create an object with order item ID and quantity
+            var cartItem = {
+                "order_item_id": orderItemId,
+                "quantity": quantity
+            };
+
+            // Push the object to the cartItems array
+            cartItems.push(cartItem);
+        });
+        // Create a new FormData object
+        var updateFormData = new FormData();
+        // Append the cartItems array as a JSON string to the FormData object
+        updateFormData.append("cart_items", JSON.stringify(cartItems));
+        // Send to backend
         $.ajax({
             type: 'POST',
-            url: '/cms/api/order/verify/',
-            data: formData,
+            url: 'update/',
+            data: updateFormData,
             contentType: false,
             processData: false,
             dataType: "json",
@@ -44,11 +65,41 @@ $(document).ready(function () {
             success: function (data) {
                 // Handle success, e.g., redirect or show a success message
                 sendNotif(data.success, "success")
+                console.log("Start second ajax call")
+                if (data.success) {
+                    // Create Form Data and add data
+                    var formData = new FormData();
+                    formData.append('buyer_email', $('#buyerEmail').val())
+                    formData.append('buyer_name', $('#buyerVorname').val() + " " + $('#buyerName').val())
+
+                    // Verify Cart Post Request
+                    $.ajax({
+                        type: 'POST',
+                        url: '/cms/api/cart/verify/',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            // Add the CSRF token to the request headers
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        },
+                        success: function (data) {
+                            // Handle success, e.g., redirect or show a success message
+                            sendNotif(data.success, "success")
+                        },
+                        error: function (data) {
+                            // Handle errors, e.g., display error message to the user
+                            sendNotif(data.responseJSON.error, "error")
+                            disableSpinner($('#verifyCart'));
+                        }
+                    });
+                }
             },
             error: function (data) {
                 // Handle errors, e.g., display error message to the user
                 sendNotif(data.responseJSON.error, "error")
-                disableSpinner($('#verifyOrder'));
+                disableSpinner($('#verifyCart'));
             }
         });
 
@@ -95,16 +146,6 @@ $(document).ready(function () {
             });
         });
     });
-
-    $('#invoice').click(() => {
-        $(this).addClass('border-2 border-orange-500')
-        $('#pickup').removeClass('border-2 border-blue-500')
-    })
-
-    $('#pickup').click(() => {
-        $('invoice').removeClass('border-2 border-orange-500')
-        $(this).addClass('border-2 border-blue-500')
-    })
 
 });
 

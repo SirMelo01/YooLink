@@ -5,7 +5,7 @@ $(document).ready(function () {
     // Ajax call to save opening hours
     $('#saveOpeningHours').on('click', function () {
         var openingHours = [];
-        var days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        var days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
         var valid = true;
 
         days.forEach(function (day) {
