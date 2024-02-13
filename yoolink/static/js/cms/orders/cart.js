@@ -119,7 +119,7 @@ $(document).ready(function () {
 
             // Delete Item
             $.ajax({
-                type: 'POST',
+                type: 'DELETE',
                 url: `/cms/api/cart/${cartItemId}/remove/`,
                 data: {},
                 contentType: false,

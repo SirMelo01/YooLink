@@ -1227,7 +1227,7 @@ def cart_view(request):
 
 
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 @authentication_classes([])
 @permission_classes([])
 def remove_from_cart(request, order_item_id):
@@ -1238,7 +1238,7 @@ def remove_from_cart(request, order_item_id):
     if order_id and order_item.order_id == order_id:
         order_item.delete()
         cart_amount = request.session.get('cart_amount', 0)
-        request.session['cart_amount'] = int(cart_amount) + 1
+        request.session['cart_amount'] = int(cart_amount) - 1
         return JsonResponse({'success': 'Produkt wurde erfolgreich vom Warenkorb entfernt'})
     else:
         return JsonResponse({'error': 'OrderItem does not belong to the current order'})
