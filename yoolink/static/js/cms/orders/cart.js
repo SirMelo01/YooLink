@@ -11,6 +11,13 @@ $(document).ready(function () {
             sendNotif("Der Einkaufswagen ist leer. Bitte lade die Seite neu oder gehe zur Startseite.", "error")
             return;
         }
+
+        if(!$('#isChecked').is(":checked")) {
+            disableSpinner($('#verifyCart'));
+            sendNotif("Bitte bestätige die Übergabe deiner Daten", "error")
+            return;
+        }
+
         // Check if Form is Valid
         var requiredFields = ['#buyerVorname', '#buyerName', '#buyerEmail'];
         var isValid = isFormValid(requiredFields);
@@ -53,7 +60,7 @@ $(document).ready(function () {
         // Send to backend
         $.ajax({
             type: 'POST',
-            url: 'update/',
+            url: '/cms/api/cart/update/',
             data: updateFormData,
             contentType: false,
             processData: false,
