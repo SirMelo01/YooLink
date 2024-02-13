@@ -141,14 +141,17 @@ $(document).ready(function () {
                     if (data.success) {
                         $cartitem.remove();
                         sendNotif(data.success, "success")
+                        disableSpinner($('#verifyCart'));
                     } else {
                         sendNotif(data.error ? data.error : "Etwas ist schief gelaufen.", "error")
+                        disableSpinner($('#verifyCart'));
                     }
 
                 },
                 error: function (data) {
                     // Handle errors, e.g., display error message to the user
                     sendNotif(data.responseJSON.error, "error")
+                    disableSpinner($('#verifyCart'));
                 }
             });
         });
