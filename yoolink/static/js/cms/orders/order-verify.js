@@ -107,13 +107,11 @@ $(document).ready(function () {
     $('#invoice').click(function () {
         $(this).addClass('border-2 border-orange-500 active')
         $('#pickup').removeClass('border-2 border-blue-500 active')
-        console.log("invoice clicked")
     })
 
     $('#pickup').click(function () {
-        $('invoice').removeClass('border-2 border-orange-500 active')
+        $('#invoice').removeClass('border-2 border-orange-500 active')
         $(this).addClass('border-2 border-blue-500 active')
-        console.log("pickup")
     })
 
 });
