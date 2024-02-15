@@ -1502,7 +1502,6 @@ def verify_order(request):
             country=country,
             prename=prename,
             name=name,
-            prename=prename,
             postal_code=postal_code
         )
 

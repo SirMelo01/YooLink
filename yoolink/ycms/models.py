@@ -197,7 +197,7 @@ class ShippingAddress(models.Model):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.prename + " " + self.name}'s Shipping Address"
+        return f"{self.prename} {self.name}'s Shipping Address"
     
     def get_shipping_address(self):
         return f"{self.address}, {self.postal_code} {self.city}, {self.country}"
