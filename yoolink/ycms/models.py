@@ -219,7 +219,7 @@ class Order(models.Model):
     ]
 
     buyer_email = models.EmailField()
-    buyer_address = models.ForeignKey(ShippingAddress, on_delete=models.DO_NOTHING)
+    buyer_address = models.ForeignKey(ShippingAddress, null=True, on_delete=models.DO_NOTHING)
     verified = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
