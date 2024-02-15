@@ -93,7 +93,15 @@ $(document).ready(function () {
                         },
                         success: function (data) {
                             // Handle success, e.g., redirect or show a success message
-                            sendNotif(data.success, "success")
+                            if(data.success) {
+                                sendNotif(data.success, "success")
+                                // Redirect to success page
+                                setTimeout(() => {
+                                    window.location.href = '/cms/cart/success/'
+                                }, 2000)
+                                
+                            }
+                            sendNotif(data.error, "error")
                         },
                         error: function (data) {
                             // Handle errors, e.g., display error message to the user
@@ -195,6 +203,7 @@ function disableSpinner($elem) {
     $elem.prop("disabled", false);
     $elem.find('svg').addClass('hidden');
     $elem.find('.bi').removeClass('hidden');
+    $elem.prop('disabled', false);
 }
 
 /**
@@ -205,4 +214,5 @@ function enableSpinner($elem) {
     $elem.prop("disabled", true);
     $elem.find('svg').removeClass('hidden');
     $elem.find('.bi').addClass('hidden');
+    $elem.prop('disabled', true);
 }

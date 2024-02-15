@@ -70,18 +70,16 @@ urlpatterns = [
     path('api/cart/update/', views.update_cart_items, name='api-cart-update'),
     path('api/cart/verify/', views.verify_cart, name='api-cart-verify'),
     path('api/order/<int:order_id>/update-shipping-address/', views.update_shipping_address, name='api-order-update-shipping-address'),
-    path('api/order/<int:order_id>/update-order-status/', views.update_order_status_by_user, name='api-order-update-status'),
 
     # PAYPAL endpoints
-    path('api/order/<int:order_id>/payment/success/', views.api_order_success, name='api-order-payment-success'),
-    path('api/order/<int:order_id>/payment/error/', views.api_order_error, name='api-order-payment-error'),
-    path('checkout/', views.checkout_view, name='checkout-view'),
-    path('checkout/<int:order_id>/', views.checkout_view_id, name='checkout-view-id'),
     path('cart/', views.cart_view, name='cart-view'),
+    path('cart/success/', views.cart_verify_success_view, name='cart-verify-success-view'),
 
     # Other Order Stuff
     path('api/order/verify/', views.verify_order, name='api-order-verify'),
     path('order/verify/', views.order_verify_view, name='order-verify'),
+    path('order/success/', views.order_verify_success_view, name='order-verify-success-view'),
+
     path('orders/', views.order_view, name='order-overview'),
     path('orders/<int:order_id>/', views.order_detail_view, name='order-detail-view'),
     # GET all orders by filter (as JSON)
@@ -90,8 +88,6 @@ urlpatterns = [
     path('api/orders/<int:order_id>/', views.get_order_by_id, name='get_order_by_id'),
     path('orders/<int:order_id>/update_order_status/', views.update_order_status_admin, name='update_order_status'),
     path('orders/<int:order_id>/delete/', views.delete_order, name='delete_order'),
-    # USER API BASED ENDPOINTS
-    path('orders/create/', views.create_order, name='create_order'),
 
     # ** END - Orders **
 

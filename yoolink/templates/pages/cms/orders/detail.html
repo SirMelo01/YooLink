@@ -17,14 +17,24 @@
         <a class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:cursor-pointer hover:bg-red-700" id="deleteOrder"> Löschen </a>
       </div>
     </div>
-    <h2 class="my-6 text-xl font-medium">Auftragsdetails</h2>
+    <h2 class="my-6 text-2xl font-medium">Auftragsdetails</h2>
     <div id="galeryForm" class="w-full rounded-2xl bg-blue-50 px-4 py-2 shadow-lg">
       <div class="flex justify-between">
         <div class="space-y-1">
-          <p class="font-medium">Auftragsnummer: #{{order.id}}</p>
-          <p>{{order.created_at}}</p>
+          <p class="font-medium text-lg">Auftragsnummer: #{{order.id}}</p>
+          <p class="my-2">{{order.created_at}}</p>
           <div class="flex space-x-1">
+            {% if order.status == 'OPEN' %}
             <p class="w-fit rounded-2xl bg-yellow-400 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
+            {% elif order.status == 'PAID' %}
+            <p class="w-fit rounded-2xl bg-orange-400 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
+            {% elif order.status == 'READY_FOR_PICKUP' %}
+            <p class="w-fit rounded-2xl bg-blue-400 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
+            {% elif order.status == 'SHIPPED' %}
+            <p class="w-fit rounded-2xl bg-purple-400 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
+            {% elif order.status == 'COMPLETED' %}
+            <p class="w-fit rounded-2xl bg-green-500 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
+            {% endif %}
             <p class="w-fit rounded-2xl bg-orange-400 px-2 text-sm font-medium text-gray-700">{{order.total}}€</p>
           </div>
         </div>
@@ -34,11 +44,12 @@
               <option value="OPEN" {% if order.status == 'OPEN' %}selected{% endif %}>Offen</option>
               <option value="PAID" {% if order.status == 'PAID' %}selected{% endif %}>Bezahlt</option>
               <option value="SHIPPED" {% if order.status == 'SHIPPED' %}selected{% endif %}>Verschickt</option>
+              <option value="READY_FOR_PICKUP" {% if order.status == 'READY_FOR_PICKUP' %}selected{% endif %}>Bereit zur Abholung</option>
               <option value="COMPLETED" {% if order.status == 'COMPLETED' %}selected{% endif %}>Abgeschlossen</option>
             </select>
             <label class="before:content[' '] after:content[' '] text-blue-gray-400 before:border-blue-gray-200 after:border-blue-gray-200 peer-placeholder-shown:text-blue-gray-500 peer-disabled:peer-placeholder-shown:text-blue-gray-500 pointer-events-none absolute -top-1.5 left-0 flex h-full w-full select-none text-[11px] font-normal leading-tight transition-all before:pointer-events-none before:mr-1 before:mt-[6.5px] before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-l before:border-t before:transition-all after:pointer-events-none after:ml-1 after:mt-[6.5px] after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-r after:border-t after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-l-2 peer-focus:before:border-t-2 peer-focus:before:border-blue-500 peer-focus:after:border-r-2 peer-focus:after:border-t-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent"> Status auswählen </label>
           </div>
-          <button class="ml-2 rounded bg-green-500 px-4 py-2 font-medium text-white hover:cursor-pointer hover:bg-green-700" id="updateStatus"> Speichern </button>
+          <button class="ml-2 rounded bg-green-500 px-4 py-2 font-medium text-white hover:cursor-pointer hover:bg-green-700" id="updateStatus"> Status ändern </button>
         </div>
       </div>
       <!-- Order Info -->
@@ -52,11 +63,11 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-lg font-medium">Kunde</h3>
-              <p class="text-sm text-slate-500">Name: <span class="text-black">/</span></p>
+              <h3 class="text-lg font-medium mb-2">Kunde</h3>
+              <p class="text-sm text-slate-500">Name: <span class="text-black">{{order.buyer_address.get_buyer_name}}</span></p>
               <p class="text-sm text-slate-500">Email: <span class="text-black">{{order.buyer_email}}</span></p>
-              <p class="text-sm text-slate-500">Telefon: <span class="text-black">/</span></p>
-              <p class="text-sm text-slate-500">Adresse: <span class="text-black">{{order.buyer_address}}</span></p>
+              <p class="text-sm text-slate-500">Telefon: <span class="text-black">{{order.buyer_address.phone_number}}</span></p>
+              <p class="text-sm text-slate-500">Adresse: <span class="text-black">{{order.buyer_address.get_shipping_address}}</span></p>
             </div>
           </div>
         </div>
@@ -70,12 +81,13 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-lg font-medium">Auftrag</h3>
-              <p class="text-sm text-slate-500">UUID: <span class="text-black">{{order.uuid}}</span></p>
+              <h3 class="text-lg font-medium mb-2">Auftrag</h3>
               <p class="text-sm text-slate-500">Anzahl Produkte: <span class="text-black">{{order.orderitem_set.count}}</span></p>
               <p class="text-sm text-slate-500">Anzahl Items: <span class="text-black">{{order.total_quantity}}</span></p>
-              <p class="text-sm text-slate-500">Bezahlmethode: <span class="text-black font-semibold">{{order.get_payment_display}}</span></p>
-              <p class="text-sm text-slate-500">Summe: <span class="text-green-700 font-semibold">{{order.total}}€</span></p>
+              <p class="text-sm text-slate-500">Liefermethode: <span class="text-black font-semibold">{{order.get_shipping_display}}</span></p>
+              <p class="text-sm text-slate-500">Nettosumme: <span class="text-orange-600 font-semibold">{{order.total}}€</span></p>
+              <hr class="my-1">
+              <p class="text-base text-slate-500">Summe (mit 19% Steuern): <span class="text-green-700 font-semibold">{{order.total_with_tax}}€</span></p>
             </div>
           </div>
         </div>

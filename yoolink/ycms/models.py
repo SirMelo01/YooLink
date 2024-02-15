@@ -185,6 +185,26 @@ class Product(models.Model):
         # Call the parent class's save method to actually save the model
         super(Product, self).save(*args, **kwargs)
 
+class ShippingAddress(models.Model):
+    prename = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=100)
+    address2 = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=50)
+    # state = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.prename + " " + self.name}'s Shipping Address"
+    
+    def get_shipping_address(self):
+        return f"{self.address}, {self.postal_code} {self.city}, {self.country}"
+    
+    def get_buyer_name(self):
+        return f"{self.prename} {self.name}"
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ('OPEN', 'Offen'),
@@ -193,25 +213,25 @@ class Order(models.Model):
         ('SHIPPED', 'Versendet'),
         ('COMPLETED', 'Abgeschlossen'),
     ]
-    PAYMENT_CHOICES = [
-        ('INVOICE', 'Rechnung'),
-        ('PICKUP', 'Zahlung bei Abholung'),
+    SHIPPING_CHOICES = [
+        ('SHIPPING', 'Lieferung'),
+        ('PICKUP', 'Abholung'),
     ]
 
     buyer_email = models.EmailField()
-    buyer_address = models.TextField(default='')
+    buyer_address = models.ForeignKey(ShippingAddress, on_delete=models.DO_NOTHING)
     verified = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
-    payment = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='INVOICE')
+    shipping = models.CharField(max_length=20, choices=SHIPPING_CHOICES, default='SHIPPING')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_status_display(self):
         return dict(self.STATUS_CHOICES)[self.status]
     
-    def get_payment_display(self):
-        return dict(self.PAYMENT_CHOICES)[self.payment]
+    def get_shipping_display(self):
+        return dict(self.SHIPPING_CHOICES)[self.shipping]
 
     def total(self):
         return sum(item.subtotal() for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
@@ -227,6 +247,14 @@ class Order(models.Model):
 
     def total_quantity(self):
         return sum(item.quantity for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
+
+    def delete(self, *args, **kwargs):
+        # Check if the ShippingAddress is only associated with this Order
+        if ShippingAddress.objects.filter(pk=self.buyer_address.id).count() == 1:
+            # If so, delete the ShippingAddress
+            self.buyer_address.delete()
+        # Call the parent class's delete method to delete the Order instance
+        super().delete(*args, **kwargs)
 
 
 class OrderItem(models.Model):
@@ -290,6 +318,7 @@ class UserSettings(models.Model):
     fax_number = models.CharField(max_length=18, default='')
     mobile_number = models.CharField(max_length=18, default='')
     website = models.URLField(blank=True, default='')
+    address = models.CharField(max_length=255, default='')
 
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"

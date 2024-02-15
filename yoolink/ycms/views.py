@@ -1,7 +1,7 @@
 import json
 import re
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, OpeningHours, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -1053,8 +1053,22 @@ def update_order_status_admin(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     new_status = request.POST.get('status')
     if new_status:
+        old_status = order.status
         order.status = new_status
         order.save()
+        if old_status == 'OPEN' and new_status in ['PAID', 'READY_FOR_PICKUP']:
+            if new_status == 'PAID':
+                send_payment_confirmation(order)
+            elif new_status == 'READY_FOR_PICKUP':
+                send_ready_for_pickup_confirmation(order)
+            else:
+                return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
+        
+        if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP':
+            send_ready_for_pickup_confirmation(order)
+        elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
+            pass # send Shipped Confirmation
+        
         return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst'}, status=status.HTTP_200_OK)
     return Response({'error': 'Es wurde kein Status mitgegeben!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1223,8 +1237,20 @@ def cart_view(request):
 
     order = Order.objects.get(id=order_id)
     
+    if order.verified: 
+        request.session['cart_amount'] = 0
+        request.session['order_id'] = None
+        return render(request, "pages/errors/error.html", {
+            "error": "Deine Bestellung wurde bereits verifiziert und bestellt, wodurch der Warenkorb nicht mehr valide ist. Bitte füge neue Produkte hinzu, um eine neue Bestellung zu tätigen!",
+            "saveLink": last_url if last_url else '/'
+        })
+    
+    
     return render(request, "pages/cms/orders/cart.html", {"order": order})
 
+
+def cart_verify_success_view(request):
+    return render(request, "pages/cms/orders/success/cart-verify-success.html", {})
 
 
 @api_view(['DELETE'])
@@ -1383,250 +1409,62 @@ def verify_cart(request):
 @authentication_classes([])
 @permission_classes([])
 def update_shipping_address(request, order_id):
-    new_shipping_address = request.POST.get('shipping_address')
+    address = request.POST.get('address')
+    address2 = request.POST.get('address2')
+    city = request.POST.get('city')
+    phone_number = request.POST.get('phone_number')
+    postal_code = request.POST.get('postal_code')
+    country = request.POST.get('country')
+    prename = request.POST.get('buyer_prename')
+    name = request.POST.get('buyer_name')
 
-    if not new_shipping_address:
-        return JsonResponse({'error': 'New shipping address is required'}, status=400)
-
+    # Get the order
     order = get_object_or_404(Order, id=order_id)
 
+    # Check if the order is verified
     if not order.verified:
         return JsonResponse({'error': 'Product is not verified yet. Please check your emails'}, status=400)
 
-    # Update shipping address
-    order.buyer_address = new_shipping_address
-    order.save()
+    # Update shipping address fields if provided
+    buyer_address = order.buyer_address
+    if address:
+        buyer_address.address = address
+    if address2:
+        buyer_address.address2 = address2
+    if city:
+        buyer_address.city = city
+    if phone_number:
+        buyer_address.phone_number = phone_number
+    if postal_code:
+        buyer_address.postal_code = postal_code
+    if country:
+        buyer_address.country = country
+    if prename:
+        buyer_address.prename = prename
+    if name:
+        buyer_address.name = name
+
+    buyer_address.save()
 
     return JsonResponse({'success': 'Shipping address updated successfully'})
-
-
-@api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
-def api_order_success(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    if not order:
-        return JsonResponse({'error': 'The order does not exist'}, status=400)
-    old_status = order.status
-    if old_status != 'OPEN':
-        return JsonResponse({'error': 'The order was already checked-out'}, status=400)
-    
-    order.status = 'PAID'
-    order.save()
-    send_payment_confirmation(order)
-    return JsonResponse({'success': f'The payment for the order #{order.id} was successful. You should get a confirmation email to the following email soon: {order.buyer_email}'})
-
-@api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
-def api_order_error(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    if not order:
-        return JsonResponse({'error': 'The order does not exist'}, status=400)
-    old_status = order.status
-    if old_status != 'OPEN':
-        return JsonResponse({'error': 'The order was already checked-out'}, status=400)
-    
-    return JsonResponse({'error': 'This is the order payment error route. Something went wrong while trying to pay for the order'})
-
-def checkout_view(request):
-    order_id = request.session.get('order_id')
-    if not order_id:
-        return JsonResponse({"error": "There is no Cart yet. Add Items to it first."}, status=400)
-    order = Order.objects.get(id=order_id) if order_id else None
-    if not order.verified:
-        return JsonResponse({"error": "The order is not yet verified"}, status=400)
-    if order.status != 'OPEN':
-        return JsonResponse({"error": "The order is not open anymore"}, status=400)
-
-    total_price = 0.0
-    if order:
-        cart_items = [{
-            'product_title': item.product.title,
-            'quantity': item.quantity,
-            'price': float(item.get_price()),
-            'subtotal': float(item.subtotal())
-        } for item in order.orderitem_set.all()]
-        total_price = float(order.total())
-    else:
-        cart_items = []
-
-    # What you want the button to do.
-    host = request.get_host()
-
-    # Create the instance.
-
-    context = {
-        'cart_items': cart_items, 
-        'total_price': total_price,
-        'order': order,
-    }
-    return render(request, "pages/cms/orders/checkout.html", context)
-
-# Check Out View with id
-def checkout_view_id(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    if not order.verified:
-        return JsonResponse({"error": "The order is not yet verified"}, status=400)
-    if order.status != 'OPEN':
-        return JsonResponse({"error": "The order is not open anymore"}, status=400)
-
-    total_price = 0.0
-    if order:
-        cart_items = [{
-            'product_title': item.product.title,
-            'quantity': item.quantity,
-            'price': float(item.get_price()),
-            'subtotal': float(item.subtotal())
-        } for item in order.orderitem_set.all()]
-        total_price = float(order.total())
-    else:
-        cart_items = []
-
-    # What you want the button to do.
-    host = request.get_host()
-
-    context = {
-        'cart_items': cart_items, 
-        'total_price': total_price,
-        'order': order,
-    }
-    return render(request, "pages/cms/orders/checkout.html", context)
-
-
-@api_view(['PATCH'])
-@authentication_classes([])
-@permission_classes([])
-def update_order_status_by_user(request, order_id):
-    new_status = request.data.get('new_status')
-
-    if not new_status:
-        return JsonResponse({'error': 'New status is required'}, status=400)
-
-    order = get_object_or_404(Order, id=order_id)
-    old_status = order.status
-
-    # Check if the new status is allowed based on the old status
-     # Check if the new status is allowed based on the old status
-    allowed_status_transitions = {
-        'OPEN': ['PAID', 'READY_FOR_PICKUP'],
-    }
-
-    if new_status not in allowed_status_transitions.get(old_status, []):
-        return JsonResponse({'error': f'Invalid status transition from {old_status} to {new_status}'}, status=400)
-
-   
-    # Update order status
-    order.status = new_status
-    order.save()
-
-    # Send confirmation emails based on status change
-    if old_status == 'OPEN' and new_status in ['PAID', 'READY_FOR_PICKUP']:
-        if new_status == 'PAID':
-            send_payment_confirmation(order)
-        elif new_status == 'READY_FOR_PICKUP':
-            send_ready_for_pickup_confirmation(order)
-        else:
-             return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
-    else:
-        return JsonResponse({'error': 'Something went wrong!'})
-
-    return JsonResponse({'success': 'Order status updated successfully'})
-
-
-@api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
-def create_order(request):
-    product_id = request.data.get('product_id')
-    quantity = request.data.get('quantity')
-    buyer_email = request.data.get('email')
-    buyer_name = request.data.get('name')
-    if not buyer_email or not buyer_name:
-        return Response({'error': 'Es wurde keine Email oder Name angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
-    if not quantity or not product_id:
-        return Response({'error': 'Es wurde kein Produkt angegeben'}, status=status.HTTP_401_UNAUTHORIZED)
-    # Check if the product exists
-    product = get_object_or_404(Product, id=product_id)
-    # Corrected code to get user settings for staff user
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
-
-    # Check if a staff user with settings exists
-    if user_settings is None:
-        return Response({'error': 'No staff user with settings found'}, status=status.HTTP_404_NOT_FOUND)
-    # Check if the product is discounted
-    is_discounted = product.is_reduced
-    unit_price = product.discount_price if is_discounted else product.price
-
-    # Create order item
-    order_item = OrderItem.objects.create(
-        order=order,
-        product=product,
-        quantity=quantity,
-        is_discounted=is_discounted,
-        unit_price=unit_price
-    )
-
-    # Create order
-    order = Order.objects.create(buyer_email=buyer_email)
-    order.save()
-
-    # User Data
-    full_name = user_settings.full_name
-    company_name = user_settings.company_name
-    phone_number = user_settings.tel_number
-    fax_number = user_settings.fax_number
-    mobile_number = user_settings.mobile_number
-    website = user_settings.website
-
-    # Send confirmation emails (use your preferred method)
-    subject = f"Ihr Auftrag {order.id}"
-    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Wir freuen uns, Ihnen mitzuteilen, dass Ihr Auftrag mit der Auftragsnummer {order.id} erfolgreich eingegangen ist. Unten finden Sie die Details Ihrem Auftrag:\n\n"
-
-    # Add details of each ordered item
-    for item in order.orderitem_set.all():
-        message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
-
-
-    message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
-    #message += "Wir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
-    dashboard_url = settings.DASHBOARD_URL
-    url = dashboard_url + "cms/order/verify/?token=" + str(order.uuid) + "&order_id=" + str(order.id)
-    message += f"\nBitte bestätigen sie ihren Auftrag hier: {url}"
-    message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
-    message += f"\n{company_name}"
-
-    if phone_number and phone_number != "0":
-        message += f"\nTel. {phone_number}"
-
-    if fax_number and fax_number != "0":
-        message += f"\nFax {fax_number}"
-
-    if mobile_number and mobile_number != "0":
-        message += f"\nHandy {mobile_number}"
-
-    if website:
-        message += f"\n{website}"
-    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
-
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_HOST_USER,
-        [buyer_email],
-        fail_silently=False,
-    )
-
-
-    return Response({'success': True}, status=status.HTTP_201_CREATED)
 
 
 def order_verify_view(request):
     token = request.GET.get('token')
     order_id = request.GET.get('order_id')
+    last_url = request.META.get('HTTP_REFERER')
     order = get_object_or_404(Order, id=order_id, uuid=token)
+    if order.verified: 
+        request.session['cart_amount'] = 0
+        request.session['order_id'] = None
+        return render(request, "pages/errors/error.html", {
+            "error": "Diese Bestellung wurde bereits verifiziert und bestellt. Für weitere Informationen überprüfe deine E-Mails oder schreibe uns eine Nachricht. Status der Bestellung: " + order.get_status_display(),
+            "saveLink": last_url if last_url else '/'
+        })
     return render(request, "pages/cms/orders/verify.html", {"order": order})
 
+def order_verify_success_view(request):
+    return render(request, "pages/cms/orders/success/order-verify-success.html", {})
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1636,25 +1474,41 @@ def verify_order(request):
     uuid = request.POST.get('token')
     address = request.POST.get('address')
     city = request.POST.get('city')
+    postal_code = request.POST.get('postal_code')
     country = request.POST.get('country')
     prename = request.POST.get('buyer_prename')
     name = request.POST.get('buyer_name')
+    shipping = request.POST.get('shipping')
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     
-    if not address:
+    if not (address and city and postal_code and country and prename and name):
         return JsonResponse({'error': 'Die Adresse muss angegeben sein'}, status=400)
 
     # Check if the order exists
     order = get_object_or_404(Order, id=orderId, uuid=uuid)
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()
     if not user_settings:
-        return JsonResponse({'error': 'There is no staff user!.'}, status=400)
+        return JsonResponse({'error': 'There is no staff user!'}, status=400)
     # Check if the order is not already verified
     if not order.verified:
         # Set the order as verified
         order.verified = True
-        order.buyer_address = address
+        
+        # Create or get the shipping address
+        shipping_address, created = ShippingAddress.objects.get_or_create(
+            address=address,
+            city=city,
+            country=country,
+            prename=prename,
+            name=name,
+            prename=prename,
+            postal_code=postal_code
+        )
+
+        # Update the order with the shipping address and shipping method
+        order.buyer_address = shipping_address
+        order.shipping = shipping
         order.save()
         # User Data
         full_name = user_settings.full_name
@@ -1778,6 +1632,7 @@ def user_settings_update(request):
         user_settings.fax_number = request.POST.get('fax_number', '')
         user_settings.mobile_number = request.POST.get('mobile_number', '')
         user_settings.website = request.POST.get('website', '')
+        user_settings.website = request.POST.get('address', '')
 
         # Save the updated user settings
         user_settings.save()

@@ -9,6 +9,7 @@ $(document).ready(function() {
         var fax_number = $('#fax_number').val();
         var mobile_number = $('#mobile_number').val();
         var website = $('#website').val();
+        var address = $('#address').val();
 
         // AJAX request to update user settings
         $.ajax({
@@ -22,6 +23,7 @@ $(document).ready(function() {
                 'fax_number': fax_number,
                 'mobile_number': mobile_number,
                 'website': website,
+                'address': address,
                 'csrfmiddlewaretoken': csrfToken
             },
             success: function(response) {

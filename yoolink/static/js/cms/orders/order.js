@@ -54,7 +54,7 @@ $(document).ready(function () {
     $('#deleteOrder').prop('disabled', true);
     $.ajax({
       url: "delete/",
-      type: 'POST',
+      type: 'DELETE',
       data: {
         csrfmiddlewaretoken: csrfToken,
       },

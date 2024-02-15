@@ -5,6 +5,7 @@ module.exports = {
             "./yoolink/templates/pages/**/*.{html,js}",
             "./yoolink/templates/pages/cms/*.{html,js}",
             "./yoolink/templates/pages/cms/**/*.{html,js}",
+            "./yoolink/templates/pages/cms/orders/**/*.{html,js}",
             "./yoolink/templates/pages/cms/galery/*.{html,js}",
             "./yoolink/templates/designs/*.{html,js}",
             "./yoolink/templates/blog/*.{html,js}",

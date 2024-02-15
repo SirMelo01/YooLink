@@ -19,8 +19,8 @@ $(document).ready(function () {
             return;
         }
 
-        const $payment = $(".active")
-        if($payment.length < 1 || $payment.length > 1) {
+        const $shipping = $(".active")
+        if($shipping.length < 1 || $shipping.length > 1) {
             disableSpinner($('#verifyOrder'));
             sendNotif("Es wurde keine Bezahlmethode ausgewählt", "error")
             return;
@@ -32,10 +32,11 @@ $(document).ready(function () {
         formData.append('buyer_prename', $('#buyerVorname').val());
         formData.append('address', $('#address').val());
         formData.append('city', $('#city').val());
+        formData.append('postal_code', $('#postal_code').val());
         formData.append('country', $('#country').val());
         formData.append('token', $('#orderToken').val());
         formData.append('order_id', $('#orderId').val());
-        formData.append('payment', $payment.val())
+        formData.append('shipping', $shipping.attr('shipping'))
 
         // Verify Cart Post Request
         $.ajax({
@@ -51,7 +52,14 @@ $(document).ready(function () {
             },
             success: function (data) {
                 // Handle success, e.g., redirect or show a success message
-                sendNotif(data.success, "success")
+                if(data.success) {
+                    sendNotif(data.success, "success")
+                    // Redirect to success page
+                    setTimeout(() => {
+                        window.location.href = '/cms/order/success/'
+                    }, 2000)
+                }
+                sendNotif(data.error, "error")
             },
             error: function (data) {
                 // Handle errors, e.g., display error message to the user
@@ -104,13 +112,13 @@ $(document).ready(function () {
         });
     });
 
-    $('#invoice').click(function () {
+    $('#shipping').click(function () {
         $(this).addClass('border-2 border-orange-500 active')
         $('#pickup').removeClass('border-2 border-blue-500 active')
     })
 
     $('#pickup').click(function () {
-        $('#invoice').removeClass('border-2 border-orange-500 active')
+        $('#shipping').removeClass('border-2 border-orange-500 active')
         $(this).addClass('border-2 border-blue-500 active')
     })
 
@@ -152,6 +160,7 @@ function disableSpinner($elem) {
     $elem.prop("disabled", false);
     $elem.find('svg').addClass('hidden');
     $elem.find('.bi').removeClass('hidden');
+    $elem.prop('disabled', false);
 }
 
 /**
@@ -162,4 +171,5 @@ function enableSpinner($elem) {
     $elem.prop("disabled", true);
     $elem.find('svg').removeClass('hidden');
     $elem.find('.bi').addClass('hidden');
+    $elem.prop('disabled', true);
 }
