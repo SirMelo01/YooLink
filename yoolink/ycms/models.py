@@ -174,6 +174,8 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, blank=True, null=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    online_sell = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -218,12 +220,17 @@ class Order(models.Model):
         ('SHIPPING', 'Lieferung'),
         ('PICKUP', 'Abholung'),
     ]
+    PAYMENT_CHOICES = [
+        ('TRANSFER', 'Überweisung/Paypal'),
+        ('CASH', 'Barzahlung'),
+    ]
 
     buyer_email = models.EmailField()
     buyer_address = models.ForeignKey(ShippingAddress, null=True, on_delete=models.DO_NOTHING)
     verified = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='OPEN')
+    payment = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='CASH')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     shipping = models.CharField(max_length=20, choices=SHIPPING_CHOICES, default='SHIPPING')
@@ -232,18 +239,48 @@ class Order(models.Model):
     def get_status_display(self):
         return dict(self.STATUS_CHOICES)[self.status]
     
+    def get_payment_display(self):
+        return dict(self.PAYMENT_CHOICES)[self.status]
+    
     def get_shipping_display(self):
         return dict(self.SHIPPING_CHOICES)[self.shipping]
 
     def total(self):
+        return sum(item.subtotal() for item in self.orderitem_set.all()) + self.shipping_price()  # Adjusted to use the related name orderitem_set
+
+    def total_without_shipping(self):
         return sum(item.subtotal() for item in self.orderitem_set.all())  # Adjusted to use the related name orderitem_set
 
     def total_with_tax(self):
-        return self.total() + self.calculate_tax()
+        return self.total() - self.calculate_tax()
 
     def calculate_tax(self):
         return self.total() * Decimal('0.19')
     
+    def shipping_price(self):
+        total_weight_kg = self.total_weight_kg()
+        
+        if total_weight_kg <= Decimal('2'):
+            return Decimal('5.49')
+        elif total_weight_kg <= Decimal('5'):
+            return Decimal('6.99')
+        elif total_weight_kg <= Decimal('10'):
+            return Decimal('10.49')
+        elif total_weight_kg <= Decimal('31.5'):
+            return Decimal('19.99')
+        elif total_weight_kg <= Decimal('50.5'):
+            return Decimal('19.99')
+        else:
+            # Handle weights above 31.5 kg
+            return Decimal('19.99')  # You may want to handle this case differently based on your business logic
+
+    
+    def total_weight_kg(self):
+        total_weight = Decimal('0')
+        for item in self.orderitem_set.all():
+            total_weight += item.product_weight()
+        return total_weight
+
     def total_discount(self):
         total_discount = 0
         for item in self.orderitem_set.filter(is_discounted=True):
@@ -281,6 +318,10 @@ class OrderItem(models.Model):
 
     def subtotal(self):
         return self.quantity * self.get_price()
+    
+    def product_weight(self):
+        # Return the weight of the product multiplied by the quantity
+        return self.product.weight * self.quantity if self.product.weight else 0
 
     def __str__(self):
         return f"{self.product.title} - {self.quantity} units - {'Discounted' if self.is_discounted else 'Normal'}"

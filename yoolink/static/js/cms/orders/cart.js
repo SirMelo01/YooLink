@@ -181,10 +181,10 @@ $(document).ready(function () {
                 if (data.success) {
                     // Create Form Data and add data
 
-                    $("#tax").val(data.tax)
-                    $("#total").val(data.total_price)
-                    $("#discount").val(data.total_discount)
-                    $("#total_with_tax").val(data.total_tax_price)
+                    $("#tax").text(data.tax)
+                    $("#total").text(data.total_price)
+                    $("#discount").text(data.total_discount)
+                    $("#total_with_tax").text(data.total_tax_price)
 
                     $.each(data.cart_items, function(index, item) {
                         // Accessing each item's properties
@@ -194,11 +194,12 @@ $(document).ready(function () {
         
                         // Do something with the item data
                         const orderItemElement = $('.order-item[order-item-id="' + orderItemId + '"]');
-                        orderItemElement.find('.order-item-subtotal').val(subtotal + "€")
+                        orderItemElement.find('.order-item-subtotal').text(subtotal + "€")
                         orderItemElement.find('.product-amount').val(quantity)
                     });
 
                     sendNotif(data.success, "success")
+                    
                 } else {
                     sendNotif(data.error, "success")
                 }

@@ -16,7 +16,7 @@
                 <hr class="my-2">
                 {% for item in order.orderitem_set.all %}
                 <div order-item-id="{{item.id}}" class="mt-5 order-item">
-                    <div class="flex items-center justify-between rounded-2xl border px-3">
+                    <div class="flex items-center justify-between rounded-2xl border px-1 lg:px-3">
                         <div class="flex items-center">
                             <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl hidden md:block" alt="" />
                             <p class="font-semibold ml-4">{{item.product.title}}</p>
@@ -26,14 +26,6 @@
                             value="{{item.quantity}}" min="1" type="number" placeholder="2" />
                         <p class="text-lg font-semibold order-item-price">{{item.get_price|floatformat:2}}€</p>
                         <p class="text-lg font-semibold order-item-subtotal">{{item.subtotal|floatformat:2}}€</p>
-                        <span class="delete-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                fill="currentColor" class="bi bi-trash text text-red-600 hover:cursor-pointer"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                <path
-                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                            </svg></span>
                     </div>
                 </div>
                 {% endfor %}
@@ -45,24 +37,21 @@
                     <div class="mt-5">
                         <div class="flex justify-between">
                             <span class="text-slate-500">Rabatt</span>
-                            <span><p class="discount">{{order.total_discount|floatformat:2}}</p>€</span>
+                            <span class="flex"><p class="discount">{{order.total_discount|floatformat:2}}</p>€</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Lieferung</span>
-                            <span>5€+ (steht auf Rechnung)</span>
+                            <span class="flex">{{order.shipping_price|floatformat:2}}€</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Umsatzsteuer</span>
-                            <span><p id="tax">{{order.calculate_tax|floatformat:2}}</p>€ (19%)</span>
+                            <span class="flex"><p id="tax">{{order.calculate_tax|floatformat:2}}</p>€ (19%)</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">Nettobetrag</span>
-                            <span><p id="total">{{order.total|floatformat:2}}</p>€</span>
-                        </div>
+                        
                         <hr class="my-2" />
                         <div class="flex justify-between">
                             <span class="text-lg font-bold text-slate-500">Gesamtbetrag</span>
-                            <span class="text-lg font-bold"><p id="total_with_tax">{{order.total_with_tax|floatformat:2}}</p>€</span>
+                            <span class="flex" class="text-lg font-bold"><p id="total_with_tax">{{order.total|floatformat:2}}</p>€</span>
                         </div>
                     </div>
                 </div>
@@ -110,17 +99,14 @@
                             <strong class="">Der Klick auf Verifizieren ist nicht verbindlich, er dient lediglich der
                                 Überprüfung Ihrer Identität.</strong>
                         </p>
-                        <div class="mt-5 px-2">
-                            <span class="mt-5 font-medium text-gray-900 dark:text-gray-400">Hiermit bestätige ich, dass
-                                meine Email privat und sicher gespeichert werden darf</span>
-                        </div>
+                        
                         <div class="mt-5 flex w-full justify-center">
                             <label class="relative inline-flex cursor-pointer items-center">
                                 <input id="isChecked" type="checkbox" value="" class="open-switch peer sr-only" />
                                 <div
                                     class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800">
                                 </div>
-                                <span class="ms-3 font-medium text-gray-900 dark:text-gray-400">Bestätigen</span>
+                                <span class="ms-3 font-medium text-gray-900 dark:text-gray-400 flex"><a class="text-blue-600" href="/agb">AGBs</a> bestätigen</span>
                             </label>
                         </div>
 

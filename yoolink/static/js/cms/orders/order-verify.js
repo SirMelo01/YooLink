@@ -22,6 +22,13 @@ $(document).ready(function () {
         const $shipping = $(".active")
         if($shipping.length < 1 || $shipping.length > 1) {
             disableSpinner($('#verifyOrder'));
+            sendNotif("Es wurde keine Liefermethode ausgewählt", "error")
+            return;
+        }
+
+        const $payment = $(".payment-active")
+        if($payment.length < 1 || $payment.length > 1) {
+            disableSpinner($('#verifyOrder'));
             sendNotif("Es wurde keine Bezahlmethode ausgewählt", "error")
             return;
         }
@@ -37,6 +44,17 @@ $(document).ready(function () {
         formData.append('token', $('#orderToken').val());
         formData.append('order_id', $('#orderId').val());
         formData.append('shipping', $shipping.attr('shipping'))
+
+
+        if ($shipping.attr('shipping') == 'SHIPPING') {
+            if($payment.attr('payment') == 'CASH') {
+                disableSpinner($('#verifyOrder'));
+                sendNotif("Bei Lieferung kann nicht in Bar bezahlt werden", "error")
+                return;
+            }
+        }
+        formData.append('shipping', $payment.attr('payment'))
+
 
         // Verify Cart Post Request
         $.ajax({
@@ -117,12 +135,43 @@ $(document).ready(function () {
     $('#shipping').click(function () {
         $(this).addClass('border-2 border-orange-500 active')
         $('#pickup').removeClass('border-2 border-blue-500 active')
+        $('#cash').removeClass('border-2 border-orange-500 payment-active')
+        $('#transfer').addClass('border-2 border-blue-500 payment-active')
+        showShippingPrice()
     })
 
     $('#pickup').click(function () {
         $('#shipping').removeClass('border-2 border-orange-500 active')
         $(this).addClass('border-2 border-blue-500 active')
+        showPickUpPrice()
     })
+
+    $('#transfer').click(function () {
+        $('#cash').removeClass('border-2 border-orange-500 payment-active')
+        $(this).addClass('border-2 border-blue-500 payment-active')
+    })
+
+    $('#cash').click(function () {
+        if($(".active").attr('shipping') === 'SHIPPING') {
+            sendNotif("Bei Lieferung kann nicht in Bar bezahlt werden", "error")
+            return;
+        }
+        $('#transfer').removeClass('border-2 border-orange-500 payment-active')
+        $(this).addClass('border-2 border-blue-500 payment-active')
+    })
+
+    function showPickUpPrice() {
+        $('.shipping-price').removeClass('flex').addClass('hidden')
+        $('.pickup-price').addClass('flex').removeClass('hidden')
+    }
+
+    function showShippingPrice() {
+        $('.pickup-price').removeClass('flex').addClass('hidden')
+        $('.shipping-price').addClass('flex').removeClass('hidden')
+    }
+
+
+
 
 });
 

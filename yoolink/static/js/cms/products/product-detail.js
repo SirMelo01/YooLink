@@ -214,6 +214,8 @@ $(document).ready(function () {
     formData.append('isReduced', $('#reducedSwitch').is(':checked'));
     formData.append('hersteller', $('#autocomplete-hersteller-input').val())
     formData.append('price', $('#price').val());
+    formData.append('weight', $('#weight').val());
+    formData.append('isOnlineAvailable', $('#onlineSwitch').is(':checked'));
     formData.append('reducedPrice', $('#reducedPrice').val());
     formData.append('selected_categories', JSON.stringify(addedCategories));
     console.log(JSON.stringify(addedCategories))

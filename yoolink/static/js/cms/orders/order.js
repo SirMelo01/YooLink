@@ -69,7 +69,7 @@ $(document).ready(function () {
           sendNotif(response.error, 'error')
           $('#deleteOrder').prop('disabled', false);
         } else {
-          sendNotif("Der Auftrag wurde erfolgreich gelöscht. Warte auf Umleiten...", 'success')
+          sendNotif(response.success, 'success')
           setTimeout(() => {
             window.location.href = '/cms/orders/';
           }, 2000)

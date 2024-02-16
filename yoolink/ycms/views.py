@@ -864,11 +864,14 @@ def product_update(request, product_id, slug):
 
         active = request.POST.get('isActive', False)
         inStock = request.POST.get('isInStock', False)
+        isOnlineAvailable = request.POST.get('isOnlineAvailable', False)
         isReduced = request.POST.get('isReduced', False)
         price_str = request.POST.get('price', '0')
+        weight_str = request.POST.get('weight', '0')
         reduced_price_str = request.POST.get('reducedPrice', price_str)
         # Remove commas and convert to float
         price = float(price_str.replace(',', '.'))
+        weight = float(weight_str.replace(',', '.'))
         reduced_price = price
         if reduced_price_str:
             reduced_price = float(reduced_price_str.replace(',', '.'))
@@ -908,12 +911,17 @@ def product_update(request, product_id, slug):
             product.title = title
             product.description = description
             product.price = price 
+            product.weight = weight 
             product.discount_price = reduced_price
 
             if active == "true":
                 product.is_active = True
             else:
                 product.is_active = False
+            if isOnlineAvailable == "true":
+                product.online_sell = True
+            else:
+                product.online_sell = False
             if inStock == "true":
                 product.is_in_stock = True
             else:
@@ -1075,6 +1083,7 @@ def update_order_status_admin(request, order_id):
             sendingEmail = True
         if new_status == 'PAID':
             order.paid = True
+        order.save()
         if sendingEmail:
             return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst. Der Käufer hat eine Bestätiguns-Email erhalten'}, status=status.HTTP_200_OK)
         return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst.'}, status=status.HTTP_200_OK)
@@ -1163,6 +1172,10 @@ def add_to_cart(request, product_id):
         return JsonResponse({'error': 'Dieses Produkt wird aktuell nicht mehr verkauft'}, status=400)
     if not product.is_in_stock:
         return JsonResponse({'error': 'Dieses Produkt ist aktuell nicht mehr im Lager verfügbar. Schauen Sie später nochmal vorbei'}, status=400)
+
+    if not product.online_sell:
+        return JsonResponse({'error': 'Dieses Produkt kann nur im Shop vor Ort erworben werden'}, status=400)
+
 
     order_id = request.session.get('order_id')
     cart_amount = request.session.get('cart_amount')
@@ -1405,9 +1418,11 @@ def verify_cart(request):
     for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
     message += f"---------------------"
-    message += f"\nNettopreis: {order.total():.2f} Euro\n\n"
-    message += f"\nLieferung: Noch nicht vorhanden\n\n"
-    message += f"\nGesamtpreis (mit 19% Steuern): {order.total_with_tax():.2f} Euro\n\n"
+    message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
+    message += f"\nLieferung: {order.shipping_price():.2f} Euro"
+    message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
+    message += f"---------------------"
+    message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
     message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}"
@@ -1436,7 +1451,7 @@ def verify_cart(request):
     request.session['cart_amount'] = 0
     request.session['order_id'] = None
 
-    return JsonResponse({'success': 'Order verification email sent successfully'})
+    return JsonResponse({'success': 'Erfolg! Sie erhalten nun bald eine Email'})
 
 
 def order_verify_view(request):
@@ -1469,6 +1484,7 @@ def verify_order(request):
     prename = request.POST.get('buyer_prename')
     name = request.POST.get('buyer_name')
     shipping = request.POST.get('shipping')
+    payment = request.POST.get('payment')
     if not orderId or not uuid:
         return JsonResponse({'error': 'orderId and uuid are required.'}, status=400)
     
@@ -1498,6 +1514,7 @@ def verify_order(request):
         # Update the order with the shipping address and shipping method
         order.buyer_address = shipping_address
         order.shipping = shipping
+        order.payment = payment
         order.save()
         # User Data
         full_name = user_settings.full_name

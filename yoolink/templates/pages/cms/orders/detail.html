@@ -48,8 +48,11 @@
             <select id="status" class="border-blue-gray-200 text-blue-gray-700 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 disabled:bg-blue-gray-50 peer z-40 h-full w-full rounded-[7px] border border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border empty:!bg-red-500 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0">
               <option value="OPEN" {% if order.status == 'OPEN' %}selected{% endif %}>Offen</option>
               <option value="PAID" {% if order.status == 'PAID' %}selected{% endif %}>Bezahlt</option>
-              <option value="SHIPPED" {% if order.status == 'SHIPPED' %}selected{% endif %}>Verschickt</option>
+              {% if order.shipping == 'PICKUP' %}
               <option value="READY_FOR_PICKUP" {% if order.status == 'READY_FOR_PICKUP' %}selected{% endif %}>Bereit zur Abholung</option>
+              {% else %}
+              <option value="SHIPPED" {% if order.status == 'SHIPPED' %}selected{% endif %}>Verschickt</option>
+              {% endif %}
               <option value="COMPLETED" {% if order.status == 'COMPLETED' %}selected{% endif %}>Abgeschlossen</option>
             </select>
             <label class="before:content[' '] after:content[' '] text-blue-gray-400 before:border-blue-gray-200 after:border-blue-gray-200 peer-placeholder-shown:text-blue-gray-500 peer-disabled:peer-placeholder-shown:text-blue-gray-500 pointer-events-none absolute -top-1.5 left-0 flex h-full w-full select-none text-[11px] font-normal leading-tight transition-all before:pointer-events-none before:mr-1 before:mt-[6.5px] before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-l before:border-t before:transition-all after:pointer-events-none after:ml-1 after:mt-[6.5px] after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-r after:border-t after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-l-2 peer-focus:before:border-t-2 peer-focus:before:border-blue-500 peer-focus:after:border-r-2 peer-focus:after:border-t-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent"> Status auswählen </label>
@@ -73,6 +76,8 @@
               <p class="text-sm text-slate-500">Email: <span class="text-black">{{order.buyer_email}}</span></p>
               <p class="text-sm text-slate-500">Telefon: <span class="text-black">{{order.buyer_address.phone_number}}</span></p>
               <p class="text-sm text-slate-500">Adresse: <span class="text-black">{{order.buyer_address.get_shipping_address}}</span></p>
+              <p class="text-sm text-slate-500">Liefermethode: <span class="text-black font-semibold">{{order.get_shipping_display}}</span></p>
+              <p class="text-sm text-slate-500">Bezahlmethode: <span class="text-black font-semibold">{{order.get_payment_display}}</span></p>
             </div>
           </div>
         </div>
@@ -89,10 +94,16 @@
               <h3 class="text-lg font-medium mb-2">Auftrag</h3>
               <p class="text-sm text-slate-500">Anzahl Produkte: <span class="text-black">{{order.orderitem_set.count}}</span></p>
               <p class="text-sm text-slate-500">Anzahl Items: <span class="text-black">{{order.total_quantity}}</span></p>
-              <p class="text-sm text-slate-500">Liefermethode: <span class="text-black font-semibold">{{order.get_shipping_display}}</span></p>
-              <p class="text-sm text-slate-500">Nettosumme: <span class="text-orange-600 font-semibold">{{order.total}}€</span></p>
+              <p class="text-sm text-slate-500">Nettosumme: <span class="text-orange-600 font-semibold">{{order.total_with_tax}}€</span></p>
+              {% if order.shipping == 'SHIPPING' %}
+              <p class="text-sm text-slate-500">Lieferkosten: <span class="text-orange-600 font-semibold">{{order.shipping_price}}€</span></p>
               <hr class="my-1">
-              <p class="text-base text-slate-500">Summe (mit 19% Steuern): <span class="text-green-700 font-semibold">{{order.total_with_tax}}€</span></p>
+              <p class="text-base text-slate-500">Summe (mit 19% Steuern): <span class="text-green-700 font-semibold">{{order.total}}€</span></p>
+              {% else %}
+              <p class="text-sm text-slate-500">Lieferkosten: 0€</span></p>
+              <hr class="my-1">
+              <p class="text-base text-slate-500">Summe (mit 19% Steuern): <span class="text-green-700 font-semibold">{{order.total_without_shipping}}€</span></p>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -126,14 +137,7 @@
             <p class="text-sm text-gray-500">Reduziert?</p>
             <p class="font-medium text-gray-700">{% if item.is_discounted %}Ja{% else %}Nein{% endif %}</p>
           </div>
-          <div class="flex flex-col items-center justify-center">
-            <a href="#" class="rounded-2xl bg-red-500 p-2 text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-              </svg>
-            </a>
-          </div>
+          
         </div>
         {% endfor %}
       </div>

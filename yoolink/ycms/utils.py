@@ -16,7 +16,12 @@ def send_payment_confirmation(order: Order):
     for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
-    message += f"\nGesamtpreis: {order.total_with_tax():.2f} Euro\n"
+    message += f"---------------------"
+    message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
+    message += f"\nLieferung: {order.shipping_price():.2f} Euro"
+    message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
+    message += f"---------------------"
+    message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
     message += f"\nIhre ausgewählte Liefermethode: {order.get_shipping_display()}"
     if order.shipping == "SHIPPING":
         message += f"\nVersandadresse:\n{order.buyer_address.get_shipping_address()}\n"
@@ -73,7 +78,7 @@ def send_ready_for_pickup_confirmation(order: Order):
 def send_shipping_confirmation(order : Order, user_settings: UserSettings):
     buyer_email = order.buyer_email
     # Check if the request.user is a staff member
-    
+    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
     subject = f"Ihre Produkte sind auf dem Weg"
     message = f"Ihre Produkte aus dem Auftrag #{order.id} sind auf dem Weg zu Ihnen. \nVielen Dank für Ihren Einkauf!\n\nDetails Ihres Auftrags:\n"
     
