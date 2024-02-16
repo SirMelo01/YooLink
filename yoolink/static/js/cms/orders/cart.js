@@ -182,9 +182,9 @@ $(document).ready(function () {
                     // Create Form Data and add data
 
                     $("#tax").text(data.tax)
-                    $("#total").text(data.total_price)
+                    $("#total").text(data.total_tax_price)
                     $("#discount").text(data.total_discount)
-                    $("#total_with_tax").text(data.total_tax_price)
+                    $("#total_with_tax").text(data.total_price)
 
                     $.each(data.cart_items, function(index, item) {
                         // Accessing each item's properties

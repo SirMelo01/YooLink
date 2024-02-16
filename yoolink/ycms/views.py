@@ -1421,7 +1421,7 @@ def verify_cart(request):
     message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
     message += f"\nLieferung: {order.shipping_price():.2f} Euro"
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
-    message += f"---------------------"
+    message += f"\n---------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
     message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"

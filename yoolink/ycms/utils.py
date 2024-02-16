@@ -20,7 +20,7 @@ def send_payment_confirmation(order: Order):
     message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
     message += f"\nLieferung: {order.shipping_price():.2f} Euro"
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
-    message += f"---------------------"
+    message += f"\n---------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
     message += f"\nIhre ausgewählte Liefermethode: {order.get_shipping_display()}"
     if order.shipping == "SHIPPING":

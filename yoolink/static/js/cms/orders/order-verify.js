@@ -53,7 +53,7 @@ $(document).ready(function () {
                 return;
             }
         }
-        formData.append('shipping', $payment.attr('payment'))
+        formData.append('payment', $payment.attr('payment'))
 
 
         // Verify Cart Post Request
