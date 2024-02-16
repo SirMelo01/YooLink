@@ -36,6 +36,11 @@
             <p class="w-fit rounded-2xl bg-green-500 px-2 text-sm font-medium text-gray-700">{{order.get_status_display}}</p>
             {% endif %}
             <p class="w-fit rounded-2xl bg-orange-400 px-2 text-sm font-medium text-gray-700">{{order.total}}€</p>
+            {% if order.paid %}
+            <p class="w-fit rounded-2xl bg-orange-600 px-2 text-sm font-medium text-gray-800">Bezahlt</p>
+            {% else %}
+            <p class="w-fit rounded-2xl bg-gray-700 px-2 text-sm font-medium text-white">Nicht bezahlt</p>
+            {% endif %}
           </div>
         </div>
         <div class="flex items-center justify-center">

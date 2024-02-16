@@ -1073,7 +1073,8 @@ def update_order_status_admin(request, order_id):
         elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
             send_shipping_confirmation(order)
             sendingEmail = True
-        
+        if new_status == 'PAID':
+            order.paid = True
         if sendingEmail:
             return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst. Der Käufer hat eine Bestätiguns-Email erhalten'}, status=status.HTTP_200_OK)
         return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst.'}, status=status.HTTP_200_OK)
