@@ -69,8 +69,7 @@ urlpatterns = [
     path('api/cart/<int:order_item_id>/update-quantity/', views.update_quantity, name='api-cart-update-quantity'),
     path('api/cart/update/', views.update_cart_items, name='api-cart-update'),
     path('api/cart/verify/', views.verify_cart, name='api-cart-verify'),
-    path('api/order/<int:order_id>/update-shipping-address/', views.update_shipping_address, name='api-order-update-shipping-address'),
-
+    
     # PAYPAL endpoints
     path('cart/', views.cart_view, name='cart-view'),
     path('cart/success/', views.cart_verify_success_view, name='cart-verify-success-view'),

@@ -22,7 +22,7 @@ from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail
 from .serializers import OrderSerializer, OrderItemSerializer
 from yoolink.users.models import User
-from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation
+from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 
 @login_required(login_url='login')
 def upload(request):
@@ -1056,20 +1056,29 @@ def update_order_status_admin(request, order_id):
         old_status = order.status
         order.status = new_status
         order.save()
+        sendingEmail = False
         if old_status == 'OPEN' and new_status in ['PAID', 'READY_FOR_PICKUP']:
             if new_status == 'PAID':
                 send_payment_confirmation(order)
+                sendingEmail = True
             elif new_status == 'READY_FOR_PICKUP':
                 send_ready_for_pickup_confirmation(order)
+                sendingEmail = True
             else:
                 return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
         
         if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP':
             send_ready_for_pickup_confirmation(order)
+            sendingEmail = True
         elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
-            pass # send Shipped Confirmation
+            send_shipping_confirmation(order)
+            sendingEmail = True
         
-        return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst'}, status=status.HTTP_200_OK)
+        if sendingEmail:
+            return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst. Der Käufer hat eine Bestätiguns-Email erhalten'}, status=status.HTTP_200_OK)
+        return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst.'}, status=status.HTTP_200_OK)
+
+        
     return Response({'error': 'Es wurde kein Status mitgegeben!'}, status=status.HTTP_400_BAD_REQUEST)
 
 # views.py
@@ -1320,7 +1329,25 @@ def update_cart_items(request):
     # Update total price in the session
     request.session['cart_total_price'] = float(order.total())
 
-    return JsonResponse({'success': 'Cart items updated successfully'})
+    cart_items = [{
+        'order_item_id': item.id,
+        'product_title': item.product.title,
+        'quantity': item.quantity,
+        'price': float(item.get_price()),
+        'subtotal': float(item.subtotal())
+    } for item in order.orderitem_set.all()]
+    total_price = float(order.total())
+
+    data = {
+        'success': 'Der Warenkorb wurde erfolgreich aktualisiert',
+        'cart_items': cart_items, 
+        'tax': round(float(order.calculate_tax()), 2),
+        'total_price': round(total_price, 2), 
+        'total_discount': round(float(order.total_discount()), 2), 
+        'total_tax_price': round(float(order.total_with_tax()), 2)
+    }
+
+    return JsonResponse(data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -1372,13 +1399,15 @@ def verify_cart(request):
     website = user_settings.website
 
     subject = f"Ihr Auftrag {order.id}"
-    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. Ihr Auftrag mit der Auftragsnummer {order.id} wurde erfolgreich bestätigt. Hier sind die Details Ihres Auftrags:\n\n"
+    message = f"Hallo {buyer_name},\n\nVielen Dank für Ihren Auftrag bei {company_name}. \nIhr Auftrag mit der Auftragsnummer #{order.id} wurde erfolgreich bestätigt. \nHier sind die Details Ihres Auftrags:\n\n"
 
     for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
-
-    message += f"\nGesamtpreis: {order.total():.2f} Euro\n\n"
-    message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. Bitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
+    message += f"---------------------"
+    message += f"\nNettopreis: {order.total():.2f} Euro\n\n"
+    message += f"\nLieferung: Noch nicht vorhanden\n\n"
+    message += f"\nGesamtpreis (mit 19% Steuern): {order.total_with_tax():.2f} Euro\n\n"
+    message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}"
 
@@ -1402,51 +1431,11 @@ def verify_cart(request):
         [buyer_email],
         fail_silently=False,
     )
+    
+    request.session['cart_amount'] = 0
+    request.session['order_id'] = None
 
     return JsonResponse({'success': 'Order verification email sent successfully'})
-
-@api_view(['PATCH'])
-@authentication_classes([])
-@permission_classes([])
-def update_shipping_address(request, order_id):
-    address = request.POST.get('address')
-    address2 = request.POST.get('address2')
-    city = request.POST.get('city')
-    phone_number = request.POST.get('phone_number')
-    postal_code = request.POST.get('postal_code')
-    country = request.POST.get('country')
-    prename = request.POST.get('buyer_prename')
-    name = request.POST.get('buyer_name')
-
-    # Get the order
-    order = get_object_or_404(Order, id=order_id)
-
-    # Check if the order is verified
-    if not order.verified:
-        return JsonResponse({'error': 'Product is not verified yet. Please check your emails'}, status=400)
-
-    # Update shipping address fields if provided
-    buyer_address = order.buyer_address
-    if address:
-        buyer_address.address = address
-    if address2:
-        buyer_address.address2 = address2
-    if city:
-        buyer_address.city = city
-    if phone_number:
-        buyer_address.phone_number = phone_number
-    if postal_code:
-        buyer_address.postal_code = postal_code
-    if country:
-        buyer_address.country = country
-    if prename:
-        buyer_address.prename = prename
-    if name:
-        buyer_address.name = name
-
-    buyer_address.save()
-
-    return JsonResponse({'success': 'Shipping address updated successfully'})
 
 
 def order_verify_view(request):
@@ -1520,9 +1509,23 @@ def verify_order(request):
         # Send confirmation emails (use your preferred method)
         subject = f"Bestätigung Auftrag {order.id}"
         message = f"Vielen Dank für die Bestätigung Ihres Auftrags bei {company_name}."
-        message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen alle weiteren Informationen mitteilen.\n\n"
+        message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
+        message += "\nSobald Sie die Rechnung bezahlt haben und wir die Zahlung erhalten haben, erhalten Sie ihre Ware."
+        if order.shipping == "PICKUP":
+            message += "Sie haben sich für die Abholung entschieden. Sie erhalten nun bald eine E-Mail mit der Rechnung, welche Sie dann Überweisen oder vor Ort bezahlen können.\n\n"
         message += f"Vielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
-        message += f"\n{company_name}\nTel. {phone_number}\nFax {fax_number}\nHandy {mobile_number}\n{website}"
+        
+        if phone_number and phone_number != "0":
+            message += f"\nTel. {phone_number}"
+
+        if fax_number and fax_number != "0":
+            message += f"\nFax {fax_number}"
+
+        if mobile_number and mobile_number != "0":
+            message += f"\nHandy {mobile_number}"
+
+        if website:
+            message += f"\n{website}"
         message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
 
         send_mail(
@@ -1537,7 +1540,7 @@ def verify_order(request):
         dashboard_url = settings.DASHBOARD_URL
 
         subject_company = "Neue Bestellung eingegangen"
-        message_company = f"Hallo Team,\n\nEine neue Bestellung ist eingegangen. Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten.\n\n"
+        message_company = f"Hallo {full_name},\n\nEine neue Bestellung ist eingegangen. Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten.\n\n"
         message_company += f"Sie können die Bestellung hier einsehen: {dashboard_url}cms/orders/{order.id}/\n\n"
         message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
 
@@ -1597,7 +1600,7 @@ def email_send(request):
         fail_silently=False,
     )
 
-    return Response({'success': True}, status=status.HTTP_200_OK)
+    return Response({'success': 'Ihre Nachricht wurde erfolgreich versendet.'}, status=status.HTTP_200_OK)
 
 # Settings
 @login_required(login_url='login')

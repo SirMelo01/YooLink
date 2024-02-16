@@ -5,22 +5,27 @@
 {% block content %}
 
 <section class="bg-blue-50 w-full h-full">
-    <div class="container mx-auto h-screen max-w-screen-xl p-3 my-10">
-        <div class="grid grid-cols-3 gap-6">
-            <div class="col-span-2 rounded-2xl bg-white p-2 shadow-lg">
-                <h2 class="text-xl font-medium">Auftrag #{{order.id}}</h2>
+    <div class="container mx-auto h-full max-w-screen-xl p-3">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 my-10">
+            <div class="lg:col-span-2 rounded-2xl bg-white p-2 shadow-lg">
+                <div class="flex justify-between">
+                    <h2 class="text-xl font-medium">Auftrag #{{order.id}}</h2>
+                    <button class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700" id="updateCart">Warenkorb aktualisieren</button>
+                </div>
+                
                 <hr class="my-2">
                 {% for item in order.orderitem_set.all %}
                 <div order-item-id="{{item.id}}" class="mt-5 order-item">
                     <div class="flex items-center justify-between rounded-2xl border px-3">
                         <div class="flex items-center">
-                            <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl" alt="" />
+                            <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl hidden md:block" alt="" />
                             <p class="font-semibold ml-4">{{item.product.title}}</p>
                         </div>
                         <input
-                            class="block product-amount item-quantity w-16 appearance-none text-center rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
-                            value="{{item.quantity}}" type="number" placeholder="2" />
-                        <p class="text-lg font-semibold">{{item.subtotal|floatformat:2}}€</p>
+                            class="block product-amount item-quantity w-12 lg:w-16 appearance-none text-center rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
+                            value="{{item.quantity}}" min="1" type="number" placeholder="2" />
+                        <p class="text-lg font-semibold order-item-price">{{item.get_price|floatformat:2}}€</p>
+                        <p class="text-lg font-semibold order-item-subtotal">{{item.subtotal|floatformat:2}}€</p>
                         <span class="delete-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                 fill="currentColor" class="bi bi-trash text text-red-600 hover:cursor-pointer"
                                 viewBox="0 0 16 16">
@@ -40,24 +45,24 @@
                     <div class="mt-5">
                         <div class="flex justify-between">
                             <span class="text-slate-500">Rabatt</span>
-                            <span>00.00€</span>
+                            <span><p class="discount">{{order.total_discount|floatformat:2}}</p>€</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Lieferung</span>
-                            <span>wird später berechnet</span>
+                            <span>5€+ (steht auf Rechnung)</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Umsatzsteuer</span>
-                            <span>{{order.calculate_tax|floatformat:2}}€ (19%)</span>
+                            <span><p id="tax">{{order.calculate_tax|floatformat:2}}</p>€ (19%)</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Nettobetrag</span>
-                            <span>{{order.total|floatformat:2}}€</span>
+                            <span><p id="total">{{order.total|floatformat:2}}</p>€</span>
                         </div>
                         <hr class="my-2" />
                         <div class="flex justify-between">
                             <span class="text-lg font-bold text-slate-500">Gesamtbetrag</span>
-                            <span class="text-lg font-bold">{{order.total_with_tax|floatformat:2}}€</span>
+                            <span class="text-lg font-bold"><p id="total_with_tax">{{order.total_with_tax|floatformat:2}}</p>€</span>
                         </div>
                     </div>
                 </div>

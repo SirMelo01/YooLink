@@ -204,6 +204,7 @@ class ShippingAddress(models.Model):
     
     def get_buyer_name(self):
         return f"{self.prename} {self.name}"
+    
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -241,6 +242,13 @@ class Order(models.Model):
 
     def calculate_tax(self):
         return self.total() * Decimal('0.19')
+    
+    def total_discount(self):
+        total_discount = 0
+        for item in self.orderitem_set.filter(is_discounted=True):
+            if item.discounted_price is not None:
+                total_discount += (item.unit_price - item.discounted_price) * item.quantity
+        return total_discount
 
     def __str__(self):
         return f"Order #{self.pk} - {self.buyer_email} - {self.status}"

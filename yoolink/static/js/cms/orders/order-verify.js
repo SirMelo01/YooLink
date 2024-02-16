@@ -58,8 +58,10 @@ $(document).ready(function () {
                     setTimeout(() => {
                         window.location.href = '/cms/order/success/'
                     }, 2000)
+                } else {
+                    sendNotif(data.error, "error")
                 }
-                sendNotif(data.error, "error")
+                
             },
             error: function (data) {
                 // Handle errors, e.g., display error message to the user

@@ -1,63 +1,67 @@
 var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 $(document).ready(function () {
 
-    $('#updateStatus').click(function () {
-        var formData = new FormData();
-        const status = $('#status').val()
-        if(!status) {
-            sendNotif("Status konnte nicht gefunden werden.", "error")
-            return;
+  $('#updateStatus').click(function () {
+    var formData = new FormData();
+    const status = $('#status').val()
+    if (!status) {
+      sendNotif("Status konnte nicht gefunden werden.", "error")
+      return;
+    }
+    formData.append('status', status)
+    $.ajax({
+      url: 'update_order_status/',
+      type: 'PATCH',
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      beforeSend: function (xhr) {
+        // Add the CSRF token to the request headers
+        xhr.setRequestHeader("X-CSRFToken", csrfToken);
+      },
+      success: function (response) {
+        // Handle success
+        console.log(response);
+        // redirect to detail page
+        if (response.success) {
+          sendNotif(response.success, "success")
+        } else {
+          sendNotif(response.error ? response.error : 'Es ist ein Fehler aufgetreten, versuche es erneut!', "error")
         }
-        formData.append('status', status)
-        $.ajax({
-            url: 'update_order_status/',
-            type: 'PATCH',
-            data: formData,
-            contentType: false,
-            processData: false,
-            dataType: "json",
-            beforeSend: function (xhr) {
-                // Add the CSRF token to the request headers
-                xhr.setRequestHeader("X-CSRFToken", csrfToken);
-            },
-            success: function (response) {
-                // Handle success
-                console.log(response);
-                // redirect to detail page
-                if (response.success) {
-                    sendNotif(response.success, "success")
-                } else {
-                    sendNotif(response.error ? response.error : 'Es ist ein Fehler aufgetreten, versuche es erneut!', "error")
-                }
 
 
-            },
-            error: function (error) {
-                // Handle error
-                console.error(error);
-                sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
+      },
+      error: function (error) {
+        // Handle error
+        console.error(error);
+        sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
 
-            }
-        })
+      }
     })
+  })
 
-    $('#deleteOrder').click(function() {
-        $('#deleteModal').removeClass('hidden')
-      })
-    
-    $('.close-delete-modal').click(() => {
-        $('#deleteModal').addClass('hidden')
-    })
+  $('#deleteOrder').click(function () {
+    $('#deleteModal').removeClass('hidden')
+  })
 
-    // Delete Product
+  $('.close-delete-modal').click(() => {
+    $('#deleteModal').addClass('hidden')
+  })
+
+  // Delete Product
   $('#deleteConfirm').click(function () {
     $('#deleteOrder').prop('disabled', true);
     $.ajax({
       url: "delete/",
       type: 'DELETE',
-      data: {
-        csrfmiddlewaretoken: csrfToken,
+      data: {},
+      beforeSend: function (xhr) {
+        // Add the CSRF token to the request headers
+        xhr.setRequestHeader("X-CSRFToken", csrfToken);
       },
+      contentType: false,
+      processData: false,
       dataType: 'json',
       success: function (response) {
         console.log(response);
@@ -65,11 +69,11 @@ $(document).ready(function () {
           sendNotif(response.error, 'error')
           $('#deleteOrder').prop('disabled', false);
         } else {
-          sendNotif("Die Order wurde erfolgreich gelöscht. Warte auf Umleiten...", 'success')
+          sendNotif("Der Auftrag wurde erfolgreich gelöscht. Warte auf Umleiten...", 'success')
           setTimeout(() => {
             window.location.href = '/cms/orders/';
           }, 2000)
-         
+
         }
       },
       error: function (xhr, status, error) {

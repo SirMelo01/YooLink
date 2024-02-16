@@ -6,20 +6,21 @@
 
 <section class="bg-blue-50 w-full h-full">
   <div class="container mx-auto h-screen max-w-screen-xl p-3 ">
-    <div class="grid grid-cols-3 gap-6 my-10">
-      <div class="col-span-2 rounded-2xl bg-white p-2 shadow-lg">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 my-10">
+      <div class="lg:col-span-2 rounded-2xl bg-white p-2 shadow-lg">
         <h2 class="text-xl font-medium">Auftrag #{{order.id}}</h2>
         <hr class="my-2">
         {% for item in order.orderitem_set.all %}
         <div order-item-id="{{item.id}}" class="mt-5 order-item">
           <div class="flex items-center justify-between rounded-2xl border px-3">
             <div class="flex items-center">
-              <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl" alt="" />
+              <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl hidden md:block" alt="" />
               <p class="font-semibold ml-4">{{item.product.title}}</p>
             </div>
             <input
               class="block product-amount product-amount w-16 appearance-none text-center rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
               value="{{item.quantity}}" type="number" placeholder="2" disabled />
+            <p class="text-lg font-semibold order-item-price">{{item.get_price|floatformat:2}}€</p>
             <p class="text-lg font-semibold">{{item.subtotal|floatformat:2}}€</p>
             <span class="delete-item"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                 class="bi bi-trash text text-red-600 hover:cursor-pointer" viewBox="0 0 16 16">
@@ -39,11 +40,11 @@
           <div class="mt-5">
             <div class="flex justify-between">
               <span class="text-slate-500">Rabatt</span>
-              <span>00.00€</span>
+              <span>{{order.total_discount|floatformat:2}}€</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">Lieferung</span>
-              <span>0.00€</span>
+              <span>5€+ (steht auf Rechnung)</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">Umsatzsteuer</span>
@@ -124,7 +125,7 @@
           </form>
         </div>
         <div class="rounded-2xl bg-white px-4 py-2 shadow-lg mt-5">
-          <h2 class="text-xl font-medium">Bezahlmethode</h2>
+          <h2 class="text-xl font-medium">Liefermethode</h2>
           <hr class="my-2">
           <div class="mt-5">
             <div class="flex justify-center space-x-5 my-5">

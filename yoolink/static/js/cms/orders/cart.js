@@ -43,7 +43,11 @@ $(document).ready(function () {
 
             // Extract quantity from the input field value
             var quantity = $(this).find(".item-quantity").val();
-
+            if(parseFloat(quantity) < 1) {
+                sendNotif("Keine Ware darf eine Menge von unter 1 haben!", "error")
+                disableSpinner($('#verifyCart'));
+                return;
+            }
             // Create an object with order item ID and quantity
             var cartItem = {
                 "order_item_id": orderItemId,
@@ -71,9 +75,9 @@ $(document).ready(function () {
             },
             success: function (data) {
                 // Handle success, e.g., redirect or show a success message
-                sendNotif(data.success, "success")
-                console.log("Start second ajax call")
+                
                 if (data.success) {
+                    sendNotif(data.success, "success")
                     // Create Form Data and add data
                     var formData = new FormData();
                     formData.append('buyer_email', $('#buyerEmail').val())
@@ -100,8 +104,10 @@ $(document).ready(function () {
                                     window.location.href = '/cms/cart/success/'
                                 }, 2000)
                                 
+                            } else {
+                                sendNotif(data.error, "error")
                             }
-                            sendNotif(data.error, "error")
+                            
                         },
                         error: function (data) {
                             // Handle errors, e.g., display error message to the user
@@ -120,6 +126,90 @@ $(document).ready(function () {
 
 
     });
+
+    $('#updateCart').click(function() {
+        // Update Quantity of Products first (if there were any changes)
+        // Initialize an empty array to store the cart items
+        var cartItems = [];
+
+        var orderItemCount = $(".order-item").length;
+        if (orderItemCount === 0) {
+            disableSpinner($('#verifyCart'));
+            sendNotif("Der Einkaufswagen ist leer. Bitte lade die Seite neu oder gehe zur Startseite.", "error")
+            return;
+        }
+
+        // Iterate through each element with the class "order-item"
+        $(".order-item").each(function () {
+            // Extract order item ID from the "order-item-id" attribute
+            var orderItemId = $(this).attr("order-item-id");
+
+            // Extract quantity from the input field value
+            var quantity = $(this).find(".item-quantity").val();
+            if(parseFloat(quantity) < 1) {
+                sendNotif("Keine Ware darf eine Menge von unter 1 haben!", "error")
+                disableSpinner($('#verifyCart'));
+                return;
+            }
+            // Create an object with order item ID and quantity
+            var cartItem = {
+                "order_item_id": orderItemId,
+                "quantity": quantity
+            };
+
+            // Push the object to the cartItems array
+            cartItems.push(cartItem);
+        });
+        // Create a new FormData object
+        var updateFormData = new FormData();
+        // Append the cartItems array as a JSON string to the FormData object
+        updateFormData.append("cart_items", JSON.stringify(cartItems));
+        // Send to backend
+        $.ajax({
+            type: 'POST',
+            url: '/cms/api/cart/update/',
+            data: updateFormData,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            beforeSend: function (xhr) {
+                // Add the CSRF token to the request headers
+                xhr.setRequestHeader("X-CSRFToken", csrfToken);
+            },
+            success: function (data) {
+                // Handle success, e.g., redirect or show a success message
+                if (data.success) {
+                    // Create Form Data and add data
+
+                    $("#tax").val(data.tax)
+                    $("#total").val(data.total_price)
+                    $("#discount").val(data.total_discount)
+                    $("#total_with_tax").val(data.total_tax_price)
+
+                    $.each(data.cart_items, function(index, item) {
+                        // Accessing each item's properties
+                        var orderItemId = item.order_item_id;
+                        var quantity = item.quantity;
+                        var subtotal = item.subtotal;
+        
+                        // Do something with the item data
+                        const orderItemElement = $('.order-item[order-item-id="' + orderItemId + '"]');
+                        orderItemElement.find('.order-item-subtotal').val(subtotal + "€")
+                        orderItemElement.find('.product-amount').val(quantity)
+                    });
+
+                    sendNotif(data.success, "success")
+                } else {
+                    sendNotif(data.error, "success")
+                }
+            },
+            error: function (data) {
+                // Handle errors, e.g., display error message to the user
+                sendNotif(data.responseJSON.error, "error")
+                disableSpinner($('#verifyCart'));
+            }
+        });
+    })
 
     /**
      * Delete Item From Cart
