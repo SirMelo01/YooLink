@@ -240,7 +240,7 @@ class Order(models.Model):
         return dict(self.STATUS_CHOICES)[self.status]
     
     def get_payment_display(self):
-        return dict(self.PAYMENT_CHOICES)[self.status]
+        return dict(self.PAYMENT_CHOICES)[self.payment]
     
     def get_shipping_display(self):
         return dict(self.SHIPPING_CHOICES)[self.shipping]

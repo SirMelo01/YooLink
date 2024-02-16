@@ -135,8 +135,8 @@ $(document).ready(function () {
     $('#shipping').click(function () {
         $(this).addClass('border-2 border-orange-500 active')
         $('#pickup').removeClass('border-2 border-blue-500 active')
-        $('#cash').removeClass('border-2 border-orange-500 payment-active')
-        $('#transfer').addClass('border-2 border-blue-500 payment-active')
+        $('#cash').removeClass('border-2 border-blue-500 payment-active')
+        $('#transfer').addClass('border-2 border-orange-500 payment-active')
         showShippingPrice()
     })
 
@@ -147,8 +147,8 @@ $(document).ready(function () {
     })
 
     $('#transfer').click(function () {
-        $('#cash').removeClass('border-2 border-orange-500 payment-active')
-        $(this).addClass('border-2 border-blue-500 payment-active')
+        $('#cash').removeClass('border-2 border-blue-500 payment-active')
+        $(this).addClass('border-2 border-orange-500 payment-active')
     })
 
     $('#cash').click(function () {
