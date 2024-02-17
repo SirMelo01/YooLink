@@ -17,10 +17,10 @@
                 {% for item in order.orderitem_set.all %}
                 <div order-item-id="{{item.id}}" class="mt-5 order-item">
                     <div class="flex items-center justify-between rounded-2xl border px-1 lg:px-3">
-                        <div class="flex items-center">
+                        <a href="/products/{{item.product.id}}/{{item.product.slug}}" class="flex items-center">
                             <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl hidden md:block" alt="" />
                             <p class="font-semibold ml-4">{{item.product.title}}</p>
-                        </div>
+                        </a>
                         <input
                             class="block product-amount item-quantity w-12 lg:w-16 appearance-none text-center rounded border border-gray-200 bg-gray-200 px-2 py-2 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
                             value="{{item.quantity}}" min="1" type="number" placeholder="2" />

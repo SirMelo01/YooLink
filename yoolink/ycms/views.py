@@ -1084,13 +1084,13 @@ def update_order_status_admin(request, order_id):
             else:
                 return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
         
-        if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP':
+        if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP' and not sendingEmail:
             send_ready_for_pickup_confirmation(order)
             sendingEmail = True
-        elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
+        elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED' and not sendingEmail:
             send_shipping_confirmation(order)
             sendingEmail = True
-        if new_status == 'PAID':
+        if new_status == 'PAID' and not sendingEmail:
             order.paid = True
         order.save()
         if sendingEmail:
@@ -1426,12 +1426,18 @@ def verify_cart(request):
 
     for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
-    message += f"---------------------"
+    message += f"------------------------------------------"
     message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
     message += f"\nLieferung: {order.shipping_price():.2f} Euro"
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
-    message += f"\n---------------------"
+    message += f"\n------------------------------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
+    message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
+    if order.shipping == "SHIPPING":
+        message += f"\nVersandadresse: {order.buyer_address.get_shipping_address()}\n"
+    elif order.shipping == "PICKUP":
+        message += f"\nRechnungsadresse: {order.buyer_address.get_shipping_address()}\n"
+    message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
     message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}"
@@ -1581,7 +1587,7 @@ def verify_order(request):
             fail_silently=False,
         )
 
-        return JsonResponse({'success': 'Order successfully verified.'})
+        return JsonResponse({'success': 'Die Bestellung wurde erfolgreich aufgegeben'})
     else:
         return JsonResponse({'error': 'Order is already verified.'}, status=400)
 

@@ -77,7 +77,6 @@ $(document).ready(function () {
                 // Handle success, e.g., redirect or show a success message
                 
                 if (data.success) {
-                    sendNotif(data.success, "success")
                     // Create Form Data and add data
                     var formData = new FormData();
                     formData.append('buyer_email', $('#buyerEmail').val())

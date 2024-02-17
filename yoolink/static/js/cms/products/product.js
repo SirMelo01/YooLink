@@ -1,7 +1,6 @@
 $(document).ready(function () {
     $('#searchProduct').on('click', function () {
-        console.log("Test")
-        var query = $('#searchProduct').val();
+        var query = $('#searchProductInput').val();
         $.ajax({
             url: '/cms/products/search/?q=' + query,
             type: 'GET',
@@ -16,7 +15,7 @@ $(document).ready(function () {
         productGrid.empty();
         for (var i = 0; i < products.length; i++) {
             var product = products[i];
-            var productHtml = '<div class="flex h-fit w-full rounded-2xl bg-blue-100 shadow-xl relative">';
+            var productHtml = '<div class="flex h-full w-full rounded-2xl bg-blue-100 shadow-xl relative">';
             
             // Add the image
             productHtml += '<img class="w-36 rounded-l-2xl hidden sm:block" src="' + product.image_url + '" alt="" srcset="" />';

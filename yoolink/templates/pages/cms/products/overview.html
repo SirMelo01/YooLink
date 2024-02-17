@@ -4,14 +4,16 @@
 
 {% block content %}
 
-
+<h1 class="text-2xl ">
+  <a href="{% url 'cms:shop' %}" class="text-blue-500">Shop</a> / <span id="titleSpan">Produkte</span>
+</h1>
 <div class="my-2 space-x-8 flex justify-between">
   <a href="{% url 'cms:product-create' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">
   Produkt erstellen
   </a>
     <input
       class="bg-gray-200 grow w-24 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-      id="inline-full-name" type="text" value="" placeholder="Suche nach einem Gerät...">
+      id="searchProductInput" type="text" value="" placeholder="Suche nach einem Gerät...">
       <button id="searchProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer">
         Suchen
       </button>

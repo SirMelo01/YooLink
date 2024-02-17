@@ -91,46 +91,6 @@ $(document).ready(function () {
 
     });
 
-    /**
-     * Delete Item From Cart
-     */
-    $(".delete-item").each(function () {
-        $(this).on("click", function () {
-            // Hier können Sie den Code für die Löschfunktion einfügen
-            // Verwenden Sie $(this), um auf das geklickte Element zuzugreifen
-            console.log("Löschen geklickt für Element mit ID:", $(this).attr("id"));
-            const $cartitem = $(this).closest('.order-item')
-            const cartItemId = $cartitem.attr("order-item-id");
-
-            // Delete Item
-            $.ajax({
-                type: 'DELETE',
-                url: `/cms/api/cart/${cartItemId}/remove/`,
-                data: {},
-                contentType: false,
-                processData: false,
-                dataType: "json",
-                beforeSend: function (xhr) {
-                    // Add the CSRF token to the request headers
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken);
-                },
-                success: function (data) {
-                    // Handle success, e.g., redirect or show a success message
-                    if (data.success) {
-                        $cartitem.remove();
-                        sendNotif(data.success, "success")
-                    } else {
-                        sendNotif(data.error ? data.error : "Etwas ist schief gelaufen.", "error")
-                    }
-
-                },
-                error: function (data) {
-                    // Handle errors, e.g., display error message to the user
-                    sendNotif(data.responseJSON.error, "error")
-                }
-            });
-        });
-    });
 
     $('#shipping').click(function () {
         $(this).addClass('border-2 border-orange-500 active')

@@ -8,25 +8,26 @@ def send_payment_confirmation(order: Order):
     subject = f"Ihr Auftrag {order.id} wurde bezahlt"
     message = f"Vielen Dank! Ihr Auftrag mit der Auftragsnummer #{order.id} wurde erfolgreich bezahlt."
     if order.shipping == "SHIPPING":
-        message += f"Die Produkte werden in Kürze an Sie versandt. Sie erhalten eine weitere Email, sobald die Ware verschickt wird."
+        message += f"\nDie Produkte werden in Kürze an Sie versandt. \nSie erhalten eine weitere Email, sobald die Ware verschickt wird."
     elif order.shipping == "PICKUP":
-        message += f"Die Produkte werden bereitgestellt. Sie erhalten in Kürze eine Email, sobald Sie die Ware abholen können"
+        message += f"\nDie Produkte werden bereitgestellt. Sie erhalten in Kürze eine Email, sobald Sie die Ware abholen können"
 
     message += "\n\nDetails Ihres Auftrags:\n"
     for item in order.orderitem_set.all():
         message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
 
-    message += f"---------------------"
+    message += f"------------------------------------------"
     message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
     message += f"\nLieferung: {order.shipping_price():.2f} Euro"
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
-    message += f"\n---------------------"
+    message += f"\n------------------------------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
-    message += f"\nIhre ausgewählte Liefermethode: {order.get_shipping_display()}"
+    message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
     if order.shipping == "SHIPPING":
-        message += f"\nVersandadresse:\n{order.buyer_address.get_shipping_address()}\n"
+        message += f"\nVersandadresse: {order.buyer_address.get_shipping_address()}\n"
     elif order.shipping == "PICKUP":
-        message += f"\nRechnungsadresse:\n{order.buyer_address.get_shipping_address()}\n"
+        message += f"\nRechnungsadresse: {order.buyer_address.get_shipping_address()}\n"
+    message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
 
     message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{user_settings.full_name}"
 
@@ -82,7 +83,7 @@ def send_shipping_confirmation(order : Order):
     subject = f"Ihre Produkte sind auf dem Weg"
     message = f"Ihre Produkte aus dem Auftrag #{order.id} sind auf dem Weg zu Ihnen. \nVielen Dank für Ihren Einkauf!\n\nDetails Ihres Auftrags:\n"
     
-    message += f"\nVersandadresse:\n{order.buyer_address.get_shipping_address()}\n"
+    message += f"\nVersandadresse: {order.buyer_address.get_shipping_address()}\n"
     message += f"\nWir informieren Sie, wenn die Produkte unterwegs sind. Vielen Dank!\n\nMit freundlichen Grüßen,\n{user_settings.full_name}"
 
     # Send confirmation email to buyer

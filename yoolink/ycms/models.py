@@ -174,7 +174,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, blank=True, null=True)
-    weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    weight = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True, default=0)
     online_sell = models.BooleanField(default=False)
 
     def __str__(self):

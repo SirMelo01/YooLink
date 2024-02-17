@@ -70,9 +70,10 @@ $(document).ready(function () {
           $('#deleteOrder').prop('disabled', false);
         } else {
           sendNotif(response.success, 'success')
+          $('#deleteModal').addClass('hidden')
           setTimeout(() => {
             window.location.href = '/cms/orders/';
-          }, 2000)
+          }, 1300)
 
         }
       },
