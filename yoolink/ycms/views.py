@@ -50,6 +50,7 @@ def upload(request):
         "blog_count": Blog.objects.count(),
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
+        "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -751,7 +752,7 @@ def product_search(request):
             'description': product.description,
             'price': product.price,
             'discount_price': product.discount_price if product.is_reduced else None,
-            'image_url': 'https://www.kovinc.de/wp-content/uploads/2021/02/schweissen-fuer-einsteiger.jpg',
+            'image_url': str(product.title_image.url),
             # Add other fields as needed
         })
 
@@ -1652,7 +1653,7 @@ def user_settings_update(request):
         user_settings.fax_number = request.POST.get('fax_number', '')
         user_settings.mobile_number = request.POST.get('mobile_number', '')
         user_settings.website = request.POST.get('website', '')
-        user_settings.website = request.POST.get('address', '')
+        user_settings.address = request.POST.get('address', '')
 
         # Save the updated user settings
         user_settings.save()
@@ -1713,3 +1714,13 @@ def opening_hours_update(request):
         return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)
     else:
         return JsonResponse({'success': 'Öffnungszeiten erfolgreich aktualisiert'})
+    
+@login_required(login_url='login')
+def shop(request):
+
+    data = {
+        "product_count": Product.objects.count(),
+        "order_count": Order.objects.filter(verified=True).count(),
+        "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
+    }
+    return render(request, 'pages/cms/shop/shop.html', data)

@@ -75,7 +75,7 @@ def send_ready_for_pickup_confirmation(order: Order):
         fail_silently=False,
     )"""
 
-def send_shipping_confirmation(order : Order, user_settings: UserSettings):
+def send_shipping_confirmation(order : Order):
     buyer_email = order.buyer_email
     # Check if the request.user is a staff member
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()

@@ -88,6 +88,7 @@ urlpatterns = [
     path('orders/<int:order_id>/update_order_status/', views.update_order_status_admin, name='update_order_status'),
     path('orders/<int:order_id>/delete/', views.delete_order, name='delete_order'),
 
+    path('shop/', views.shop, name='shop'),
     # ** END - Orders **
 
     # Reviews
