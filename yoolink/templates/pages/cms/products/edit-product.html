@@ -134,7 +134,7 @@
         </div>
       </div>
       <div>
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <div class="flex space-x-2">
             <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="onlineSwitch"> Lieferbar </label>
           <input {% if product.online_sell %}checked{% endif %}
@@ -143,7 +143,7 @@
           </div>
           
           <div>
-            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Produktgewicht (in kg) </label>
+            <label class="mb-1 block w-full self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Produktgewicht (in kg) </label>
             <input
               class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
               id="weight" type="text" value="{{product.weight}}" placeholder="1,5" required />

@@ -776,11 +776,14 @@ def product_create(request):
         
         active = request.POST.get('isActive', False)
         inStock = request.POST.get('isInStock', False)
+        isOnlineAvailable = request.POST.get('isOnlineAvailable', False)
         isReduced = request.POST.get('isReduced', False)
         price_str = request.POST.get('price', '0')
+        weight_str = request.POST.get('weight', '0')
         reduced_price_str = request.POST.get('reducedPrice', price_str)
         # Remove commas and convert to float
         price = float(price_str.replace(',', '.'))
+        weight = float(weight_str.replace(',', '.'))
         reduced_price = price
         if reduced_price_str:
             reduced_price = float(reduced_price_str.replace(',', '.'))
@@ -795,11 +798,16 @@ def product_create(request):
                 title=title, 
                 description=description, 
                 price=price,
-                discount_price=reduced_price)
+                discount_price=reduced_price,
+                weight=weight)
             if active == "true":
                 product.is_active = True
             else:
                 product.is_active = False
+            if isOnlineAvailable == "true":
+                product.online_sell = True
+            else:
+                product.online_sell = False
             if inStock == "true":
                 product.is_in_stock = True
             else:
