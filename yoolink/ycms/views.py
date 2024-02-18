@@ -1079,6 +1079,7 @@ def update_order_status_admin(request, order_id):
         if old_status == 'OPEN' and new_status in ['PAID', 'READY_FOR_PICKUP']:
             if new_status == 'PAID':
                 send_payment_confirmation(order)
+                order.paid = True
                 sendingEmail = True
             elif new_status == 'READY_FOR_PICKUP':
                 send_ready_for_pickup_confirmation(order)
