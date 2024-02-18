@@ -296,11 +296,16 @@ class Order(models.Model):
 
     def delete(self, *args, **kwargs):
         # Check if the ShippingAddress is only associated with this Order
-        if ShippingAddress.objects.filter(pk=self.buyer_address.id).count() == 1:
-            # If so, delete the ShippingAddress
+        # Überprüfen, ob andere Bestellungen dieselbe Versandadresse verwenden
+        other_orders_with_same_address = Order.objects.filter(buyer_address=self.buyer_address).exclude(pk=self.pk)
+        
+        if other_orders_with_same_address.exists():
+            # Wenn andere Bestellungen dieselbe Versandadresse verwenden, löschen Sie diese nicht
+            super().delete(*args, **kwargs)
+        else:
+            # Wenn keine anderen Bestellungen dieselbe Versandadresse verwenden, löschen Sie sie
             self.buyer_address.delete()
-        # Call the parent class's delete method to delete the Order instance
-        super().delete(*args, **kwargs)
+            super().delete(*args, **kwargs)
 
 
 class OrderItem(models.Model):
