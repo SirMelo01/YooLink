@@ -1030,7 +1030,7 @@ def order_view(request):
 
     # Calculate total revenue for orders with the desired statuses
     total_revenue = Order.objects.filter(status__in=desired_statuses, verified=True).aggregate(
-        total_revenue=Sum('orderitem__unit_price')
+        total_revenue=Sum(F('orderitem__unit_price') * F('orderitem__quantity'), output_field=DecimalField())
     )['total_revenue'] or 0
     # Number of clients
     total_clients = Order.objects.filter(verified=True).values('buyer_email').distinct().count()
@@ -1048,7 +1048,9 @@ def order_view(request):
 ).order_by('-total_quantity')[:5]
 
     # Biggest buyers
-    biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(total_spent=Sum('orderitem__unit_price')).order_by('-total_spent')[:5]
+    biggest_buyers = Order.objects.filter(verified=True).values('buyer_email').annotate(
+        total_spent=Sum(F('orderitem__unit_price') * F('orderitem__quantity'), output_field=DecimalField())
+    ).order_by('-total_spent')[:5]
 
     all_orders = Order.objects.filter(verified=True).order_by('-created_at')
 
@@ -1436,7 +1438,7 @@ def verify_cart(request):
     message += f"\n------------------------------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
     message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
-    message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
+    message += f"\nWir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}"
 
@@ -1539,8 +1541,8 @@ def verify_order(request):
         website = user_settings.website
         # Send confirmation emails (use your preferred method)
         subject = f"Bestätigung Auftrag {order.id}"
-        message = f"Vielen Dank für die Bestätigung Ihres Auftrags bei {company_name}."
-        message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
+        message = f"Vielen Dank für die Bestätigung Ihres Auftrags #{order.id} bei {company_name}."
+        message += "\n\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
         message += "\nSobald Sie die Rechnung bezahlt haben und wir die Zahlung erhalten haben, erhalten Sie ihre Ware."
         if order.shipping == "PICKUP":
             message += "\nSie haben sich für die Abholung entschieden. Sie erhalten nun bald eine E-Mail mit der Rechnung, welche Sie dann Überweisen oder vor Ort bezahlen können."
