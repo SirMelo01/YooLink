@@ -5,6 +5,11 @@ from django.conf import settings
 def send_payment_confirmation(order: Order):
     buyer_email = order.buyer_email
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    phone_number = user_settings.tel_number
+    email = user_settings.email
+    fax_number = user_settings.fax_number
+    mobile_number = user_settings.mobile_number
+    website = user_settings.website
     subject = f"Ihr Auftrag {order.id} wurde bezahlt"
     message = f"Vielen Dank! Ihr Auftrag mit der Auftragsnummer #{order.id} wurde erfolgreich bezahlt."
     if order.shipping == "SHIPPING":
@@ -31,6 +36,20 @@ def send_payment_confirmation(order: Order):
 
     message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{user_settings.full_name}"
 
+    if phone_number and phone_number != "0":
+        message += f"\nTel. {phone_number}"
+
+    if fax_number and fax_number != "0":
+        message += f"\nFax {fax_number}"
+
+    if mobile_number and mobile_number != "0":
+        message += f"\nHandy {mobile_number}"
+    if email:
+        message += f"\n{email}"
+    if website:
+        message += f"\n{website}"
+    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
+
     # Send confirmation email to buyer
     send_mail(
         subject,
@@ -53,9 +72,28 @@ def send_payment_confirmation(order: Order):
 def send_ready_for_pickup_confirmation(order: Order):
     buyer_email = order.buyer_email
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    phone_number = user_settings.tel_number
+    email = user_settings.email
+    fax_number = user_settings.fax_number
+    mobile_number = user_settings.mobile_number
+    website = user_settings.website
     subject = f"Ihr Auftrag {order.id} ist bereit zur Abholung"
     message = f"Ihr Auftrag mit der Auftragsnummer #{order.id} ist bereit zur Abholung. \nDie Produkte können während der Öffnungszeiten abgeholt werden."
     message += f"\nVielen Dank für Ihre Bestellung und bis bald!\n\nMit freundlichen Grüßen,\n{user_settings.full_name}"
+
+    if phone_number and phone_number != "0":
+        message += f"\nTel. {phone_number}"
+
+    if fax_number and fax_number != "0":
+        message += f"\nFax {fax_number}"
+
+    if mobile_number and mobile_number != "0":
+        message += f"\nHandy {mobile_number}"
+    if email:
+        message += f"\n{email}"
+    if website:
+        message += f"\n{website}"
+    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
 
     # Send confirmation email to buyer
     send_mail(
@@ -80,11 +118,30 @@ def send_shipping_confirmation(order : Order):
     buyer_email = order.buyer_email
     # Check if the request.user is a staff member
     user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    phone_number = user_settings.tel_number
+    email = user_settings.email
+    fax_number = user_settings.fax_number
+    mobile_number = user_settings.mobile_number
+    website = user_settings.website
     subject = f"Ihre Produkte sind auf dem Weg"
     message = f"Ihre Produkte aus dem Auftrag #{order.id} sind auf dem Weg zu Ihnen. \nVielen Dank für Ihren Einkauf!\n\nDetails Ihres Auftrags:\n"
     
     message += f"\nVersandadresse: {order.buyer_address.get_shipping_address()}\n"
     message += f"\nWir informieren Sie, wenn die Produkte unterwegs sind. Vielen Dank!\n\nMit freundlichen Grüßen,\n{user_settings.full_name}"
+
+    if phone_number and phone_number != "0":
+        message += f"\nTel. {phone_number}"
+
+    if fax_number and fax_number != "0":
+        message += f"\nFax {fax_number}"
+
+    if mobile_number and mobile_number != "0":
+        message += f"\nHandy {mobile_number}"
+    if email:
+        message += f"\n{email}"
+    if website:
+        message += f"\n{website}"
+    message += "\n\nUnterstützt durch YooLink\nhttps://yoolink.de"
 
     # Send confirmation email to buyer
     send_mail(

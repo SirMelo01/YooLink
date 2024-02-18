@@ -1543,8 +1543,8 @@ def verify_order(request):
         message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
         message += "\nSobald Sie die Rechnung bezahlt haben und wir die Zahlung erhalten haben, erhalten Sie ihre Ware."
         if order.shipping == "PICKUP":
-            message += "Sie haben sich für die Abholung entschieden. Sie erhalten nun bald eine E-Mail mit der Rechnung, welche Sie dann Überweisen oder vor Ort bezahlen können.\n\n"
-        message += f"Vielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
+            message += "\nSie haben sich für die Abholung entschieden. Sie erhalten nun bald eine E-Mail mit der Rechnung, welche Sie dann Überweisen oder vor Ort bezahlen können."
+        message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
         
         if phone_number and phone_number != "0":
             message += f"\nTel. {phone_number}"

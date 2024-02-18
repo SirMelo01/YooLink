@@ -11,7 +11,7 @@ $(document).ready(function () {
     $('#updateStatus').prop('disabled', true);
     formData.append('status', status)
     console.log("STATUS UPDATE")
-    setTimeout(() => {
+    
       $.ajax({
         url: 'update_order_status/',
         type: 'PATCH',
@@ -25,9 +25,6 @@ $(document).ready(function () {
         },
         success: function (response) {
           // Handle success
-          console.log(response);
-          console.log("DONE")
-          console.log(response.success)
           // redirect to detail page
           if (response.success) {
             sendNotif(response.success, "success")
@@ -46,7 +43,7 @@ $(document).ready(function () {
           $('#updateStatus').prop('disabled', false);
         }
       })
-    }, 500)
+    
     
   })
 
