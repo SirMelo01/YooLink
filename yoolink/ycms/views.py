@@ -1542,12 +1542,32 @@ def verify_order(request):
         website = user_settings.website
         # Send confirmation emails (use your preferred method)
         subject = f"Bestätigung Auftrag {order.id}"
-        message = f"Vielen Dank für die Bestätigung Ihres Auftrags #{order.id} bei {company_name}."
-        message += "\n\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
-        message += "\nSobald Sie die Rechnung bezahlt haben und wir die Zahlung erhalten haben, erhalten Sie ihre Ware."
-        if order.shipping == "PICKUP":
-            message += "\nSie haben sich für die Abholung entschieden. Sie erhalten nun bald eine E-Mail mit der Rechnung, welche Sie dann Überweisen oder vor Ort bezahlen können."
-        message += f"\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
+        message = f"Vielen Dank für die Bestätigung Ihres Auftrags #{order.id} bei {company_name}.\n\n"
+
+        for item in order.orderitem_set.all():
+            message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
+            message += f"------------------------------------------"
+            message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
+            message += f"\nLieferung: {order.shipping_price():.2f} Euro"
+            message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
+            message += f"\n------------------------------------------"
+            message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
+            message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
+            message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
+
+        if order.payment != "CASH":
+            message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
+            message += "\nSobald Sie die Rechnung bezahlt haben und wir die Zahlung erhalten haben, erhalten Sie"
+
+            if order.shipping == "PICKUP":
+                message += " eine E-Mail, dass Ihre Ware zur Abholung bereit ist."
+            elif order.shipping == "SHIPPING":
+                message += " eine Benachrichtigung per E-Mail, sobald Ihre Bestellung versandt wurde."
+        else:
+            if order.shipping == "PICKUP":
+                message += "\nSie erhalten eine Email, sobald Sie Ihre Bestellung abholen können."
+
+        message += f"\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
         
         if phone_number and phone_number != "0":
             message += f"\nTel. {phone_number}"

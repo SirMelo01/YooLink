@@ -260,6 +260,9 @@ class Order(models.Model):
     def shipping_price(self):
         total_weight_kg = self.total_weight_kg()
         
+        if self.shipping and self.shipping == 'PICKUP':
+            return Decimal('0.0')
+
         if total_weight_kg <= Decimal('2'):
             return Decimal('5.49')
         elif total_weight_kg <= Decimal('5'):
