@@ -8,6 +8,7 @@ $(document).ready(function () {
       sendNotif("Status konnte nicht gefunden werden.", "error")
       return;
     }
+    $('#updateStatus').prop('disabled', true);
     formData.append('status', status)
     $.ajax({
       url: 'update_order_status/',
@@ -28,8 +29,10 @@ $(document).ready(function () {
         // redirect to detail page
         if (response.success) {
           sendNotif(response.success, "success")
+          $('#updateStatus').prop('disabled', false);
         } else {
           sendNotif(response.error ? response.error : 'Es ist ein Fehler aufgetreten, versuche es erneut!', "error")
+          $('#updateStatus').prop('disabled', false);
         }
 
 
@@ -38,7 +41,7 @@ $(document).ready(function () {
         // Handle error
         console.error(error);
         sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
-
+        $('#updateStatus').prop('disabled', false);
       }
     })
   })
