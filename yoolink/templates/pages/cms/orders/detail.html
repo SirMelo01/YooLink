@@ -4,8 +4,6 @@
 
 {% block content %}
 
-
-
 <!-- Delete Modal -->
 {% include "pages/cms/components/DeleteModal.html" %}
 
@@ -145,10 +143,8 @@
   </div>
   
 
-{% endblock content %}
+{% endblock %}
 
 {% block javascriptend %}
-{% compress js inline %}
 <script src="{% static 'js/cms/orders/order.js' %}"></script>
-{% endcompress js %}
 {% endblock javascriptend %}
