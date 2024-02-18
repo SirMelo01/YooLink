@@ -23,6 +23,8 @@ $(document).ready(function () {
       success: function (response) {
         // Handle success
         console.log(response);
+        console.log("DONE")
+        console.log(response.success)
         // redirect to detail page
         if (response.success) {
           sendNotif(response.success, "success")
