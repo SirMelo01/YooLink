@@ -10,40 +10,44 @@ $(document).ready(function () {
     }
     $('#updateStatus').prop('disabled', true);
     formData.append('status', status)
-    $.ajax({
-      url: 'update_order_status/',
-      type: 'PATCH',
-      data: formData,
-      contentType: false,
-      processData: false,
-      dataType: "json",
-      beforeSend: function (xhr) {
-        // Add the CSRF token to the request headers
-        xhr.setRequestHeader("X-CSRFToken", csrfToken);
-      },
-      success: function (response) {
-        // Handle success
-        console.log(response);
-        console.log("DONE")
-        console.log(response.success)
-        // redirect to detail page
-        if (response.success) {
-          sendNotif(response.success, "success")
-          $('#updateStatus').prop('disabled', false);
-        } else {
-          sendNotif(response.error ? response.error : 'Es ist ein Fehler aufgetreten, versuche es erneut!', "error")
+    console.log("STATUS UPDATE")
+    setTimeout(() => {
+      $.ajax({
+        url: 'update_order_status/',
+        type: 'PATCH',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: "json",
+        beforeSend: function (xhr) {
+          // Add the CSRF token to the request headers
+          xhr.setRequestHeader("X-CSRFToken", csrfToken);
+        },
+        success: function (response) {
+          // Handle success
+          console.log(response);
+          console.log("DONE")
+          console.log(response.success)
+          // redirect to detail page
+          if (response.success) {
+            sendNotif(response.success, "success")
+            $('#updateStatus').prop('disabled', false);
+          } else {
+            sendNotif(response.error ? response.error : 'Es ist ein Fehler aufgetreten, versuche es erneut!', "error")
+            $('#updateStatus').prop('disabled', false);
+          }
+  
+  
+        },
+        error: function (error) {
+          // Handle error
+          console.error(error);
+          sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
           $('#updateStatus').prop('disabled', false);
         }
-
-
-      },
-      error: function (error) {
-        // Handle error
-        console.error(error);
-        sendNotif("Etwas ist schief gelaufen. Versuche es erneut!", "error")
-        $('#updateStatus').prop('disabled', false);
-      }
-    })
+      })
+    }, 500)
+    
   })
 
   $('#deleteOrder').click(function () {

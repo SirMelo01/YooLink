@@ -1083,20 +1083,22 @@ def update_order_status_admin(request, order_id):
                 sendingEmail = True
             else:
                 return JsonResponse({'error': f'The new status {new_status} cannot be used here'})
-        if not sendingEmail:
-            if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP':
-                send_ready_for_pickup_confirmation(order)
-                sendingEmail = True
-            elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
-                send_shipping_confirmation(order)
-                sendingEmail = True
-            else:
-                if new_status == 'PAID':
-                    order.paid = True
+        else:
+            if not sendingEmail:
+                if old_status == 'PAID' and new_status == 'READY_FOR_PICKUP':
+                    send_ready_for_pickup_confirmation(order)
+                    sendingEmail = True
+                elif (old_status == 'READY_FOR_PICKUP' or old_status == 'PAID' or old_status == 'OPEN') and new_status == 'SHIPPED':
+                    send_shipping_confirmation(order)
+                    sendingEmail = True
+                else:
+                    if new_status == 'PAID':
+                        order.paid = True
         order.save()
         if sendingEmail:
             return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst. Der Käufer hat eine Bestätiguns-Email erhalten'}, status=status.HTTP_200_OK)
-        return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'success': 'Auftragsstatus wurde erfolgreich angepasst.'}, status=status.HTTP_200_OK)
 
         
     return Response({'error': 'Es wurde kein Status mitgegeben!'}, status=status.HTTP_400_BAD_REQUEST)
