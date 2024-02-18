@@ -1,7 +1,7 @@
 var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 $(document).ready(function () {
 
-  $('#updateStatus').click(function () {
+  $('#updateStatus').off('click').on('click', function () {
     var formData = new FormData();
     const status = $('#status').val()
     if (!status) {
