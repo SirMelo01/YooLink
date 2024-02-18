@@ -47,7 +47,7 @@
                             <span class="flex"><p class="discount">{{order.total_discount|floatformat:2}}</p>€</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-lg font-bold text-slate-500">Nettobetrag</span>
+                            <span class="text-lg text-slate-500">Nettobetrag</span>
                             <span class="flex" class="text-lg font-bold"><p id="total">{{order.total_with_tax|floatformat:2}}</p>€</span>
                         </div>
                         <div class="flex justify-between">
@@ -61,7 +61,7 @@
                         <hr class="my-2" />
                         <div class="flex justify-between">
                             <span class="text-lg font-bold text-slate-500">Gesamtbetrag</span>
-                            <span class="flex" class="text-lg font-bold"><p id="total_with_tax">{{order.total|floatformat:2}}</p>€</span>
+                            <span class="flex" class="text-lg font-bold"><p id="total_with_tax font-bold">{{order.total|floatformat:2}}</p>€</span>
                         </div>
                     </div>
                 </div>

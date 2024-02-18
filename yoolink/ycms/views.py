@@ -1381,12 +1381,12 @@ def verify_cart(request):
     buyer_name = request.POST.get('buyer_name')
 
     if not buyer_email or not buyer_name:
-        return JsonResponse({'error': 'Buyer email and buyer name are required parameters'}, status=400)
+        return JsonResponse({'error': 'Email und Name müssen angegeben werden'}, status=400)
 
     order_id = request.session.get('order_id')
     
     if not order_id:
-        return JsonResponse({"error": "There is no Cart yet. Add Items to it first."})
+        return JsonResponse({"error": "Du hast noch keine Produkte im Einkaufswagen"})
     
     if not Order.objects.filter(id=order_id).exists():
         request.session['cart_amount'] = 0
@@ -1397,12 +1397,12 @@ def verify_cart(request):
 
     if not order or order.status != 'OPEN' or order.verified:
         request.session['order_id'] = None  # Clear session order
-        return JsonResponse({'error': 'Invalid order for verification'}, status=400)
+        return JsonResponse({'error': 'Order ist bereits verifiziert'}, status=400)
 
     # Check linked prices for OrderItems
     for item in order.orderitem_set.all():
         if (item.product.is_reduced and not item.is_discounted) or (not item.product.is_reduced and item.is_discounted):
-            return JsonResponse({'error': f'Invalid price configuration for {item.product.title}'}, status=400)
+            return JsonResponse({'error': f'Falsche Preiskonfiguration {item.product.title}'}, status=400)
 
     # Update Order Data
     order.buyer_email = buyer_email
@@ -1432,11 +1432,6 @@ def verify_cart(request):
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
     message += f"\n------------------------------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
-    message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
-    if order.shipping == "SHIPPING":
-        message += f"\nVersandadresse: {order.buyer_address.get_shipping_address()}\n"
-    elif order.shipping == "PICKUP":
-        message += f"\nRechnungsadresse: {order.buyer_address.get_shipping_address()}\n"
     message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
     message += f"Wir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
