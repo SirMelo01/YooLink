@@ -1546,14 +1546,14 @@ def verify_order(request):
 
         for item in order.orderitem_set.all():
             message += f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro\n"
-            message += f"------------------------------------------"
-            message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
-            message += f"\nLieferung: {order.shipping_price():.2f} Euro"
-            message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
-            message += f"\n------------------------------------------"
-            message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
-            message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
-            message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
+        message += f"------------------------------------------"
+        message += f"\nNettopreis: {order.total_with_tax():.2f} Euro"
+        message += f"\nLieferung: {order.shipping_price():.2f} Euro"
+        message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
+        message += f"\n------------------------------------------"
+        message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
+        message += f"Ihre ausgewählte Liefermethode: {order.get_shipping_display()}"
+        message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
 
         if order.payment != "CASH":
             message += "\nWir werden Ihren Auftrag so schnell wie möglich bearbeiten und Ihnen eine Rechnung zukommen lassen."
