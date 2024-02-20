@@ -4,7 +4,7 @@ from django.conf import settings
 
 def send_payment_confirmation(order: Order):
     buyer_email = order.buyer_email
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     phone_number = user_settings.tel_number
     email = user_settings.email
     fax_number = user_settings.fax_number
@@ -71,7 +71,7 @@ def send_payment_confirmation(order: Order):
 
 def send_ready_for_pickup_confirmation(order: Order):
     buyer_email = order.buyer_email
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__rue).first()
     phone_number = user_settings.tel_number
     email = user_settings.email
     fax_number = user_settings.fax_number
@@ -117,7 +117,7 @@ def send_ready_for_pickup_confirmation(order: Order):
 def send_shipping_confirmation(order : Order):
     buyer_email = order.buyer_email
     # Check if the request.user is a staff member
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     phone_number = user_settings.tel_number
     email = user_settings.email
     fax_number = user_settings.fax_number

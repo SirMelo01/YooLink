@@ -1419,7 +1419,7 @@ def verify_cart(request):
     token = str(order.uuid)
     verification_url = request.scheme + '://' + request.get_host() + reverse('cms:order-verify') + f'?token={token}&order_id={order_id}'
     # Send confirmation email with verification link
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     full_name = user_settings.full_name
     company_name = user_settings.company_name
     phone_number = user_settings.tel_number
@@ -1509,7 +1509,7 @@ def verify_order(request):
 
     # Check if the order exists
     order = get_object_or_404(Order, id=orderId, uuid=uuid)
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     if not user_settings:
         return JsonResponse({'error': 'There is no staff user!'}, status=400)
     # Check if the order is not already verified
@@ -1644,7 +1644,7 @@ def email_send(request):
     message_company += f"Nachricht: { message }\n\n"
     message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
     message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
-    user_settings = UserSettings.objects.filter(user__is_staff=True).first()
+    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     # Replace 'your_company_email' with the actual email address of your company
     send_mail(
         subject_company,
