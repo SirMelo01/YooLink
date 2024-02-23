@@ -21,7 +21,7 @@
             <div class="mt-4 space-y-2">
                 <p class="text-slate-500">{{blog.last_updated}}</p>
                 <div class="w-fit">
-                    <a href="#" class="text-2xl font-medium blogTitle w-fit">{{ blog.title }}</a>
+                    <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" class="text-2xl font-medium blogTitle w-fit">{{ blog.title }}</a>
                 </div>
                 <p class="text-slate-500">{{ blog.description|slice:":150" }}...</p>
             </div>
