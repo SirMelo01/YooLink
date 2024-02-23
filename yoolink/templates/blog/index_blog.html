@@ -4,37 +4,35 @@
 {% block title %}{{block.super}} | Blog{% endblock title %}
 
 {% block content %}
-    <div class="text-center pt-3"> 
-        <h1 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
-            Blog - YooLink
-        </h1>
-        <h2 class="mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-800 sm:text-4xl md:mx-auto">
-            Unsere Blogbeiträge zu spanndenen Themen
-        </h2>
 
+<div class="container max-w-7xl min-h-screen h-full mx-auto mt-16">
+    <div class="flex flex-col justify-center items-center">
+        <h1 class="text-4xl font-bold">Unsere Neuigkeiten</h1>
+        <p class="text-slate-600 text-lg mt-2">Finde hier alle aktuellen Themen</p>
     </div>
-
-
-  
-    <div aria-label="Articles" class="pb-8 lg:pb-24 pt-2 lg:pt-9 mx-2 lg:mx-24">
-        <div class="px-4 mx-auto max-w-screen-xl">
-            <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {% for blog in object_list %}
-                    {% if blog.active %}
-                    <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}">
-                        <article class="max-w-xs overflow-hidden">
-                            <img src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}" class="h-40 mb-5 rounded-lg w-full object-cover object-center" alt="Image 1"><!--{% static 'images/designImg/filler.png' %}-->
-                            <h2 class="mb-2 text-xl font-bold leading-tight text-gray-900">
-                                {{ blog.title }}
-                            </h2>
-                            <p class="mb-4 font-light text-gray-500 dark:text-gray-400">{{ blog.description|slice:":150"|safe }}...</p>
-                        </article>
-                    </a>
-                    {% endif %}
-                {% endfor %}
+    <div class="grid grid-cols-1 px-3 xl:px-0 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-20 mb-3">
+        <!-- Blog Beitrag -->
+        {% for blog in object_list %} {% if blog.active %}
+        <div>
+            <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}"><img
+                    class="w-full object-cover h-60 rounded-xl hover:shadow-lg hover:shadow-blue-500/50"
+                    src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}"
+                    alt="{{blog.title}}"></a>
+            <div class="mt-4 space-y-2">
+                <p class="text-slate-500">{{blog.last_updated}}</p>
+                <div class="w-fit">
+                    <a href="#" class="text-2xl font-medium blogTitle w-fit">{{ blog.title }}</a>
+                </div>
+                <p class="text-slate-500">{{ blog.description|slice:":150" }}...</p>
             </div>
-        </div>
+            <div class="mt-7">
+                <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" aria-label="Blog Lesen"
+                    title="Blog Lesen"
+                    class="inline-flex items-center justify-center h-12 transition ease-in-out delay-150 duration-300 hover:-translate-y-1 text-base font-semibold leading-6 text-white rounded-lg bg-indigo-700 hover:bg-indigo-600 p-2 px-5 mr-4">Lesen</a>
+            </div>
+        </div>{% endif %} {% endfor %}
     </div>
+</div>
 
 
 

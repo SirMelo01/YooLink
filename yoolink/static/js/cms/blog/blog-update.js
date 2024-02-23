@@ -210,8 +210,11 @@ $(document).ready(function () {
         }
         var firstTextAreaId = $firstTextArea.attr('id')
         var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
+        var tempDiv = document.createElement("div");
+        tempDiv.innerHTML = firstTextAreaContent;
+        var plainText = tempDiv.textContent || tempDiv.innerText || ""
         // Überprüfen, ob ein Element gefunden wurde
-        if (firstTextAreaContent.trim() === '') {
+        if (plainText.trim() === '') {
             // Ein Element wurde gefunden
             // Du kannst hier weiter mit 'firstTextArea' arbeiten
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
@@ -243,7 +246,7 @@ $(document).ready(function () {
         formData.append('body', $directCodeContainer.html());
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
-        formData.append('description', firstTextAreaContent);
+        formData.append('description', plainText);
         if(files.length>0)formData.append('title_image', files[0], "blogTitleImage");
         // Send the Ajax POST request //
         $.ajax({
