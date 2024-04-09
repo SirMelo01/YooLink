@@ -1,5 +1,6 @@
 import json
 import re
+from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.models import fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
@@ -22,6 +23,7 @@ from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail
 from .serializers import OrderSerializer, OrderItemSerializer
 from yoolink.users.models import User
+from rest_framework.permissions import IsAuthenticated
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 
 @login_required(login_url='login')
@@ -1039,7 +1041,7 @@ def order_view(request):
     open_orders = Order.objects.filter(status='OPEN', verified=True).count()
 
     # Most bought products
-    most_bought_products = OrderItem.objects.values(
+    most_bought_products = OrderItem.objects.filter(order__status='COMPLETED').values(
     'product__title',
     'product__title_image',
 ).annotate(
@@ -1067,7 +1069,7 @@ def order_view(request):
     return render(request, "pages/cms/orders/overview.html", context)
 
 @api_view(['PATCH'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def update_order_status_admin(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     new_status = request.POST.get('status')
@@ -1108,7 +1110,7 @@ def update_order_status_admin(request, order_id):
 
 # views.py
 @api_view(['DELETE'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def delete_review(request, review_id):
     try:
         review = Review.objects.get(pk=review_id)
@@ -1119,7 +1121,7 @@ def delete_review(request, review_id):
 
 # views.py
 @api_view(['DELETE'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def delete_order(request, order_id):
     try:
         order = Order.objects.get(pk=order_id)
@@ -1131,7 +1133,7 @@ def delete_order(request, order_id):
 # views.py
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def get_order_by_id(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     
@@ -1144,7 +1146,7 @@ from django.db.models import Q
 from datetime import timezone, timedelta
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def get_orders(request):
     status_filter = request.GET.get('status')
     buyer_email_filter = request.GET.get('buyer_email')
@@ -1282,13 +1284,18 @@ def cart_view(request):
             "error": "Deine Bestellung wurde bereits verifiziert und bestellt, wodurch der Warenkorb nicht mehr valide ist. Bitte füge neue Produkte hinzu, um eine neue Bestellung zu tätigen!",
             "saveLink": last_url if last_url else '/'
         })
+    context = {
+        "order": order
+    }
+    context.update(get_opening_hours())
     
-    
-    return render(request, "pages/cms/orders/cart.html", {"order": order})
+    return render(request, "pages/cms/orders/cart.html", context)
 
 
 def cart_verify_success_view(request):
-    return render(request, "pages/cms/orders/success/cart-verify-success.html", {})
+    context = {}
+    context.update(get_opening_hours())
+    return render(request, "pages/cms/orders/success/cart-verify-success.html", context)
 
 
 @api_view(['DELETE'])
@@ -1417,7 +1424,7 @@ def verify_cart(request):
 
     # Generate verification link
     token = str(order.uuid)
-    verification_url = request.scheme + '://' + request.get_host() + reverse('cms:order-verify') + f'?token={token}&order_id={order_id}'
+    verification_url = request.scheme + '://' + request.get_host() + reverse('order-verify') + f'?token={token}&order_id={order_id}'
     # Send confirmation email with verification link
     user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     full_name = user_settings.full_name
@@ -1438,7 +1445,6 @@ def verify_cart(request):
     message += f"\nUmsatzsteuer (19%): {order.calculate_tax():.2f} Euro"
     message += f"\n------------------------------------------"
     message += f"\nGesamtpreis (mit 19% Steuern): {order.total():.2f} Euro\n\n"
-    message += f"\nIhre ausgewählte Bezahlmethode: {order.get_payment_display()}"
     message += f"\nWir haben Ihren Auftrag erhalten und benötigen noch eine Bestätigung von Ihnen, um fortzufahren. \nBitte klicken Sie auf den folgenden Link, um Ihren Auftrag zu bestätigen und zur Kasse zu gelangen:\n{verification_url}\n\n"
     message += f"Nach erfolgreicher Bestätigung können Sie Ihre Ware bestellen oder abholen.\n\nVielen Dank für Ihr Vertrauen!\n\nMit freundlichen Grüßen,\n{full_name}"
     message += f"\n{company_name}"
@@ -1482,10 +1488,14 @@ def order_verify_view(request):
             "error": "Diese Bestellung wurde bereits verifiziert und bestellt. Für weitere Informationen überprüfe deine E-Mails oder schreibe uns eine Nachricht. Status der Bestellung: " + order.get_status_display(),
             "saveLink": last_url if last_url else '/'
         })
-    return render(request, "pages/cms/orders/verify.html", {"order": order})
+    context = {"order": order}
+    context.update(get_opening_hours())
+    return render(request, "pages/cms/orders/verify.html", context)
 
 def order_verify_success_view(request):
-    return render(request, "pages/cms/orders/success/order-verify-success.html", {})
+    context = {}
+    context.update(get_opening_hours())
+    return render(request, "pages/cms/orders/success/order-verify-success.html", context)
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -1641,8 +1651,8 @@ def email_send(request):
     subject_company = "Neue Nachricht in Ihrem CMS"
     message_company = f"Hallo Team,\n\n{ name } ({ email }) hat eine neue Anfrage gesendet:\n\n"
     message_company += f"Betreff: { title }\n\n"
-    message_company += f"Nachricht: { message }\n\n"
-    message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
+    message_company += f"Nachricht: { message.message }\n\n"
+    #message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
     message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
     user_settings = UserSettings.objects.filter(user__is_staff=False).first()
     # Replace 'your_company_email' with the actual email address of your company
@@ -1721,7 +1731,7 @@ def opening_hours_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def opening_hours_update(request):
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
@@ -1756,6 +1766,6 @@ def shop(request):
     data = {
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
-        "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
+        "order_not_closed_count": Order.objects.filter(verified=True).exclude(status='COMPLETED').count(),
     }
     return render(request, 'pages/cms/shop/shop.html', data)

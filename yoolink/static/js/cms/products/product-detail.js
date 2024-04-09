@@ -39,8 +39,6 @@ $(document).ready(function () {
   // Event listener for add category button
   addCategoryBtn.on('click', function () {
     const selectedCategory = categoryInput.val().trim();
-    console.log(selectedCategory)
-    console.log(categories.includes(selectedCategory))
     if (selectedCategory && !addedCategories.includes(selectedCategory)) {
       if (!categories.includes(selectedCategory)) {
         // Add it to backend !
@@ -60,7 +58,6 @@ $(document).ready(function () {
   addedCategoryList.on('click', '.remove-category-btn', function () {
     const categoryToRemove = $(this).parent().data('category');
     // Remove the category from the added categories list
-    console.log("Remove 1")
     removeCategory(categoryToRemove);
     // Add the category back to the autocomplete list
     addCategoryToAutocomplete(categoryToRemove);
@@ -74,7 +71,6 @@ $(document).ready(function () {
 
   function updateAutocompleteCategoryList(show) {
     const query = categoryInput.val().toLowerCase();
-    console.log(categories)
     const matchedCategories = categories.filter(category => category.toLowerCase().includes(query.toLowerCase())
     );
     // Clear previous options
@@ -103,10 +99,8 @@ $(document).ready(function () {
 
   function removeCategory(category) {
     const index = addedCategories.indexOf(category);
-    console.log("Remove Category: " + index)
     if (index !== -1) {
       addedCategories.splice(index, 1);
-      console.log("Render Added Categories")
       renderAddedCategories();
     }
   }
@@ -147,11 +141,9 @@ $(document).ready(function () {
 
   /** Image Uploader */
   $('#titleImgUpload').change(function () {
-    console.log("Title Image Upload")
     // Get the uploaded file
     var file = this.files[0];
 
-    console.log(file)
 
     // Check if a file is selected
     if (file) {
@@ -160,7 +152,6 @@ $(document).ready(function () {
 
       // Set up the FileReader onload event
       reader.onload = function (e) {
-        console.log("load it")
         // Set the source of the preview image to the FileReader result
         $('#productImage').attr('src', e.target.result);
         // Show the preview image
@@ -193,7 +184,6 @@ $(document).ready(function () {
   $('#updateProductForm').on("submit", function (event) {
     enableSpinner($('#updateProduct'))
     event.preventDefault();
-    console.log("Update Product Form");
 
     var files = $('#titleImgUpload').prop("files");
 
@@ -218,7 +208,6 @@ $(document).ready(function () {
     formData.append('isOnlineAvailable', $('#onlineSwitch').is(':checked'));
     formData.append('reducedPrice', $('#reducedPrice').val());
     formData.append('selected_categories', JSON.stringify(addedCategories));
-    console.log(JSON.stringify(addedCategories))
     const galeryId = $('#productGalery').attr('galery-id')
     if (galeryId && parseInt(galeryId) > 0) {
       formData.append('galeryId', galeryId)
@@ -227,7 +216,6 @@ $(document).ready(function () {
       formData.append('title_image', files[0], "productTitleImage");
     }
 
-    console.log(formData);
 
     $.ajax({
       url: 'update',
@@ -242,7 +230,6 @@ $(document).ready(function () {
       },
       success: function (response) {
         // Handle success
-        console.log(response);
         // redirect to detail page
         disableSpinner($('#updateProduct'));
         if (response.success) {
@@ -282,7 +269,6 @@ $(document).ready(function () {
       },
       dataType: 'json',
       success: function (response) {
-        console.log(response);
         if (response.error) {
           sendNotif(response.error, 'error')
         } else {
@@ -304,7 +290,6 @@ $(document).ready(function () {
   $('#createProductForm').on("submit", function (event) {
     enableSpinner($('#createProduct'))
     event.preventDefault();
-    console.log("Create Product Form");
 
     var files = $('#titleImgUpload').prop("files");
 
@@ -343,9 +328,8 @@ $(document).ready(function () {
     if (galeryId && parseInt(galeryId) > 0) {
       formData.append('galeryId', galeryId)
     }
-    console.log(JSON.stringify(addedCategories))
 
-    console.log(formData);
+
 
     // Use Ajax to send the FormData
     $.ajax({
@@ -361,7 +345,6 @@ $(document).ready(function () {
       },
       success: function (response) {
         // Handle success
-        console.log(response);
         // redirect to detail page
         if (response.success) {
           sendNotif("Das Produkt wurde erfolgreich erstellt", "success");

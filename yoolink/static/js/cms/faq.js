@@ -19,7 +19,6 @@ $(document).ready(function () {
             },
             dataType: 'json',
             success: function (response) {
-                console.log(response);
                 sendNotif("Das ausgewählte FAQ wurde erfolgreich gelöscht!", "success")
                 if (response.success) { $listItem.remove() }
             },
@@ -46,7 +45,6 @@ $(document).ready(function () {
             },
             dataType: 'json',
             success: function (response) {
-                console.log(response);
                 sendNotif("Das ausgewählte FAQ wurde erfolgreich gespeichert!", "success")
             },
             error: function (xhr, status, error) {

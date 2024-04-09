@@ -48,6 +48,7 @@ urlpatterns = [
     path('seiten/hauptseite/CMS/', views.site_view_main_cms, name='site_hauptseite_cms'),
     path('seiten/hauptseite/Preis/', views.site_view_main_price, name='site_hauptseite_price'),
     path('seiten/hauptseite/Team/', views.site_view_main_team, name='site_hauptseite_team'),
+    
     # Products
     path('products/', views.product_view, name='products'),
     path('products/search/', views.product_search, name='product_search'),
@@ -70,14 +71,8 @@ urlpatterns = [
     path('api/cart/update/', views.update_cart_items, name='api-cart-update'),
     path('api/cart/verify/', views.verify_cart, name='api-cart-verify'),
     
-    # PAYPAL endpoints
-    path('cart/', views.cart_view, name='cart-view'),
-    path('cart/success/', views.cart_verify_success_view, name='cart-verify-success-view'),
-
     # Other Order Stuff
     path('api/order/verify/', views.verify_order, name='api-order-verify'),
-    path('order/verify/', views.order_verify_view, name='order-verify'),
-    path('order/success/', views.order_verify_success_view, name='order-verify-success-view'),
 
     path('orders/', views.order_view, name='order-overview'),
     path('orders/<int:order_id>/', views.order_detail_view, name='order-detail-view'),

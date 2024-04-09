@@ -187,6 +187,9 @@ class Product(models.Model):
         # Call the parent class's save method to actually save the model
         super(Product, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse("product-detail", kwargs={"product_id": self.pk, "slug": self.slug})
+
 class ShippingAddress(models.Model):
     prename = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
@@ -361,10 +364,10 @@ class Message(models.Model):
 
 class TextContent(models.Model):
     name = models.CharField(max_length=50, default="", unique=True)
-    header = models.CharField(max_length=50, default="")
-    title = models.CharField(max_length=70, default="")
+    header = models.CharField(max_length=100, default="")
+    title = models.CharField(max_length=140, default="")
     description = models.TextField(default="")
-    buttonText = models.CharField(max_length=60, default="")
+    buttonText = models.CharField(max_length=120, default="")
 
 
 class UserSettings(models.Model):

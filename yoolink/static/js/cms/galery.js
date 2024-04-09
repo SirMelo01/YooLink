@@ -17,7 +17,6 @@ $(document).ready(function () {
             url: 'delete/',
             data: { csrfmiddlewaretoken: csrftoken, },
             success: function (response) {
-                console.log(response)
                 if (response.error) {
                     sendNotif('Die Galerie konnte nicht gelöscht werden', 'error')
                     return;

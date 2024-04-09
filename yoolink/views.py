@@ -1,8 +1,23 @@
-from django.shortcuts import render, redirect
-from yoolink.ycms.models import FAQ, Message, TextContent, fileentry, Galerie, GaleryImage
+from django.shortcuts import render, redirect, get_object_or_404
+from yoolink.ycms.models import FAQ, Message, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
 import datetime
 from django.http import HttpResponseRedirect
 
+
+def get_opening_hours():
+    opening_hours = {}
+    days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+    for day in days:
+        if OpeningHours.objects.filter(day=day).exists():
+            opening_hours[f"opening_{day.lower()}"] = OpeningHours.objects.get(day=day)
+        else:
+            opening_hours[f"opening_{day.lower()}"] = None
+            
+    user_settings = UserSettings.objects.filter(user__is_staff=False)
+    if user_settings.exists():
+        user_settings = user_settings.first()
+        opening_hours["owner_data"] = user_settings
+    return opening_hours
 
 def load_index(request):
     faq = FAQ.objects.all()
@@ -41,6 +56,8 @@ def load_index(request):
     if fileentry.objects.filter(place='main_cms').exists():
         context["cmsImage"] = fileentry.objects.get(place='main_cms')
 
+    context.update(get_opening_hours())
+
     return render(request, 'pages/index.html', context=context)
 
 def kontaktform(request):
@@ -52,3 +69,20 @@ def kontaktform(request):
         return render(request, 'pages/kontakt.html', {'success': True})
 
     return render(request, 'pages/kontakt.html', {'success': success})
+
+def shop(request):
+   context={"products": Product.objects.filter(is_active=True)}
+   context.update(get_opening_hours())
+   return render(request, 'pages/shop.html', context)
+
+def detail(request, product_id, slug):
+    product = get_object_or_404(Product, id=product_id, slug=slug)
+    last_url = request.META.get('HTTP_REFERER')
+    if not product.is_active:
+        return render(request, "pages/errors/error.html", {
+            "error": "Dieses Produkt ist nicht mehr verfügbar",
+            "saveLink": last_url if last_url else '/'
+        })
+    context={"product": product}
+    context.update(get_opening_hours())
+    return render(request, 'pages/detail.html', context)

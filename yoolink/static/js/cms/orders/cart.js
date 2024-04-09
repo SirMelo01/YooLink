@@ -100,7 +100,7 @@ $(document).ready(function () {
                                 sendNotif(data.success, "success")
                                 // Redirect to success page
                                 setTimeout(() => {
-                                    window.location.href = '/cms/cart/success/'
+                                    window.location.href = '/cart/success/'
                                 }, 2000)
                                 
                             } else {

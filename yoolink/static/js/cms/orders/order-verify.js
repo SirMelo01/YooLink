@@ -74,7 +74,7 @@ $(document).ready(function () {
                     sendNotif(data.success, "success")
                     // Redirect to success page
                     setTimeout(() => {
-                        window.location.href = '/cms/order/success/'
+                        window.location.href = '/order/success/'
                     }, 2000)
                 } else {
                     sendNotif(data.error, "error")

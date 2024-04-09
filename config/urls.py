@@ -6,17 +6,20 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform
+from yoolink.views import load_index, kontaktform, shop, detail
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
 
 from django.contrib.sitemaps.views import sitemap
-from yoolink.sitemaps import StaticViewSitemap, BlogSitemap
+from yoolink.sitemaps import StaticViewSitemap, BlogSitemap, ProductSitemap
+
+from yoolink.ycms.views import cart_verify_success_view, cart_view, order_verify_success_view, order_verify_view
 
 sitemaps = {
     'static': StaticViewSitemap,
     'blog': BlogSitemap,
+    'product': ProductSitemap,
 }
 
 urlpatterns = [
@@ -33,6 +36,17 @@ urlpatterns = [
     path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
+
+    # Shop urls
+    path("products/", view=shop, name="products"),
+    path("products/<int:product_id>-<slug:slug>/", view=detail, name="product-detail"),
+
+    path('cart/', cart_view, name='cart-view'),
+    path('cart/success/', cart_verify_success_view, name='cart-verify-success-view'),
+
+    path('order/verify/', order_verify_view, name='order-verify'),
+    path('order/success/', order_verify_success_view, name='order-verify-success-view'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

@@ -4,35 +4,37 @@
 {% block title %}{{block.super}} | Blog{% endblock title %}
 
 {% block content %}
+    
 
-<div class="container max-w-7xl min-h-screen h-full mx-auto mt-16">
-    <div class="flex flex-col justify-center items-center">
-        <h1 class="text-4xl font-bold">Unsere Neuigkeiten</h1>
-        <p class="text-slate-600 text-lg mt-2">Finde hier alle aktuellen Themen</p>
-    </div>
-    <div class="grid grid-cols-1 px-3 xl:px-0 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-20 mb-3">
-        <!-- Blog Beitrag -->
-        {% for blog in object_list %} {% if blog.active %}
-        <div>
-            <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}"><img
-                    class="w-full object-cover h-60 rounded-xl hover:shadow-lg hover:shadow-blue-500/50"
-                    src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}"
-                    alt="{{blog.title}}"></a>
-            <div class="mt-4 space-y-2">
-                <p class="text-slate-500">{{blog.last_updated}}</p>
-                <div class="w-fit">
-                    <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" class="text-2xl font-medium blogTitle w-fit">{{ blog.title }}</a>
+    <!-- Content -->
+    <div class="container max-w-7xl min-h-screen h-full mx-auto mt-16">
+        <div class="flex flex-col justify-center items-center">
+            <h1 class="text-4xl font-bold">Unsere Neuigkeiten</h1>
+            <p class="text-slate-600 text-lg mt-2">Finde hier alle aktuellen Themen</p>
+        </div>
+        <div class="grid grid-cols-1 px-3 xl:px-0 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-20 mb-3">
+            <!-- Blog Beitrag -->
+            {% for blog in object_list %} {% if blog.active %}
+            <div>
+                <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}"><img
+                        class="w-full object-cover h-60 rounded-xl hover:shadow-lg hover:shadow-blue-500/50"
+                        src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}"
+                        alt="{{blog.title}}"></a>
+                <div class="mt-4 space-y-2">
+                    <p class="text-slate-500">{{blog.last_updated}}</p>
+                    <div class="w-fit">
+                        <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" class="text-2xl font-medium blogTitle w-fit">{{ blog.title }}</a>
+                    </div>
+                    <p class="text-slate-500">{{ blog.description|slice:":150" }}...</p>
                 </div>
-                <p class="text-slate-500">{{ blog.description|slice:":150" }}...</p>
-            </div>
-            <div class="mt-7">
-                <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" aria-label="Blog Lesen"
-                    title="Blog Lesen"
-                    class="inline-flex items-center justify-center h-12 transition ease-in-out delay-150 duration-300 hover:-translate-y-1 text-base font-semibold leading-6 text-white rounded-lg bg-indigo-700 hover:bg-indigo-600 p-2 px-5 mr-4">Lesen</a>
-            </div>
-        </div>{% endif %} {% endfor %}
+                <div class="mt-7">
+                    <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}" aria-label="Blog Lesen"
+                        title="Blog Lesen"
+                        class="inline-flex items-center justify-center h-12 transition ease-in-out delay-150 duration-300 hover:-translate-y-1 text-base font-semibold leading-6 text-white rounded-lg bg-indigo-700 hover:bg-indigo-600 p-2 px-5 mr-4">Lesen</a>
+                </div>
+            </div>{% endif %} {% endfor %}
+        </div>
     </div>
-</div>
 
 
 
