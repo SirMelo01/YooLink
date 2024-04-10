@@ -1716,11 +1716,17 @@ Opening Hours
 def opening_hours_view(request):
     # Retrieve the UserSettings for the currently logged-in user or any specific user
 
-    for day_abbr, _ in OpeningHours.DAY_CHOICES:
-        if not OpeningHours.objects.filter(user=request.user, day=day_abbr):
-            OpeningHours.objects.create(user=request.user, day=day_abbr)
+    user = User.objects.filter(is_staff=False).first()
 
-    opening_hours = OpeningHours.objects.filter(user=request.user)
+    for day_abbr, _ in OpeningHours.DAY_CHOICES:
+        # Überprüfen, ob bereits Öffnungszeiten für diesen Tag existieren
+        obj, created = OpeningHours.objects.get_or_create(user=user, day=day_abbr)
+        # Wenn Objekt gerade erstellt wurde, können Sie es initialisieren, wenn nötig
+        if created:
+            # obj.some_field = some_value
+            obj.save()
+
+    opening_hours = OpeningHours.objects.filter(user=user)
 
     context = {
         'opening_hours': opening_hours
@@ -1735,7 +1741,7 @@ def opening_hours_view(request):
 def opening_hours_update(request):
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
-
+    user = User.objects.filter(is_staff=False).first()
     errors = []
     for item in opening_hours:
         day = item['day']
@@ -1747,7 +1753,7 @@ def opening_hours_update(request):
             errors.append(f"Ungültiges Format für Öffnungszeiten am {day}")
             continue
 
-        opening_hour = OpeningHours.objects.get(user=request.user, day=day)
+        opening_hour = OpeningHours.objects.get(user=user, day=day)
         opening_hour.is_open = is_open
         if start_time:
             opening_hour.start_time = start_time
