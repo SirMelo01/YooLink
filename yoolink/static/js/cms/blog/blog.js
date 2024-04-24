@@ -50,8 +50,9 @@ $(document).ready(function () {
         buttonList : ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'fontFormat', 'forecolor', 'bgcolor', 'link', 'unlink'] 
     })
 
-    loadSlick()
-    loadNicEditors()
+    loadSlick();
+    loadNicEditors();
+    loadImages();
 
     function initializeSimpleSortable() {
         new Sortable(document.getElementById('blogContent'), {
