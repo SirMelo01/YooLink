@@ -11,7 +11,7 @@
       </h2>
 
 
-      {% if success == False%}
+      {% if success == False %}
         <p class="mb-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Lassen Sie uns wissen, wie wir Ihnen helfen können. Wir werden Sie so schnell wie möglich kontaktieren.</p>
       {% else %}
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
@@ -20,7 +20,7 @@
         </div>
       {% endif %}
 
-      <form action="/cms/email/request/" method="POST" class="space-y-8">
+      <form id="emailForm" method="POST" class="space-y-8">
         {% csrf_token%}
         <div>
           <label for="name" class="block mb-2 text-lg text-gray-900">Name</label>
@@ -32,7 +32,7 @@
         </div>
         <div>
           <label for="title" class="block mb-2 text-lg text-gray-900">Anliegen</label>
-          <input name="title" type="name" id="name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+          <input name="title" type="name" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
         </div>
         <div class="sm:col-span-2">
           <label for="message" class="block mb-2 text-lg text-gray-900">Nachricht</label>
@@ -49,6 +49,12 @@
   </section>
 
 {%endblock content%}
+
+{% block javascriptend %}
+{% compress js inline %}
+  <script defer src="{% static 'js/contact.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}
 
 
 
