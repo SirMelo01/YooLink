@@ -1,3 +1,4 @@
+var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 $(document).ready(function() {
     $('#emailForm').submit(function (event) {
         event.preventDefault(); // Prevent the default form submission
