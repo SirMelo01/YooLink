@@ -28,3 +28,4 @@ drf-spectacular==0.26.0  # https://github.com/tfranzel/drf-spectacular
 #image upload
 boto3==1.26.108
 django-storages==1.13.2
+django-recaptcha==4.0.0

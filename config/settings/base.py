@@ -78,6 +78,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    'django_recaptcha'
 ]
 
 LOCAL_APPS = [
@@ -185,7 +186,8 @@ AWS_STORAGE_BUCKET_NAME='yoolink'
 AWS_S3_ENDPOINT_URL='https://fra1.digitaloceanspaces.com/'
 AWS_LOCATION = 'https://yoolink.fra1.digitaloceanspaces.com/'
 
-
+RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY", default="")
+RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY", default="")
 
 # TEMPLATES
 # ------------------------------------------------------------------------------

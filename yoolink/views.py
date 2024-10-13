@@ -60,15 +60,24 @@ def load_index(request):
 
     return render(request, 'pages/index.html', context=context)
 
+from .forms import ContactForm
 def kontaktform(request):
     success = False
-    current_date_time = datetime.datetime.now()
     if request.method == 'POST':
-        Message.objects.create(name = request.POST["name"], email=request.POST['email'], message=request.POST['message'], date=current_date_time, seen=False)
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Hier Nachricht verarbeiten und speichern
+            Message.objects.create(
+                name=form.cleaned_data['name'],
+                email=form.cleaned_data['email'],
+                title=form.cleaned_data['title'],
+                message=form.cleaned_data['message'],
+            )
+            return render(request, 'pages/kontakt.html', {'success': True})
+    else:
+        form = ContactForm()
 
-        return render(request, 'pages/kontakt.html', {'success': True})
-
-    return render(request, 'pages/kontakt.html', {'success': success})
+    return render(request, 'pages/kontakt.html', {'form': form, 'success': success})
 
 def shop(request):
    context={"products": Product.objects.filter(is_active=True)}

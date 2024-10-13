@@ -38,6 +38,9 @@
           <label for="message" class="block mb-2 text-lg text-gray-900">Nachricht</label>
           <textarea name="message" id="message" rows="6" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none" placeholder="Hinterlasse eine Nachricht..." required></textarea>
         </div>
+        <div>
+          {{ form.captcha }}
+        </div>
         <div class="max-w-fit bg-blue-300 rounded-2xl mt-12">
           <button type="submit" class="inline-flex items-center h-12 px-6 text-white rounded">Absenden</button>
         </div>

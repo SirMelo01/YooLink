@@ -1,5 +1,6 @@
 import json
 import re
+from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.models import fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
@@ -1626,45 +1627,47 @@ def verify_order(request):
 @authentication_classes([])
 @permission_classes([])
 def email_send(request):
-    message = request.data.get('message')
-    email = request.data.get('email')
-    title = request.data.get('title')
-    name = request.data.get('name', 'Unbekannt')
+    # Erstelle das Formular mit den POST-Daten
+    form = ContactForm(request.POST)
     
-    if not message or not email or not title or not name:
-        return Response({'error': 'Es fehlen Parameter bei der Anfrage'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    # Hier könntest du den Namen des Anfragenden hinzufügen, wenn dieser verfügbar ist
-    # z.B., angenommen, dass der Name in den Anfrage-Daten als 'name' vorhanden ist
-    
-    
-    # Email an Unternehmen
-    dashboard_url = settings.DASHBOARD_URL
-    existing_message = Message.objects.filter(name=name, message=message, email=email, title=title).first()
+    # Validierung des Formulars und reCAPTCHA
+    if form.is_valid():
+        name = form.cleaned_data.get('name', 'Unbekannt')
+        email = form.cleaned_data.get('email')
+        title = form.cleaned_data.get('title')
+        message_text = form.cleaned_data.get('message')
 
-    if existing_message:
-        # Return an error response indicating that a similar message already exists
-        response_data = {'error': 'Sie haben diese Nachricht bereits gesendet'}
-        return JsonResponse(response_data, status=400)
-    message = Message.objects.create(name=name,message=message,email=email,title=title)
+        # Überprüfen, ob ähnliche Nachricht bereits existiert
+        existing_message = Message.objects.filter(name=name, message=message_text, email=email, title=title).first()
 
-    subject_company = "Neue Nachricht in Ihrem CMS"
-    message_company = f"Hallo Team,\n\n{ name } ({ email }) hat eine neue Anfrage gesendet:\n\n"
-    message_company += f"Betreff: { title }\n\n"
-    message_company += f"Nachricht: { message.message }\n\n"
-    #message_company += f"Bitte schauen Sie im Dashboard nach, um weitere Details zu erhalten: {dashboard_url}cms/messages/{message.id}\n\n"
-    message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
-    user_settings = UserSettings.objects.filter(user__is_staff=False).first()
-    # Replace 'your_company_email' with the actual email address of your company
-    send_mail(
-        subject_company,
-        message_company,
-        settings.EMAIL_HOST_USER,
-        [user_settings.email],  # Add additional recipients if needed
-        fail_silently=False,
-    )
+        if existing_message:
+            return Response({'error': 'Sie haben diese Nachricht bereits gesendet'}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({'success': 'Ihre Nachricht wurde erfolgreich versendet.'}, status=status.HTTP_200_OK)
+        # Nachricht speichern
+        message = Message.objects.create(name=name, message=message_text, email=email, title=title)
+
+        # Email an Unternehmen senden
+        subject_company = "Neue Nachricht in Ihrem CMS"
+        message_company = f"Hallo Team,\n\n{name} ({email}) hat eine neue Anfrage gesendet:\n\n"
+        message_company += f"Betreff: {title}\n\n"
+        message_company += f"Nachricht: {message.message}\n\n"
+        message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
+
+        # Einstellungen für das Senden der E-Mail
+        user_settings = UserSettings.objects.filter(user__is_staff=False).first()
+        send_mail(
+            subject_company,
+            message_company,
+            settings.EMAIL_HOST_USER,
+            [user_settings.email],  # Add recipients if needed
+            fail_silently=False,
+        )
+
+        return Response({'success': 'Ihre Nachricht wurde erfolgreich versendet.'}, status=status.HTTP_200_OK)
+    else:
+        # Wenn das Formular nicht gültig ist (z. B. durch ein fehlerhaftes reCAPTCHA), wird ein Fehler zurückgegeben
+        return Response({'error': 'Formular-Validierung fehlgeschlagen. Bitte versuchen Sie es erneut.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Settings
 @login_required(login_url='login')
