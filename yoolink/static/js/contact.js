@@ -1,20 +1,13 @@
-var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
 $(document).ready(function() {
     $('#emailForm').submit(function (event) {
         event.preventDefault(); // Prevent the default form submission
         console.log("Sende email...")
-        var formData = {
-          name: $('#name').val(),
-          email: $('#email').val(),
-          title: $('#title').val(),
-          message: $('#message').val(),
-          csrfmiddlewaretoken: csrftoken,
-        };
         // Send form data to the server using AJAX
         $.ajax({
           type: 'POST',
           url: '/cms/email/request/',
-          data: formData,
+          data: $("#emailForm").serialize(),
           success: function (response) {
             // Handle successful response here
             if (response.success) {
