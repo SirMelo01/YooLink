@@ -380,6 +380,9 @@ class UserSettings(models.Model):
     mobile_number = models.CharField(max_length=18, default='')
     website = models.URLField(blank=True, default='')
     address = models.CharField(max_length=255, default='')
+    vacation = models.BooleanField(default=False)
+    vacationText = models.CharField(max_length=200, default='Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!')
+    global_font = models.CharField(max_length=60, default='font-sans')
 
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"

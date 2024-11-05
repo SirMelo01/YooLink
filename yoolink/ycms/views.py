@@ -1702,6 +1702,7 @@ def user_settings_update(request):
         user_settings.mobile_number = request.POST.get('mobile_number', '')
         user_settings.website = request.POST.get('website', '')
         user_settings.address = request.POST.get('address', '')
+        user_settings.global_font = request.POST.get('global_font', '')
 
         # Save the updated user settings
         user_settings.save()
@@ -1720,6 +1721,8 @@ def opening_hours_view(request):
     # Retrieve the UserSettings for the currently logged-in user or any specific user
 
     user = User.objects.filter(is_staff=False).first()
+    
+    user_settings = UserSettings.objects.get(user=user) 
 
     for day_abbr, _ in OpeningHours.DAY_CHOICES:
         # Überprüfen, ob bereits Öffnungszeiten für diesen Tag existieren
@@ -1732,7 +1735,8 @@ def opening_hours_view(request):
     opening_hours = OpeningHours.objects.filter(user=user)
 
     context = {
-        'opening_hours': opening_hours
+        'opening_hours': opening_hours,
+        'settings': user_settings
         # Other context variables if needed
     }
 
@@ -1745,6 +1749,9 @@ def opening_hours_update(request):
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
     user = User.objects.filter(is_staff=False).first()
+    user_settings = UserSettings.objects.get(user=user) 
+    vacation = request.POST.get('vacation') == "true"
+    vacationText = request.POST.get('vacationText')
     errors = []
     for item in opening_hours:
         day = item['day']
@@ -1763,6 +1770,11 @@ def opening_hours_update(request):
         if end_time:
             opening_hour.end_time = end_time
         opening_hour.save()
+
+
+    if vacation and vacationText:
+        user_settings.vacation = vacation
+        user_settings.vacationText = vacationText
 
     if errors:
         return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)

@@ -38,8 +38,18 @@
                 </div>
             </div>
             {% endfor %}
-
         </div>
+        <div class="mt-8 px-2">
+            <div class="flex justify-between">
+              <h2 class="self-center text-2xl font-semibold">Urlaub</h2>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input id="vacation" type="checkbox" value="{{settings.vacation}}" class="open-switch peer sr-only" {% if settings and settings.vacation %}checked{% endif %} />
+                <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[9px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+                <span class="ms-3 font-medium text-gray-900 dark:text-gray-400">Im Urlaub</span>
+              </label>
+            </div>
+            <textarea id="vacationText" rows="3" class="mt-6 w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 text-base leading-tight text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none md:text-lg" inputType="vacationText" type="text">{% if settings and settings.vacationText %}{{settings.vacationText}}{% else %}Wir sind vom 24.12. bis 01.01. im Urlaub. Ab dem 02.01. sind wir wieder für Sie da!{% endif %}</textarea>
+          </div>
     </div>
 </div>
 

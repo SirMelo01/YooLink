@@ -36,7 +36,10 @@ $(document).ready(function () {
  
         var formData = new FormData();
         formData.append('opening_hours', JSON.stringify(openingHours))
-
+        const vacation = $('#vacation').prop('checked');
+        const vacationText = $('#vacationText').text();
+        formData.append('vacation', vacation ? "true" : "false"); // Convert boolean to string
+        formData.append('vacationText', vacationText);
         console.log(formData)
 
         $.ajax({
