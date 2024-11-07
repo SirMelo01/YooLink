@@ -39,7 +39,7 @@ $(document).ready(function () {
 
     // Funktion zum Bearbeiten eines bestehenden Teammitglieds
     $('.edit-member').click(function () {
-        const memberId = $(this).closest('div').siblings('.member-id').text().trim();
+        const memberId = $(this).siblings('.member-id').text().trim();
         console.log("Edit Member!")
         console.log(memberId)
         // AJAX-GET-Request, um die Daten des Teammitglieds zu laden
