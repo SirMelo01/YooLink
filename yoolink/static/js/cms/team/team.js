@@ -40,12 +40,15 @@ $(document).ready(function () {
     // Funktion zum Bearbeiten eines bestehenden Teammitglieds
     $('.edit-member').click(function () {
         const memberId = $(this).closest('div').siblings('.member-id').text().trim();
-
+        console.log("Edit Member!")
+        console.log(memberId)
         // AJAX-GET-Request, um die Daten des Teammitglieds zu laden
         $.ajax({
             url: `${memberId}/`,
             type: 'GET',
             success: function (data) {
+                console.log("Data received!")
+                console.log(data)
                 $('#memberId').val(memberId);
                 $('#full_name').val(data.full_name);
                 $('#position').val(data.position);
