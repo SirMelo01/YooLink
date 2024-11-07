@@ -1843,7 +1843,7 @@ def create_team_member(request):
 
             team_member.save()
 
-            return JsonResponse({'success': 'Teammitglied wurde erfolgreich erstellt'})
+            return JsonResponse({'success': 'Teammitglied wurde erfolgreich erstellt', 'member_id': team_member.id})
         except IntegrityError:
             return JsonResponse({'error': 'Fehler beim Erstellen des Teammitglieds, möglicherweise durch Duplikate.'}, status=400)
 

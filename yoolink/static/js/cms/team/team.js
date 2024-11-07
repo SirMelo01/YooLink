@@ -90,28 +90,44 @@ $(document).ready(function () {
             url: url,
             type: method,
             data: formData,
+            beforeSend: function (xhr) {
+                // Add the CSRF token to the request headers
+                xhr.setRequestHeader("X-CSRFToken", csrfToken);
+            },
             success: function (response) {
                 sendNotif(response.success || 'Daten erfolgreich verarbeitet', "success");
                 $('#teamMemberModal').addClass('hidden');
 
                 if (isNewMember) {
-                    // HTML für ein neues Teammitglied hinzufügen
                     const newMemberHtml = `
-                        <div class="relative text-center flex flex-col justify-center items-center w-fit">
-                            <span class="member-id hidden">${response.member_id}</span>
-                            <div class="relative">
-                                <span class="absolute top-2 left-2 ${formData.active ? 'bg-green-600' : 'bg-orange-600'} text-white rounded-full px-2 py-0.5">
-                                    ${formData.active ? 'Aktiv' : 'Inaktiv'}
-                                </span>
-                                <span class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member">X</span>
-                                <img src="${formData.image}" alt="${formData.full_name}" class="rounded-tl-2xl rounded-br-2xl h-80" />
-                            </div>
-                            <h3 class="mt-4 text-xl font-semibold text-gray-800">${formData.full_name}</h3>
-                            <p class="text-blue-600">${formData.position}</p>
-                            <p class="text-gray-500 mt-2">Dabei seit ${formData.years_with_team} Jahren</p>
-                            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member">Verwalten</button>
-                        </div>`;
-                    $('.grid').append(newMemberHtml);
+                    <div class="relative text-center flex flex-col justify-center items-center w-fit">
+                        <span class="member-id hidden">${response.member_id}</span>
+                        <div class="relative">
+                            <span class="absolute top-2 left-2 ${formData.active ? 'bg-green-600' : 'bg-orange-600'} text-white rounded-full px-2 py-0.5">
+                                ${formData.active ? 'Aktiv' : 'Inaktiv'}
+                            </span>
+                            <span class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member">X</span>
+                            <img src="${formData.image}" alt="${formData.full_name}" class="rounded-tl-2xl rounded-br-2xl h-80" />
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">${formData.full_name}</h3>
+                        <p class="text-blue-600">${formData.position}</p>
+                        <p class="text-gray-500 mt-2">Dabei seit ${formData.years_with_team} Jahren</p>
+                        <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member">Verwalten</button>
+                    </div>`;
+
+                $('.grid').append(newMemberHtml);
+
+                // Click-Event für den "Verwalten"-Button des neuen Teammitglieds hinzufügen
+                $('.grid').find('.edit-member').last().click(function () {
+                    const memberId = $(this).siblings('.member-id').text().trim();
+                    openEditModal(memberId);
+                });
+
+                // Click-Event für den "Löschen"-Button des neuen Teammitglieds hinzufügen
+                $('.grid').find('.delete-member').last().click(function () {
+                    memberIdToDelete = $(this).closest('.relative').find('.member-id').text().trim();
+                    $('#confirmDeleteModal').removeClass('hidden');
+                });
                 } else {
                     // Aktualisiere die vorhandenen Daten ohne Neuladen
                     const $memberDiv = $(`.member-id:contains(${memberId})`).closest('div');
