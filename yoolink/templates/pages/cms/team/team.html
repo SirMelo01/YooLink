@@ -1,15 +1,13 @@
 {% extends 'cmsbase.html' %} {% load compress static %} {% block title %}
-{{block.super}} | CMS | Team{% endblock %}
-{% block css %}
+{{block.super}} | CMS | Team{% endblock %} {% block css %}
 <style>
-    input:checked ~ .dot {
-        transform: translateX(100%);
-        background-color: #2974ff;
-      }
+  input:checked ~ .dot {
+    transform: translateX(100%);
+    background-color: #2974ff;
+  }
 </style>
-{% endblock css %}
-{% block content %}
-{% include "pages/cms/components/ImageSelectModal.html" %}
+{% endblock css %} {% block content %} {% include
+"pages/cms/components/ImageSelectModal.html" %}
 <div class="container mx-auto mt-6 max-w-6xl px-2">
   <div class="flex justify-between w-full items-center mt-4">
     <h2 class="text-3xl">Mitarbeiterübersicht</h2>
@@ -24,12 +22,12 @@
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
     {% for member in team_members %}
-    <span class="member-id hidden">
-        {{member.id}}
-    <span>
     <div
       class="relative text-center flex flex-col justify-center items-center w-fit"
     >
+      <!-- Hidden ID Element -->
+      <span class="member-id hidden">{{ member.id }}</span>
+
       <div class="relative">
         {% if member.active %}
         <span
@@ -37,34 +35,34 @@
         >
           Aktiv
         </span>
-        {%else%}
+        {% else %}
         <span
           class="absolute top-2 left-2 bg-orange-600 text-white rounded-full px-2 py-0.5 cursor-pointer"
         >
           Inaktiv
         </span>
-        {%endif%}
+        {% endif %}
         <span
           class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member"
         >
           X
         </span>
         <img
-          src="{{member.image}}"
-          alt="{{member.full_name}}"
+          src="{{ member.image }}"
+          alt="{{ member.full_name }}"
           class="rounded-tl-2xl rounded-br-2xl h-80"
         />
       </div>
+
       <h3 class="mt-4 text-xl font-semibold text-gray-800">
-        {{member.full_name}}
+        {{ member.full_name }}
       </h3>
-      <p class="text-blue-600">{{member.position}}</p>
+      <p class="text-blue-600">{{ member.position }}</p>
       <p class="text-gray-500 mt-2">
-        Dabei seit {{member.years_with_team}} Jahren
+        Dabei seit {{ member.years_with_team }} Jahren
       </p>
-      <button
-        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member"
-      >
+
+      <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member">
         Bearbeiten
       </button>
     </div>
@@ -90,7 +88,7 @@
 
     <!-- Eingabeformular -->
     <form id="teamMemberForm" class="space-y-4 w-2/3 mr-6">
-        {% csrf_token %}
+      {% csrf_token %}
       <h2 id="modalTitle" class="text-2xl font-semibold mb-4">
         Teammitglied erstellen
       </h2>
@@ -215,15 +213,30 @@
 </div>
 
 <!-- Bestätigungs-Modal für das Löschen -->
-<div id="confirmDeleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg w-80 p-6 text-center">
-        <h3 class="text-xl font-semibold text-gray-800">Löschen bestätigen</h3>
-        <p class="text-gray-600 mt-4">Möchten Sie dieses Teammitglied wirklich löschen?</p>
-        <div class="mt-6 flex justify-center space-x-4">
-            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" id="bConfirmDelete">Ja, löschen</button>
-            <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400" id="bDeclineDelete">Abbrechen</button>
-        </div>
+<div
+  id="confirmDeleteModal"
+  class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden"
+>
+  <div class="bg-white rounded-lg w-80 p-6 text-center">
+    <h3 class="text-xl font-semibold text-gray-800">Löschen bestätigen</h3>
+    <p class="text-gray-600 mt-4">
+      Möchten Sie dieses Teammitglied wirklich löschen?
+    </p>
+    <div class="mt-6 flex justify-center space-x-4">
+      <button
+        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        id="bConfirmDelete"
+      >
+        Ja, löschen
+      </button>
+      <button
+        class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+        id="bDeclineDelete"
+      >
+        Abbrechen
+      </button>
     </div>
+  </div>
 </div>
 
 {% endblock %} {% block javascriptend %} {% compress js inline %}
