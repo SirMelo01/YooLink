@@ -2,7 +2,7 @@
 $(document).ready(function () {
     let memberIdToDelete = null;
     const $imageModal = $('#imageModal');
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
     $('#closeImageModal').click(function() {
         $imageModal.addClass("hidden");
@@ -84,14 +84,16 @@ $(document).ready(function () {
             'note': $('#notes').val(),
             'active': $('#activeSwitch').is(':checked'),
             'image': $('#imagePreview').attr('src'),  // Bildquelle
+            'csrfmiddlewaretoken': csrfToken
         };
+
+        console.log(formData)
 
         // AJAX-Request
         $.ajax({
             url: url,
             type: method,
             data: formData,
-            contentType: 'application/json',
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);
