@@ -1849,19 +1849,31 @@ def get_team_member(request, id):
     })
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
-    data = request.data
+    data = request.data  # request.data verwenden
 
+    # E-Mail-Überprüfung auf Duplikate
+    new_email = data.get('email', team_member.email)
+    if TeamMember.objects.filter(email=new_email).exclude(id=team_member.id).exists():
+        return JsonResponse({'error': 'Diese E-Mail wird bereits verwendet.'}, status=400)
+
+    # Felder aktualisieren
     team_member.full_name = data.get('full_name', team_member.full_name)
-    team_member.active = data.get('active', team_member.active)
-    team_member.image = data.get('image', team_member.image)
-    team_member.age = data.get('age', team_member.age)
-    team_member.email = data.get('email', team_member.email)
-    team_member.years_with_team = data.get('years_with_team', team_member.years_with_team)
     team_member.position = data.get('position', team_member.position)
+    team_member.years_with_team = int(data.get('years_with_team', team_member.years_with_team))
+    team_member.age = int(data.get('age', team_member.age)) if data.get('age') else team_member.age
+    team_member.email = new_email
     team_member.note = data.get('note', team_member.note)
-
+    
+    # Active-Feld nur aktualisieren, wenn es explizit im Request vorhanden ist
+    if 'active' in data:
+        team_member.active = True if str(data['active']).lower() == "true" else False
+    
+    # Image aktualisieren
+    team_member.image = data.get('image', team_member.image)
+    
     team_member.save()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich aktualisiert'})
 
