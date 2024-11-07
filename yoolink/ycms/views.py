@@ -1851,7 +1851,7 @@ def get_team_member(request, id):
 @api_view(['PUT'])
 def update_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
-    data = request.PUT
+    data = request.data
 
     team_member.full_name = data.get('full_name', team_member.full_name)
     team_member.active = data.get('active', team_member.active)
