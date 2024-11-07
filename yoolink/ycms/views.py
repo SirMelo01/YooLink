@@ -16,7 +16,7 @@ from PIL import Image
 from io import BytesIO
 from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -1806,33 +1806,48 @@ def team_member_list(request):
 @permission_classes([IsAuthenticated])
 def create_team_member(request):
     if request.method == 'POST':
-        full_name = request.POST.get('full_name', '')
-        age = request.POST.get('age', None)
-        active = request.POST.get('active', True) == "true"
-        image = request.POST.get('image', '')
-        email = request.POST.get('email', '')
-        years_with_team = request.POST.get('years_with_team', 0)
+        full_name = request.POST.get('full_name', '').strip()
+        
+        # Überprüfen, ob der Name vorhanden ist
+        if not full_name:
+            return JsonResponse({'error': 'Voller Name ist erforderlich.'}, status=400)
+
+        # Initialisiere optionale Felder
+        active = request.POST.get('active', 'true') == "true"
+        image = request.POST.get('image', '').strip()
+        age = request.POST.get('age')
+        email = request.POST.get('email', '').strip()
+        years_with_team = int(request.POST.get('years_with_team', 0))
         position = request.POST.get('position', 'Mitarbeiter')
         note = request.POST.get('note', '')
 
-        # Convert age and years_with_team to integers if they are not None
-        age = int(age) if age else None
-        years_with_team = int(years_with_team)
+        # TeamMember erstellen
+        try:
+            team_member = TeamMember(
+                full_name=full_name,
+                active=active,
+                years_with_team=years_with_team,
+                position=position,
+                note=note
+            )
 
-        team_member = TeamMember.objects.create(
-            full_name=full_name,
-            active = active,
-            image=image,
-            age=age,
-            email=email,
-            years_with_team=years_with_team,
-            position=position,
-            note=note
-        )
-        team_member.save()
+            # Optionale Felder nur setzen, wenn sie vorhanden und nicht leer sind
+            if image:
+                team_member.image = image
+            if age:
+                team_member.age = int(age)
+            if email:
+                if TeamMember.objects.filter(email=email).exists():
+                    return JsonResponse({'error': 'Diese E-Mail wird bereits verwendet.'}, status=400)
+                team_member.email = email
 
-        return JsonResponse({'success': 'Teammitglied wurde erfolgreich erstellt'})
-    return JsonResponse({'error': 'Fehler beim Erstellen vom Teammitglied'})
+            team_member.save()
+
+            return JsonResponse({'success': 'Teammitglied wurde erfolgreich erstellt'})
+        except IntegrityError:
+            return JsonResponse({'error': 'Fehler beim Erstellen des Teammitglieds, möglicherweise durch Duplikate.'}, status=400)
+
+    return JsonResponse({'error': 'Fehler beim Erstellen vom Teammitglied'}, status=400)
 
 @api_view(['GET'])
 def get_team_member(request, id):
@@ -1852,27 +1867,38 @@ def get_team_member(request, id):
 @permission_classes([IsAuthenticated])
 def update_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
-    data = request.data  # request.data verwenden
+    data = request.data
 
     # E-Mail-Überprüfung auf Duplikate
-    new_email = data.get('email', team_member.email)
-    if TeamMember.objects.filter(email=new_email).exclude(id=team_member.id).exists():
+    new_email = data.get('email', team_member.email).strip()
+    if new_email and TeamMember.objects.filter(email=new_email).exclude(id=team_member.id).exists():
         return JsonResponse({'error': 'Diese E-Mail wird bereits verwendet.'}, status=400)
 
     # Felder aktualisieren
-    team_member.full_name = data.get('full_name', team_member.full_name)
+    team_member.full_name = data.get('full_name', team_member.full_name).strip()
+    if not team_member.full_name:
+        return JsonResponse({'error': 'Voller Name ist erforderlich.'}, status=400)
+
     team_member.position = data.get('position', team_member.position)
     team_member.years_with_team = int(data.get('years_with_team', team_member.years_with_team))
-    team_member.age = int(data.get('age', team_member.age)) if data.get('age') else team_member.age
-    team_member.email = new_email
+
+    if 'age' in data and data['age']:
+        team_member.age = int(data['age'])
+    else:
+        team_member.age = None
+
+    if new_email:
+        team_member.email = new_email
+
     team_member.note = data.get('note', team_member.note)
     
     # Active-Feld nur aktualisieren, wenn es explizit im Request vorhanden ist
     if 'active' in data:
-        team_member.active = True if str(data['active']).lower() == "true" else False
+        team_member.active = str(data['active']).lower() == "true"
     
-    # Image aktualisieren
-    team_member.image = data.get('image', team_member.image)
+    # Image nur aktualisieren, wenn ein nicht-leerer Wert übergeben wurde
+    if data.get('image', '').strip():
+        team_member.image = data['image']
     
     team_member.save()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich aktualisiert'})

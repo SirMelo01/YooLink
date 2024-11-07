@@ -19,7 +19,7 @@
       </button>
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+  <div class="grid mt-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
     {% for member in team_members %}
     <div
       class="relative text-center flex flex-col justify-center items-center w-fit"
@@ -73,6 +73,7 @@
 <div
   id="teamMemberModal"
   class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden"
+  onclick="closeModalOnClickOutside(event)"
 >
   <div
     class="bg-white rounded-lg w-11/12 md:w-3/4 lg:w-2/3 p-6 relative flex"
@@ -115,7 +116,6 @@
             id="position"
             name="position"
             class="w-full border rounded p-2"
-            required
           />
         </div>
         <div class="w-52">
@@ -127,7 +127,6 @@
             id="years_with_team"
             name="years_with_team"
             class="w-full border rounded p-2"
-            required
           />
         </div>
         <div class="w-40">
@@ -137,7 +136,6 @@
             id="age"
             name="age"
             class="w-full border rounded p-2"
-            required
           />
         </div>
       </div>
@@ -150,7 +148,6 @@
           id="email"
           name="email"
           class="w-full border rounded p-2"
-          required
         />
       </div>
       <div>

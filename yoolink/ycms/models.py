@@ -357,7 +357,7 @@ class Message(models.Model):
     name = models.CharField(max_length=70)
     title = models.CharField(max_length=100, null=True)
     email = models.EmailField(max_length=60)
-    message = models.CharField(max_length=600)
+    message = models.CharField(max_length=3000)
     date = models.DateField(auto_now_add=True, null=True)
     seen = models.BooleanField(default=False)
 

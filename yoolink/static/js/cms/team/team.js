@@ -40,15 +40,11 @@ $(document).ready(function () {
     // Funktion zum Bearbeiten eines bestehenden Teammitglieds
     $('.edit-member').click(function () {
         const memberId = $(this).siblings('.member-id').text().trim();
-        console.log("Edit Member!")
-        console.log(memberId)
-        // AJAX-GET-Request, um die Daten des Teammitglieds zu laden
+
         $.ajax({
             url: `${memberId}/`,
             type: 'GET',
             success: function (data) {
-                console.log("Data received!")
-                console.log(data)
                 $('#memberId').val(memberId);
                 $('#full_name').val(data.full_name);
                 $('#position').val(data.position);
@@ -71,7 +67,7 @@ $(document).ready(function () {
 
     // AJAX-Request zum Erstellen oder Aktualisieren eines Teammitglieds
     $('#teamMemberForm').submit(function (event) {
-        event.preventDefault();  // Verhindert die Standard-Formularübermittlung
+        event.preventDefault();
 
         const memberId = $('#memberId').val();
         const isNewMember = !memberId;
@@ -86,25 +82,47 @@ $(document).ready(function () {
             'email': $('#email').val(),
             'note': $('#notes').val(),
             'active': $('#activeSwitch').is(':checked'),
-            'image': $('#imagePreview').attr('src'),  // Bildquelle
+            'image': $('#imagePreview').attr('src'),
             'csrfmiddlewaretoken': csrfToken
         };
 
-        console.log(formData)
-
-        // AJAX-Request
         $.ajax({
             url: url,
             type: method,
             data: formData,
-            beforeSend: function (xhr) {
-                // Add the CSRF token to the request headers
-                xhr.setRequestHeader("X-CSRFToken", csrfToken);
-            },
             success: function (response) {
-                sendNotif(response.success || 'Daten erfolgreich verarbeitet', "success")
-                $('#teamMemberModal').addClass('hidden');  // Modal schließen
-                location.reload();  // Seite neu laden, um die aktualisierten Daten anzuzeigen
+                sendNotif(response.success || 'Daten erfolgreich verarbeitet', "success");
+                $('#teamMemberModal').addClass('hidden');
+
+                if (isNewMember) {
+                    // HTML für ein neues Teammitglied hinzufügen
+                    const newMemberHtml = `
+                        <div class="relative text-center flex flex-col justify-center items-center w-fit">
+                            <span class="member-id hidden">${response.member_id}</span>
+                            <div class="relative">
+                                <span class="absolute top-2 left-2 ${formData.active ? 'bg-green-600' : 'bg-orange-600'} text-white rounded-full px-2 py-0.5">
+                                    ${formData.active ? 'Aktiv' : 'Inaktiv'}
+                                </span>
+                                <span class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member">X</span>
+                                <img src="${formData.image}" alt="${formData.full_name}" class="rounded-tl-2xl rounded-br-2xl h-80" />
+                            </div>
+                            <h3 class="mt-4 text-xl font-semibold text-gray-800">${formData.full_name}</h3>
+                            <p class="text-blue-600">${formData.position}</p>
+                            <p class="text-gray-500 mt-2">Dabei seit ${formData.years_with_team} Jahren</p>
+                            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member">Verwalten</button>
+                        </div>`;
+                    $('.grid').append(newMemberHtml);
+                } else {
+                    // Aktualisiere die vorhandenen Daten ohne Neuladen
+                    const $memberDiv = $(`.member-id:contains(${memberId})`).closest('div');
+                    $memberDiv.find('img').attr('src', formData.image);
+                    $memberDiv.find('h3').text(formData.full_name);
+                    $memberDiv.find('.text-blue-600').text(formData.position);
+                    $memberDiv.find('.text-gray-500').text(`Dabei seit ${formData.years_with_team} Jahren`);
+                    $memberDiv.find('.absolute.left-2').text(formData.active ? 'Aktiv' : 'Inaktiv')
+                        .removeClass('bg-green-600 bg-orange-600')
+                        .addClass(formData.active ? 'bg-green-600' : 'bg-orange-600');
+                }
             },
             error: function (error) {
                 sendNotif(error.responseJSON.error || 'Fehler beim Speichern der Daten.', "error");
@@ -122,20 +140,39 @@ $(document).ready(function () {
     $('#bConfirmDelete').click(function () {
         if (memberIdToDelete) {
             $.ajax({
-                url: `/team/${memberIdToDelete}/delete/`,
+                url: `${memberIdToDelete}/delete/`,
                 type: 'DELETE',
+                headers: { 'X-CSRFToken': csrfToken },
                 success: function (response) {
                     sendNotif(response.success || 'Teammitglied erfolgreich gelöscht', "success");
-                    $('#confirmDeleteModal').addClass('hidden');  // Bestätigungs-Modal schließen
-                    location.reload();  // Seite neu laden, um die aktualisierte Teamliste zu sehen
+                    $('#confirmDeleteModal').addClass('hidden');
+
+                    // Entferne das gelöschte Teammitglied aus der Ansicht
+                    const $memberDiv = $(`.member-id:contains(${memberIdToDelete})`).closest('.relative');
+                    $memberDiv.remove();
                 },
                 error: function () {
                     sendNotif('Fehler beim Löschen des Teammitglieds', "error");
-                    $('#confirmDeleteModal').addClass('hidden');  // Bestätigungs-Modal schließen
+                    $('#confirmDeleteModal').addClass('hidden');
                 }
             });
         }
     });
+
+    // Funktion, um das Create-Modal zu schließen, wenn außerhalb geklickt wird und Image-Modal nicht sichtbar ist
+    function closeModalOnClickOutside(event) {
+        const teamMemberModal = document.getElementById('teamMemberModal');
+        const imageModal = document.getElementById('imageModal');
+        
+        // Überprüfen, ob der Klick außerhalb des Modals und das Image-Select-Modal nicht sichtbar ist
+        if (event.target === teamMemberModal && imageModal.classList.contains('hidden')) {
+            closeModal();
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('teamMemberModal').classList.add('hidden');
+    }
 
     // Klick-Event für den Abbrechen-Button im Bestätigungs-Modal
     $('#bDeclineDelete').click(function () {
