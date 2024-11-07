@@ -412,3 +412,17 @@ class OpeningHours(models.Model):
 
     def __str__(self):
         return f"Opening hours for {self.user.username} on {self.get_day_display()}"
+    
+class TeamMember(models.Model):
+    full_name = models.CharField(max_length=120, default='')
+    active = models.BooleanField(default=True)
+    image = models.CharField(max_length=200, default='')
+    age = models.PositiveIntegerField(null=True, blank=True)
+    email = models.EmailField(unique=True, null=True)
+    years_with_team = models.PositiveIntegerField(default=0)
+    position = models.CharField(max_length=100, default="Mitarbeiter")
+    note = models.TextField(default="")
+
+    def __str__(self):
+        return self.full_name
+    

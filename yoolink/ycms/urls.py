@@ -99,5 +99,11 @@ urlpatterns = [
     # Opening Hours
     path('openinghours/', views.opening_hours_view, name='openinghours-view'),
     path('openinghours/update/', views.opening_hours_update, name='openinghours-update'),
-
+    
+    # Team Members
+    path('team/', views.team_member_list, name='team-list'),
+    path('team/create/', views.create_team_member, name='create-team-member'),
+    path('team/<int:id>/', views.get_team_member, name='get-team-member'),
+    path('team/<int:id>/update/', views.update_team_member, name='update-team-member'),
+    path('team/<int:id>/delete/', views.delete_team_member, name='delete-team-member'),
 ]

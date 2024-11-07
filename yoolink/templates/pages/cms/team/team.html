@@ -1,0 +1,231 @@
+{% extends 'cmsbase.html' %} {% load compress static %} {% block title %}
+{{block.super}} | CMS | Team{% endblock %} {% block javascript %} {% load
+compress static %} {% endblock %} 
+{% block css %}
+<style>
+    input:checked ~ .dot {
+        transform: translateX(100%);
+        background-color: #2974ff;
+      }
+</style>
+{% endblock css %}
+{% block content %}
+{% include "pages/cms/components/ImageSelectModal.html" %}
+<div class="container mx-auto mt-6 max-w-6xl px-2">
+  <div class="flex justify-between w-full items-center mt-4">
+    <h2 class="text-3xl">Mitarbeiterübersicht</h2>
+    <div class="text-center">
+      <button
+        class="bg-green-500 text-white px-6 py-3 rounded"
+        id="bCreateNewMember"
+      >
+        Neues Teammitglied erstellen
+      </button>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    {% for member in team_members %}
+    <span class="member-id hidden">
+        {{member.id}}
+    <span>
+    <div
+      class="relative text-center flex flex-col justify-center items-center w-fit"
+    >
+      <div class="relative">
+        {% if member.active %}
+        <span
+          class="absolute top-2 left-2 bg-green-600 text-white rounded-full px-2 py-0.5 cursor-pointer"
+        >
+          Aktiv
+        </span>
+        {%else%}
+        <span
+          class="absolute top-2 left-2 bg-orange-600 text-white rounded-full px-2 py-0.5 cursor-pointer"
+        >
+          Inaktiv
+        </span>
+        {%endif%}
+        <span
+          class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member"
+        >
+          X
+        </span>
+        <img
+          src="{{member.image}}"
+          alt="{{member.full_name}}"
+          class="rounded-tl-2xl rounded-br-2xl h-80"
+        />
+      </div>
+      <h3 class="mt-4 text-xl font-semibold text-gray-800">
+        {{member.full_name}}
+      </h3>
+      <p class="text-blue-600">{{member.position}}</p>
+      <p class="text-gray-500 mt-2">
+        Dabei seit {{member.years_with_team}} Jahren
+      </p>
+      <button
+        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member"
+      >
+        Bearbeiten
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal zum Erstellen/Bearbeiten eines Teammitglieds -->
+<div
+  id="teamMemberModal"
+  class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden"
+>
+  <div
+    class="bg-white rounded-lg w-11/12 md:w-3/4 lg:w-2/3 p-6 relative flex"
+    onclick="event.stopPropagation()"
+  >
+    <button
+      class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+      onclick="closeModal()"
+    >
+      X
+    </button>
+
+    <!-- Eingabeformular -->
+    <form id="teamMemberForm" class="space-y-4 w-2/3 mr-6">
+      <h2 id="modalTitle" class="text-2xl font-semibold mb-4">
+        Teammitglied erstellen
+      </h2>
+      <input type="hidden" id="memberId" name="memberId" />
+
+      <div>
+        <label for="full_name" class="block text-gray-700 font-medium"
+          >Voller Name</label
+        >
+        <input
+          type="text"
+          id="full_name"
+          name="full_name"
+          class="w-full border rounded p-2"
+          required
+        />
+      </div>
+      <div class="flex justify-between space-x-5">
+        <div class="w-full">
+          <label for="position" class="block text-gray-700 font-medium"
+            >Position</label
+          >
+          <input
+            type="text"
+            id="position"
+            name="position"
+            class="w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div class="w-40">
+          <label for="years_with_team" class="block text-gray-700 font-medium"
+            >Jahre im Team</label
+          >
+          <input
+            type="number"
+            id="years_with_team"
+            name="years_with_team"
+            class="w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div class="w-40">
+          <label for="age" class="block text-gray-700 font-medium">Alter</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            class="w-full border rounded p-2"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <label for="email" class="block text-gray-700 font-medium"
+          >E-Mail</label
+        >
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="w-full border rounded p-2"
+          required
+        />
+      </div>
+      <div>
+        <label for="notes" class="block text-gray-700 font-medium"
+          >Notizen</label
+        >
+        <textarea
+          id="notes"
+          name="note"
+          class="w-full border rounded p-2"
+          rows="3"
+        ></textarea>
+      </div>
+      <label
+        for="activeSwitch"
+        class="team-switch flex cursor-pointer items-center"
+      >
+        <!-- toggle -->
+        <div class="relative">
+          <!-- input -->
+          <input id="activeSwitch" type="checkbox" class="sr-only" />
+          <!-- line -->
+          <div class="h-4 w-10 rounded-full bg-gray-400 shadow-inner"></div>
+          <!-- dot -->
+          <div
+            class="dot absolute -left-1 -top-1 h-6 w-6 rounded-full bg-white shadow transition"
+          ></div>
+        </div>
+        <!-- label -->
+        <div class="ml-3 font-medium text-gray-700">
+          Aktiv (Anzeigen in Team-Sektion)
+        </div>
+      </label>
+      <button
+        type="submit"
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-fit"
+      >
+        Speichern
+      </button>
+    </form>
+
+    <!-- Bildvorschau -->
+    <div class="w-1/3 flex flex-col justify-center items-center">
+      <img
+        id="imagePreview"
+        src=""
+        alt="Vorschau"
+        class="rounded-tl-2xl rounded-br-2xl h-80 hidden mb-4"
+      />
+      <button
+        type="button"
+        id="bImageSelect"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Bild auswählen
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Bestätigungs-Modal für das Löschen -->
+<div id="confirmDeleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg w-80 p-6 text-center">
+        <h3 class="text-xl font-semibold text-gray-800">Löschen bestätigen</h3>
+        <p class="text-gray-600 mt-4">Möchten Sie dieses Teammitglied wirklich löschen?</p>
+        <div class="mt-6 flex justify-center space-x-4">
+            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" id="bConfirmDelete">Ja, löschen</button>
+            <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400" id="bDeclineDelete">Abbrechen</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block javascriptend %} {% compress js inline %}
+<script src="{% static 'js/cms/team/team.js' %}"></script>
+{% endcompress js %} {% endblock javascriptend %}

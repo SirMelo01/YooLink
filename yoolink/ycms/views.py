@@ -3,7 +3,7 @@ import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -54,6 +54,7 @@ def upload(request):
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
         "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
+        "member_count":  TeamMember.objects.count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -1790,3 +1791,82 @@ def shop(request):
         "order_not_closed_count": Order.objects.filter(verified=True).exclude(status='COMPLETED').count(),
     }
     return render(request, 'pages/cms/shop/shop.html', data)
+
+# View to display all TeamMembers
+@login_required(login_url='login')
+def team_member_list(request):
+    team_members = TeamMember.objects.all()
+    context = {
+        'team_members': team_members,
+    }
+    return render(request, 'pages/cms/team/team.html', context)
+
+# View to handle the creation of a TeamMember
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_team_member(request):
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '')
+        age = request.POST.get('age', None)
+        active = request.POST.get('active', True) == "true"
+        image = request.POST.get('image', '')
+        email = request.POST.get('email', '')
+        years_with_team = request.POST.get('years_with_team', 0)
+        position = request.POST.get('position', 'Mitarbeiter')
+        note = request.POST.get('note', '')
+
+        # Convert age and years_with_team to integers if they are not None
+        age = int(age) if age else None
+        years_with_team = int(years_with_team)
+
+        team_member = TeamMember.objects.create(
+            full_name=full_name,
+            active = active,
+            image=image,
+            age=age,
+            email=email,
+            years_with_team=years_with_team,
+            position=position,
+            note=note
+        )
+        team_member.save()
+
+        return JsonResponse({'success': 'Teammitglied wurde erfolgreich erstellt'})
+    return JsonResponse({'error': 'Fehler beim Erstellen vom Teammitglied'})
+
+@api_view(['GET'])
+def get_team_member(request, id):
+    team_member = get_object_or_404(TeamMember, id=id)
+    return JsonResponse({
+        'full_name': team_member.full_name,
+        'active': team_member.active,
+        'image': team_member.image,
+        'age': team_member.age,
+        'email': team_member.email,
+        'years_with_team': team_member.years_with_team,
+        'position': team_member.position,
+        'note': team_member.note
+    })
+
+@api_view(['PUT'])
+def update_team_member(request, id):
+    team_member = get_object_or_404(TeamMember, id=id)
+    data = json.loads(request.body)
+
+    team_member.full_name = data.get('full_name', team_member.full_name)
+    team_member.active = data.get('active', team_member.active)
+    team_member.image = data.get('image', team_member.image)
+    team_member.age = data.get('age', team_member.age)
+    team_member.email = data.get('email', team_member.email)
+    team_member.years_with_team = data.get('years_with_team', team_member.years_with_team)
+    team_member.position = data.get('position', team_member.position)
+    team_member.note = data.get('note', team_member.note)
+
+    team_member.save()
+    return JsonResponse({'success': 'Teammitglied wurde erfolgreich aktualisiert'})
+
+@api_view(['DELETE'])
+def delete_team_member(request, id):
+    team_member = get_object_or_404(TeamMember, id=id)
+    team_member.delete()
+    return JsonResponse({'success': 'Teammitglied wurde erfolgreich gelöscht'})
