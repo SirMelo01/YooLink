@@ -41,28 +41,7 @@ $(document).ready(function () {
     $('.edit-member').click(function () {
         const memberId = $(this).siblings('.member-id').text().trim();
 
-        $.ajax({
-            url: `${memberId}/`,
-            type: 'GET',
-            success: function (data) {
-                $('#memberId').val(memberId);
-                $('#full_name').val(data.full_name);
-                $('#position').val(data.position);
-                $('#years_with_team').val(data.years_with_team);
-                $('#age').val(data.age);
-                $('#email').val(data.email);
-                $('#notes').val(data.note);
-                $('#activeSwitch').prop('checked', data.active);
-                $('#imagePreview').attr('src', data.image).removeClass('hidden');
-
-                $('#modalTitle').text('Teammitglied bearbeiten');
-                $('#teamMemberModal').find('button[type="submit"]').text('Speichern');
-                $('#teamMemberModal').removeClass('hidden');
-            },
-            error: function () {
-                sendNotif('Fehler beim Laden der Teammitglied-Daten.', 'error');
-            }
-        });
+        openEditModal(memberId);
     });
 
     // AJAX-Request zum Erstellen oder Aktualisieren eines Teammitglieds
@@ -245,4 +224,35 @@ function loadImages(sendLoadMsg) {
         }
     });
 }
+// Öffnet das Bearbeiten-Modal für ein Teammitglied und füllt es mit den vorhandenen Daten
+function openEditModal(memberId) {
+    // AJAX-Request, um die Daten des Teammitglieds zu laden
+    $.ajax({
+        url: `${memberId}/`,  // Endpoint, der die Daten des Teammitglieds bereitstellt
+        type: 'GET',
+        success: function (data) {
+            // Fülle das Formular mit den vorhandenen Daten
+            $('#memberId').val(memberId);
+            $('#full_name').val(data.full_name);
+            $('#position').val(data.position);
+            $('#years_with_team').val(data.years_with_team);
+            $('#age').val(data.age);
+            $('#email').val(data.email);
+            $('#notes').val(data.note);
+            $('#activeSwitch').prop('checked', data.active);
+            $('#imagePreview').attr('src', data.image).removeClass('hidden'); // Setze Bildvorschau
+            
+            // Passe die Modalüberschrift und den Button an
+            $('#modalTitle').text('Teammitglied bearbeiten');
+            $('#teamMemberModal').find('button[type="submit"]').text('Speichern');
+
+            // Zeige das Modal an
+            $('#teamMemberModal').removeClass('hidden');
+        },
+        error: function () {
+            sendNotif('Fehler beim Laden der Teammitglied-Daten.', 'error');
+        }
+    });
+}
+
 
