@@ -1,3 +1,4 @@
+var csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
 $(document).ready(function () {
     let memberIdToDelete = null;
     const $imageModal = $('#imageModal');
@@ -81,7 +82,8 @@ $(document).ready(function () {
             email: $('#email').val(),
             note: $('#notes').val(),
             active: $('#activeSwitch').is(':checked'),
-            image: $('#imagePreview').attr('src')  // Bildquelle
+            image: $('#imagePreview').attr('src'),  // Bildquelle
+            csrfmiddlewaretoken: csrftoken,
         };
 
         // AJAX-Request
