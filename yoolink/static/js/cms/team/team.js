@@ -76,23 +76,22 @@ $(document).ready(function () {
         const method = isNewMember ? 'POST' : 'PUT';
 
         const formData = {
-            full_name: $('#full_name').val(),
-            position: $('#position').val(),
-            years_with_team: $('#years_with_team').val(),
-            age: $('#age').val(),
-            email: $('#email').val(),
-            note: $('#notes').val(),
-            active: $('#activeSwitch').is(':checked'),
-            image: $('#imagePreview').attr('src'),  // Bildquelle
+            'full_name': $('#full_name').val(),
+            'position': $('#position').val(),
+            'years_with_team': $('#years_with_team').val(),
+            'age': $('#age').val(),
+            'email': $('#email').val(),
+            'note': $('#notes').val(),
+            'active': $('#activeSwitch').is(':checked'),
+            'image': $('#imagePreview').attr('src'),  // Bildquelle
         };
 
         // AJAX-Request
         $.ajax({
             url: url,
             type: method,
-            data: JSON.stringify(formData),
+            data: formData,
             contentType: 'application/json',
-            dataType: "json",
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);
