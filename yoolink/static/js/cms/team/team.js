@@ -1,7 +1,8 @@
-var csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+
 $(document).ready(function () {
     let memberIdToDelete = null;
     const $imageModal = $('#imageModal');
+    var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
 
     $('#closeImageModal').click(function() {
         $imageModal.addClass("hidden");
