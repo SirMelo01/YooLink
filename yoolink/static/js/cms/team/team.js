@@ -133,6 +133,8 @@ $(document).ready(function () {
         $('#confirmDeleteModal').addClass('hidden');  // Bestätigungs-Modal schließen
         memberIdToDelete = null;  // memberId zurücksetzen
     });
+
+    loadImages(false);
 });
 
 // Modal schließen
@@ -164,6 +166,7 @@ function loadImages(sendLoadMsg) {
                             $imagePreview.attr('src', $(this).attr('src'));
                             $imagePreview.attr('imgId', $(this).attr('imgId'))
                             $('#imageModal').toggleClass("hidden");
+                            $($imagePreview).removeClass("hidden");
                             sendNotif('Neues Bild ausgewählt', 'success');
                         }
                     });
@@ -180,3 +183,4 @@ function loadImages(sendLoadMsg) {
         }
     });
 }
+
