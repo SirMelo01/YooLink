@@ -2,7 +2,7 @@
 $(document).ready(function () {
     let memberIdToDelete = null;
     const $imageModal = $('#imageModal');
-    var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
     $('#closeImageModal').click(function() {
         $imageModal.addClass("hidden");
@@ -84,7 +84,6 @@ $(document).ready(function () {
             note: $('#notes').val(),
             active: $('#activeSwitch').is(':checked'),
             image: $('#imagePreview').attr('src'),  // Bildquelle
-            csrfmiddlewaretoken: csrftoken,
         };
 
         // AJAX-Request
@@ -93,6 +92,11 @@ $(document).ready(function () {
             type: method,
             data: JSON.stringify(formData),
             contentType: 'application/json',
+            dataType: "json",
+            beforeSend: function (xhr) {
+                // Add the CSRF token to the request headers
+                xhr.setRequestHeader("X-CSRFToken", csrfToken);
+            },
             success: function (response) {
                 sendNotif(response.success || 'Daten erfolgreich verarbeitet', "success")
                 $('#teamMemberModal').addClass('hidden');  // Modal schließen
