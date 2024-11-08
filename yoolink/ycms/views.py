@@ -1776,6 +1776,7 @@ def opening_hours_update(request):
     if vacation and vacationText:
         user_settings.vacation = vacation
         user_settings.vacationText = vacationText
+        user_settings.save()
 
     if errors:
         return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)

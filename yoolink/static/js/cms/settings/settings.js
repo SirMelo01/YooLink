@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    // Handle form submission through AJAX
     const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
     $('#updateSettings').on('click', function() {
         var email = $('#email').val();
         var full_name = $('#full_name').val();
@@ -10,11 +10,12 @@ $(document).ready(function() {
         var mobile_number = $('#mobile_number').val();
         var website = $('#website').val();
         var address = $('#address').val();
+        var global_font = $('#global_font').val();
 
-        // AJAX request to update user settings
+        // AJAX-Anfrage zum Aktualisieren der Benutzereinstellungen
         $.ajax({
             type: 'POST',
-            url: 'update/',  // Update with the actual URL
+            url: 'update/',  // Die URL aktualisieren
             data: {
                 'email': email,
                 'full_name': full_name,
@@ -24,20 +25,18 @@ $(document).ready(function() {
                 'mobile_number': mobile_number,
                 'website': website,
                 'address': address,
+                'global_font': global_font,
                 'csrfmiddlewaretoken': csrfToken
             },
             success: function(response) {
-                // Handle success, if needed
-                console.log(response);
                 if(response.success) {
-                    sendNotif(response.success, 'success')
+                    sendNotif(response.success, 'success');
                 } else {
-                    sendNotif(response.error ? response.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
+                    sendNotif(response.error ? response.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error');
                 }
             },
             error: function(error) {
-                // Handle error, if needed
-                sendNotif(error.error ? error.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error')
+                sendNotif(error.error ? error.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error');
             }
         });
     });

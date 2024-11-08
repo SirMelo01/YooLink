@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.models import FAQ, Message, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
+from yoolink.ycms.models import FAQ, Message, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
 import datetime
 from django.http import HttpResponseRedirect
 
@@ -55,6 +55,11 @@ def load_index(request):
     # Images
     if fileentry.objects.filter(place='main_cms').exists():
         context["cmsImage"] = fileentry.objects.get(place='main_cms')
+    
+    # Mitarbeiter
+    active_team_members = TeamMember.objects.filter(active=True)
+    if active_team_members.exists():
+        context['teamMembers'] = active_team_members
 
     context.update(get_opening_hours())
 

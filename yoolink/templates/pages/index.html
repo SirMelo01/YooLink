@@ -1,206 +1,346 @@
-{% extends "base.html" %}
-{% load compress static %}
+{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} {% compress css inline %}
+<link href="{% static 'css/cardslider.css' %}" rel="stylesheet" />
+<link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
+<link href="{% static 'css/fische.css' %}" rel="stylesheet" />
+<link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
+{% endcompress css %} {% endblock css %}
 
-{% block title %}{{block.super}} - Webdesign Agentur{% endblock title %}
+<!--Kontaktbuttons Beginn-->
 
-{% block content %}
-
-
-  {% block css %}
-    {% compress css inline %}
-      <link href="{% static 'css/cardslider.css' %}" rel="stylesheet">
-      <link href="{% static 'css/wellen.css' %}" rel="stylesheet">
-      <link href="{% static 'css/fische.css' %}" rel="stylesheet">
-      <link href="{% static 'css/uboot.css' %}" rel="stylesheet">
-    {% endcompress css %}
-  {% endblock css %}
-
-
-  <!--Kontaktbuttons Beginn-->
-  
-  {% block kontaktbuttons %}
-  <a href="{% url 'kontakt' %}">
-    <button type="button">
-      <div class="hidden md:block fixed z-50 bottom-12 right-8 bg-blue-900 rounded-full shadow-2xl p-3">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-7 h-7">
-          <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/>
-          <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/>
-        </svg>
-      </div>
-    </button>
-  </a>
-  <a href="tel:+491705977862">
-    <button>
-      <div class="hidden md:block fixed z-50 bottom-28 right-8 bg-blue-900 rounded-full shadow-2xl p-3">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-7 h-7">
-          <path fill-rule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-    </button>
-  </a>
-  {% endblock kontaktbuttons %}
-
-  <!--Kontaktbuttons Ende-->
-
-
-  <!--Templates Beginn-->
-  {% block Templates %}
-  <section class="bg-white mb-20">
-    <div class="flex flex-col items-center justify-center px-4 pt-6 mx-auto sm:max-w-xl md:max-w-full lg:pt-6 md:px-0">
-      <div class="flex flex-col items-center max-w-2xl md:px-8">
-        <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
-          <div class="text-center"> 
-            <h1 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full ">
-              {{heroText.header}}
-            </h1>
-          </div>
-          <h2 class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
-            {{heroText.title}}
-          </h2>
-          <p class="text-base leading-7 text-gray-600 md:text-lg">
-            {{heroText.description}}
-          </p>
-        </div>
-      </div>
-
-      <!--Cardslider Beginn-->
-        <figure class="icon-cards mt-3">
-          <div class="icon-cards__content">
-            {% if heroImages %}
-              {% for img in heroImages %}
-              <div class="icon-cards__item d-flex align-items-center justify-content-center">
-                <img src="{{img.upload.url}}" alt="{{img.title}}"/>
-              </div>
-              {% endfor %}
-            {% else %}
-            <div class="icon-cards__item d-flex align-items-center justify-content-center">
-              <img src="{% static 'images/Template1.png' %}" alt="Template Design"/>
-            </div>
-            <div class="icon-cards__item d-flex align-items-center justify-content-center">
-              <img src="{% static 'images/Template2.png' %}" alt="Template Design"/>
-            </div>
-            <div class="icon-cards__item d-flex align-items-center justify-content-center">
-              <img src="{% static 'images/Template3.png' %}" alt="Template Design"/>
-            </div>
-            {% endif %}
-          </div>
-        </figure>
-        <div class="items-center justify-center mx-auto bg-blue-900 rounded-2xl mt-12">
-          <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Webdesign-Vorlagen" title="Webdesign-Vorlagen"
-        class="inline-flex items-center justify-center h-12 px-6 font-medium  text-white transition duration-200 rounded">
-        Webdesign-Vorlagen
-      </a>
-        </div>
-      <!--Cardslider End-->
-    </div>
-  </section>
-  {% endblock Templates %}
-  <!--Templates End-->
-
-
-  <!--Wellen Beginn-->
-  {% block Wellen %}
-  <section class="bg-white">
-    <div>
-      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-        <defs>
-          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
-        </defs>
-        <g class="parallax">
-          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(219,234,254,0.7)"/>
-          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(219,234,254,0.5)"/>
-          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(219,234,254,0.3)"/>
-          <use xlink:href="#gentle-wave" x="48" y="7" fill="#dbeafe" />
-        </g>
+{% block kontaktbuttons %}
+<a href="{% url 'kontakt' %}">
+  <button type="button">
+    <div
+      class="hidden md:block fixed z-50 bottom-12 right-8 bg-blue-900 rounded-full shadow-2xl p-3"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="white"
+        class="w-7 h-7"
+      >
+        <path
+          d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"
+        />
+        <path
+          d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"
+        />
       </svg>
     </div>
-  </section>
-  {% endblock Wellen %}
-  <!--Wellen End-->
+  </button>
+</a>
+<a href="tel:+491705977862">
+  <button>
+    <div
+      class="hidden md:block fixed z-50 bottom-28 right-8 bg-blue-900 rounded-full shadow-2xl p-3"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="white"
+        class="w-7 h-7"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+  </button>
+</a>
+{% endblock kontaktbuttons %}
 
+<!--Kontaktbuttons Ende-->
 
-  <!--Background-->
-  <div class="bg-blue-100">
-
-    <!--ResponsiveDesign Beginn -->
-    {% block ResponsiveDesign %}
-    <section class="scroll-my-4 -mb-0 xs:-mb-48 lg:-mb-0" id="Responsive">
-      <div class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl">
-        <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
-          <div class="w-6xl mb-5">
-            <div>
-              <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-                {{responsiveText.header}}
-              </h3>
-            </div>
-            <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-              {{responsiveText.title}}
-            </h2>
-            <p class="text-base leading-7 text-gray-600 md:text-lg ">
-              {{responsiveText.description}}
-            </p>
-            <br/>
-            <div class="flex">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
-              </svg>
-              <label class="relative inline-flex items-center mb-5 mx-3 cursor-pointer">
-                <input type="checkbox" value="" class="sr-only peer" onclick="toggleResponsive()"/>
-                <div class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"></div>
-              </label>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
-              </svg>
-            </div>
-          </div>
+<!--Templates Beginn-->
+{% block Templates %}
+<section class="bg-white mb-20">
+  <div
+    class="flex flex-col items-center justify-center px-4 pt-6 mx-auto sm:max-w-xl md:max-w-full lg:pt-6 md:px-0"
+  >
+    <div class="flex flex-col items-center max-w-2xl md:px-8">
+      <div
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+      >
+        <div class="text-center">
+          <h1
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full"
+          >
+            {{heroText.header}}
+          </h1>
         </div>
-        <!--Imageslider-->
-        <div class="container content-center px-1">
-          <!--Browser-->
-          <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
-            <img src="{% static 'images/MacBookPro16.png' %}" class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10" alt="MacBookPro16 Bezel"/>
-            <span id="desktopSlider">
-              {% if responsiveDesktopImages %}
-                {% for image in responsiveDesktopImages %}
-                  {% if forloop.first %}
-                    <img src="{{image.upload.url}}" class="relative h-full w-full object-contain xs:object-top lg:object-center" title="{{image.title}}" alt="{{image.title}}"/>
-                  {% else %}
-                    <img src="{{image.upload.url}}" class="hidden relative h-full w-full object-contain xs:object-top lg:object-center" title="{{image.title}}" alt="{{image.title}}"/>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" class="relative h-full w-full object-contain xs:object-top lg:object-center" alt="MacBookPro16 Bezel RS-Autoglas"/>
-                <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" class="hidden relative h-full w-full object-contain xs:object-top lg:object-center" alt="MacBookPro16 Bezel RS-Autoglas"/>
-              {% endif %}
-            </span>
+        <h2
+          class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center"
+        >
+          {{heroText.title}}
+        </h2>
+        <p class="text-base leading-7 text-gray-600 md:text-lg">
+          {{heroText.description}}
+        </p>
+      </div>
+    </div>
+
+    <!--Cardslider Beginn-->
+    <figure class="icon-cards mt-3">
+      <div class="icon-cards__content">
+        {% if heroImages %} {% for img in heroImages %}
+        <div
+          class="icon-cards__item d-flex align-items-center justify-content-center"
+        >
+          <img src="{{img.upload.url}}" alt="{{img.title}}" />
+        </div>
+        {% endfor %} {% else %}
+        <div
+          class="icon-cards__item d-flex align-items-center justify-content-center"
+        >
+          <img
+            src="{% static 'images/Template1.png' %}"
+            alt="Template Design"
+          />
+        </div>
+        <div
+          class="icon-cards__item d-flex align-items-center justify-content-center"
+        >
+          <img
+            src="{% static 'images/Template2.png' %}"
+            alt="Template Design"
+          />
+        </div>
+        <div
+          class="icon-cards__item d-flex align-items-center justify-content-center"
+        >
+          <img
+            src="{% static 'images/Template3.png' %}"
+            alt="Template Design"
+          />
+        </div>
+        {% endif %}
+      </div>
+    </figure>
+    <div
+      class="items-center justify-center mx-auto bg-blue-900 rounded-2xl mt-12"
+    >
+      <a
+        href="{% url 'designtemplates:designtemplates' %}"
+        aria-label="Webdesign-Vorlagen"
+        title="Webdesign-Vorlagen"
+        class="inline-flex items-center justify-center h-12 px-6 font-medium text-white transition duration-200 rounded"
+      >
+        Webdesign-Vorlagen
+      </a>
+    </div>
+    <!--Cardslider End-->
+  </div>
+</section>
+{% endblock Templates %}
+<!--Templates End-->
+
+<!--Wellen Beginn-->
+{% block Wellen %}
+<section class="bg-white">
+  <div>
+    <svg
+      class="waves"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 24 150 28"
+      preserveAspectRatio="none"
+      shape-rendering="auto"
+    >
+      <defs>
+        <path
+          id="gentle-wave"
+          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+        />
+      </defs>
+      <g class="parallax">
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="0"
+          fill="rgba(219,234,254,0.7)"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="3"
+          fill="rgba(219,234,254,0.5)"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="5"
+          fill="rgba(219,234,254,0.3)"
+        />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#dbeafe" />
+      </g>
+    </svg>
+  </div>
+</section>
+{% endblock Wellen %}
+<!--Wellen End-->
+
+<!--Background-->
+<div class="bg-blue-100">
+  <!--ResponsiveDesign Beginn -->
+  {% block ResponsiveDesign %}
+  <section class="scroll-my-4 -mb-0 xs:-mb-48 lg:-mb-0" id="Responsive">
+    <div
+      class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl"
+    >
+      <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
+        <div class="w-6xl mb-5">
+          <div>
+            <h3
+              class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+            >
+              {{responsiveText.header}}
+            </h3>
           </div>
-          <!--Phone-->
-          <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
-            <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute h-full w-full object-contain z-10" alt="iPhone-Frame Bezel"/>
-            <span id="handySlider">
-              {% if responsiveHandyImages %}
-                {% for image in responsiveHandyImages %}
-                  {% if forloop.first %}
-                    <img src="{{image.upload.url}}" class="relative h-full w-full object-contain" title="{{image.title}}" alt="{{image.title}}"/>
-                  {% else %}
-                    <img src="{{image.upload.url}}" class="hidden relative h-full w-full object-contain" title="{{image.title}}" alt="{{image.title}}"/>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-              <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="relative h-full w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas"/>
-              <img src="{% static 'images/iPhone-RSAutoglas.png' %}" class="hidden relative h-full w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas"/>
-              {% endif %}
-              
-            </span>
+          <h2
+            class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
+          >
+            {{responsiveText.title}}
+          </h2>
+          <p class="text-base leading-7 text-gray-600 md:text-lg">
+            {{responsiveText.description}}
+          </p>
+          <br />
+          <div class="flex">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-10 h-10"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"
+              />
+            </svg>
+            <label
+              class="relative inline-flex items-center mb-5 mx-3 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value=""
+                class="sr-only peer"
+                onclick="toggleResponsive()"
+              />
+              <div
+                class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"
+              ></div>
+            </label>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-10 h-10"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+              />
+            </svg>
           </div>
         </div>
       </div>
-    </section>
-    {% endblock ResponsiveDesign %}
-    <!--ResponsiveDesign End-->
+      <!--Imageslider-->
+      <div class="container content-center px-1">
+        <!--Browser-->
+        <div
+          class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative"
+          id="browser"
+        >
+          <img
+            src="{% static 'images/MacBookPro16.png' %}"
+            class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10"
+            alt="MacBookPro16 Bezel"
+          />
+          <span id="desktopSlider">
+            {% if responsiveDesktopImages %} {% for image in
+            responsiveDesktopImages %} {% if forloop.first %}
+            <img
+              src="{{image.upload.url}}"
+              class="relative h-full w-full object-contain xs:object-top lg:object-center"
+              title="{{image.title}}"
+              alt="{{image.title}}"
+            />
+            {% else %}
+            <img
+              src="{{image.upload.url}}"
+              class="hidden relative h-full w-full object-contain xs:object-top lg:object-center"
+              title="{{image.title}}"
+              alt="{{image.title}}"
+            />
+            {% endif %} {% endfor %} {% else %}
+            <img
+              src="{% static 'images/MacBook-RSAutoglas1.png' %}"
+              class="relative h-full w-full object-contain xs:object-top lg:object-center"
+              alt="MacBookPro16 Bezel RS-Autoglas"
+            />
+            <img
+              src="{% static 'images/MacBook-RSAutoglas2.png' %}"
+              class="hidden relative h-full w-full object-contain xs:object-top lg:object-center"
+              alt="MacBookPro16 Bezel RS-Autoglas"
+            />
+            {% endif %}
+          </span>
+        </div>
+        <!--Phone-->
+        <div
+          class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative"
+          id="phone"
+        >
+          <img
+            src="{% static 'images/iPhone-Frame.png' %}"
+            class="absolute h-full w-full object-contain z-10"
+            alt="iPhone-Frame Bezel"
+          />
+          <span id="handySlider">
+            {% if responsiveHandyImages %} {% for image in responsiveHandyImages
+            %} {% if forloop.first %}
+            <img
+              src="{{image.upload.url}}"
+              class="relative h-full w-full object-contain"
+              title="{{image.title}}"
+              alt="{{image.title}}"
+            />
+            {% else %}
+            <img
+              src="{{image.upload.url}}"
+              class="hidden relative h-full w-full object-contain"
+              title="{{image.title}}"
+              alt="{{image.title}}"
+            />
+            {% endif %} {% endfor %} {% else %}
+            <img
+              src="{% static 'images/iPhone-RSAutoglas.png' %}"
+              class="relative h-full w-full object-contain"
+              alt="iPhone-Frame Bezel RS-Autoglas"
+            />
+            <img
+              src="{% static 'images/iPhone-RSAutoglas.png' %}"
+              class="hidden relative h-full w-full object-contain"
+              alt="iPhone-Frame Bezel RS-Autoglas"
+            />
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock ResponsiveDesign %}
+  <!--ResponsiveDesign End-->
 
-
-    <!--Referenzen Beginn
+  <!--Referenzen Beginn
     {% block Referenzen %}
     <section class="bg-blue-100">
       <br/><br/><br/><br/><br/>
@@ -262,349 +402,502 @@
     {% endblock Referenzen %}
     Referenzen End-->
 
-
-    <!--CMS Beginn-->
-    {% block CMSDetail %}
-    <section class="-scroll-my-14" id="Cms">
-      <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
-        <div class="relative isolate overflow-visible px-6 pt-16 sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 lg:mt-20">
-          <!-- Foto-PC -->
-          <div class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-2/3 overflow-hidden shadow-2xl rounded-md hidden lg:block">
-            <img class="absolute left-0 top-0 w-[45rem] max-w-none" title="{% if cmsImage %}{{cmsImage.title}}{% endif %}" src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}" alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}">
-          </div>
-          <div class="mx-auto max-w-[30rem] lg:mx-0 lg:flex-auto lg:py-16 lg:text-left">
-            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-             {{cmsText.header}}
-            </h3>
-            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">{{cmsText.title}}</h2>
-            <p class="mt-6 text-base leading-7 md:text-lg text-gray-600">
-              {{cmsText.description}}
-            </p>
-            <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
-              <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">{{cmsText.buttonText}}</a>
-              <a href="#" class="text-sm font-semibold leading-6">Erfahre mehr <span aria-hidden="true">→</span></a>
-            </div>
-            <!-- Foto-Mobil -->
-            <div class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
-              <img class="absolute  left-0 top-0 w-[50rem] max-w-none" title="{% if cmsImage %}{{cmsImage.title}}{% endif %}" src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}" alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}">
-            </div>
-          </div>
+  <!--CMS Beginn-->
+  {% block CMSDetail %}
+  <section class="-scroll-my-14" id="Cms">
+    <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
+      <div
+        class="relative isolate overflow-visible px-6 pt-16 sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 lg:mt-20"
+      >
+        <!-- Foto-PC -->
+        <div
+          class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-2/3 overflow-hidden shadow-2xl rounded-md hidden lg:block"
+        >
+          <img
+            class="absolute left-0 top-0 w-[45rem] max-w-none"
+            title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+            src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
+            alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+          />
         </div>
-      </div>
-    </section>
-    {% endblock CMSDetail %}
-    <!--CMS End-->
-
-
-    <!--Skills Beginn-->
-    {% block Skills %}
-    <section class="scroll-my-4" id="Skills">
-      <div class="pb-20 sm:pb-32 pt-20 sm:pt-20">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-          <div class="mx-auto max-w-2xl lg:text-center">
-            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-              KNOW-HOW
-             </h3>
-            <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Fähigkeiten & Kenntnisse</h2>
-            <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum an Fähigkeiten und Kompetenzen, um Ihre digitalen Projekte zum Erfolg zu führen. Unser Skillset umfasst die neuesten Technologien, um funktionale und benutzerfreundliche Websites zu gestalten.</p>
-          </div>
-          <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
-            <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16">
-              <div class="relative">
-                <dt class="text-base font-semibold leading-7 text-gray-900">Designkonzept</dt>
-                <dd class="mt-2 text-base leading-7 text-gray-600">Unser Designkonzept basiert auf der Idee, dass jede Website einzigartig sein sollte, um die Identität Ihres Unternehmens bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte Lösungen, die auf Ihre speziellen Anforderungen zugeschnitten sind. Unsere Designs sind benutzerorientiert, um eine bestmögliche Erfahrung auf Ihrer Website sicherzustellen</dd>
-              </div>
-              <div class="relative">
-                <dt class="text-base font-semibold leading-7 text-gray-900">SEO Strategien</dt>
-                <dd class="mt-2 text-base leading-7 text-gray-600">Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und nutzen Blogs als leistungsstarkes Werkzeug, um organischen Traffic zu generieren. Unsere Strategien umfassen Keyword-Recherche, mobile Optimierung und die Erstellung hochwertiger Blog-Inhalte. Durch unser CMS-System können Sie Blogs jeder Zeit selber erstellen und anpassen.</dd>
-              </div>
-              <div class="relative">
-                <dt class="text-base font-semibold leading-7 text-gray-900">Technischen Fähigkeiten</dt>
-                <dd class="mt-2 text-base leading-7 text-gray-600">Unsere technischen Fähigkeiten bilden das Fundament unserer Dienstleistungen. Von der Frontend-Entwicklung bis zur Backend-Programmierung sind wir in der Lage, Websites zu gestalten, die nicht nur visuell ansprechend sind, sondern auch reibungslos funktionieren und den neuesten technischen Standards entsprechen.</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </section>
-    {% endblock Skills %}
-    <!--Skills End-->
-
-
-
-    <!--Pricing Beginn-->
-    {% block Pricing %}
-    <section class="scroll-my-4" id="Preise">
-      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-        <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
-          <div>
-            <h3 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-              {{priceText.header}}
-            </h3>
-          </div>
-          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto">
-            <span class="relative inline-block">
-              <span class="relative text-gray-900">{{priceText.title}}</span>
-            </span>
+        <div
+          class="mx-auto max-w-[30rem] lg:mx-0 lg:flex-auto lg:py-16 lg:text-left"
+        >
+          <h3
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+          >
+            {{cmsText.header}}
+          </h3>
+          <h2
+            class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900"
+          >
+            {{cmsText.title}}
           </h2>
-          <p class="text-base text-gray-700 md:text-lg">
-            {{priceText.description}}
+          <p class="mt-6 text-base leading-7 md:text-lg text-gray-600">
+            {{cmsText.description}}
           </p>
-        </div>
-        <div class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
-          <div class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
-            <div class="text-center">
-              <div class="text-lg font-semibold">Standard </div>
-              <div class="flex items-center justify-center mt-2">
-                <div class="mr-1 text-5xl font-bold">20 €</div>
-                <div class="text-gray-700">/ Monat</div>
-              </div>
-              <div class="mt-2 space-y-3">
-                <div class="text-black text-lg">250 € Einmalzahlung</div>
-                <div class="text-gray-700">1-Domain</div>
-                <div class="text-gray-700">Cookies</div>
-                <div class="text-gray-700">Optimiert für alle Geräte</div>
-                <div class="text-gray-700">Datenschutz und Impressum</div>
-                <div class="text-gray-700">Funktionen: Karte, Galerie, etc.</div>
-              </div>
-            </div>
-            <div>
-              <a href="{% url 'kontakt' %}" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-                Kontaktieren Sie uns
-              </a>
-              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-                Dieses Angebot gilt für einfaches Webdesign, siehe Vorlagen.
-              </p>
-            </div>
+          <div
+            class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start"
+          >
+            <a
+              href="{% url 'home' %}#Preise"
+              class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm"
+              >{{cmsText.buttonText}}</a
+            >
+            <a href="#" class="text-sm font-semibold leading-6"
+              >Erfahre mehr <span aria-hidden="true">→</span></a
+            >
           </div>
-          <div class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
-            <div class="text-center">
-              <div class="text-lg font-semibold">Dynamische Seite </div>
-              <div class="flex items-center justify-center mt-2">
-                <div class="mr-1 text-5xl font-bold">30 €</div>
-                <div class="text-gray-700">/ Monat</div>
-              </div>
-              <div class="mt-2 space-y-3">
-                <div class="text-black text-lg">500 € Einmalzahlung</div>
-                <div class="text-gray-700">siehe Standard</div>
-                <div class="text-gray-700">+</div>
-                <div class="text-gray-700">Content Management System</div>
-                <div class="text-gray-700">Schulung für die Benutzung</div>
-
-              </div>
-            </div>
-            <div>
-              
-              <a href="{% url 'kontakt' %}" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-                Kontaktieren Sie uns
-              </a>
-              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-                Unser Eigens entwickeltes Content Managment System, individuell angepasst für Ihre Website.
-              </p>
-            </div>
+          <!-- Foto-Mobil -->
+          <div
+            class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden"
+          >
+            <img
+              class="absolute left-0 top-0 w-[50rem] max-w-none"
+              title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+              src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
+              alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+            />
           </div>
-          <div class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
-            <div class="text-center">
-              <div class="text-lg font-semibold">Individuelles Angebot</div>
-              <div class="flex items-center justify-center mt-2">
-                <div class="mr-1 text-5xl font-bold">? €</div>
-                <div class="text-gray-700">/ Monat</div>
-              </div>
-              <div class="mt-2 space-y-3">
-                <div class="text-black text-lg">? € Einmalzahlung</div>
-                <div class="text-gray-700">Gerne erarbeiten wir</div>
-                <div class="text-gray-700">gemeinsam mit Ihnen</div>
-                <div class="text-gray-700">individuelle Softwarelösungen</div>
-                <div class="text-gray-700">und Eigenprogrammierungen</div>
-              </div>
-            </div>
-            <div>
-              <a href="{% url 'kontakt' %}" class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none">
-                Kontaktieren Sie uns
-              </a>
-              <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
-                Dieses Angebot gilt für komplexe und individuelle Lösungen.
-              </p>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-    </section>
-    {% endblock Pricing %}
-    <!--Pricing End-->
-
-
-
-    <!--Team Beginn-->
-    {% block Team %}
-    <section class="scroll-my-4" id="Team">
-      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-        <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
-          <h2 class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
-            {{teamText.header}}
-          </h2>
-          <p class="text-base leading-8 text-gray-600 md:text-lg">
-            {{teamText.description}}
-          </p>
-        </div>
-        <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:max-w-screen-md">
-          <div>
-            <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-              <img class="absolute object-cover w-full h-full rounded-xl" src="{% static 'images/Sebastian.jpeg' %}" alt="Sebastian Rauch"/>
-            </div>
-            <div class="flex flex-col sm:text-center">
-              <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
-              <p class="mb-5 text-xs text-gray-800">Product Manager</p>
-            </div>
-          </div>
-          <div>
-            <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-              <img class="absolute object-cover w-full h-full rounded-xl" src="{% static 'images/Lennert.jpg' %}" alt="Lennert Meißner"/>
-            </div>
-            <div class="flex flex-col sm:text-center">
-              <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
-              <p class="mb-5 text-xs text-gray-800">Development</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    {% endblock Team %}
-    <!--Team End-->
-
-
-
-    <!--U-Boot Beginn-->
-    {% block UBoot %}
-    <section class="h-72">
-      <div class="seaContainer">
-        <div class="submarine__container">
-          <div class="light"></div>
-          <div class="submarine__periscope"></div>
-          <div class="submarine__periscope-glass"></div>
-          <div class="submarine__sail">
-            <div class="submarine__sail-shadow dark1"></div>
-            <div class="submarine__sail-shadow light1"></div>
-            <div class="submarine__sail-shadow dark2"></div>
-          </div>
-          <div class="submarine__body">
-            <div class="submarine__window one"></div>
-            <div class="submarine__window two"></div>
-            <div class="submarine__shadow-dark"></div>
-            <div class="submarine__shadow-light"></div>
-            <div class="submarine__shadow-arcLight"></div>
-          </div>
-          <div class="submarine__propeller">
-            <div class="propeller__perspective">
-              <div class="submarine__propeller-parts darkOne"></div>
-              <div class="submarine__propeller-parts lightOne"></div>
-            </div>
-          </div>
-        </div>
-        <div class="bubbles__container">
-          <span class="bubbles bubble-1"></span>
-          <span class="bubbles bubble-2"></span>
-          <span class="bubbles bubble-3"></span>
-          <span class="bubbles bubble-4"></span>
-        </div>
-        <div class="ground__container">
-          <div class="ground ground1">
-            <span class="up-1"></span>
-            <span class="up-2"></span>
-            <span class="up-3"></span>
-            <span class="up-4"></span>
-            <span class="up-5"></span>
-            <span class="up-6"></span>
-            <span class="up-7"></span>
-            <span class="up-8"></span>
-            <span class="up-9"></span>
-            <span class="up-10"></span>
-          </div>
-          <div class="ground ground2">
-            <span class="up-1"></span>
-            <span class="up-2"></span>
-            <span class="up-3"></span>
-            <span class="up-4"></span>
-            <span class="up-5"></span>
-            <span class="up-6"></span>
-            <span class="up-7"></span>
-            <span class="up-8"></span>
-            <span class="up-9"></span>
-            <span class="up-10"></span>
-            <span class="up-11"></span>
-            <span class="up-12"></span>
-            <span class="up-13"></span>
-            <span class="up-14"></span>
-            <span class="up-15"></span>
-            <span class="up-16"></span>
-            <span class="up-17"></span>
-            <span class="up-18"></span>
-            <span class="up-19"></span>
-            <span class="up-20"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-    {% endblock UBoot %}
-    <!--U-Boot End-->
-
-  </div>
-
-  <!--FAQ Beginn-->
-  {% block FAQ %}
-  <section itemscope itemtype="https://schema.org/FAQPage" class="bg-gray-700 text-white -mt-5">
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-      <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
-        <div class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
-          <div>
-            <p class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-white uppercase rounded-full bg-teal-accent-400">
-              FAQ
-            </p>
-          </div>
-          <h2 class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto">
-            <span class="relative inline-block">
-              <span class="relative">Häufig gestellte Fragen</span>
-            </span>
-          </h2>
-          <p class="text-base text-white md:text-lg">
-            Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir
-            das wichtigste hier zu beantworten. Bei weiteren Fragen können Sie
-            sich jederzeit gerne melden.
-          </p>
-        </div>
-        <div class="space-y-4">
-          {% csrf_token %}
-          {% for faq in FAQ %}
-          
-          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question" class="border-b">
-            <button type="button" aria-label="Open item" title="Open item" class="flex items-center justify-between w-full p-4 focus:outline-none faq-toggle">
-              <div itemprop="name" class="text-lg font-medium">
-               {{ faq.question }}
-              </div>
-              <svg viewBox="0 0 24 24" class="w-3 text-gray-600 faq-arrow">
-                <polyline fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" points="2,7 12,17 22,7" stroke-linejoin="round"></polyline>
-              </svg>
-            </button>
-            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="p-4 pt-0 hidden faq-content">
-              <div itemprop="text" class="text-white">
-                {{ faq.answer }}
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-
         </div>
       </div>
     </div>
   </section>
-  {% endblock FAQ %}
-  <!--FAQ End-->
+  {% endblock CMSDetail %}
+  <!--CMS End-->
 
-{% endblock content %}
+  <!--Skills Beginn-->
+  {% block Skills %}
+  <section class="scroll-my-4" id="Skills">
+    <div class="pb-20 sm:pb-32 pt-20 sm:pt-20">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl lg:text-center">
+          <h3
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+          >
+            KNOW-HOW
+          </h3>
+          <h2
+            class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+          >
+            Fähigkeiten & Kenntnisse
+          </h2>
+          <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
+            Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum
+            an Fähigkeiten und Kompetenzen, um Ihre digitalen Projekte zum
+            Erfolg zu führen. Unser Skillset umfasst die neuesten Technologien,
+            um funktionale und benutzerfreundliche Websites zu gestalten.
+          </p>
+        </div>
+        <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
+          <dl
+            class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16"
+          >
+            <div class="relative">
+              <dt class="text-base font-semibold leading-7 text-gray-900">
+                Designkonzept
+              </dt>
+              <dd class="mt-2 text-base leading-7 text-gray-600">
+                Unser Designkonzept basiert auf der Idee, dass jede Website
+                einzigartig sein sollte, um die Identität Ihres Unternehmens
+                bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte
+                Lösungen, die auf Ihre speziellen Anforderungen zugeschnitten
+                sind. Unsere Designs sind benutzerorientiert, um eine
+                bestmögliche Erfahrung auf Ihrer Website sicherzustellen
+              </dd>
+            </div>
+            <div class="relative">
+              <dt class="text-base font-semibold leading-7 text-gray-900">
+                SEO Strategien
+              </dt>
+              <dd class="mt-2 text-base leading-7 text-gray-600">
+                Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und
+                nutzen Blogs als leistungsstarkes Werkzeug, um organischen
+                Traffic zu generieren. Unsere Strategien umfassen
+                Keyword-Recherche, mobile Optimierung und die Erstellung
+                hochwertiger Blog-Inhalte. Durch unser CMS-System können Sie
+                Blogs jeder Zeit selber erstellen und anpassen.
+              </dd>
+            </div>
+            <div class="relative">
+              <dt class="text-base font-semibold leading-7 text-gray-900">
+                Technischen Fähigkeiten
+              </dt>
+              <dd class="mt-2 text-base leading-7 text-gray-600">
+                Unsere technischen Fähigkeiten bilden das Fundament unserer
+                Dienstleistungen. Von der Frontend-Entwicklung bis zur
+                Backend-Programmierung sind wir in der Lage, Websites zu
+                gestalten, die nicht nur visuell ansprechend sind, sondern auch
+                reibungslos funktionieren und den neuesten technischen Standards
+                entsprechen.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock Skills %}
+  <!--Skills End-->
 
-{% block javascriptend %}
-{% compress js inline %}
-  <script defer src="{% static 'js/home.js' %}"></script>
-{% endcompress js %}
-{% endblock javascriptend %}
+  <!--Pricing Beginn-->
+  {% block Pricing %}
+  <section class="scroll-my-4" id="Preise">
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+      >
+        <div>
+          <h3
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+          >
+            {{priceText.header}}
+          </h3>
+        </div>
+        <h2
+          class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto"
+        >
+          <span class="relative inline-block">
+            <span class="relative text-gray-900">{{priceText.title}}</span>
+          </span>
+        </h2>
+        <p class="text-base text-gray-700 md:text-lg">
+          {{priceText.description}}
+        </p>
+      </div>
+      <div
+        class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto"
+      >
+        <div
+          class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Standard</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">20 €</div>
+              <div class="text-gray-700">/ Monat</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-black text-lg">250 € Einmalzahlung</div>
+              <div class="text-gray-700">1-Domain</div>
+              <div class="text-gray-700">Cookies</div>
+              <div class="text-gray-700">Optimiert für alle Geräte</div>
+              <div class="text-gray-700">Datenschutz und Impressum</div>
+              <div class="text-gray-700">Funktionen: Karte, Galerie, etc.</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="{% url 'kontakt' %}"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Dieses Angebot gilt für einfaches Webdesign, siehe Vorlagen.
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Dynamische Seite</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">30 €</div>
+              <div class="text-gray-700">/ Monat</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-black text-lg">500 € Einmalzahlung</div>
+              <div class="text-gray-700">siehe Standard</div>
+              <div class="text-gray-700">+</div>
+              <div class="text-gray-700">Content Management System</div>
+              <div class="text-gray-700">Schulung für die Benutzung</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="{% url 'kontakt' %}"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Unser Eigens entwickeltes Content Managment System, individuell
+              angepasst für Ihre Website.
+            </p>
+          </div>
+        </div>
+        <div
+          class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
+        >
+          <div class="text-center">
+            <div class="text-lg font-semibold">Individuelles Angebot</div>
+            <div class="flex items-center justify-center mt-2">
+              <div class="mr-1 text-5xl font-bold">? €</div>
+              <div class="text-gray-700">/ Monat</div>
+            </div>
+            <div class="mt-2 space-y-3">
+              <div class="text-black text-lg">? € Einmalzahlung</div>
+              <div class="text-gray-700">Gerne erarbeiten wir</div>
+              <div class="text-gray-700">gemeinsam mit Ihnen</div>
+              <div class="text-gray-700">individuelle Softwarelösungen</div>
+              <div class="text-gray-700">und Eigenprogrammierungen</div>
+            </div>
+          </div>
+          <div>
+            <a
+              href="{% url 'kontakt' %}"
+              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+            >
+              Kontaktieren Sie uns
+            </a>
+            <p
+              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+            >
+              Dieses Angebot gilt für komplexe und individuelle Lösungen.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock Pricing %}
+  <!--Pricing End-->
+
+  <!--Team Beginn-->
+  {% block Team %}
+  <section class="scroll-my-4" id="Team">
+    <div
+      class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+    >
+      <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
+        <h2
+          class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+        >
+          {{teamText.header}}
+        </h2>
+        <p class="text-base leading-8 text-gray-600 md:text-lg">
+          {{teamText.description}}
+        </p>
+      </div>
+      {% if teamMembers %}
+      <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:max-w-screen-md">
+        {% for member in teamMembers %}
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded-xl"
+              src="{{ member.image }}"
+              alt="{{ member.full_name }}"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">
+              {{ member.full_name }}
+            </p>
+            <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:max-w-screen-md">
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded-xl"
+              src="{% static 'images/Sebastian.jpeg' %}"
+              alt="Sebastian Rauch"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
+            <p class="mb-5 text-xs text-gray-800">Product Manager</p>
+          </div>
+        </div>
+        <div>
+          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+            <img
+              class="absolute object-cover w-full h-full rounded-xl"
+              src="{% static 'images/Lennert.jpg' %}"
+              alt="Lennert Meißner"
+            />
+          </div>
+          <div class="flex flex-col sm:text-center">
+            <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
+            <p class="mb-5 text-xs text-gray-800">Development</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endblock Team %}
+  <!--Team End-->
+
+  <!--U-Boot Beginn-->
+  {% block UBoot %}
+  <section class="h-72">
+    <div class="seaContainer">
+      <div class="submarine__container">
+        <div class="light"></div>
+        <div class="submarine__periscope"></div>
+        <div class="submarine__periscope-glass"></div>
+        <div class="submarine__sail">
+          <div class="submarine__sail-shadow dark1"></div>
+          <div class="submarine__sail-shadow light1"></div>
+          <div class="submarine__sail-shadow dark2"></div>
+        </div>
+        <div class="submarine__body">
+          <div class="submarine__window one"></div>
+          <div class="submarine__window two"></div>
+          <div class="submarine__shadow-dark"></div>
+          <div class="submarine__shadow-light"></div>
+          <div class="submarine__shadow-arcLight"></div>
+        </div>
+        <div class="submarine__propeller">
+          <div class="propeller__perspective">
+            <div class="submarine__propeller-parts darkOne"></div>
+            <div class="submarine__propeller-parts lightOne"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bubbles__container">
+        <span class="bubbles bubble-1"></span>
+        <span class="bubbles bubble-2"></span>
+        <span class="bubbles bubble-3"></span>
+        <span class="bubbles bubble-4"></span>
+      </div>
+      <div class="ground__container">
+        <div class="ground ground1">
+          <span class="up-1"></span>
+          <span class="up-2"></span>
+          <span class="up-3"></span>
+          <span class="up-4"></span>
+          <span class="up-5"></span>
+          <span class="up-6"></span>
+          <span class="up-7"></span>
+          <span class="up-8"></span>
+          <span class="up-9"></span>
+          <span class="up-10"></span>
+        </div>
+        <div class="ground ground2">
+          <span class="up-1"></span>
+          <span class="up-2"></span>
+          <span class="up-3"></span>
+          <span class="up-4"></span>
+          <span class="up-5"></span>
+          <span class="up-6"></span>
+          <span class="up-7"></span>
+          <span class="up-8"></span>
+          <span class="up-9"></span>
+          <span class="up-10"></span>
+          <span class="up-11"></span>
+          <span class="up-12"></span>
+          <span class="up-13"></span>
+          <span class="up-14"></span>
+          <span class="up-15"></span>
+          <span class="up-16"></span>
+          <span class="up-17"></span>
+          <span class="up-18"></span>
+          <span class="up-19"></span>
+          <span class="up-20"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock UBoot %}
+  <!--U-Boot End-->
+</div>
+
+<!--FAQ Beginn-->
+{% block FAQ %}
+<section
+  itemscope
+  itemtype="https://schema.org/FAQPage"
+  class="bg-gray-700 text-white -mt-5"
+>
+  <div
+    class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
+  >
+    <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
+      <div
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+      >
+        <div>
+          <p
+            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-white uppercase rounded-full bg-teal-accent-400"
+          >
+            FAQ
+          </p>
+        </div>
+        <h2
+          class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto"
+        >
+          <span class="relative inline-block">
+            <span class="relative">Häufig gestellte Fragen</span>
+          </span>
+        </h2>
+        <p class="text-base text-white md:text-lg">
+          Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir das
+          wichtigste hier zu beantworten. Bei weiteren Fragen können Sie sich
+          jederzeit gerne melden.
+        </p>
+      </div>
+      <div class="space-y-4">
+        {% csrf_token %} {% for faq in FAQ %}
+
+        <div
+          itemscope
+          itemprop="mainEntity"
+          itemtype="https://schema.org/Question"
+          class="border-b"
+        >
+          <button
+            type="button"
+            aria-label="Open item"
+            title="Open item"
+            class="flex items-center justify-between w-full p-4 focus:outline-none faq-toggle"
+          >
+            <div itemprop="name" class="text-lg font-medium">
+              {{ faq.question }}
+            </div>
+            <svg viewBox="0 0 24 24" class="w-3 text-gray-600 faq-arrow">
+              <polyline
+                fill="white"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                points="2,7 12,17 22,7"
+                stroke-linejoin="round"
+              ></polyline>
+            </svg>
+          </button>
+          <div
+            itemscope
+            itemprop="acceptedAnswer"
+            itemtype="https://schema.org/Answer"
+            class="p-4 pt-0 hidden faq-content"
+          >
+            <div itemprop="text" class="text-white">{{ faq.answer }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock FAQ %}
+<!--FAQ End-->
+
+{% endblock content %} {% block javascriptend %} {% compress js inline %}
+<script defer src="{% static 'js/home.js' %}"></script>
+{% endcompress js %} {% endblock javascriptend %}
