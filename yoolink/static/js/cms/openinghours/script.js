@@ -36,16 +36,17 @@ $(document).ready(function () {
  
         var formData = new FormData();
         formData.append('opening_hours', JSON.stringify(openingHours))
-        formData.append('vacation', $('#vacation').prop('checked')); // Convert boolean to string
+        formData.append('vacation', $('#vacationSwitch').is(':checked')); // Convert boolean to string
+        const vacationText = $('#vacationText').val();
         formData.append('vacationText', vacationText);
 
         $.ajax({
-            url: 'update/',
             type: 'POST',
-            dataType: 'json',
+            url: 'update/',
+            data: formData,
             processData: false, // Prevent jQuery from processing the data
             contentType: false, // Prevent jQuery from setting the content type
-            data: formData,
+            dataType: 'json',
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);

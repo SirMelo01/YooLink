@@ -1771,10 +1771,12 @@ def opening_hours_update(request):
 
 
     user_settings = UserSettings.objects.get(user=user) 
-    vacation = request.POST.get('vacation', 'true') == "true"
+    vacation = request.POST.get('vacation', False)
     vacationText = request.POST.get('vacationText')
-    if vacation:
-        user_settings.vacation = vacation
+    if vacation == "true":
+        user_settings.vacation = True
+    else:
+        user_settings.vacation = False
     if vacationText:
         user_settings.vacationText = vacationText
     user_settings.save()
