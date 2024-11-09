@@ -43,6 +43,8 @@ $(document).ready(function () {
             url: 'update/',
             type: 'POST',
             dataType: 'json',
+            processData: false, // Prevent jQuery from processing the data
+            contentType: false, // Prevent jQuery from setting the content type
             data: formData,
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
