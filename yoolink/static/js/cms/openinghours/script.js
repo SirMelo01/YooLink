@@ -36,13 +36,9 @@ $(document).ready(function () {
  
         var formData = new FormData();
         formData.append('opening_hours', JSON.stringify(openingHours))
-        const vacationText = $('#vacationText').text();
-        console.log(vacation)
-        console.log(vacationText)
-        console.log(vacation ? "true" : "false")
+        const vacationText = $('#vacationText').val();
         formData.append('vacation', $('#vacation').is(':checked'));
         formData.append('vacationText', vacationText);
-        console.log(formData)
 
         $.ajax({
             url: 'update/',
@@ -56,7 +52,6 @@ $(document).ready(function () {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);
             },
             success: function (response) {
-                console.log(response);
                 if(response.success) {
                     sendNotif(response.success, "success")
                 } else {
@@ -65,7 +60,6 @@ $(document).ready(function () {
                 // Handle success response
             },
             error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
                 sendNotif("Etwas ist schief gelaufen. Versuche es erneut.", "error")
                 // Handle error response
             }
