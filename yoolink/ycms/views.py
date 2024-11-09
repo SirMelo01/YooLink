@@ -1750,9 +1750,6 @@ def opening_hours_update(request):
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
     user = User.objects.filter(is_staff=False).first()
-    user_settings = UserSettings.objects.get(user=user) 
-    vacation = request.POST.get('vacation') == "true"
-    vacationText = request.POST.get('vacationText')
     errors = []
     for item in opening_hours:
         day = item['day']
@@ -1773,6 +1770,9 @@ def opening_hours_update(request):
         opening_hour.save()
 
 
+    user_settings = UserSettings.objects.get(user=user) 
+    vacation = request.POST.get('vacation', 'true') == "true"
+    vacationText = request.POST.get('vacationText')
     if vacation:
         user_settings.vacation = vacation
     if vacationText:

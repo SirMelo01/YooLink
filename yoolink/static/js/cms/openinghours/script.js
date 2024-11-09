@@ -36,17 +36,13 @@ $(document).ready(function () {
  
         var formData = new FormData();
         formData.append('opening_hours', JSON.stringify(openingHours))
-        const vacation = $('#vacation').prop('checked');
-        const vacationText = $('#vacationText').text();
-        formData.append('vacation', vacation ? "true" : "false"); // Convert boolean to string
+        formData.append('vacation', $('#vacation').prop('checked')); // Convert boolean to string
         formData.append('vacationText', vacationText);
 
         $.ajax({
             url: 'update/',
             type: 'POST',
             dataType: 'json',
-            processData: false, // Prevent jQuery from processing the data
-            contentType: false, // Prevent jQuery from setting the content type
             data: formData,
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
