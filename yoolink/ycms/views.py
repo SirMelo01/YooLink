@@ -27,6 +27,9 @@ from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 
+
+
+
 @login_required(login_url='login')
 def upload(request):
 
@@ -161,38 +164,43 @@ def images_view(request):
     return render(request, "pages/cms/images.html", {"files": files})
 
 
-# Resize the image (Aufloesung wird geaendert)
+
+
 def resize_image(image):
-    
+    """
+    Resize the image without changing its resolution and format.
+    """
     img = Image.open(image)
     format = img.format
-    img = img.resize((int(img.width), int(img.height)), resample=Image.LANCZOS)
-    img.info['dpi'] = (72,72)
-
+    img = img.resize((int(img.width), int(img.height)), resample=Image.Resampling.LANCZOS)
+    img.info['dpi'] = (72, 72)
+    
     buffer = BytesIO()
-
     img.save(buffer, format=format)
-
+    
     file = InMemoryUploadedFile(
         buffer,
         None,
         f"{image.name.split('.')[0]}.{format.lower()}",
-        "image/{format.lower()}",
+        f"image/{format.lower()}",
         buffer.getbuffer().nbytes,
         None
     )
     return file
 
-# Pixelgroese wird auf maximale Breite gesetzt
-def scale_image(image):
+
+def scale_image(image, max_dimensions=(1920, 1920)):
+    """
+    Scale the image dimensions to fit within max_dimensions while maintaining the aspect ratio.
+    """
     img = Image.open(image)
     format = img.format
-    img.thumbnail((1920,1920), Image.ANTIALIAS)
+    img.thumbnail(max_dimensions, Image.Resampling.LANCZOS)
+    
     buffer = BytesIO()
-
     img.save(buffer, format=format, quality=100)
     buffer.seek(0)
-
+    
     file = InMemoryUploadedFile(
         buffer,
         None,
@@ -201,36 +209,45 @@ def scale_image(image):
         buffer.tell(),
         None
     )
-
     return file
 
 
-# Compress the image (Maximale Groese auf Limit setzten)
-def compress_image(image):
+def compress_image(image, max_size_kb=500):
+    """
+    Compress the image to ensure its size is under max_size_kb.
+    """
     img = Image.open(image)
     buffer = BytesIO()
+    
+    target_size = max_size_kb * 1024  # Convert KB to bytes
+    quality = 95  # Start with high quality
+    format = "JPEG"  # Use JPEG for better compression
 
-    target_size = 500 * 1024 # 500 KB
-    quality = 100
-    format = img.format
-    img.save(buffer, format=format, quality=quality)
-    while buffer.tell() > target_size and quality > 5:
+    # Convert to JPEG and remove alpha channel if necessary
+    if img.mode in ("RGBA", "P"):  # Handle transparency
+        img = img.convert("RGB")
+    
+    while True:
         buffer.seek(0)
         buffer.truncate()
-        quality -= 5
-
         img.save(buffer, format=format, quality=quality)
+        
+        if buffer.tell() <= target_size or quality <= 5:  # Stop if file size is within limits or quality is too low
+            break
+        
+        quality -= 5  # Gradually reduce quality to compress further
 
+    buffer.seek(0)
     file = InMemoryUploadedFile(
         buffer,
         None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        f"image/{format.lower()}",
+        f"{image.name.split('.')[0]}.jpeg",
+        f"image/jpeg",
         buffer.tell(),
         None
     )
-
     return file
+
 
 
 # --------------- [FAQ] ---------------
