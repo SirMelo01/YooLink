@@ -36,6 +36,22 @@
                         class="end-date w-16 appearance-none rounded border-2 border-gray-200 bg-gray-200 p-2 text-center leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
                         id="title" type="text" value="{{opening_hour.end_time}}" placeholder="13:00" />
                 </div>
+                <label class="relative inline-flex cursor-pointer items-center">
+                    <input type="checkbox" value="" class="peer sr-only lunch-break-switch" {% if opening_hour and opening_hour.has_lunch_break  %}checked{% endif %} />
+                    <div
+                        class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[9px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800">
+                    </div>
+                    <span class="ms-3 font-medium text-gray-900 dark:text-gray-400">Mittagspause</span>
+                </label>
+                <div class="flex">
+                    <input
+                        class="lunch-start w-16 appearance-none rounded border-2 border-gray-200 bg-gray-200 p-2 text-center leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+                        type="text" value="{{opening_hour.lunch_break_start|default:'12:00'}}" placeholder="12:00"  />
+                    <span class="text-center flex self-center mx-2 text-slate-600 font-bold text-lg">-</span>
+                    <input
+                        class="lunch-end w-16 appearance-none rounded border-2 border-gray-200 bg-gray-200 p-2 text-center leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
+                        type="text" value="{{opening_hour.lunch_break_end|default:'13:00'}}" placeholder="13:00" />
+                </div>
             </div>
             {% endfor %}
         </div>

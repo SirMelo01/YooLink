@@ -406,6 +406,20 @@ class OpeningHours(models.Model):
     has_lunch_break = models.BooleanField(default=False)
     lunch_break_start = models.TimeField(blank=True, null=True)
     lunch_break_end = models.TimeField(blank=True, null=True)
+    
+    def calculate_opening_periods(self):
+        """
+        Berechnet die Öffnungszeiten mit Berücksichtigung der Mittagspause.
+        Gibt eine Liste von Zeiträumen zurück, z. B. [(08:00, 12:00), (13:00, 18:00)].
+        """
+        if self.is_open:
+            if self.has_lunch_break and self.lunch_break_start and self.lunch_break_end:
+                return [
+                    (self.start_time, self.lunch_break_start),
+                    (self.lunch_break_end, self.end_time),
+                ]
+            return [(self.start_time, self.end_time)]
+        return []
 
     def get_day(self):
         return dict(self.DAY_CHOICES)[self.day]

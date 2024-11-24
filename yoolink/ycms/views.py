@@ -1759,10 +1759,19 @@ def opening_hours_update(request):
         is_open = bool(item['isOpen'])  # Convert to boolean
         start_time = item['startTime']
         end_time = item['endTime']
+        has_lunch_break = item['hasLunchBreak']
+        lunch_break_start = item['lunchBreakStart']
+        lunch_break_end = item['lunchBreakEnd']
         
         if is_open and (not start_time or not end_time or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', start_time) or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', end_time)):
             errors.append(f"Ungültiges Format für Öffnungszeiten am {day}")
             continue
+        
+        # Validierung für Mittagspause
+        if has_lunch_break:
+            if not lunch_break_start or not lunch_break_end or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', lunch_break_start) or not re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', lunch_break_end):
+                errors.append(f"Ungültiges Format für Mittagspause am {day}.")
+                continue
 
         opening_hour = OpeningHours.objects.get(user=user, day=day)
         opening_hour.is_open = is_open
@@ -1770,6 +1779,9 @@ def opening_hours_update(request):
             opening_hour.start_time = start_time
         if end_time:
             opening_hour.end_time = end_time
+        opening_hour.has_lunch_break = has_lunch_break if has_lunch_break else False
+        opening_hour.lunch_break_start = lunch_break_start if has_lunch_break else None
+        opening_hour.lunch_break_end = lunch_break_end if has_lunch_break else None
         opening_hour.save()
 
 
