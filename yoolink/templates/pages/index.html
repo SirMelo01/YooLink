@@ -265,8 +265,7 @@
             alt="MacBookPro16 Bezel"
           />
           <span id="desktopSlider">
-            {% if responsiveDesktopImages %} {% for image in
-            responsiveDesktopImages %} {% if forloop.first %}
+            {% if responsiveDesktopImages %} {% for image in responsiveDesktopImages %} {% if forloop.first %}
             <img
               src="{{image.upload.url}}"
               class="relative h-full w-full object-contain xs:object-top lg:object-center"
@@ -305,8 +304,7 @@
             alt="iPhone-Frame Bezel"
           />
           <span id="handySlider">
-            {% if responsiveHandyImages %} {% for image in responsiveHandyImages
-            %} {% if forloop.first %}
+            {% if responsiveHandyImages %} {% for image in responsiveHandyImages %} {% if forloop.first %}
             <img
               src="{{image.upload.url}}"
               class="relative h-full w-full object-contain"

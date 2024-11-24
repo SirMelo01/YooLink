@@ -47,25 +47,22 @@ $(document).ready(function () {
  
         var formData = new FormData();
         formData.append('opening_hours', JSON.stringify(openingHours))
-        const vacation = $('#vacation').prop('checked');
-        const vacationText = $('#vacationText').text();
-        formData.append('vacation', vacation ? "true" : "false"); // Convert boolean to string
+        formData.append('vacation', $('#vacationSwitch').is(':checked')); // Convert boolean to string
+        const vacationText = $('#vacationText').val();
         formData.append('vacationText', vacationText);
-        console.log(formData)
 
         $.ajax({
-            url: 'update/',
             type: 'POST',
-            dataType: 'json',
+            url: 'update/',
+            data: formData,
             processData: false, // Prevent jQuery from processing the data
             contentType: false, // Prevent jQuery from setting the content type
-            data: formData,
+            dataType: 'json',
             beforeSend: function (xhr) {
                 // Add the CSRF token to the request headers
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);
             },
             success: function (response) {
-                console.log(response);
                 if(response.success) {
                     sendNotif(response.success, "success")
                 } else {
@@ -74,7 +71,6 @@ $(document).ready(function () {
                 // Handle success response
             },
             error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
                 sendNotif("Etwas ist schief gelaufen. Versuche es erneut.", "error")
                 // Handle error response
             }

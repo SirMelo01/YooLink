@@ -59,7 +59,7 @@
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <a href="/" aria-label="Company" title="Company" class="items-center inline-flex">
+                            <a href="/cms" aria-label="Company" title="Company" class="items-center inline-flex">
                                 <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                 viewBox="0 0 2000 2000" style="enable-background:new 0 0 2000 2000;" xml:space="preserve" class="h-10">
                                   <style type="text/css">
@@ -116,7 +116,7 @@
                                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                         <span class="sr-only">Open user menu</span>
                                         <img class="h-8 w-8 rounded-full"
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            src="{% static 'images/designImg/profil.webp' %}"
                                             alt="">
                                     </button>
                                 </div>
@@ -137,8 +137,6 @@
                                     <!-- Active: "bg-gray-100", Not Active: "" -->
                                     <a href="{% url 'cms:settings-view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
                                         tabindex="-1" id="user-menu-item-0">Dein Profil</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
-                                        tabindex="-1" id="user-menu-item-1">Einstellungen</a>
                                     <a href="{% url 'cms:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
                                         tabindex="-1" id="user-menu-item-2">Abmelden</a>
                                 </div>
@@ -221,8 +219,6 @@
                 <a href="{% url 'cms:cms' %}"
                     class="flex items-center justify-between text-3xl font-bold tracking-tight text-gray-900">
                     <span>YooLink CMS</span>
-                    <span
-                        class="ml-2 px-2 py-1 text-sm font-semibold bg-yellow-400 text-yellow-800 rounded-full">v1.0</span>
                 </a>
                 <a href="{% url 'cms:images-view' %}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Support</a>

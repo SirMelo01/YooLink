@@ -58,8 +58,7 @@ def load_index(request):
     
     # Mitarbeiter
     active_team_members = TeamMember.objects.filter(active=True)
-    if active_team_members.exists():
-        context['teamMembers'] = active_team_members
+    context['teamMembers'] = active_team_members
 
     context.update(get_opening_hours())
 

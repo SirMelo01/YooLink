@@ -66,13 +66,11 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     // Funktion, die ausgeführt wird, wenn die Anfrage erfolgreich ist
-                    console.log(response);
                     sendNotif("Das ausgewählte Bild wurde erfolgreich gelöscht", "success")
                     elem.closest('.relative').remove();
                 },
                 error: function (error) {
                     // Funktion, die ausgeführt wird, wenn ein Fehler auftritt
-                    console.log(error);
                     sendNotif("Beim Löschen des Bildes ist etwas schief gelaufen", "error")
                 }
             });
