@@ -27,9 +27,6 @@ from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 
-
-
-
 @login_required(login_url='login')
 def upload(request):
 

@@ -17,6 +17,11 @@ def get_opening_hours():
     if user_settings.exists():
         user_settings = user_settings.first()
         opening_hours["owner_data"] = user_settings
+        
+    # Muss überall sein
+    if TextContent.objects.filter(name="footer").exists():
+        opening_hours["footerText"] = TextContent.objects.get(name='footer')
+        
     return opening_hours
 
 def load_index(request):
