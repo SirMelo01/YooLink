@@ -826,10 +826,10 @@ def saveTextContent(request):
                 setattr(textContent, f'buttonText_{lang}', buttonText)
                  # Setze das Hauptfeld NUR wenn es die Standardsprache ist
                 if lang == DEFAULT_LANGUAGE:
-                    textContent.header = inputs.get('header', textContent.header)
-                    textContent.title = inputs.get('title', textContent.title)
-                    textContent.description = inputs.get('description', textContent.description)
-                    textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
+                    textContent.header = header
+                    textContent.title = title
+                    textContent.description = description
+                    textContent.buttonText = buttonText
                 textContent.save()
 
                 return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
