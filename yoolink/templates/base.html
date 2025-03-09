@@ -133,58 +133,45 @@
             </li>
           </ul>
           <div class="flex items-center space-x-4">
-            <div class="relative inline-block text-left">
-                <button id="languageDropdownButton"
-                    class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none">
-                    <span id="selectedLangFlag" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
-                    <span id="selectedLangText">
-                        {% if request.LANGUAGE_CODE == 'de' %}
-                            Deutsch
-                        {% else %}
-                            English
-                        {% endif %}
-                    </span>
-                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-        
-                <div id="languageDropdownMenu"
-                    class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    <div class="py-1">
-                        <button data-lang="de" data-flag="de" 
-                            data-text="{% if request.LANGUAGE_CODE == 'de' %}Deutsch{% else %}German{% endif %}"
-                            class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
-                            <span class="fi fi-de mr-2"></span> 
-                            {% if request.LANGUAGE_CODE == 'de' %}
-                                Deutsch
-                            {% else %}
-                                German
-                            {% endif %}
-                        </button>
-                        <button data-lang="en" data-flag="gb" 
-                            data-text="{% if request.LANGUAGE_CODE == 'de' %}Englisch{% else %}English{% endif %}"
-                            class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
-                            <span class="fi fi-gb mr-2"></span> 
-                            {% if request.LANGUAGE_CODE == 'de' %}
-                                Englisch
-                            {% else %}
-                                English
-                            {% endif %}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div class="relative hidden lg:block text-left">
+              <button id="languageDropdownButtonDesktop"
+                  class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none">
+                  <span id="selectedLangFlagDesktop" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
+                  <span id="selectedLangTextDesktop">
+                      {% if request.LANGUAGE_CODE == 'de' %}
+                          Deutsch
+                      {% else %}
+                          English
+                      {% endif %}
+                  </span>
+                  <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                      aria-hidden="true">
+                      <path fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd" />
+                  </svg>
+              </button>
+          
+              <div id="languageDropdownMenuDesktop"
+                  class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div class="py-1">
+                      <button data-lang="de" data-flag="de" data-text="Deutsch"
+                          class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                          <span class="fi fi-de mr-2"></span> Deutsch
+                      </button>
+                      <button data-lang="en" data-flag="gb" data-text="English"
+                          class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                          <span class="fi fi-gb mr-2"></span> English
+                      </button>
+                  </div>
+              </div>
+          </div>
             <a href="{% url 'kontakt' %}" aria-label="Kontakt" title="Kontakt"
                 class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-white transition duration-200 rounded-md shadow-md bg-blue-500 hover:bg-blue-700 focus:shadow-outline focus:outline-none">
                 Kontakt
             </a>
         </div>
                   
-          
           <!-- Mobile menu -->
           <div class="lg:hidden z-50">
             <button aria-label="Open Menu" title="Open Menu" class="p-2 -mr-1 transition duration-100" onclick="toggleMenu()">
@@ -265,6 +252,41 @@
                         class="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-400 rounded-2xl">
                         Kontakt
                       </a>
+                    </li>
+                    <li class="w-full justify-end items-end">
+                      <div class="relative inline-block text-left">
+                        <button id="languageDropdownButtonMobile"
+                          class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none">
+                          <span id="selectedLangFlagMobile" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
+                          <span id="selectedLangTextMobile" class="lg:flex hidden">
+                              {% if request.LANGUAGE_CODE == 'de' %}
+                                  Deutsch
+                              {% else %}
+                                  English
+                              {% endif %}
+                          </span>
+                          <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                              aria-hidden="true">
+                              <path fill-rule="evenodd"
+                                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                  clip-rule="evenodd" />
+                          </svg>
+                      </button>
+
+                      <div id="languageDropdownMenuMobile"
+                          class="hidden absolute left-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                          <div class="py-1">
+                              <button data-lang="de" data-flag="de" data-text="Deutsch"
+                                  class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                                  <span class="fi fi-de mr-2"></span> Deutsch
+                              </button>
+                              <button data-lang="en" data-flag="gb" data-text="English"
+                                  class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                                  <span class="fi fi-gb mr-2"></span> English
+                              </button>
+                          </div>
+                      </div>
+                    </div>
                     </li>
                   </ul>
                 </nav>
@@ -440,7 +462,7 @@
         <div class="flex flex-wrap items-center md:justify-between justify-center">
           <div class="w-full md:w-4/12 px-4 mx-auto text-center">
             <div class="text-sm  font-semibold py-1">
-              &copy; YooLink - Sebastian Rauch, 2023.
+              &copy; YooLink - Sebastian Rauch, {% load tz %} {% now "Y" %}.
             </div>
           </div>
         </div>

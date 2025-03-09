@@ -70,9 +70,6 @@ def load_index(request):
 
     lang = get_language_from_request(request)  # Browser-Sprache holen
     available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
-    print("GET ON YOUR KNEES")
-    print(lang)
-    print(available_languages)
     if lang not in available_languages:
         lang = "en"
 
