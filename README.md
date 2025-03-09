@@ -39,8 +39,8 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f production.yml up
 
 ### Django Migrations:
-        $ docker-compose -f production.yml run --rm django python manage.py migrate
         $ docker-compose -f production.yml run --rm django python manage.py makemigrations
+        $ docker-compose -f production.yml run --rm django python manage.py migrate
 
 ### Superuser erstellen:
         $ docker-compose -f production.yml run --rm django python manage.py createsuperuser
@@ -49,6 +49,11 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 ### File Compress:
         $ docker-compose -f production.yml run --rm django python manage.py collectstatic
         $ docker-compose -f production.yml run --rm django python manage.py compress --force
+
+
+### Load Translations Production:
+        $ docker-compose -f production.yml run --rm django python manage.py makemessages -l de -l en
+        $ docker-compose -f production.yml run --rm django python manage.py compilemessages
 
 ### .django Manuell kopieren:
 -   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden
