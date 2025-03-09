@@ -3,7 +3,7 @@
 {% block title %} {{block.super}} | CMS{% endblock %}
 
 
-
+{% load i18n %}
 {% block content %}
 
 
@@ -11,7 +11,7 @@
 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
     <!-- Image Manage Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Bilder <i class="bi bi-image"></i></h2>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">{% trans "CMS_TITLE_IMAGE" %} <i class="bi bi-image"></i></h2>
         <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
         <p class="mb-4">Momentane Bilder: <strong>{{file_count}}</strong></p>
         <div class="flex-grow"></div>

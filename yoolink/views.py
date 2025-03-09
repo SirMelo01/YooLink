@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from yoolink.ycms.models import FAQ, Message, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
 import datetime
 from django.http import HttpResponseRedirect
-
+from django.utils.translation import get_language_from_request, activate
+from django.conf import settings
 
 def get_opening_hours():
     opening_hours = {}
@@ -66,6 +67,16 @@ def load_index(request):
     context['teamMembers'] = active_team_members
 
     context.update(get_opening_hours())
+
+    lang = get_language_from_request(request)  # Browser-Sprache holen
+    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
+    print("GET ON YOUR KNEES")
+    print(lang)
+    print(available_languages)
+    if lang not in available_languages:
+        lang = "en"
+
+    activate(lang)  # Sprache für diese Anfrage setzen
 
     return render(request, 'pages/index.html', context=context)
 

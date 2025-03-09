@@ -4,7 +4,7 @@
 <link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
 {% endcompress css %} {% endblock css %}
-
+{% load i18n %}
 <!--Kontaktbuttons Beginn-->
 
 {% block kontaktbuttons %}
@@ -127,7 +127,7 @@
         title="Webdesign-Vorlagen"
         class="inline-flex items-center justify-center h-12 px-6 font-medium text-white transition duration-200 rounded"
       >
-        Webdesign-Vorlagen
+      {{heroText.buttonText}}
       </a>
     </div>
     <!--Cardslider End-->
@@ -840,13 +840,11 @@
           class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto"
         >
           <span class="relative inline-block">
-            <span class="relative">Häufig gestellte Fragen</span>
+            <span class="relative">{% trans "FAQ_TITLE" %}</span>
           </span>
         </h2>
         <p class="text-base text-white md:text-lg">
-          Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir das
-          wichtigste hier zu beantworten. Bei weiteren Fragen können Sie sich
-          jederzeit gerne melden.
+          {% trans "FAQ_TEXT" %}
         </p>
       </div>
       <div class="space-y-4">

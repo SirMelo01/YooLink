@@ -3,6 +3,7 @@ Base settings to build other settings files upon.
 """
 from pathlib import Path
 import os
+from django.utils.translation import gettext_lazy as _
 
 import environ
 
@@ -36,6 +37,12 @@ USE_I18N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
+# Languages
+LANGUAGES = (
+    ('de', _('Deutsch')),
+    ('en', _('Englisch')),
+)
+USE_L10N = True  # Lokale Formatierungen aktivieren
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -348,7 +355,7 @@ SOCIALACCOUNT_FORMS = {"signup": "yoolink.users.forms.UserSocialSignupForm"}
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
-INSTALLED_APPS += ["compressor"]
+INSTALLED_APPS += ["compressor", "modeltranslation"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 # django-rest-framework
 # -------------------------------------------------------------------------------

@@ -25,7 +25,37 @@ from django.core.mail import send_mail
 from .serializers import OrderSerializer, OrderItemSerializer
 from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
+from django.middleware.csrf import get_token
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
+
+DEFAULT_LANGUAGE = "en"
+
+def get_active_language(request):
+    """Holt die aktuelle Sprache aus dem Request oder setzt Fallback auf 'en'"""
+    lang = get_language_from_request(request)  # Browser-Sprache holen
+    available_languages = dict(settings.LANGUAGES)  # Unterstützte Sprachen aus settings.py
+
+    if lang not in available_languages:
+        lang = "en"  # Standard-Sprache setzen
+
+    activate(lang)  # Sprache für diese Anfrage aktiv setzen
+    return lang
+
+def set_language(request, lang_code):
+    """
+    Speichert die gewählte Sprache in einem Cookie und lädt die Seite neu.
+    """
+
+    available_languages = dict(settings.LANGUAGES)
+    if lang_code not in available_languages:
+        return JsonResponse({'error': 'Invalid language'}, status=400)
+
+    activate(lang_code)  # Sprache setzen
+
+    response = JsonResponse({'message': 'Language changed', 'language': lang_code})
+    response.set_cookie('django_language', lang_code, max_age=60 * 60 * 24 * 30)  # 30 Tage speichern
+    response.set_cookie('csrftoken', get_token(request))  # Falls CSRF-Token benötigt wird
+    return response
 
 @login_required(login_url='login')
 def upload(request):
@@ -123,8 +153,13 @@ def update_file(request, id):
         title = request.POST.get('title', '')
         place = request.POST.get('place', '')
         file = fileentry.objects.get(id=id)
+        lang = get_active_language(request)
         if title:
-            file.title = title
+            setattr(file, f'title_{lang}', title)
+
+            # Falls Standardsprache → auch Hauptfeld setzen
+            if lang == DEFAULT_LANGUAGE:
+                file.title = title
         if place and not place == 'nothing':
             if fileentry.objects.filter(place=place).exists():
                 extra = fileentry.objects.get(place=place)
@@ -245,35 +280,63 @@ def compress_image(image, max_size_kb=500):
     )
     return file
 
-
+from django.utils.translation import get_language_from_request, activate
 
 # --------------- [FAQ] ---------------
 @login_required(login_url='login')
 def faq_view(request):
+    lang = get_active_language(request)
+    activate(lang)
     data = {
-        "faqs":  FAQ.objects.all()
+        "faqs":  FAQ.objects.all(),
+        "selected_language": lang
     }
     return render(request, "pages/cms/faq.html", data)
 
 # Update or create FAQ
 @login_required(login_url='login')
 def update_faq(request):
-    # Update specific FAQ
+    """FAQ aktualisieren oder neu erstellen, mit Unterstützung für Mehrsprachigkeit"""
+    lang = get_active_language(request)  # Aktuelle Sprache holen
+
     if request.method == 'POST':
         faq_id = request.POST.get('faq_id')
-        faq = FAQ.objects.get(id=faq_id)
-        faq.question = request.POST.get('question')
-        faq.answer = request.POST.get('answer')
+        faq = get_object_or_404(FAQ, id=faq_id)
+
+        question = request.POST.get('question')
+        answer = request.POST.get('answer')
+        # Dynamisch die Sprachvarianten setzen
+        setattr(faq, f'question_{lang}', question)
+        setattr(faq, f'answer_{lang}', answer)
+        # Falls Standardsprache → auch Hauptfeld setzen
+        if lang == DEFAULT_LANGUAGE:
+            faq.question = question
+            faq.answer = answer
         faq.save()
+
         return JsonResponse({'success': True})
-    # Create new FAQ
+
     elif request.method == 'GET':
         new_question = request.GET.get('question')
         new_answer = request.GET.get('answer')
-        faq = FAQ(question=new_question, answer=new_answer)
-        faq.save()
-        return JsonResponse({'id': faq.id, 'question': faq.question, 'answer': faq.answer, 'order': faq.order, 'success': True})
-    
+
+        # Neues FAQ mit Hauptfeld (falls Standardsprache) und Sprachfeld erstellen
+        faq_data = {f'question_{lang}': new_question, f'answer_{lang}': new_answer}
+
+        if lang == DEFAULT_LANGUAGE:
+            faq_data["question"] = new_question
+            faq_data["answer"] = new_answer
+
+        faq = FAQ.objects.create(**faq_data)
+
+        return JsonResponse({
+            'id': faq.id,
+            'question': getattr(faq, f'question_{lang}'),
+            'answer': getattr(faq, f'answer_{lang}'),
+            'order': faq.order,
+            'success': True
+        })
+
     return JsonResponse({'success': False})
 
 # Delete FAQ
@@ -457,14 +520,27 @@ def get_galery_images(request):
     
 @login_required(login_url='login')
 def update_galery_image(request, id):
+    """Aktualisiert ein GaleryImage mit mehrsprachiger Speicherung"""
     if request.method == 'POST':
+        lang = get_active_language(request)
+        DEFAULT_LANGUAGE = "de"
+
         title = request.POST.get('title', '')
-        file = GaleryImage.objects.get(id=id)
+
+        galery_image = get_object_or_404(GaleryImage, id=id)
+
         if title:
-            file.title = title
-            file.save()
+            setattr(galery_image, f'title_{lang}', title)
+
+            # Falls Standardsprache → auch Hauptfeld setzen
+            if lang == DEFAULT_LANGUAGE:
+                galery_image.title = title
+
+            galery_image.save()
             return JsonResponse({"success": "Bild wurde erfolgreich gespeichert"})
+
         return JsonResponse({"error": "Bitte gebe einen Titel ein!"})
+
     return JsonResponse({"error": "Etwas ist schief gelaufen. Versuche es später nochmal"})
 
 
@@ -487,18 +563,28 @@ def create_galery(request):
 def save_galery(request, id):
     galery = get_object_or_404(Galerie, id=id)
     if request.method == 'POST':
+        lang = get_active_language(request)
         title = request.POST.get('title', '')
         description = request.POST.get('description', '')
-        
-        galery.title = title
-        galery.description = description
         place = request.POST.get('place', 'nothing')
-        if not place == 'nothing':
+
+        
+        setattr(galery, f'title_{lang}', title)
+        # Falls Standardsprache → auch Hauptfeld setzen
+        if lang == DEFAULT_LANGUAGE:
+            galery.title = title
+        setattr(galery, f'description_{lang}', description)
+        # Falls Standardsprache → auch Hauptfeld setzen
+        if lang == DEFAULT_LANGUAGE:
+            galery.description = description
+
+        if place != 'nothing':
             if Galerie.objects.filter(place=place).exists():
                 extra = Galerie.objects.get(place=place)
                 extra.place = "nothing"
                 extra.save()
-        galery.place = place
+            galery.place = place
+
         galery.save()
         return JsonResponse({"success": "Die Galerie wurde erfolgreich gespeichert"})
     return JsonResponse({"error": "Fehler beim Speichern der Galerie"})
@@ -663,6 +749,7 @@ def site_view_main_team(request):
 @login_required(login_url='login')
 def saveTextContent(request):
     if request.method == 'POST':
+        lang = get_active_language(request)
         header = request.POST.get('header', '')
         title = request.POST.get('title', '')
         description = request.POST.get('description', '')
@@ -705,35 +792,50 @@ def saveTextContent(request):
         for custom in customText:
             key = custom['key']
             customKeys.append(key)
-            if TextContent.objects.filter(name=key).exists():
-                inputs = custom['inputs']
-                textContent = TextContent.objects.get(name=key)
-                # Set Values
-                textContent.header = inputs.get('header', textContent.header)
-                textContent.title = inputs.get('title', textContent.title)
-                textContent.description = inputs.get('description', textContent.description)
-                textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
+            inputs = custom['inputs']
+
+            try:
+                with transaction.atomic():  # Sorgt dafür, dass nur ein Prozess die Datenbank ändert
+                    textContent, created = TextContent.objects.get_or_create(name=key)
+
+                # Mehrsprachige Speicherung
+                setattr(textContent, f'header_{lang}', inputs.get('header', ''))
+                setattr(textContent, f'title_{lang}', inputs.get('title', ''))
+                setattr(textContent, f'description_{lang}', inputs.get('description', ''))
+                setattr(textContent, f'buttonText_{lang}', inputs.get('buttonText', ''))
+                 # Setze das Hauptfeld NUR wenn es die Standardsprache ist
+                if lang == DEFAULT_LANGUAGE:
+                    textContent.header = inputs.get('header', textContent.header)
+                    textContent.title = inputs.get('title', textContent.title)
+                    textContent.description = inputs.get('description', textContent.description)
+                    textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
                 textContent.save()
-            else:
-                inputs = custom['inputs']
-                textContent = TextContent.objects.create(name=key, header=inputs.get('header', ''), title=inputs.get('title', ''), description=inputs.get('description', ''), buttonText=inputs.get('buttonText', ''))
-                textContent.save()
+
+            except IntegrityError:
+                return JsonResponse({'error': f'Fehler: {key} existiert bereits'}, status=400)
 
         # Normal Text update
         if not name in customKeys:
-            if TextContent.objects.filter(name=name).exists():
-                # Create Model
-                textContent = TextContent.objects.get(name=name)
-                textContent.header = header
-                textContent.title = title
-                textContent.description = description
-                textContent.buttonText = buttonText
+            try:
+                with transaction.atomic():
+                    textContent, created = TextContent.objects.get_or_create(name=name)
+                
+                setattr(textContent, f'header_{lang}', header)
+                setattr(textContent, f'title_{lang}', title)
+                setattr(textContent, f'description_{lang}', description)
+                setattr(textContent, f'buttonText_{lang}', buttonText)
+                 # Setze das Hauptfeld NUR wenn es die Standardsprache ist
+                if lang == DEFAULT_LANGUAGE:
+                    textContent.header = inputs.get('header', textContent.header)
+                    textContent.title = inputs.get('title', textContent.title)
+                    textContent.description = inputs.get('description', textContent.description)
+                    textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
                 textContent.save()
+
                 return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
-            else:
-                textContent = TextContent.objects.create(name=name, header=header, title=title, description=description, buttonText=buttonText)
-                textContent.save()
-                return JsonResponse({'success': 'Element wurde erfolgreich erstellt'}, status=201)
+
+            except IntegrityError:
+                return JsonResponse({'error': f'Fehler: {name} existiert bereits'}, status=400)
         return JsonResponse({'success': 'Elemente wurden erfolgreich gespeichert'}, status=200)
 
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)

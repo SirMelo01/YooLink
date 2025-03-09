@@ -11,6 +11,12 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f local.yml build
         $ docker-compose -f local.yml up
 
+### Load Translations:
+        - {% load i18n %}
+        - {% trans "FAQ_TITLE" %}
+        $ docker-compose -f local.yml run --rm django python manage.py makemessages -l de -l en
+        $ docker-compose -f local.yml run --rm django python manage.py compilemessages
+
 ### Django Migrations:
         $ docker-compose -f local.yml run --rm django python manage.py makemigrations
         $ docker-compose -f local.yml run --rm django python manage.py migrate 

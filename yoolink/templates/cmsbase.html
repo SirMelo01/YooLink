@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
     <link href="{% static 'css/utils.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
+    <!-- Flag Icons -->
+    <link
+      rel="stylesheet"
+      href="{% static 'css/icons/flag-icons.min.css' %}"
+    />
     {% endcompress css %}
 
     <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
@@ -220,8 +225,51 @@
                     class="flex items-center justify-between text-3xl font-bold tracking-tight text-gray-900">
                     <span>YooLink CMS</span>
                 </a>
-                <a href="{% url 'cms:images-view' %}"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Support</a>
+                <div class="relative inline-block text-left">
+                    <button id="languageDropdownButton"
+                        class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <span id="selectedLangFlag" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
+                        <span id="selectedLangText">
+                            {% if request.LANGUAGE_CODE == 'de' %}
+                                Deutsch
+                            {% else %}
+                                English
+                            {% endif %}
+                        </span>
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+            
+                    <div id="languageDropdownMenu"
+                        class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <div class="py-1">
+                            <button data-lang="de" data-flag="de" 
+                                data-text="{% if request.LANGUAGE_CODE == 'de' %}Deutsch{% else %}German{% endif %}"
+                                class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                                <span class="fi fi-de mr-2"></span> 
+                                {% if request.LANGUAGE_CODE == 'de' %}
+                                    Deutsch
+                                {% else %}
+                                    German
+                                {% endif %}
+                            </button>
+                            <button data-lang="en" data-flag="gb" 
+                                data-text="{% if request.LANGUAGE_CODE == 'de' %}Englisch{% else %}English{% endif %}"
+                                class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
+                                <span class="fi fi-gb mr-2"></span> 
+                                {% if request.LANGUAGE_CODE == 'de' %}
+                                    Englisch
+                                {% else %}
+                                    English
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
         <main>
