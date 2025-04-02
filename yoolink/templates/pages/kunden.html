@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} 
-<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+<script src="{% static 'js/aos.js' %}"></script>
 {% compress css inline %}
 <script>
     AOS.init({
