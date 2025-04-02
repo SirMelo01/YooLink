@@ -1,16 +1,7 @@
 {% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} 
+{% compress css inline %}
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <script src="{% static 'js/aos.js' %}"></script>
-<script>
-  AOS.init({
-    duration: 800, // Dauer der Animation in ms
-    once: true,     // Animation nur beim ersten Scroll
-    easing: 'ease-out',
-    disable: "phone"
-  });
-</script>
-{% compress css inline %}
-
 {% endcompress css %} {% endblock css %}
 {% load i18n %}
 
@@ -323,3 +314,13 @@
   </section>
 
 {% endblock content %} 
+{% block javascriptend %} 
+<script>
+  AOS.init({
+    duration: 800, // Dauer der Animation in ms
+    once: true,     // Animation nur beim ersten Scroll
+    easing: 'ease-out',
+    disable: "phone"
+  });
+</script>
+{% endblock javascriptend %}

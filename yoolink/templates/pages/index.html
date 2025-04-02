@@ -1,12 +1,11 @@
 {% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} 
-<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-<script src="{% static 'js/aos.js' %}"></script>
 {% compress css inline %}
 <link href="{% static 'css/cardslider.css' %}" rel="stylesheet" />
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
-
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+<script src="{% static 'js/aos.js' %}"></script>
 {% endcompress css %} {% endblock css %}
 {% load i18n %}
 <!--Kontaktbuttons Beginn-->
