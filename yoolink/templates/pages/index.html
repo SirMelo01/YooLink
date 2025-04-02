@@ -6,19 +6,6 @@
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
-<script>
-  AOS.init({
-    duration: 800, // Dauer der Animation in ms
-    once: true,     // Animation nur beim ersten Scroll
-    easing: 'ease-out',
-    disable: "phone"
-  });
-</script>
-<style>
-  .aos-scale-fix {
-    transform: scale(0.9);
-  }
-</style>
 
 {% endcompress css %} {% endblock css %}
 {% load i18n %}
@@ -1124,4 +1111,13 @@
   }
 </script>
 
-{% endcompress js %} {% endblock javascriptend %}
+{% endcompress js %}
+<script>
+  AOS.init({
+    duration: 800, // Dauer der Animation in ms
+    once: true,     // Animation nur beim ersten Scroll
+    easing: 'ease-out',
+    disable: "phone"
+  });
+</script>
+{% endblock javascriptend %}
