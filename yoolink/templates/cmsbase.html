@@ -226,10 +226,10 @@
                     <span>YooLink CMS</span>
                 </a>
                 <div class="relative inline-block text-left">
-                    <button id="languageDropdownButton"
+                    <button id="languageDropdownButtonDesktop"
                         class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <span id="selectedLangFlag" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
-                        <span id="selectedLangText">
+                        <span id="selectedLangFlagDesktop" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
+                        <span id="selectedLangTextDesktop">
                             {% if request.LANGUAGE_CODE == 'de' %}
                                 Deutsch
                             {% else %}
@@ -244,7 +244,7 @@
                         </svg>
                     </button>
             
-                    <div id="languageDropdownMenu"
+                    <div id="languageDropdownMenuDesktop"
                         class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div class="py-1">
                             <button data-lang="de" data-flag="de" 
