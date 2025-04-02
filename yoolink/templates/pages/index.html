@@ -3,6 +3,22 @@
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800, // Dauer der Animation in ms
+    once: true,     // Animation nur beim ersten Scroll
+    easing: 'ease-out',
+    disable: "phone"
+  });
+</script>
+<style>
+  .aos-scale-fix {
+    transform: scale(0.9);
+  }
+</style>
+
 {% endcompress css %} {% endblock css %}
 {% load i18n %}
 <!--Kontaktbuttons Beginn-->
@@ -63,18 +79,11 @@
       <div
         class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
       >
-        <div class="text-center">
-          <h1
-            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full"
-          >
-            {{heroText.header}}
-          </h1>
-        </div>
-        <h2
-          class="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center"
+        <h1
+          class="max-w-xl mb-6 mt-8 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center"
         >
           {{heroText.title}}
-        </h2>
+        </h1>
         <p class="text-base leading-7 text-gray-600 md:text-lg">
           {{heroText.description}}
         </p>
@@ -119,17 +128,17 @@
       </div>
     </figure>
     <div
-      class="items-center justify-center mx-auto bg-blue-900 rounded-2xl mt-12"
+    class="inline-flex items-center justify-center mx-auto bg-blue-900 hover:bg-blue-700 rounded-xl mt-12 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1"
     >
       <a
         href="{% url 'designtemplates:designtemplates' %}"
         aria-label="Webdesign-Vorlagen"
-        title="Webdesign-Vorlagen"
-        class="inline-flex items-center justify-center h-12 px-6 font-medium text-white transition duration-200 rounded"
+        class="flex items-center justify-center h-12 px-6 font-medium text-white"
       >
-      {{heroText.buttonText}}
+        {{ heroText.buttonText }}
       </a>
     </div>
+  
     <!--Cardslider End-->
   </div>
 </section>
@@ -159,21 +168,21 @@
           xlink:href="#gentle-wave"
           x="48"
           y="0"
-          fill="rgba(219,234,254,0.7)"
+          fill="rgba(239,246,255,0.7)"
         />
         <use
           xlink:href="#gentle-wave"
           x="48"
           y="3"
-          fill="rgba(219,234,254,0.5)"
+          fill="rgba(239,246,255,0.5)"
         />
         <use
           xlink:href="#gentle-wave"
           x="48"
           y="5"
-          fill="rgba(219,234,254,0.3)"
+          fill="rgba(239,246,255,0.3)"
         />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="#dbeafe" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#eff6ff" />
       </g>
     </svg>
   </div>
@@ -182,18 +191,21 @@
 <!--Wellen End-->
 
 <!--Background-->
-<div class="bg-blue-100">
+<div class="bg-blue-50">
   <!--ResponsiveDesign Beginn -->
   {% block ResponsiveDesign %}
   <section class="scroll-my-4 -mb-0 xs:-mb-48 lg:-mb-0" id="Responsive">
     <div
       class="flex flex-col justify-between max-w-xl px-4 mx-auto lg:pt-16 lg:flex-row md:px-8 lg:max-w-screen-xl"
     >
-      <div class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10">
+      <div 
+        class="pt-14 mb-5 lg:mb-0 lg:pt-32 lg:max-w-lg lg:pr-1 xl:ml-10"
+        data-aos="fade-right"
+        data-aos-delay="100">
         <div class="w-6xl mb-5">
           <div>
             <h3
-              class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+              class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
             >
               {{responsiveText.header}}
             </h3>
@@ -207,7 +219,7 @@
             {{responsiveText.description}}
           </p>
           <br />
-          <div class="flex">
+          <div class="flex" data-aos="fade-up" data-aos-delay="200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -253,7 +265,7 @@
         </div>
       </div>
       <!--Imageslider-->
-      <div class="container content-center px-1">
+      <div class="container content-center px-1" data-aos="fade-left" data-aos-delay="200">
         <!--Browser-->
         <div
           class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative"
@@ -297,6 +309,8 @@
         <div
           class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative"
           id="phone"
+          data-aos="fade-up"
+          data-aos-delay="300"
         >
           <img
             src="{% static 'images/iPhone-Frame.png' %}"
@@ -325,7 +339,7 @@
               alt="iPhone-Frame Bezel RS-Autoglas"
             />
             <img
-              src="{% static 'images/iPhone-RSAutoglas.png' %}"
+              src="{% static 'images/iPhone-RSAutoglas2.png' %}"
               class="hidden relative h-full w-full object-contain"
               alt="iPhone-Frame Bezel RS-Autoglas"
             />
@@ -402,100 +416,109 @@
 
   <!--CMS Beginn-->
   {% block CMSDetail %}
-  <section class="-scroll-my-14" id="Cms">
-    <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
-      <div
-        class="relative isolate overflow-visible px-6 pt-16 sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 lg:mt-20"
-      >
+  <section class="-scroll-my-14 lg:mt-24" id="Cms">
+    <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-4">
+      <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
+        
         <!-- Foto-PC -->
-        <div
-          class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-2/3 overflow-hidden shadow-2xl rounded-md hidden lg:block"
-        >
-          <img
-            class="absolute left-0 top-0 w-[45rem] max-w-none"
-            title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-            src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
-            alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-          />
+        <div 
+          class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
+          data-aos="fade-right"
+          data-aos-delay="100">
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            class="w-full h-auto object-cover rounded-md"
+            title="Demo: CMS-Seite bearbeiten"
+          >
+            <source src="{% static 'images/videos/CMS Preview.mp4' %}" type="video/mp4" />
+            Dein Browser unterstützt kein HTML5-Video.
+          </video>
         </div>
-        <div
-          class="mx-auto max-w-[30rem] lg:mx-0 lg:flex-auto lg:py-16 lg:text-left"
-        >
-          <h3
-            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
-          >
-            {{cmsText.header}}
+  
+        <!-- Text -->
+        <div 
+          class="w-full lg:w-1/2 mt-10 lg:mt-0"
+          data-aos="fade-left"
+          data-aos-delay="200">
+          <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
+            {{ cmsText.header }}
           </h3>
-          <h2
-            class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900"
-          >
-            {{cmsText.title}}
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
+            {{ cmsText.title }}
           </h2>
           <p class="mt-6 text-base leading-7 md:text-lg text-gray-600">
-            {{cmsText.description}}
+            {{ cmsText.description }}
           </p>
-          <div
-            class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start"
-          >
-            <a
-              href="{% url 'home' %}#Preise"
-              class="rounded-md bg-blue-300 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm"
-              >{{cmsText.buttonText}}</a
-            >
-            <a href="#" class="text-sm font-semibold leading-6"
-              >Erfahre mehr <span aria-hidden="true">→</span></a
-            >
+          <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
+            <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-900 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">
+              {{ cmsText.buttonText }}
+            </a>
+            <a href="/cmsinfo" class="text-sm font-semibold leading-6">
+              Erfahre mehr <span aria-hidden="true">→</span>
+            </a>
           </div>
-          <!-- Foto-Mobil -->
-          <div
-            class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden"
+  
+          <!-- Mobile Bild -->
+          <div 
+          class="relative w-full overflow-hidden mt-16 rounded-md shadow-2xl lg:hidden"
+          data-aos="fade-right"
+          data-aos-delay="100">
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            class="w-full h-auto object-cover rounded-md"
+            title="Demo: CMS-Seite bearbeiten"
           >
-            <img
-              class="absolute left-0 top-0 w-[50rem] max-w-none"
-              title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-              src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
-              alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-            />
-          </div>
+            <source src="{% static 'images/videos/CMS Preview.mp4' %}" type="video/mp4" />
+            Dein Browser unterstützt kein HTML5-Video.
+          </video>
         </div>
+        </div>
+        
       </div>
     </div>
   </section>
+  
   {% endblock CMSDetail %}
   <!--CMS End-->
-
+  <div class="h-20 bg-gradient-to-b from-blue-50 to-blue-100"></div>
   <!--Skills Beginn-->
   {% block Skills %}
-  <section class="scroll-my-4" id="Skills">
+  <section class="scroll-my-4 bg-blue-100" id="Skills">
     <div class="pb-20 sm:pb-32 pt-20 sm:pt-20">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl lg:text-center">
-          <h3
-            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
-          >
+        <!-- Headline und Text -->
+        <div class="mx-auto max-w-2xl lg:text-center" data-aos="fade-up">
+          <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
             KNOW-HOW
           </h3>
-          <h2
-            class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
-          >
+          <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Fähigkeiten & Kenntnisse
           </h2>
           <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
-            Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum
-            an Fähigkeiten und Kompetenzen, um Ihre digitalen Projekte zum
-            Erfolg zu führen. Unser Skillset umfasst die neuesten Technologien,
-            um funktionale und benutzerfreundliche Websites zu gestalten.
+            Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum an Fähigkeiten ...
           </p>
         </div>
         <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
           <dl
             class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16"
           >
-            <div class="relative">
-              <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="relative" data-aos="fade-up" data-aos-delay="100">
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-columns-gap text-4xl text-blue-900 p-1"></i>
+                </div>
+              </div>
+              <dt class="text-2xl text-center font-semibold leading-7 text-gray-900">
                 Designkonzept
               </dt>
-              <dd class="mt-2 text-base leading-7 text-gray-600">
+              <dd class="mt-2 text-base text-center leading-7 text-gray-600">
                 Unser Designkonzept basiert auf der Idee, dass jede Website
                 einzigartig sein sollte, um die Identität Ihres Unternehmens
                 bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte
@@ -504,11 +527,17 @@
                 bestmögliche Erfahrung auf Ihrer Website sicherzustellen
               </dd>
             </div>
-            <div class="relative">
-              <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="relative" data-aos="fade-up" data-aos-delay="200">
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-bar-chart text-4xl text-blue-900 p-1"></i>
+                </div>
+              </div>
+              <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
                 SEO Strategien
               </dt>
-              <dd class="mt-2 text-base leading-7 text-gray-600">
+              <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
                 Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und
                 nutzen Blogs als leistungsstarkes Werkzeug, um organischen
                 Traffic zu generieren. Unsere Strategien umfassen
@@ -517,11 +546,17 @@
                 Blogs jeder Zeit selber erstellen und anpassen.
               </dd>
             </div>
-            <div class="relative">
-              <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="relative" data-aos="fade-up" data-aos-delay="300">
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-code-slash text-4xl text-blue-900 p-1"></i>
+                </div>
+              </div>
+              <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
                 Technischen Fähigkeiten
               </dt>
-              <dd class="mt-2 text-base leading-7 text-gray-600">
+              <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
                 Unsere technischen Fähigkeiten bilden das Fundament unserer
                 Dienstleistungen. Von der Frontend-Entwicklung bis zur
                 Backend-Programmierung sind wir in der Lage, Websites zu
@@ -538,18 +573,154 @@
   {% endblock Skills %}
   <!--Skills End-->
 
+  <!-- Section References -->
+  <section id="references" class="bg-blue-100 pb-16 pt-10">
+    <div class="container mx-auto">
+      <div class="flex justify-center mb-12">
+        <div class="max-w-2xl lg:text-center" data-aos="fade-up">
+          <h3
+            class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase "
+          >
+            Referenzen
+          </h3>
+          <h2
+            class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+          >
+            Unsere zufriedenen Kunden
+          </h2>
+          <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
+            Vom Zahnarzt bis zum Reiseanbieter – unsere Kunden kommen aus den unterschiedlichsten Branchen. Was sie verbindet: der Wunsch nach einer modernen, benutzerfreundlichen Website, die überzeugt. Mit durchdachtem Design und technischem Know-how setzen wir jedes Projekt individuell und mit viel Liebe zum Detail um.
+          </p>
+        </div>
+      </div>
+      <div class="mx-auto grid grid-cols-1 gap-3 px-2 text-center md:grid-cols-2 lg:grid-cols-3">
+        <a href="https://zahnarzt-dr-holmer.de/" target="_blank" rel="noopener noreferrer">
+          <article 
+            class="group mb-6 transform cursor-pointer rounded-2xl border-gray-400 border shadow-lg bg-white p-6 transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            data-aos="fade-up"
+            data-aos-delay="100">
+            <div class="relative mb-4 rounded-2xl">
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/ZahnarztHolmer.png' %}" alt="" />
+    
+              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Zahnarzt Holmer" title="Zahnarzt Holmer"  href="https://zahnarzt-dr-holmer.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
+                zahnarzt-dr-holmer.de
+                <svg class="ml-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="mb-auto flex w-full items-center justify-between pb-4">
+              <div class="flex items-center">
+                <div class="pr-3">
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/Holmer-Logo.jpg' %}" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" />
+                </div>
+                <div class="flex flex-1">
+                  <div class="">
+                    <p class="text-sm font-semibold text-left">Zahnarzt Dr. med. dent. Lorenz Holmer</p>
+                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 01.11.2024</p>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </article>
+        </a>
+        
+        <a href="https://uhrmann-reisen.de/" target="_blank" rel="noopener noreferrer">
+          <article 
+            class="group mb-6 transform cursor-pointer rounded-2xl border-gray-400 border shadow-lg bg-white p-6 transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            data-aos="fade-up"
+            data-aos-delay="200">
+          
+            <div class="relative mb-4 rounded-2xl">
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/Uhrmannreisen.png' %}" alt="" />
+    
+              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
+                uhrmann-reisen.de
+                <svg class="ml-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="mb-auto flex w-full items-center justify-between pb-4">
+              <div class="flex items-center">
+                <div class="pr-3">
+                  <h2 class="text-[#592e86] font-bold tracking-wide text-4xl">U</h2>
+                </div>
+                <div class="flex flex-1">
+                  <div class="">
+                    <p class="text-sm font-semibold text-left">Uhrmann Reisen</p>
+                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 10.05.2024</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </a>
+        <a href="https://hd-glas.de/" target="_blank" rel="noopener noreferrer">
+          <article 
+            class="group mb-6 transform cursor-pointer rounded-2xl border-gray-400 border shadow-lg bg-white p-6 transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            data-aos="fade-up"
+            data-aos-delay="300">
+            
+            <div class="relative mb-4 rounded-2xl">
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/HDGlas.png' %}" alt="" />
+    
+              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://hd-glas.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
+                hd-glas.de
+                <svg class="ml-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="mb-auto flex w-full items-center justify-between pb-4">
+              <div class="flex items-center">
+                <div class="pr-3">
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/HDGlas-Logo.png' %}" alt="" />
+                </div>
+                <div class="flex flex-1">
+                  <div class="">
+                    <p class="text-sm font-semibold text-left">HD-Glas Autoglas-Service</p>
+                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 19.04.2024</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </a>
+      </div>
+      <div class="flex justify-center">
+        <div
+          class="inline-flex items-center justify-center mx-auto bg-blue-900 hover:bg-blue-700 rounded-xl mt-12 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1"
+          data-aos="fade-up"
+          data-aos-delay="400">
+            <a
+              href="/kunden"
+              aria-label="Webdesign-Vorlagen"
+              class="flex items-center justify-center h-12 px-6 font-medium text-white"
+            >
+              Zur Kundenübersicht
+            </a>
+          </div>
+      </div>
+    </div>
+    
+  </section>
+
+  <div class="h-20 bg-gradient-to-b from-blue-100 to-blue-200"></div>
   <!--Pricing Beginn-->
   {% block Pricing %}
-  <section class="scroll-my-4" id="Preise">
+  <section class="scroll-my-4 bg-blue-200" id="Preise">
     <div
       class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
     >
       <div
         class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+        data-aos="fade-up"
       >
         <div>
           <h3
-            class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
+            class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
           >
             {{priceText.header}}
           </h3>
@@ -568,6 +739,9 @@
       <div
         class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto"
       >
+      <div 
+        data-aos="fade-right"
+        data-aos-delay="100">
         <div
           class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
         >
@@ -600,8 +774,11 @@
             </p>
           </div>
         </div>
+      </div>
         <div
           class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
+          data-aos="zoom-in"
+          data-aos-delay="200"
         >
           <div class="text-center">
             <div class="text-lg font-semibold">Dynamische Seite</div>
@@ -632,35 +809,39 @@
             </p>
           </div>
         </div>
-        <div
-          class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
-        >
-          <div class="text-center">
-            <div class="text-lg font-semibold">Individuelles Angebot</div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">? €</div>
-              <div class="text-gray-700">/ Monat</div>
+        <div 
+          data-aos="fade-left"
+          data-aos-delay="100">
+          <div
+            class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
+          >
+            <div class="text-center">
+              <div class="text-lg font-semibold">Individuelles Angebot</div>
+              <div class="flex items-center justify-center mt-2">
+                <div class="mr-1 text-5xl font-bold">? €</div>
+                <div class="text-gray-700">/ Monat</div>
+              </div>
+              <div class="mt-2 space-y-3">
+                <div class="text-black text-lg">? € Einmalzahlung</div>
+                <div class="text-gray-700">Gerne erarbeiten wir</div>
+                <div class="text-gray-700">gemeinsam mit Ihnen</div>
+                <div class="text-gray-700">individuelle Softwarelösungen</div>
+                <div class="text-gray-700">und Eigenprogrammierungen</div>
+              </div>
             </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">? € Einmalzahlung</div>
-              <div class="text-gray-700">Gerne erarbeiten wir</div>
-              <div class="text-gray-700">gemeinsam mit Ihnen</div>
-              <div class="text-gray-700">individuelle Softwarelösungen</div>
-              <div class="text-gray-700">und Eigenprogrammierungen</div>
+            <div>
+              <a
+                href="{% url 'kontakt' %}"
+                class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
+              >
+                Kontaktieren Sie uns
+              </a>
+              <p
+                class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
+              >
+                Dieses Angebot gilt für komplexe und individuelle Lösungen.
+              </p>
             </div>
-          </div>
-          <div>
-            <a
-              href="{% url 'kontakt' %}"
-              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
-            >
-              Kontaktieren Sie uns
-            </a>
-            <p
-              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
-            >
-              Dieses Angebot gilt für komplexe und individuelle Lösungen.
-            </p>
           </div>
         </div>
       </div>
@@ -671,43 +852,67 @@
 
   <!--Team Beginn-->
   {% block Team %}
-  <section class="scroll-my-4" id="Team">
+  <section class="scroll-my-4 bg-blue-200" id="Team">
     <div
       class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
     >
-      <div class="mx-auto mb-10 lg:max-w-xl sm:text-center">
-        <h2
-          class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400"
-        >
-          {{teamText.header}}
-        </h2>
-        <p class="text-base leading-8 text-gray-600 md:text-lg">
-          {{teamText.description}}
-        </p>
-      </div>
+    <div class="mx-auto mb-10 lg:max-w-xl text-center" data-aos="fade-up" data-aos-delay="100">
+      <h2
+        class="inline-block px-3 py-1 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
+      >
+        {{teamText.header}}
+      </h2>
+      <h1 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
+        {% if teamText.title %}{{teamText.title}}{% else %}Unser Team{% endif %}
+      </h1>
+      <p class="text-base leading-8 text-gray-600 md:text-lg">
+        {{teamText.description}}
+      </p>
+    </div>
+    
       {% if teamMembers %}
       <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:max-w-screen-md">
         {% for member in teamMembers %}
-        <div>
-          <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
-            <img
-              class="absolute object-cover w-full h-full rounded-xl"
-              src="{{ member.image }}"
-              alt="{{ member.full_name }}"
-            />
-          </div>
-          <div class="flex flex-col sm:text-center">
-            <p class="text-lg font-bold text-blue-900">
-              {{ member.full_name }}
-            </p>
-            <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
-          </div>
-        </div>
+          {% if forloop.counter|divisibleby:2 %}
+            <div class="hey" data-aos="fade-up-left" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+              <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+                <img
+                  class="absolute object-cover w-full h-full rounded-xl"
+                  src="{{ member.image }}"
+                  alt="{{ member.full_name }}"
+                />
+              </div>
+              <div class="flex flex-col sm:text-center">
+                <p class="text-lg font-bold text-blue-900">
+                  {{ member.full_name }}
+                </p>
+                <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
+              </div>
+            </div>
+          {% else %}
+            <div class="hey" data-aos="fade-up-right" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+              <div>
+                <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
+                  <img
+                    class="absolute object-cover w-full h-full rounded-xl"
+                    src="{{ member.image }}"
+                    alt="{{ member.full_name }}"
+                  />
+                </div>
+                <div class="flex flex-col sm:text-center">
+                  <p class="text-lg font-bold text-blue-900">
+                    {{ member.full_name }}
+                  </p>
+                  <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
       {% else %}
       <div class="grid gap-10 mx-auto sm:grid-cols-2 lg:max-w-screen-md">
-        <div>
+        <div data-aos="fade-up-right" data-aos-delay="100">
           <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
             <img
               class="absolute object-cover w-full h-full rounded-xl"
@@ -717,10 +922,10 @@
           </div>
           <div class="flex flex-col sm:text-center">
             <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
-            <p class="mb-5 text-xs text-gray-800">Product Manager</p>
+            <p class="mb-5 text-xs text-gray-800">Produkt Manager</p>
           </div>
         </div>
-        <div>
+        <div data-aos="fade-up-left" data-aos-delay="200">
           <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
             <img
               class="absolute object-cover w-full h-full rounded-xl"
@@ -730,7 +935,7 @@
           </div>
           <div class="flex flex-col sm:text-center">
             <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
-            <p class="mb-5 text-xs text-gray-800">Development</p>
+            <p class="mb-5 text-xs text-gray-800">Entwickler</p>
           </div>
         </div>
       </div>
@@ -742,7 +947,7 @@
 
   <!--U-Boot Beginn-->
   {% block UBoot %}
-  <section class="h-72">
+  <section class="h-72 bg-blue-200">
     <div class="seaContainer">
       <div class="submarine__container">
         <div class="light"></div>
@@ -828,6 +1033,8 @@
     <div class="max-w-xl sm:mx-auto lg:max-w-2xl">
       <div
         class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+        data-aos="fade-up"
+        data-aos-delay="100"
       >
         <div>
           <p
@@ -850,42 +1057,35 @@
       <div class="space-y-4">
         {% csrf_token %} {% for faq in FAQ %}
 
-        <div
-          itemscope
-          itemprop="mainEntity"
-          itemtype="https://schema.org/Question"
-          class="border-b"
-        >
+        <div 
+          class="border border-gray-600 bg-gray-800 rounded-xl shadow-lg hover:shadow-none"
+          data-aos="{% if forloop.counter0|divisibleby:2 %}fade-left{% else %}fade-right{% endif %}"
+          data-aos-delay='{{ forloop.counter0|add:"1" }}00'>
           <button
-            type="button"
-            aria-label="Open item"
-            title="Open item"
-            class="flex items-center justify-between w-full p-4 focus:outline-none faq-toggle"
+            class="w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
+            onclick="toggleFaq(this)"
           >
-            <div itemprop="name" class="text-lg font-medium">
-              {{ faq.question }}
-            </div>
-            <svg viewBox="0 0 24 24" class="w-3 text-gray-600 faq-arrow">
-              <polyline
-                fill="white"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-miterlimit="10"
-                points="2,7 12,17 22,7"
-                stroke-linejoin="round"
-              ></polyline>
+            <span class="flex-1">{{faq.question}}</span>
+            <svg
+              class="faq-icon w-6 h-6 flex-shrink-0 transition-transform duration-300 mt-1"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
           </button>
-          <div
-            itemscope
-            itemprop="acceptedAnswer"
-            itemtype="https://schema.org/Answer"
-            class="p-4 pt-0 hidden faq-content"
-          >
-            <div itemprop="text" class="text-white">{{ faq.answer }}</div>
+
+          <div class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
+            <p class="py-4">
+              {{faq.answer}}
+            </p>
           </div>
         </div>
+        
+        
         {% endfor %}
       </div>
     </div>
@@ -896,4 +1096,31 @@
 
 {% endblock content %} {% block javascriptend %} {% compress js inline %}
 <script defer src="{% static 'js/home.js' %}"></script>
+<script>
+  function toggleFaq(button) {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector("svg");
+
+    const isOpen = content.style.maxHeight && content.style.maxHeight !== "0px";
+
+    // Alle schließen (optional)
+    document.querySelectorAll(".faq-content").forEach((el) => {
+      el.style.maxHeight = null;
+    });
+    document.querySelectorAll(".faq-icon").forEach((svg) => {
+      svg.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      `;
+    });
+
+    // Wenn gerade geschlossen, dann öffnen
+    if (!isOpen) {
+      content.style.maxHeight = content.scrollHeight + "px";
+      icon.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+      `;
+    }
+  }
+</script>
+
 {% endcompress js %} {% endblock javascriptend %}

@@ -1,3 +1,27 @@
+.hover-overline-animation {
+    display: inline-block;
+    position: relative;
+}
+
+.hover-overline-animation::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    top: 0;
+    /* Statt bottom setzen wir es nach oben */
+    left: 0;
+    background-color: #ffffff;
+    transform-origin: top right;
+    transition: transform 0.25s ease-out;
+}
+
+.hover-overline-animation:hover::before {
+    transform: scaleX(1);
+    transform-origin: top left;
+}
+
 /* Alerts
 * @Aziz (https://codepen.io/EL_Aziz/pen/qBEyvMR) - MIT
 */

@@ -25,6 +25,19 @@ def get_opening_hours():
         
     return opening_hours
 
+def load_kunden(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    lang = get_language_from_request(request)  # Browser-Sprache holen
+    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
+    if lang not in available_languages:
+        lang = "en"
+
+    activate(lang)  # Sprache für diese Anfrage setzen
+
+    return render(request, 'pages/kunden.html', context=context)
+
 def load_index(request):
     faq = FAQ.objects.all()
 

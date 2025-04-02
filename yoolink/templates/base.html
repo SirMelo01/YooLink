@@ -27,6 +27,9 @@
       rel="stylesheet"
       href="{% static 'css/icons/flag-icons.min.css' %}"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
 
     <!--<meta name="keywords" content="Yoolink, Webdesign, Homepageerstellung, Agentur, Deggendorf, Internetauftritt">-->
     <meta property="og:type" content="website">
@@ -44,6 +47,7 @@
     {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
       <link href="{% static 'css/utils.css' %}" rel="stylesheet">
+      <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
     {% compress js inline %}
@@ -54,6 +58,18 @@
            https://jquery.org/license/ -->
       <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
       <script src="{% static 'js/cms.js' %}"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          if (cookiefontselect === "true") {
+              
+              const link = document.createElement("link");
+              link.rel = "stylesheet";
+              link.href = "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap";
+              document.head.appendChild(link);
+              
+          }
+      });
+    </script>
     {% endcompress js %}
     
 
@@ -65,7 +81,7 @@
 
   </head>
 
-  <body class="bg-white">
+  <body class="bg-white font-poppins">
     <!--Navbar Beginn-->
     {% block navbar %}
     <nav class="sticky top-0 z-50">
@@ -95,13 +111,13 @@
           <ul class="hidden items-center space-x-8 lg:flex">
             <li>
               <a href="{% url 'home' %}#Responsive" aria-label="Produkt" title="Produkt"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 Responsive
               </a>
             </li>
             <li>
               <a href="{% url 'home' %}#Cms" aria-label="Produkt" title="Produkt"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 Cms
               </a>
             </li>
@@ -115,19 +131,19 @@
             -->
             <li>
               <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 Preise
               </a>
             </li>
             <li>
               <a href="{% url 'home' %}#Team" aria-label="Team" title="Team"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 Team
               </a>
             </li>
             <li>
               <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Vorlagen" title="Vorlagen"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 Vorlagen
               </a>
             </li>
@@ -210,13 +226,13 @@
                   <ul class="space-y-4">
                     <li>
                       <a href="{% url 'home' %}#Responsive" aria-label="Produkt" title="Produkt"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         Responsive
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'home' %}#Cms" aria-label="Produkt" title="Produkt"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         Cms
                       </a>
                     </li>
@@ -231,25 +247,25 @@
                     -->
                     <li>
                       <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         Preise
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'home' %}#Team" aria-label="Team" title="Team"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         Team
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Vorlagen" title="Vorlagen"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         Vorlagen
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'kontakt' %}" aria-label="Sign up" title="Sign up"
-                        class="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-400 rounded-2xl">
+                        class="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-400 rounded-2xl hover-overline-animation">
                         Kontakt
                       </a>
                     </li>
@@ -360,7 +376,28 @@
       <div class="container mx-auto px-4">
         <div class="flex flex-wrap ">
           <div class="w-full lg:w-6/12 px-4">
-           <h4 class="text-3xl fonat-semibold text-center lg:text-left hidden md:block">YooLink</h4>
+            <a href="/" aria-label="Company" title="Company" class="items-center inline-flex">
+
+              <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+              viewBox="0 0 2000 2000" style="enable-background:new 0 0 2000 2000;" xml:space="preserve" class="h-10">
+                <style type="text/css">
+                  .st0{fill:white;stroke:#000000;stroke-miterlimit:10;}
+                </style>
+                <g>
+                  <path class="st0" d="M1803,1153.2c7.9-39.3,12-79.8,12-121.3C1815,688.4,1536.5,410,1193,410c-191.1,0-362.1,86.3-476.2,222.1
+                      c-90.9,108.1-145.5,247.7-145.5,399.9c0,110.7,28.9,214.5,79.6,304.6c95.7-30.8,197.8-47.3,303.7-47.3c19.8,0,39.6,0.5,59.1,1.9
+                      c122.1,7,238.3,36.2,344.5,83.5c82.2,36.4,158.3,83.7,227,139.9c64.7,53.1,122.5,114.1,172,181.8
+                      c-180.5,184.3-432.3,298.8-710.8,298.8c-329.5,0-621.6-160.2-802.7-407.1C122.9,1423.3,51.5,1219.8,51.5,1000
+                      c0-549.5,445.5-995,995-995c294,0,558.4,127.6,740.5,330.4c3.4,3.8,6.7,7.5,9.9,11.3c3.2,3.8,6.5,7.5,9.7,11.4
+                      c88.7,107.4,141.9,245.3,141.9,395.6C1948.5,905.9,1893.9,1045.3,1803,1153.2z"/>
+                  <path class="st0" d="M1735.2,995.9c-38.6,24.8-84.6,39.1-133.8,39.1c-58.4,0-112.1-20.2-154.6-54c-37.9,89-126.2,151.5-229.1,151.5
+                      c-99.6,0-185.7-58.6-225.3-143.3c-40.1,27.8-88.8,44.1-141.3,44.1c-81,0-152.9-38.8-198.5-98.7c27.3-166.9,130.2-308.2,272.5-387.8
+                      c0,0.2,0.2,0,0.2,0c78.4-43.9,168.9-68.8,265.3-68.8c109.2,0,211,32.1,296.2,87.5C1629.6,658,1726.3,815.3,1735.2,995.9z"/>
+                </g>
+              </svg>
+              <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
+            </a>
+            <p class="w-2/3 mt-2 text-sm">Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt.</p>
             <div class="mt-6 lg:mb-0 mb-6 flex justify-center lg:justify-normal ">
               <a href="https://twitter.com/YooLinkDE">
                 <div>
@@ -368,8 +405,7 @@
                       type="button"
                       data-te-ripple-init
                       data-te-ripple-color="light"
-                      class="mb-2 mr-3  rounded px-6 py-2.5 "
-                      style="background-color: #93C5FD">
+                      class="mb-2 mr-3  rounded px-6 py-2.5 bg-blue-500 hover:bg-blue-400">
                       <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-4 w-4"
@@ -387,8 +423,7 @@
                     type="button"
                     data-te-ripple-init
                     data-te-ripple-color="light"
-                    class="mb-2 mr-3  rounded px-6 py-2.5 "
-                    style="background-color: #93C5FD">
+                    class="mb-2 mr-3  rounded px-6 py-2.5 bg-blue-500 hover:bg-blue-400">
                     <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4"
@@ -406,8 +441,7 @@
                     type="button"
                     data-te-ripple-init
                     data-te-ripple-color="light"
-                    class="mb-2  rounded px-6 py-2.5 "
-                    style="background-color: #93C5FD">
+                    class="mb-2  rounded px-6 py-2.5 bg-blue-500 hover:bg-blue-400">
                     <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4"

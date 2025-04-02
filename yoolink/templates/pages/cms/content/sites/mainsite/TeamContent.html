@@ -25,7 +25,10 @@
             <div class="max-w-4xl mb-10 md:mx-auto sm:text-center md:mb-12">
                 <input
                     class="bg-gray-200 mb-4 appearance-none border-2 border-gray-200 rounded-lg w-72 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="header" type="text" value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}UNSER Team{% endif %}">
+                    id="header" type="text" value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Team{% endif %}">
+                  <input
+                    class="bg-gray-200 mb-4 appearance-none border-2 border-gray-200 rounded-lg w-full text-center inline-block py-2 px-4 text-lg font-semibold tracking-wider text-teal-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="title" type="text" value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Unser Team{% endif %}">
                 <textarea rows="7"
                     class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}Wir sind drei Studenten im IT-Bereich und bringen alle eine Faszination und Leidenschaft für Web-Entwicklung mit. Zusammen sind wir das Webdesign Team YooLink aus Deggendorf. Wir freuen uns gemeinsam mit Ihnen eine Lösung zu erstellen.

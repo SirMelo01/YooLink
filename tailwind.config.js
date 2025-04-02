@@ -51,7 +51,11 @@ module.exports = {
       },
       animation: {
         "fade-in-down": "fade-in-down 1.2s ease-out",
-      }
+      },
+      fontFamily: {
+        raleway: ['"Raleway"', 'sans-serif'],
+        poppins: ['"Poppins"', 'poppins-light'],
+      },
     },
   },
   plugins: [],
