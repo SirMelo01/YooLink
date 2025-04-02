@@ -4,11 +4,11 @@
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
+{% endcompress css %} 
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <script src="{% static 'js/aos.js' %}"></script>
-{% endcompress css %} {% endblock css %}
-<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-<script src="{% static 'js/aos.js' %}"></script>
+{% endblock css %}
+
 {% load i18n %}
 <!--Kontaktbuttons Beginn-->
 
@@ -410,21 +410,14 @@
       <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
         
         <!-- Foto-PC -->
-        <div 
-          class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
-          data-aos="fade-right"
-          data-aos-delay="100">
-          <video
-            autoplay
-            muted
-            loop
-            playsinline
-            class="w-full h-auto object-cover rounded-md"
-            title="Demo: CMS-Seite bearbeiten"
-          >
-            <source src="{% static 'images/videos/CMS Preview.mp4' %}" type="video/mp4" />
-            Dein Browser unterstützt kein HTML5-Video.
-          </video>
+        <div
+          class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
+          <img
+            class="absolute left-0 top-0 w-[50rem] max-w-none"
+            title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+            src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
+            alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+          />
         </div>
   
         <!-- Text -->
@@ -451,22 +444,15 @@
           </div>
   
           <!-- Mobile Bild -->
-          <div 
-          class="relative w-full overflow-hidden mt-16 rounded-md shadow-2xl lg:hidden"
-          data-aos="fade-right"
-          data-aos-delay="100">
-          <video
-            autoplay
-            muted
-            loop
-            playsinline
-            class="w-full h-auto object-cover rounded-md"
-            title="Demo: CMS-Seite bearbeiten"
-          >
-            <source src="{% static 'images/videos/CMS Preview.mp4' %}" type="video/mp4" />
-            Dein Browser unterstützt kein HTML5-Video.
-          </video>
-        </div>
+          <div
+             class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
+             <img
+               class="absolute left-0 top-0 w-[50rem] max-w-none"
+               title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+               src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
+               alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
+             />
+          </div>
         </div>
         
       </div>
