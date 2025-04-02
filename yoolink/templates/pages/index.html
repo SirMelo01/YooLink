@@ -410,10 +410,11 @@
       <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
         
         <!-- Foto-PC -->
-        <div
-          class="relative h-80 mt-16 overflow-hidden rounded-md hidden lg:block">
+        <div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
+        data-aos="fade-right"
+        data-aos-delay="100">
           <img
-            class="absolute left-0 top-0 w-[50rem] max-w-none"
+            class="w-full h-auto object-cover"
             title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
             src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
             alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
@@ -424,7 +425,7 @@
         <div 
           class="w-full lg:w-1/2 mt-10 lg:mt-0"
           data-aos="fade-left"
-          data-aos-delay="200">
+          data-aos-delay="100">
           <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
             {{ cmsText.header }}
           </h3>
