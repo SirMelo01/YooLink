@@ -48,7 +48,9 @@ urlpatterns = [
     path('seiten/hauptseite/CMS/', views.site_view_main_cms, name='site_hauptseite_cms'),
     path('seiten/hauptseite/Preis/', views.site_view_main_price, name='site_hauptseite_price'),
     path('seiten/hauptseite/Team/', views.site_view_main_team, name='site_hauptseite_team'),
-    
+    path('seiten/hauptseite/Know-How/', views.site_view_main_know_how, name='site_hauptseite_know_how'),
+    path('seiten/hauptseite/Kunden/', views.site_view_main_kunden, name='site_hauptseite_kunden'),
+    path('seiten/hauptseite/FAQ/', views.site_view_main_faq, name='site_hauptseite_faq'),
     # Products
     path('products/', views.product_view, name='products'),
     path('products/search/', views.product_search, name='product_search'),

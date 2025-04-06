@@ -685,13 +685,16 @@ def all_galerien(request):
     
     return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: GET)'})
 
+######################
+# START SITE CONTENT #
+######################
 
-# Seiten
+# Site Overview
 @login_required(login_url='login')
 def content_view(request):
     return render(request, "pages/cms/content/content.html", {})
 
-# Seiten
+# Main Site
 @login_required(login_url='login')
 def site_view_main(request):
     return render(request, "pages/cms/content/sites/MainSite.html", {})
@@ -707,6 +710,7 @@ def site_view_main_hero(request):
         
     return render(request, "pages/cms/content/sites/mainsite/HeroContent.html", data)
 
+# Main Site - Responsive Section
 @login_required(login_url='login')
 def site_view_main_responsive(request):
     data = {}
@@ -721,6 +725,7 @@ def site_view_main_responsive(request):
 
     return render(request, "pages/cms/content/sites/mainsite/ResponsiveContent.html", data)
 
+# Main Site - CMS Section
 @login_required(login_url='login')
 def site_view_main_cms(request):
     data = {}
@@ -730,6 +735,7 @@ def site_view_main_cms(request):
         data["cmsImage"] = fileentry.objects.get(place='main_cms')
     return render(request, "pages/cms/content/sites/mainsite/CmsContent.html", data)
 
+# Main Site - Price Section
 @login_required(login_url='login')
 def site_view_main_price(request):
     data = {}
@@ -737,6 +743,7 @@ def site_view_main_price(request):
         data["textContent"] = TextContent.objects.get(name='main_price')
     return render(request, "pages/cms/content/sites/mainsite/PriceContent.html", data)
 
+# Main Site - Team Section
 @login_required(login_url='login')
 def site_view_main_team(request):
     data = {}
@@ -745,6 +752,41 @@ def site_view_main_team(request):
 
     return render(request, "pages/cms/content/sites/mainsite/TeamContent.html", data)
 
+# Main Site - Know How Section
+@login_required(login_url='login')
+def site_view_main_know_how(request):
+    data = {}
+    if TextContent.objects.filter(name="main_know_how").exists():
+        data["textContent"] = TextContent.objects.get(name='main_know_how')
+    # Know How contents
+    if TextContent.objects.filter(name="main_know_how_card_1").exists():
+        data["textContentCard1"] = TextContent.objects.get(name='main_know_how_card_1')
+    if TextContent.objects.filter(name="main_know_how_card_2").exists():
+        data["textContentCard2"] = TextContent.objects.get(name='main_know_how_card_2')
+    if TextContent.objects.filter(name="main_know_how_card_3").exists():
+        data["textContentCard3"] = TextContent.objects.get(name='main_know_how_card_3')
+        
+    return render(request, "pages/cms/content/sites/mainsite/KnowHowContent.html", data)
+
+# Main Site - Kunden
+@login_required(login_url='login')
+def site_view_main_kunden(request):
+    data = {}
+    if TextContent.objects.filter(name="main_kunden").exists():
+        data["textContent"] = TextContent.objects.get(name='main_kunden')
+    return render(request, "pages/cms/content/sites/mainsite/KundenContent.html", data)
+
+# Main Site - FAQ
+@login_required(login_url='login')
+def site_view_main_faq(request):
+    data = {}
+    if TextContent.objects.filter(name="main_faq").exists():
+        data["textContent"] = TextContent.objects.get(name='main_faq')
+    return render(request, "pages/cms/content/sites/mainsite/FAQContent.html", data)
+
+######################
+# END SITE CONTENT   #
+######################
 
 @login_required(login_url='login')
 def saveTextContent(request):

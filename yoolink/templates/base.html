@@ -1,4 +1,6 @@
-{% load static i18n compress%}<!DOCTYPE html>
+{% load static i18n compress%}
+{% load i18n %}
+<!DOCTYPE html>
 <html lang="de">
   <head>
     <meta charset="utf-8">
@@ -110,15 +112,15 @@
           </a>
           <ul class="hidden items-center space-x-8 lg:flex">
             <li>
-              <a href="{% url 'home' %}#Responsive" aria-label="Produkt" title="Produkt"
+              <a href="{% url 'home' %}#Responsive" aria-label="Responsive" title="Responsive"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                Responsive
+                {% trans "NAVBAR_RESPONSIVE" %}
               </a>
             </li>
             <li>
-              <a href="{% url 'home' %}#Cms" aria-label="Produkt" title="Produkt"
+              <a href="{% url 'home' %}#Cms" aria-label="CMS" title="CMS"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                Cms
+                {% trans "NAVBAR_CMS" %}
               </a>
             </li>
             <!--
@@ -132,19 +134,19 @@
             <li>
               <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                Preise
+                {% trans "NAVBAR_PRICING" %}
               </a>
             </li>
             <li>
               <a href="{% url 'home' %}#Team" aria-label="Team" title="Team"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                Team
+                {% trans "NAVBAR_TEAM" %}
               </a>
             </li>
             <li>
-              <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Vorlagen" title="Vorlagen"
+              <a href="{% url 'kunden' %}" aria-label="Referenzen" title="Referenzen"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                Vorlagen
+                {% trans "NAVBAR_REFERENCES" %}
               </a>
             </li>
           </ul>
@@ -182,9 +184,9 @@
                   </div>
               </div>
           </div>
-            <a href="{% url 'kontakt' %}" aria-label="Kontakt" title="Kontakt"
+            <a href="{% url 'kontakt' %}" aria-label="{% trans "NAVBAR_CONTACT_BTN" %}" title="{% trans "NAVBAR_CONTACT_BTN" %}"
                 class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-white transition duration-200 rounded-md shadow-md bg-blue-500 hover:bg-blue-700 focus:shadow-outline focus:outline-none">
-                Kontakt
+                {% trans "NAVBAR_CONTACT_BTN" %}
             </a>
         </div>
                   
@@ -227,13 +229,13 @@
                     <li>
                       <a href="{% url 'home' %}#Responsive" aria-label="Produkt" title="Produkt"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        Responsive
+                        {% trans "NAVBAR_RESPONSIVE" %}
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'home' %}#Cms" aria-label="Produkt" title="Produkt"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        Cms
+                        {% trans "NAVBAR_CMS" %}
                       </a>
                     </li>
 
@@ -248,25 +250,25 @@
                     <li>
                       <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        Preise
+                        {% trans "NAVBAR_PRICING" %}
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'home' %}#Team" aria-label="Team" title="Team"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        Team
+                        {% trans "NAVBAR_TEAM" %}
                       </a>
                     </li>
                     <li>
-                      <a href="{% url 'designtemplates:designtemplates' %}" aria-label="Vorlagen" title="Vorlagen"
+                      <a href="{% url 'kunden' %}" aria-label="Referenzen" title="Referenzen"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        Vorlagen
+                        {% trans "NAVBAR_REFERENCES" %}
                       </a>
                     </li>
                     <li>
                       <a href="{% url 'kontakt' %}" aria-label="Sign up" title="Sign up"
                         class="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-400 rounded-2xl hover-overline-animation">
-                        Kontakt
+                        {% trans "NAVBAR_CONTACT_BTN" %}
                       </a>
                     </li>
                     <li class="w-full justify-end items-end">
@@ -397,7 +399,7 @@
               </svg>
               <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
             </a>
-            <p class="w-2/3 mt-2 text-sm">Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt.</p>
+            <p class="w-2/3 mt-2 text-sm">{% trans "FOOTER_HEADING" %}</p>
             <div class="mt-6 lg:mb-0 mb-6 flex justify-center lg:justify-normal ">
               <a href="https://twitter.com/YooLinkDE">
                 <div>
@@ -457,36 +459,33 @@
           </div>
           <div class="w-full lg:w-6/12 flex justify-evenly">
               <div class="px-4">
-                <span class=" uppercase text-sm font-semibold mb-2">Nützliche Links</span>
+                <span class=" uppercase text-sm font-semibold mb-2">{% trans "FOOTER_USEFUL_LINKS" %}</span>
                 <ul class="mt-2 list-unstyled">
                   <li>
-                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'home' %}">Home</a>
+                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'home' %}">{% trans "FOOTER_HOME" %}</a>
                   </li>
                   <li>
-                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'kontakt' %}">Kontakt</a>
+                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'kontakt' %}">{% trans "FOOTER_CONTACT" %}</a>
                   </li>
                   <li>
-                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'designtemplates:designtemplates' %}">Vorlagen</a>
+                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'kunden' %}">{% trans "FOOTER_REFERENCES" %}</a>
                   </li>
                   <li>
-                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'blog:blog' %}">Blog</a>
+                    <a class=" font-semibold block py-1.5 text-sm" href="{% url 'blog:blog' %}">{% trans "FOOTER_BLOG" %}</a>
                   </li>
                 </ul>
               </div>
               <div class=" px-4">
-                <span class="uppercase text-sm font-semibold ">Rechtliches</span>
+                <span class="uppercase text-sm font-semibold ">{% trans "FOOTER_Rechtliches" %}</span>
                 <ul class="mt-2 list-unstyled">
                   <li>
-                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'impressum' %}">Impressum</a>
+                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'impressum' %}">{% trans "FOOTER_Impressum" %}</a>
                   </li>
                   <li>
-                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'datenschutz' %}">Datenschutz</a>
+                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'datenschutz' %}">{% trans "FOOTER_Datenschutz" %}</a>
                   </li>
                   <li>
-                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'cookies' %}">Cookies</a>
-                  </li>
-                  <li>
-                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'home' %}">AGBs</a>
+                    <a class="font-semibold block py-1.5 text-sm" href="{% url 'cookies' %}">{% trans "FOOTER_Cookies" %}</a>
                   </li>
                 </ul>
               </div>

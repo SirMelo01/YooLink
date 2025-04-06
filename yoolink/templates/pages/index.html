@@ -471,13 +471,13 @@
         <!-- Headline und Text -->
         <div class="mx-auto max-w-2xl lg:text-center" data-aos="fade-up">
           <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
-            KNOW-HOW
+            {% if knowHowContent and knowHowContent.header %}{{knowHowContent.header}}{% endif %}
           </h3>
           <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Fähigkeiten & Kenntnisse
+            {% if knowHowContent and knowHowContent.title %}{{knowHowContent.title}}{% endif %}
           </h2>
           <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
-            Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum an Fähigkeiten ...
+            {% if knowHowContent and knowHowContent.description %}{{knowHowContent.description}}{% endif %}
           </p>
         </div>
         <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
@@ -492,15 +492,10 @@
                 </div>
               </div>
               <dt class="text-2xl text-center font-semibold leading-7 text-gray-900">
-                Designkonzept
+                {% if knowHowContentCard1 and knowHowContentCard1.title %}{{knowHowContentCard1.title}}{% endif %}
               </dt>
               <dd class="mt-2 text-base text-center leading-7 text-gray-600">
-                Unser Designkonzept basiert auf der Idee, dass jede Website
-                einzigartig sein sollte, um die Identität Ihres Unternehmens
-                bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte
-                Lösungen, die auf Ihre speziellen Anforderungen zugeschnitten
-                sind. Unsere Designs sind benutzerorientiert, um eine
-                bestmögliche Erfahrung auf Ihrer Website sicherzustellen
+                {% if knowHowContentCard1 and knowHowContentCard1.description %}{{knowHowContentCard1.description}}{% endif %}
               </dd>
             </div>
             <div class="relative" data-aos="fade-up" data-aos-delay="200">
@@ -511,15 +506,10 @@
                 </div>
               </div>
               <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
-                SEO Strategien
+                {% if knowHowContentCard2 and knowHowContentCard2.title %}{{knowHowContentCard2.title}}{% endif %}
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
-                Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und
-                nutzen Blogs als leistungsstarkes Werkzeug, um organischen
-                Traffic zu generieren. Unsere Strategien umfassen
-                Keyword-Recherche, mobile Optimierung und die Erstellung
-                hochwertiger Blog-Inhalte. Durch unser CMS-System können Sie
-                Blogs jeder Zeit selber erstellen und anpassen.
+                {% if knowHowContentCard2 and knowHowContentCard2.description %}{{knowHowContentCard2.description}}{% endif %}
               </dd>
             </div>
             <div class="relative" data-aos="fade-up" data-aos-delay="300">
@@ -530,15 +520,10 @@
                 </div>
               </div>
               <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
-                Technischen Fähigkeiten
+                {% if knowHowContentCard3 and knowHowContentCard3.title %}{{knowHowContentCard3.title}}{% endif %}
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
-                Unsere technischen Fähigkeiten bilden das Fundament unserer
-                Dienstleistungen. Von der Frontend-Entwicklung bis zur
-                Backend-Programmierung sind wir in der Lage, Websites zu
-                gestalten, die nicht nur visuell ansprechend sind, sondern auch
-                reibungslos funktionieren und den neuesten technischen Standards
-                entsprechen.
+                {% if knowHowContentCard3 and knowHowContentCard3.description %}{{knowHowContentCard3.description}}{% endif %}
               </dd>
             </div>
           </dl>
@@ -557,15 +542,15 @@
           <h3
             class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase "
           >
-            Referenzen
+            {% if kundenText and kundenText.header %}{{kundenText.header}}{% endif %}
           </h3>
           <h2
             class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
-            Unsere zufriedenen Kunden
+            {% if kundenText and kundenText.title %}{{kundenText.title}}{% endif %}
           </h2>
           <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
-            Vom Zahnarzt bis zum Reiseanbieter – unsere Kunden kommen aus den unterschiedlichsten Branchen. Was sie verbindet: der Wunsch nach einer modernen, benutzerfreundlichen Website, die überzeugt. Mit durchdachtem Design und technischem Know-how setzen wir jedes Projekt individuell und mit viel Liebe zum Detail um.
+            {% if kundenText and kundenText.description %}{{kundenText.description}}{% endif %}
           </p>
         </div>
       </div>
@@ -675,7 +660,7 @@
               aria-label="Webdesign-Vorlagen"
               class="flex items-center justify-center h-12 px-6 font-medium text-white"
             >
-              Zur Kundenübersicht
+            {% if kundenText and kundenText.buttonText %}{{kundenText.buttonText}}{% endif %}
             </a>
           </div>
       </div>
@@ -724,7 +709,7 @@
           <div class="text-center">
             <div class="text-lg font-semibold">Standard</div>
             <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">20 €</div>
+              <div class="mr-1 text-5xl font-bold">25 €</div>
               <div class="text-gray-700">/ Monat</div>
             </div>
             <div class="mt-2 space-y-3">
@@ -759,7 +744,7 @@
           <div class="text-center">
             <div class="text-lg font-semibold">Dynamische Seite</div>
             <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">30 €</div>
+              <div class="mr-1 text-5xl font-bold">35 €</div>
               <div class="text-gray-700">/ Monat</div>
             </div>
             <div class="mt-2 space-y-3">
@@ -1016,18 +1001,18 @@
           <p
             class="inline-block px-3 py-px mb-4 text-xs font-semibold tracking-wider text-white uppercase rounded-full bg-teal-accent-400"
           >
-            FAQ
+          {% if faqText and faqText.header %}{{faqText.header}}{% endif %}
           </p>
         </div>
         <h2
           class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto"
         >
           <span class="relative inline-block">
-            <span class="relative">{% trans "FAQ_TITLE" %}</span>
+            <span class="relative">{% if faqText and faqText.title %}{{faqText.title}}{% endif %}</span>
           </span>
         </h2>
         <p class="text-base text-white md:text-lg">
-          {% trans "FAQ_TEXT" %}
+          {% if faqText and faqText.description %}{{faqText.description}}{% endif %}
         </p>
       </div>
       <div class="space-y-4">

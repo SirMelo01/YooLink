@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-09 18:55+0000\n"
+"POT-Creation-Date: 2025-04-06 10:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,20 +26,74 @@ msgstr "German"
 msgid "Englisch"
 msgstr "English"
 
+#: yoolink/templates/base.html:117 yoolink/templates/base.html:232
+msgid "NAVBAR_RESPONSIVE"
+msgstr "Responsive"
+
+#: yoolink/templates/base.html:123 yoolink/templates/base.html:238
+msgid "NAVBAR_CMS"
+msgstr "CMS"
+
+#: yoolink/templates/base.html:137 yoolink/templates/base.html:253
+msgid "NAVBAR_PRICING"
+msgstr "Pricing"
+
+#: yoolink/templates/base.html:143 yoolink/templates/base.html:259
+msgid "NAVBAR_TEAM"
+msgstr "Team"
+
+#: yoolink/templates/base.html:149 yoolink/templates/base.html:265
+msgid "NAVBAR_REFERENCES"
+msgstr "References"
+
+#: yoolink/templates/base.html:187 yoolink/templates/base.html:189
+#: yoolink/templates/base.html:271
+msgid "NAVBAR_CONTACT_BTN"
+msgstr "Contact"
+
+#: yoolink/templates/base.html:402
+msgid "FOOTER_HEADING"
+msgstr "Your digital flagship - modern, user-friendly and to the point."
+
+#: yoolink/templates/base.html:462
+msgid "FOOTER_USEFUL_LINKS"
+msgstr "Useful Links"
+
+#: yoolink/templates/base.html:465
+msgid "FOOTER_HOME"
+msgstr "Home"
+
+#: yoolink/templates/base.html:468
+msgid "FOOTER_CONTACT"
+msgstr "Contact"
+
+#: yoolink/templates/base.html:471
+msgid "FOOTER_REFERENCES"
+msgstr "References"
+
+#: yoolink/templates/base.html:474
+msgid "FOOTER_BLOG"
+msgstr "Blog"
+
+#: yoolink/templates/base.html:479
+msgid "FOOTER_Rechtliches"
+msgstr "Legal Matters"
+
+#: yoolink/templates/base.html:482
+msgid "FOOTER_Impressum"
+msgstr "Imprint"
+
+#: yoolink/templates/base.html:485
+msgid "FOOTER_Datenschutz"
+msgstr "Privacy Policy"
+
+#: yoolink/templates/base.html:488
+msgid "FOOTER_Cookies"
+msgstr "Cookies"
+
 #: yoolink/templates/pages/cms/cms.html:14
 msgid "CMS_TITLE_IMAGE"
 msgstr "Images"
-
-#: yoolink/templates/pages/index.html:843
-msgid "FAQ_TITLE"
-msgstr "Frequently Asked Questions"
-
-#: yoolink/templates/pages/index.html:847
-msgid "FAQ_TEXT"
-msgstr ""
-"We are often asked the same questions, so we try to answer the most "
-"important ones here. If you have any further questions, feel free to contact "
-"us anytime."
 
 #: yoolink/users/admin.py:17
 msgid "Personal info"
@@ -68,3 +122,12 @@ msgstr ""
 #: yoolink/users/views.py:23
 msgid "Information successfully updated"
 msgstr ""
+
+#~ msgid "FAQ_TITLE"
+#~ msgstr "Frequently Asked Questions"
+
+#~ msgid "FAQ_TEXT"
+#~ msgstr ""
+#~ "We are often asked the same questions, so we try to answer the most "
+#~ "important ones here. If you have any further questions, feel free to "
+#~ "contact us anytime."

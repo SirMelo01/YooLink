@@ -61,6 +61,20 @@ def load_index(request):
     if TextContent.objects.filter(name="main_team").exists():
         context["teamText"] = TextContent.objects.get(name='main_team')
 
+    if TextContent.objects.filter(name="main_kunden").exists():
+        context["kundenText"] = TextContent.objects.get(name='main_kunden')
+    # Text Know-How
+    if TextContent.objects.filter(name="main_know_how").exists():
+        context["knowHowContent"] = TextContent.objects.get(name='main_know_how')
+    # Know How contents
+    if TextContent.objects.filter(name="main_know_how_card_1").exists():
+        context["knowHowContentCard1"] = TextContent.objects.get(name='main_know_how_card_1')
+    if TextContent.objects.filter(name="main_know_how_card_2").exists():
+        context["knowHowContentCard2"] = TextContent.objects.get(name='main_know_how_card_2')
+    if TextContent.objects.filter(name="main_know_how_card_3").exists():
+        context["knowHowContentCard3"] = TextContent.objects.get(name='main_know_how_card_3')
+    if TextContent.objects.filter(name="main_faq").exists():
+        context["faqText"] = TextContent.objects.get(name='main_faq')
     # Galery
     if Galerie.objects.filter(place='main_hero').exists():
         context["heroImages"] = Galerie.objects.get(place='main_hero').images.all()

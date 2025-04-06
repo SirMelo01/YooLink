@@ -1,0 +1,103 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{block.super}} | CMS - Seiteninhalt {% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto mt-8">
+    <div class="flex justify-between">
+        <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
+                href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> / <span>Know How</span></h1>
+        <div>
+            {% csrf_token %}
+            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+                id="saveTextData" name="main_know_how">
+                Speichern
+            </a>
+        </div>
+    </div>
+
+
+    <div class="mt-8 flex justify-center w-full">
+        <div class="flex items-center max-w-4xl md:px-8">
+            <div class="max-w-2xl mb-10 md:mx-auto sm:text-center lg:max-w-4xl md:mb-12">
+                <input
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-72 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="header" type="text"
+                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}KNOW-HOW{% endif %}">
+                <input
+                    class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="title" type="text"
+                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Fähigkeiten & Kenntnisse{% endif %}">
+                <textarea rows="7"
+                    class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}Als erfahrenes Webdesign-Team verfügen wir über ein breites Spektrum an Fähigkeiten ...{% endif %}
+                </textarea>
+            </div>
+        </div>
+    </div>
+    <!-- Cards -->
+    <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
+        <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16">
+            <div class="relative text-content" key="main_know_how_card_1">
+                <div class="flex justify-center">
+                    <div
+                        class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                        <i class="bi bi-columns-gap text-4xl text-blue-900 p-1"></i>
+                    </div>
+                </div>
+                <input
+                    class="bg-gray-200 w-full appearance-none border-2 border-gray-200 rounded-lg text-2xl text-center font-semibold leading-7 inline-block py-2 px-4 tracking-wider text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="title" type="text"
+                    value="{% if textContentCard1 and textContentCard1.title %}{{textContentCard1.title}}{% else %}Designkonzept{% endif %}">
+                <textarea rows="12"
+                    class="bg-gray-200 mt-2 rounded-lg appearance-none border-2 border-gray-200 w-full text-left py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="description" type="text">{% if textContentCard1 and textContentCard1.description %}{{textContentCard1.description}}{% else %}Unser Designkonzept basiert auf der Idee, dass jede Website einzigartig sein sollte, um die Identität Ihres Unternehmens bestmöglich widerzuspiegeln. Wir setzen auf maßgeschneiderte Lösungen, die auf Ihre speziellen Anforderungen zugeschnitten sind. Unsere Designs sind benutzerorientiert, um eine bestmögliche Erfahrung auf Ihrer Website sicherzustellen{% endif %}
+                </textarea>
+            </div>
+            <div class="relative text-content" key="main_know_how_card_2">
+                <div class="flex justify-center">
+                    <div
+                        class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                        <i class="bi bi-bar-chart text-4xl text-blue-900 p-1"></i>
+                    </div>
+                </div>
+                <input
+                    class="bg-gray-200 w-full appearance-none border-2 border-gray-200 rounded-lg text-2xl text-center font-semibold leading-7 inline-block py-2 px-4 tracking-wider text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="title" type="text"
+                    value="{% if textContentCard2 and textContentCard2.title %}{{textContentCard2.title}}{% else %}SEO Strategien{% endif %}">
+                <textarea rows="12"
+                    class="bg-gray-200 mt-2 rounded-lg appearance-none border-2 border-gray-200 w-full text-left py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="description" type="text">{% if textContentCard2 and textContentCard2.description %}{{textContentCard2.description}}{% else %}Wir sind Experten in Sachen Suchmaschinenoptimierung (SEO) und nutzen Blogs als leistungsstarkes Werkzeug, um organischen Traffic zu generieren. Unsere Strategien umfassen Keyword-Recherche, mobile Optimierung und die Erstellung hochwertiger Blog-Inhalte. Durch unser CMS-System können Sie Blogs jeder Zeit selber erstellen und anpassen.{% endif %}
+                </textarea>
+            </div>
+            <div class="relative text-content" key="main_know_how_card_3">
+                <div class="flex justify-center">
+                    <div
+                        class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                        <i class="bi bi-code-slash text-4xl text-blue-900 p-1"></i>
+                    </div>
+                </div>
+                <input
+                    class="bg-gray-200 w-full appearance-none border-2 border-gray-200 rounded-lg text-2xl text-center font-semibold leading-7 inline-block py-2 px-4 tracking-wider text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="title" type="text"
+                    value="{% if textContentCard3 and textContentCard3.title %}{{textContentCard3.title}}{% else %}Technischen Fähigkeiten{% endif %}">
+                <textarea rows="12"
+                    class="bg-gray-200 mt-2 rounded-lg appearance-none border-2 border-gray-200 w-full text-left py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    inputType="description" type="text">{% if textContentCard3 and textContentCard3.description %}{{textContentCard3.description}}{% else %}Unsere technischen Fähigkeiten bilden das Fundament unserer Dienstleistungen. Von der Frontend-Entwicklung bis zur Backend-Programmierung sind wir in der Lage, Websites zu gestalten, die nicht nur visuell ansprechend sind, sondern auch reibungslos funktionieren und den neuesten technischen Standards entsprechen.{% endif %}
+                </textarea>
+            </div>
+        </dl>
+    </div>
+
+</div>
+
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+<script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}
+
+{% endblock content %}
