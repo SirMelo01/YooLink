@@ -29,6 +29,9 @@ def load_kunden(request):
     context = {}
     context.update(get_opening_hours())
 
+    if TextContent.objects.filter(name="main_kunden").exists():
+        context["kundenText"] = TextContent.objects.get(name='main_kunden')
+
     lang = get_language_from_request(request)  # Browser-Sprache holen
     available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
     if lang not in available_languages:

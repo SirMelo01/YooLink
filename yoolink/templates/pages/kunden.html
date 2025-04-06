@@ -11,10 +11,10 @@
           <h1
             class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
-            Unsere zufriedenen Kunden
+          {% if kundenText and kundenText.title %}{{kundenText.title}}{% endif %}
           </h1>
           <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
-            Vom Zahnarzt bis zum Reiseanbieter – unsere Kunden kommen aus den unterschiedlichsten Branchen. Was sie verbindet: der Wunsch nach einer modernen, benutzerfreundlichen Website, die überzeugt. Mit durchdachtem Design und technischem Know-how setzen wir jedes Projekt individuell und mit viel Liebe zum Detail um.
+            {% if kundenText and kundenText.description %}{{kundenText.description}}{% endif %}
           </p>
         </div>
       </div>
