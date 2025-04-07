@@ -1019,14 +1019,15 @@
         {% csrf_token %} {% for faq in FAQ %}
 
         <div 
+          itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"
           class="border border-gray-600 bg-gray-800 rounded-xl shadow-lg hover:shadow-none"
           data-aos="{% if forloop.counter0|divisibleby:2 %}fade-left{% else %}fade-right{% endif %}"
           data-aos-delay='{{ forloop.counter0|add:"1" }}00'>
           <button
-            class="w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
+            class="faq-question w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
             onclick="toggleFaq(this)"
           >
-            <span class="flex-1">{{faq.question}}</span>
+            <span itemprop="name" class="flex-1">{{faq.question}}</span>
             <svg
               class="faq-icon w-6 h-6 flex-shrink-0 transition-transform duration-300 mt-1"
               fill="none"
@@ -1039,8 +1040,8 @@
             </svg>
           </button>
 
-          <div class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
-            <p class="py-4">
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
+            <p itemprop="text" class="py-4">
               {{faq.answer}}
             </p>
           </div>
