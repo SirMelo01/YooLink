@@ -10,7 +10,7 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         return [
             'home',
-            'impressum', 'datenschutz', 'cookies', 
+            'impressum', 'datenschutz', 'cookies', 'kunden', 'kontakt',
             'designtemplates:designtemplates', 'designtemplates:portfolio', 'designtemplates:handwerksbtrieb',
             'blog:blog'
             ]
