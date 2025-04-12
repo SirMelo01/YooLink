@@ -410,7 +410,14 @@
       <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
         
         <!-- Foto-PC -->
-        <div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
+        <div 
+        class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
+        data-aos="fade-right" data-aos-delay="100">
+          <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+            <source src="{% static 'images/videos/v1.mp4' %}" type="video/mp4" />
+            Dein Browser unterstützt kein HTML5-Video.
+          </video>
+        <!--<div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
         data-aos="fade-right"
         data-aos-delay="100">
           <img
@@ -418,7 +425,7 @@
             title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
             src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
             alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-          />
+          />-->
         </div>
   
         <!-- Text -->
