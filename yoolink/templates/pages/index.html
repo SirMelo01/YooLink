@@ -414,7 +414,7 @@
         class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
         data-aos="fade-right" data-aos-delay="100">
           <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
-            <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/images/v3.mp4" type="video/mp4" />
+            <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
             Dein Browser unterstützt kein HTML5-Video.
           </video>
         <!--<div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
@@ -452,14 +452,21 @@
           </div>
   
           <!-- Mobile Bild -->
-          <div
+          <div 
+          class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden"
+          data-aos="fade-right" data-aos-delay="100">
+            <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+              <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
+              Dein Browser unterstützt kein HTML5-Video.
+            </video>
+          <!--<div
              class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
              <img
                class="absolute left-0 top-0 w-[50rem] max-w-none"
                title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
                src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
                alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-             />
+             />-->
           </div>
         </div>
         
