@@ -37,8 +37,8 @@
       </div>      
       <div class="p-5 space-y-2 text-center">
         <h2 class="text-xl font-semibold">{{ card.title }}</h2>
-        <p class="text-3xl font-bold">{{ card.monthly_price }} €</p>
-        <p class="text-sm text-gray-600">Einmalig: {{ card.one_time_price }} €</p>
+        <p class="text-3xl font-bold">{{ card.monthly_price }}</p>
+        <p class="text-sm text-gray-600">Einmalig: {{ card.one_time_price }}</p>
         <p class="text-sm text-gray-500 mt-2">{{ card.description|default:"—" }}</p>
       </div>
       {% if card.button %}
