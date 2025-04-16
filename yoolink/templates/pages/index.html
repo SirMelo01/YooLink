@@ -410,7 +410,14 @@
       <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
         
         <!-- Foto-PC -->
-        <div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
+        <div 
+        class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
+        data-aos="fade-right" data-aos-delay="100">
+          <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+            <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
+            Dein Browser unterstützt kein HTML5-Video.
+          </video>
+        <!--<div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
         data-aos="fade-right"
         data-aos-delay="100">
           <img
@@ -418,7 +425,7 @@
             title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
             src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
             alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-          />
+          />-->
         </div>
   
         <!-- Text -->
@@ -445,14 +452,21 @@
           </div>
   
           <!-- Mobile Bild -->
-          <div
+          <div 
+          class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden"
+          data-aos="fade-right" data-aos-delay="100">
+            <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+              <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
+              Dein Browser unterstützt kein HTML5-Video.
+            </video>
+          <!--<div
              class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden">
              <img
                class="absolute left-0 top-0 w-[50rem] max-w-none"
                title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
                src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
                alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-             />
+             />-->
           </div>
         </div>
         
@@ -946,14 +960,15 @@
         {% csrf_token %} {% for faq in FAQ %}
 
         <div 
+          itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"
           class="border border-gray-600 bg-gray-800 rounded-xl shadow-lg hover:shadow-none"
           data-aos="{% if forloop.counter0|divisibleby:2 %}fade-left{% else %}fade-right{% endif %}"
           data-aos-delay='{{ forloop.counter0|add:"1" }}00'>
           <button
-            class="w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
+            class="faq-question w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
             onclick="toggleFaq(this)"
           >
-            <span class="flex-1">{{faq.question}}</span>
+            <span itemprop="name" class="flex-1">{{faq.question}}</span>
             <svg
               class="faq-icon w-6 h-6 flex-shrink-0 transition-transform duration-300 mt-1"
               fill="none"
@@ -966,8 +981,8 @@
             </svg>
           </button>
 
-          <div class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
-            <p class="py-4">
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
+            <p itemprop="text" class="py-4">
               {{faq.answer}}
             </p>
           </div>
