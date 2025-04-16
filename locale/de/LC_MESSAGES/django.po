@@ -53,8 +53,7 @@ msgstr "Kontakt"
 
 #: yoolink/templates/base.html:402
 msgid "FOOTER_HEADING"
-msgstr ""
-"Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt."
+msgstr "Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt."
 
 #: yoolink/templates/base.html:462
 msgid "FOOTER_USEFUL_LINKS"
