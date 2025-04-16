@@ -440,3 +440,96 @@ class TeamMember(models.Model):
     def __str__(self):
         return self.full_name
     
+from django.db import models
+
+
+class PricingCard(models.Model):
+    title = models.CharField(max_length=100, verbose_name="Titel")
+    monthly_price = models.CharField(max_length=20, verbose_name="Monatlicher Preis", help_text="z.B. '25 €' oder '? €'")
+    one_time_price = models.CharField(max_length=50, verbose_name="Einmalzahlung", help_text="z.B. '250 €' oder '? €'")
+    description = models.TextField(verbose_name="Beschreibung", blank=True, help_text="Kleiner Infotext unter dem Button")
+    order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge", help_text="Reihenfolge der Karte auf der Seite")
+    animation = models.CharField(
+        max_length=50,
+        choices=[
+            ('fade-right', 'Fade Right'),
+            ('fade-left', 'Fade Left'),
+            ('zoom-in', 'Zoom In'),
+            ('fade-up', 'Fade Up'),
+        ],
+        default='fade-up',
+        verbose_name="AOS-Animation"
+    )
+    animation_delay = models.PositiveIntegerField(default=100, verbose_name="Animationsverzögerung (ms)")
+    button = models.ForeignKey(
+        'Button',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Zugehöriger Button"
+    )
+    active = models.BooleanField(default=True, verbose_name="Aktiv")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Pricing-Karte"
+        verbose_name_plural = "Pricing-Karten"
+
+
+class PricingFeature(models.Model):
+    pricing_card = models.ForeignKey(PricingCard, related_name='features', on_delete=models.CASCADE)
+    text = models.CharField(max_length=200, verbose_name="Featuretext")
+    order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge")
+
+    def __str__(self):
+        return f"{self.pricing_card.title}: {self.text}"
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Feature"
+        verbose_name_plural = "Features"
+
+class Button(models.Model):
+    text = models.CharField(max_length=100, verbose_name="Button-Text")
+    url = models.URLField(max_length=500, verbose_name="Ziel-URL")
+    hover_text = models.CharField(
+        max_length=200,
+        verbose_name="Tooltip (Hover-Text)",
+        blank=True,
+        help_text="Optionaler Text, der beim Hover angezeigt wird"
+    )
+    target = models.CharField(
+        max_length=20,
+        choices=[
+            ("_self", "Gleiches Fenster (_self)"),
+            ("_blank", "Neuer Tab (_blank)"),
+            ("_parent", "Elternelement (_parent)"),
+            ("_top", "Oberstes Fenster (_top)"),
+        ],
+        default="_self",
+        verbose_name="Link-Ziel (_blank etc.)"
+    )
+    css_classes = models.CharField(
+        max_length=300,
+        verbose_name="CSS-Klassen",
+        blank=True,
+        help_text="Optional: Zusätzliche Tailwind oder CSS-Klassen"
+    )
+    icon = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Icon (optional)",
+        help_text="z.B. Heroicon oder FontAwesome Klassenname"
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge")
+
+    def __str__(self):
+        return f"{self.text} → {self.url}"
+
+    class Meta:
+        ordering = ["order"]
+        verbose_name = "Button"
+        verbose_name_plural = "Buttons"

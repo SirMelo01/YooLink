@@ -1,9 +1,9 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import FAQ, TextContent, fileentry, GaleryImage, Galerie
+from .models import FAQ, TextContent, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
 
 @register(FAQ)
 class FAQTranslationOptions(TranslationOptions):
-    fields = ('question', 'answer')  # Diese Felder sollen übersetzt werden
+    fields = ('question', 'answer')
 
 @register(TextContent)
 class TextContentTranslationOptions(TranslationOptions):
@@ -20,3 +20,15 @@ class GaleryImageTranslationOptions(TranslationOptions):
 @register(Galerie)
 class GalerieTranslationOptions(TranslationOptions):
     fields = ('title', 'description')
+
+@register(Button)
+class ButtonTranslationOptions(TranslationOptions):
+    fields = ('text', 'hover_text')
+
+@register(PricingCard)
+class PricingCardTranslationOptions(TranslationOptions):
+    fields = ('title', 'description')
+
+@register(PricingFeature)
+class PricingFeatureTranslationOptions(TranslationOptions):
+    fields = ('text',)

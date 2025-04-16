@@ -697,114 +697,41 @@
           {{priceText.description}}
         </p>
       </div>
-      <div
-        class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto"
-      >
-      <div 
-        data-aos="fade-right"
-        data-aos-delay="100">
-        <div
-          class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
-        >
-          <div class="text-center">
-            <div class="text-lg font-semibold">Standard</div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">25 €</div>
-              <div class="text-gray-700">/ Monat</div>
-            </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">250 € Einmalzahlung</div>
-              <div class="text-gray-700">1-Domain</div>
-              <div class="text-gray-700">Cookies</div>
-              <div class="text-gray-700">Optimiert für alle Geräte</div>
-              <div class="text-gray-700">Datenschutz und Impressum</div>
-              <div class="text-gray-700">Funktionen: Karte, Galerie, etc.</div>
-            </div>
-          </div>
-          <div>
-            <a
-              href="{% url 'kontakt' %}"
-              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
-            >
-              Kontaktieren Sie uns
-            </a>
-            <p
-              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
-            >
-              Dieses Angebot gilt für einfaches Webdesign, siehe Vorlagen.
-            </p>
-          </div>
-        </div>
-      </div>
-        <div
-          class="flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
-          data-aos="zoom-in"
-          data-aos-delay="200"
-        >
-          <div class="text-center">
-            <div class="text-lg font-semibold">Dynamische Seite</div>
-            <div class="flex items-center justify-center mt-2">
-              <div class="mr-1 text-5xl font-bold">35 €</div>
-              <div class="text-gray-700">/ Monat</div>
-            </div>
-            <div class="mt-2 space-y-3">
-              <div class="text-black text-lg">500 € Einmalzahlung</div>
-              <div class="text-gray-700">siehe Standard</div>
-              <div class="text-gray-700">+</div>
-              <div class="text-gray-700">Content Management System</div>
-              <div class="text-gray-700">Schulung für die Benutzung</div>
-            </div>
-          </div>
-          <div>
-            <a
-              href="{% url 'kontakt' %}"
-              class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
-            >
-              Kontaktieren Sie uns
-            </a>
-            <p
-              class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
-            >
-              Unser Eigens entwickeltes Content Managment System, individuell
-              angepasst für Ihre Website.
-            </p>
-          </div>
-        </div>
-        <div 
-          data-aos="fade-left"
-          data-aos-delay="100">
-          <div
-            class="lg:scale-90 flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow"
-          >
-            <div class="text-center">
-              <div class="text-lg font-semibold">Individuelles Angebot</div>
-              <div class="flex items-center justify-center mt-2">
-                <div class="mr-1 text-5xl font-bold">? €</div>
-                <div class="text-gray-700">/ Monat</div>
+      <div class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
+        {% for card in pricing_cards %}
+          <div data-aos="{{ card.animation }}" data-aos-delay="{{ card.animation_delay }}">
+            <div class="{% if forloop.counter0 == 1 %}scale-100{% else %}lg:scale-90{% endif %} flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
+              <div class="text-center">
+                <div class="text-lg font-semibold">{{ card.title }}</div>
+                <div class="flex items-center justify-center mt-2">
+                  <div class="mr-1 text-5xl font-bold">{{ card.monthly_price }}</div>
+                  <div class="text-gray-700">/ {% trans "pricing_month" %}</div>
+                </div>
+                <div class="mt-2 space-y-3">
+                  <div class="text-black text-lg">{{ card.one_time_price }} {% trans "pricing_one_off_payment" %}</div>
+                  {% for feature in card.features.all %}
+                    <div class="text-gray-700">{{ feature.text }}</div>
+                  {% endfor %}
+                </div>
               </div>
-              <div class="mt-2 space-y-3">
-                <div class="text-black text-lg">? € Einmalzahlung</div>
-                <div class="text-gray-700">Gerne erarbeiten wir</div>
-                <div class="text-gray-700">gemeinsam mit Ihnen</div>
-                <div class="text-gray-700">individuelle Softwarelösungen</div>
-                <div class="text-gray-700">und Eigenprogrammierungen</div>
+              <div>
+                {% if card.button %}
+                  <a
+                    href="{{ card.button.url }}"
+                    target="{{ card.button.target }}"
+                    title="{{ card.button.hover_text }}"
+                    class="{{ card.button.css_classes }}"
+                  >
+                    {{ card.button.text }}
+                  </a>
+                {% endif %}
+                <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
+                  {{ card.description }}
+                </p>
               </div>
             </div>
-            <div>
-              <a
-                href="{% url 'kontakt' %}"
-                class="inline-flex items-center justify-center w-full h-12 px-6 mt-6 font-medium tracking-wide text-white transition duration-200 bg-blue-900 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
-              >
-                Kontaktieren Sie uns
-              </a>
-              <p
-                class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto"
-              >
-                Dieses Angebot gilt für komplexe und individuelle Lösungen.
-              </p>
-            </div>
           </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </section>

@@ -13,7 +13,7 @@
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
         <h2 class="text-2xl font-bold mb-4 flex justify-between">{% trans "CMS_TITLE_IMAGE" %} <i class="bi bi-image"></i></h2>
         <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
-        <p class="mb-4">Momentane Bilder: <strong>{{file_count}}</strong></p>
+        <p class="mb-4">Bilder: <strong>{{file_count}}</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:images-view' %}"
@@ -24,23 +24,12 @@
         </div>
     </div>
     
-    <!-- FAQ Manage Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">FAQ <i class="bi bi-question-lg"></i></h2>
-        <p class="mb-4">Hier kannst du dein FAQ verwalten</p>
-        <p class="mb-4">Momentane FAQ's: <strong>{{faq_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:faq-view' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
-        </div>
-    </div>
 
     <!-- Galerie Creator -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
         <h2 class="text-2xl font-bold mb-4 flex justify-between">Galerien <i class="bi bi-images"></i></h2>
         <p class="mb-4">Hier kannst du deine Gallerien verwalten</p>
-        <p class="mb-4">Momentane Galerien: <strong>{{galery_count}}</strong></p>
+        <p class="mb-4">Galerien: <strong>{{galery_count}}</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:galerien' %}" 
@@ -48,18 +37,6 @@
             <div class="flex-grow"></div>
             <a href="{% url 'cms:galery-create' %}" 
                 class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end">Erstellen</a>
-        </div>
-    </div>
-    
-    <!-- Blog Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Blogs <i class="bi bi-blockquote-right"></i></h2>
-        <p class="mb-4">Hier kannst du deine Blogs managen</p>
-        <p class="mb-4">Momentane Blogs: <strong>{{blog_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:blog-view' %}" 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
         </div>
     </div>
 
@@ -74,6 +51,19 @@
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
         </div>
     </div>
+    
+    <!-- Blog Card -->
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Blogs <i class="bi bi-blockquote-right"></i></h2>
+        <p class="mb-4">Hier kannst du deine Blogs managen</p>
+        <p class="mb-4">Blogs: <strong>{{blog_count}}</strong></p>
+        <div class="flex-grow"></div>
+        <div class="flex justify-center items-center mt-4">
+            <a href="{% url 'cms:blog-view' %}" 
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+        </div>
+    </div>
+
     <!-- Shop -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
         <h2 class="text-2xl font-bold mb-4 flex justify-between">Shop <i class="bi bi-shop"></i></h2>
@@ -97,18 +87,19 @@
             
         </div>
     </div>
-    <!-- Member Manage Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Mitarbeiter <i class="bi bi-people"></i></h2>
-        <p class="mb-4">Hier kannst du deine Mitarbeiter verwalten</p>
-        <p class="mb-4">Momentane Mitarbeiter: <strong>{{member_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:team-list' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
+    <!-- Buttons -->
+    <div class="flex justify-center">
+        <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+            <h2 class="text-2xl font-bold mb-4 flex justify-between">Buttons <i class="bi bi-arrow-up-right-circle-fill"></i></h2>
+            <p class="mb-4">Hier kannst du deine Buttons verwalten</p>
+            <p class="mb-4">Buttons: <strong>{{button_count}}</strong></p>
+            <div class="flex-grow"></div>
+            <div class="flex justify-center items-center mt-4">
+                <a href="{% url 'cms:button-list' %}"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
+            </div>
         </div>
     </div>
-
 </div>
 
 

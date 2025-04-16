@@ -37,9 +37,17 @@
         </div>
     </div>
     <!-- Link to FAQ -->
-    <div class="flex justify-center mt-12">
-        <a href="{% url 'cms:faq-view' %}"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">FAQ verwalten</a>
+    <div class="flex justify-center">
+        <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+            <h2 class="text-2xl font-bold mb-4 flex justify-between">FAQ <i class="bi bi-question-lg"></i></h2>
+            <p class="mb-4">Hier kannst du dein FAQ verwalten</p>
+            <p class="mb-4">FAQ's: <strong>{{faq_count}}</strong></p>
+            <div class="flex-grow"></div>
+            <div class="flex justify-center items-center mt-4">
+                <a href="{% url 'cms:faq-view' %}"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
+            </div>
+        </div>
     </div>
 
 </div>

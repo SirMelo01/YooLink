@@ -4,7 +4,7 @@ from . import views
 
 app_name = "cms"
 urlpatterns = [
-    path("", views.upload, name="cms"),
+    path("", views.cms, name="cms"),
     path("login/", views.Login_Cms, name="login"),
     path('logout/', views.custom_logout, name='logout'),
     # Images
@@ -111,4 +111,18 @@ urlpatterns = [
 
     # Utils
     path('set-language/<str:lang_code>/', views.set_language, name='set-language'),
+
+    # Pricing
+    path("pricing/", views.pricing_card_overview, name="pricingcard-list"),
+    path("pricing/create/", views.create_pricing_card, name="pricingcard-create"),
+    path("pricing/<int:pk>/edit/", views.edit_pricing_card, name="pricingcard-edit"),
+    path("pricing/<int:pk>/delete/", views.delete_pricing_card, name="pricingcard-delete"),
+    path("pricing/<int:pk>/features/", views.manage_features, name="pricingcard-features"),
+    path("pricingcards/reorder/", views.pricingcard_reorder, name="pricingcard-reorder"),
+
+    # Buttons
+    path("buttons/", views.button_list, name="button-list"),
+    path("buttons/create/", views.button_create, name="button-create"),
+    path("buttons/<int:pk>/edit/", views.button_edit, name="button-edit"),
+    path("buttons/<int:pk>/delete/", views.button_delete, name="button-delete"),
 ]

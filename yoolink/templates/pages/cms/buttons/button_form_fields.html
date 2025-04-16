@@ -1,0 +1,41 @@
+<div>
+    <label class="block font-medium">Text</label>
+    <input type="text" id="text" class="w-full border rounded px-4 py-2" required value="{{ button.text|default:'' }}">
+</div>
+
+<div>
+    <label class="block font-medium">URL</label>
+    <input type="text" id="url" class="w-full border rounded px-4 py-2" required value="{{ button.url|default:'' }}">
+</div>
+
+<div>
+    <label class="block font-medium">Tooltip (Hover Text)</label>
+    <input type="text" id="hover_text" class="w-full border rounded px-4 py-2"
+        value="{{ button.hover_text|default:'' }}">
+</div>
+
+<details class="mt-6 border rounded px-4 py-3 bg-gray-50">
+    <summary class="font-medium cursor-pointer text-blue-600">Erweiterte Einstellungen</summary>
+    <div class="mt-4">
+        <label class="block font-medium">Target</label>
+        <select id="target" class="w-full border rounded px-4 py-2">
+            {% for val, label in targets %}
+            <option value="{{ val }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mt-4">
+      <label class="block font-medium">CSS-Klassen</label>
+      <input type="text" id="css_classes" class="w-full border rounded px-4 py-2" value="{{ button.css_classes|default:'' }}">
+    </div>
+  
+    <div class="mt-4">
+      <label class="block font-medium">Icon-Klasse</label>
+      <input type="text" id="icon" class="w-full border rounded px-4 py-2" value="{{ button.icon|default:'' }}">
+    </div>
+  
+    <div class="mt-4">
+      <label class="block font-medium">Reihenfolge</label>
+      <input type="number" id="order" class="w-full border rounded px-4 py-2" value="{{ button.order|default:0 }}">
+    </div>
+  </details>

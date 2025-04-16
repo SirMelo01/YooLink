@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.models import FAQ, Message, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
 import datetime
 from django.http import HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
@@ -87,6 +87,9 @@ def load_index(request):
         
     if Galerie.objects.filter(place='main_responsive_handy').exists():
         context['responsiveHandyImages'] = Galerie.objects.get(place='main_responsive_handy').images.all()
+
+    pricing_cards = PricingCard.objects.select_related("button").prefetch_related("features").filter(active=True)
+    context["pricing_cards"] = pricing_cards
 
     # Images
     if fileentry.objects.filter(place='main_cms').exists():

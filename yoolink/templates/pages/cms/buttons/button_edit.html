@@ -1,0 +1,107 @@
+{% extends 'cmsbase.html' %}
+
+{% block title %}{{ block.super }} | CMS | Button bearbeiten{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8 max-w-3xl">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">
+            <a href="{% url 'cms:button-list' %}" class="text-blue-600 hover:underline">Buttons</a> /
+            <span id="live-button-title">{{ button.text }}</span>
+        </h1>
+        <button
+            type="submit"
+            form="edit-button-form"
+            class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
+            Speichern
+        </button>
+    </div>
+      
+
+  <form id="edit-button-form" class="space-y-4">
+    {% csrf_token %}
+    {% include 'pages/cms/buttons/button_form_fields.html' %}
+  </form>
+
+  <div class="mt-10">
+    <h2 class="text-lg font-semibold mb-2">Live-Vorschau</h2>
+    <a id="button-preview"
+       href="{{ button.url }}"
+       title="{{ button.hover_text }}"
+       target="{{ button.target }}"
+       class="{{ button.css_classes|default:'bg-blue-600 text-white py-2 px-4 rounded inline-block' }}">
+      {% if button.icon %}
+        <i class="{{ button.icon }}"></i>
+      {% endif %}
+      {{ button.text }}
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+<script>
+    function updatePreview() {
+      const text = $("#text").val();
+      const url = $("#url").val();
+      const hover = $("#hover_text").val();
+      const target = $("#target").val();
+      const css = $("#css_classes").val();
+      const icon = $("#icon").val();
+  
+      const $preview = $("#button-preview");
+  
+      $preview.attr("href", url || "#");
+      $preview.attr("title", hover || "");
+      $preview.attr("target", target || "_self");
+      $preview.attr("class", css || "bg-blue-600 text-white py-2 px-4 rounded inline-block");
+  
+      // Inhalt setzen
+      let html = "";
+      if (icon) html += `<i class="${icon}"></i> `;
+      html += text || "Button";
+      $preview.html(html);
+    }
+  
+    // Trigger bei Eingaben
+    $("#edit-button-form input, #edit-button-form select").on("input change", updatePreview);
+  
+    // Live-Titel
+    $("#text").on("input", function () {
+      $("#live-button-title").text($(this).val());
+    });
+  
+    // Initiale Vorschau setzen
+    updatePreview();
+  
+    // AJAX Submit
+    $("#edit-button-form").submit(function (e) {
+      e.preventDefault();
+  
+      const payload = {
+        text: $("#text").val(),
+        url: $("#url").val(),
+        hover_text: $("#hover_text").val(),
+        target: $("#target").val(),
+        css_classes: $("#css_classes").val(),
+        icon: $("#icon").val(),
+        order: parseInt($("#order").val()) || 0,
+      };
+  
+      $.ajax({
+        url: "{% url 'cms:button-edit' button.id %}",
+        method: "POST",
+        headers: { "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val() },
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        success: function () {
+          sendNotif("Der Button wurde gespeichert", "success");
+        },
+        error: function (err) {
+          sendNotif("Fehler beim Speichern: " + err.responseText, "error");
+        }
+      });
+    });
+  </script>
+  
+{% endblock %}

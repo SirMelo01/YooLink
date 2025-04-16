@@ -1,0 +1,170 @@
+{% extends 'cmsbase.html' %}
+{% load static %}
+
+{% block title %}{{ block.super }} | CMS | Neue Preiskarte{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/cms/sortable/sortable.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8 max-w-3xl">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold">
+      <a href="{% url 'cms:pricingcard-list' %}" class="text-blue-600 hover:underline">Preisübersicht</a> /
+      <span id="live-title">Neue Karte</span>
+    </h1>
+    <button
+      type="submit"
+      form="create-pricing-card-form"
+      class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
+      Erstellen
+    </button>
+  </div>
+
+  <form id="create-pricing-card-form" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label class="block font-medium">Titel</label>
+      <input type="text" id="title" class="w-full border rounded px-4 py-2" required>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="block font-medium">Monatlicher Preis</label>
+        <input type="text" id="monthly_price" class="w-full border rounded px-4 py-2">
+      </div>
+      <div>
+        <label class="block font-medium">Einmalzahlung</label>
+        <input type="text" id="one_time_price" class="w-full border rounded px-4 py-2">
+      </div>
+      <div class="flex justify-center w-full items-center">
+        <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-center w-32" for="active">
+            Aktiv
+        </label>        
+        <input
+            class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+            type="checkbox" role="switch" id="active" checked />
+      </div>      
+    </div>
+
+    <div>
+      <label class="block font-medium">Beschreibung (unter dem Button)</label>
+      <textarea id="description" class="w-full border rounded px-4 py-2"></textarea>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block font-medium">Animation</label>
+        <select id="animation" class="w-full border rounded px-4 py-2">
+          <option value="fade-up">Fade Up</option>
+          <option value="fade-right">Fade Right</option>
+          <option value="fade-left">Fade Left</option>
+          <option value="zoom-in">Zoom In</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-medium">Animationsverzögerung (ms)</label>
+        <input type="number" id="animation_delay" class="w-full border rounded px-4 py-2" value="100">
+      </div>
+    </div>
+
+    <div>
+      <label class="block font-medium">Button</label>
+      <select id="button_id" class="w-full border rounded px-4 py-2">
+        <option value="">— Kein Button —</option>
+        {% for btn in buttons %}
+          <option value="{{ btn.id }}">{{ btn.text }} ({{ btn.url }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-medium mb-2">Features</label>
+      <ul id="feature-list" class="space-y-2"></ul>
+      <button type="button" id="add-feature" class="mt-3 text-sm text-blue-600 hover:underline">+ Feature hinzufügen</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+<script>
+  $("#title").on("input", function () {
+    $("#live-title").text($(this).val());
+  });
+
+  Sortable.create(document.getElementById('feature-list'), {
+    animation: 150,
+    handle: '.drag-handle',
+  });
+
+  $("#add-feature").click(function () {
+    $("#feature-list").append(`
+      <li class="flex items-center gap-2 feature-item border p-2 rounded bg-gray-100">
+        <span class="drag-handle cursor-move text-gray-400">&#x2630;</span>
+        <input type="text" class="flex-1 px-2 py-1 rounded border feature-text" placeholder="Neues Feature">
+        <button type="button" class="delete-feature text-red-500 hover:text-red-700">&times;</button>
+      </li>
+    `);
+  });
+
+  $(document).on("click", ".delete-feature", function () {
+    $(this).closest(".feature-item").remove();
+  });
+
+  $("#create-pricing-card-form").submit(function (e) {
+    e.preventDefault();
+    const payload = {
+      title: $("#title").val(),
+      monthly_price: $("#monthly_price").val(),
+      one_time_price: $("#one_time_price").val(),
+      description: $("#description").val(),
+      animation: $("#animation").val(),
+      animation_delay: parseInt($("#animation_delay").val()),
+      button_id: $("#button_id").val() || null,
+      order: 0,
+      active: $("#active").is(":checked")
+    };
+
+    $.ajax({
+      url: "{% url 'cms:pricingcard-create' %}",
+      method: "POST",
+      headers: { "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val() },
+      contentType: "application/json",
+      data: JSON.stringify(payload),
+      success: function (response) {
+        const cardId = response.id;
+        sendNotif("Neue Preiskarte wurde erstellt", "success")
+        saveFeatures(cardId);
+      },
+      error: function (err) {
+        sendNotif("Fehler beim Erstellen: " + err.responseText, "error");
+      }
+    });
+  });
+
+  function saveFeatures(cardId) {
+    const features = [];
+    $("#feature-list .feature-item").each(function () {
+      const text = $(this).find(".feature-text").val().trim();
+      if (text) features.push({ id: null, text });
+    });
+
+    $.ajax({
+      url: `/cms/pricing/${cardId}/features/`,
+      method: "POST",
+      headers: { "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val() },
+      contentType: "application/json",
+      data: JSON.stringify({ features }),
+      success: function () {
+        window.location.href = `/cms/pricing/${cardId}/edit/`;
+      },
+      error: function () {
+        sendNotif("Fehler beim Speichern der Features.", "error");
+      }
+    });
+  }
+</script>
+{% endblock %}

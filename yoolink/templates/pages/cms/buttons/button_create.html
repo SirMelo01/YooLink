@@ -1,0 +1,64 @@
+{% extends 'cmsbase.html' %}
+
+{% block title %}{{ block.super }} | CMS | Button erstellen{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8 max-w-3xl">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">
+            <a href="{% url 'cms:button-list' %}" class="text-blue-600 hover:underline">Buttons</a> /
+            <span id="live-button-title">Erstellen</span>
+        </h1>
+        <button
+            type="submit"
+            form="create-button-form"
+            class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
+            Erstellen
+        </button>
+    </div>
+  
+
+  <form id="create-button-form" class="space-y-4">
+    {% csrf_token %}
+    {% include 'pages/cms/buttons/button_form_fields.html' %}
+  </form>
+
+  <div id="success-message" class="mt-6 hidden bg-green-100 text-green-800 p-4 rounded">
+    ✅ Button erfolgreich erstellt!
+    <a href="{% url 'cms:button-list' %}" class="underline ml-2">Zurück zur Übersicht</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+<script>
+  $("#create-button-form").submit(function (e) {
+    e.preventDefault();
+
+    const payload = {
+      text: $("#text").val(),
+      url: $("#url").val(),
+      hover_text: $("#hover_text").val(),
+      target: $("#target").val(),
+      css_classes: $("#css_classes").val(),
+      icon: $("#icon").val(),
+      order: parseInt($("#order").val()) || 0,
+    };
+
+    $.ajax({
+      url: "{% url 'cms:button-create' %}",
+      method: "POST",
+      headers: { "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val() },
+      contentType: "application/json",
+      data: JSON.stringify(payload),
+      success: function () {
+        $("#success-message").removeClass("hidden");
+        $("#create-button-form")[0].reset();
+      },
+      error: function (err) {
+        alert("Fehler beim Erstellen: " + err.responseText);
+      }
+    });
+  });
+</script>
+{% endblock %}

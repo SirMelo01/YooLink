@@ -3,12 +3,12 @@ import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import Button, PricingCard, PricingFeature, TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from .forms import fileform, Blogform
 from django.conf import settings
@@ -27,6 +27,7 @@ from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
 from django.middleware.csrf import get_token
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
+from django.views.decorators.csrf import csrf_exempt
 
 DEFAULT_LANGUAGE = "en"
 
@@ -58,7 +59,7 @@ def set_language(request, lang_code):
     return response
 
 @login_required(login_url='login')
-def upload(request):
+def cms(request):
 
     context = {'form': None, 'last': None}
 
@@ -77,14 +78,13 @@ def upload(request):
         form = fileform()
 
     data = {
-        "faq_count":  FAQ.objects.count(),
         "file_count":  fileentry.objects.count(),
+        "button_count": Button.objects.count(),
         "galery_count":  Galerie.objects.count(),
         "blog_count": Blog.objects.count(),
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
         "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
-        "member_count":  TeamMember.objects.count(),
         'form': form
     }
     return render(request, 'pages/cms/cms.html', data)
@@ -738,7 +738,7 @@ def site_view_main_cms(request):
 # Main Site - Price Section
 @login_required(login_url='login')
 def site_view_main_price(request):
-    data = {}
+    data = {"pricing_count": PricingCard.objects.count(),}
     if TextContent.objects.filter(name="main_price").exists():
         data["textContent"] = TextContent.objects.get(name='main_price')
     return render(request, "pages/cms/content/sites/mainsite/PriceContent.html", data)
@@ -746,7 +746,7 @@ def site_view_main_price(request):
 # Main Site - Team Section
 @login_required(login_url='login')
 def site_view_main_team(request):
-    data = {}
+    data = {"member_count":  TeamMember.objects.count()}
     if TextContent.objects.filter(name="main_team").exists():
         data["textContent"] = TextContent.objects.get(name='main_team')
 
@@ -779,7 +779,7 @@ def site_view_main_kunden(request):
 # Main Site - FAQ
 @login_required(login_url='login')
 def site_view_main_faq(request):
-    data = {}
+    data = {"faq_count":  FAQ.objects.count()}
     if TextContent.objects.filter(name="main_faq").exists():
         data["textContent"] = TextContent.objects.get(name='main_faq')
     return render(request, "pages/cms/content/sites/mainsite/FAQContent.html", data)
@@ -2082,3 +2082,250 @@ def delete_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
     team_member.delete()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich gelöscht'})
+
+##################
+#    PRICING     #
+##################
+def pricing_card_overview(request):
+    cards = PricingCard.objects.select_related('button').all().order_by('order')
+    return render(request, 'pages/cms/pricing/pricing.html', {
+        'pricing_cards': cards
+    })
+
+from django.db import models
+def create_pricing_card(request):
+    if request.method == "GET":
+        # Optional: Alle Buttons anzeigen, um sie im Template als Auswahl zu rendern
+        buttons = Button.objects.all().order_by("order")
+        return render(request, "pages/cms/pricing/pricing_create.html", {
+            "buttons": buttons
+        })
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        lang = get_active_language(request)
+
+        button_id = data.get("button_id")
+        button = Button.objects.filter(pk=button_id).first() if button_id else None
+
+        card = PricingCard()
+        setattr(card, f"title_{lang}", data["title"])
+        setattr(card, f"description_{lang}", data.get("description", ""))
+
+        if lang == DEFAULT_LANGUAGE:
+            card.title = data["title"]
+            card.description = data.get("description", "")
+
+        card.monthly_price = data["monthly_price"]
+        card.one_time_price = data["one_time_price"]
+        max_order = PricingCard.objects.aggregate(models.Max("order"))["order__max"] or 0
+        card.order = max_order + 1
+        card.animation = data.get("animation", "fade-up")
+        card.animation_delay = data.get("animation_delay", 100)
+        card.button = button
+        card.active = data.get("active", True)
+        card.save()
+
+        return JsonResponse({"id": card.id})
+
+    return HttpResponseBadRequest()
+
+
+def edit_pricing_card(request, pk):
+    card = get_object_or_404(PricingCard, pk=pk)
+
+    if request.method == "GET":
+        buttons = Button.objects.all().order_by("order")
+        return render(request, "pages/cms/pricing/pricing_edit.html", {
+            "card": card,
+            "buttons": buttons
+        })
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        lang = get_active_language(request)
+
+        button_id = data.get("button_id")
+        button = Button.objects.filter(pk=button_id).first() if button_id else None
+
+        setattr(card, f"title_{lang}", data["title"])
+        setattr(card, f"description_{lang}", data.get("description", ""))
+
+        if lang == DEFAULT_LANGUAGE:
+            card.title = data["title"]
+            card.description = data.get("description", "")
+
+        card.monthly_price = data["monthly_price"]
+        card.one_time_price = data["one_time_price"]
+
+        card.animation = data.get("animation", "fade-up")
+        card.animation_delay = data.get("animation_delay", 100)
+        card.button = button
+        card.active = data.get("active", True)
+        card.save()
+
+        return JsonResponse({"success": True})
+
+
+    return HttpResponseBadRequest()
+
+
+@csrf_exempt
+def delete_pricing_card(request, pk):
+    if request.method == "POST":
+        card = get_object_or_404(PricingCard, pk=pk)
+        card.delete()
+
+        # Nach dem Löschen Reihenfolge aktualisieren
+        cards = PricingCard.objects.order_by("order")
+        for i, c in enumerate(cards):
+            c.order = i
+            c.save()
+
+        return JsonResponse({"success": True})
+    return HttpResponseBadRequest()
+
+@csrf_exempt
+@login_required
+def pricingcard_reorder(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        for item in data.get("order", []):
+            try:
+                card = PricingCard.objects.get(id=item["id"])
+                card.order = item["order"]
+                card.save()
+            except PricingCard.DoesNotExist:
+                continue
+        return JsonResponse({"success": True})
+    return HttpResponseBadRequest()
+
+
+def manage_features(request, pk):
+    card = get_object_or_404(PricingCard, pk=pk)
+
+    if request.method == "GET":
+        features = list(card.features.order_by("order").values("id", "text"))
+        return JsonResponse({"features": features})
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        lang = get_active_language(request)
+        new_items = data.get("features", [])
+
+        # IDs aus dem Request sammeln
+        submitted_ids = [int(item["id"]) for item in new_items if item.get("id")]
+
+        # Existierende Features mappen
+        existing = {f.id: f for f in card.features.all()}
+
+        # Neue Reihenfolge + Updates
+        for i, item in enumerate(new_items):
+            text = item["text"].strip()
+            fid = item.get("id")
+
+            if fid and int(fid) in existing:
+                feature = existing[int(fid)]
+            else:
+                feature = PricingFeature(pricing_card=card)
+
+            setattr(feature, f"text_{lang}", text)
+            if lang == DEFAULT_LANGUAGE:
+                feature.text = text
+
+            feature.order = i
+            feature.save()
+
+            if not fid:
+                submitted_ids.append(feature.id)
+
+        # Nicht mehr vorhandene Features löschen
+        if submitted_ids:
+            card.features.exclude(id__in=submitted_ids).delete()
+
+        return JsonResponse({"success": True})
+
+    return HttpResponseBadRequest()
+
+
+def button_list(request):
+    buttons = Button.objects.all().order_by("order")
+    return render(request, "pages/cms/buttons/button_list.html", {
+        "buttons": buttons
+    })
+
+
+def button_create(request):
+    if request.method == "GET":
+        targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
+        return render(request, "pages/cms/buttons/button_create.html", {
+            "targets": targets
+        })
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        lang = get_active_language(request)
+
+        button = Button()
+        setattr(button, f"text_{lang}", data["text"])
+        setattr(button, f"hover_text_{lang}", data.get("hover_text", ""))
+
+        if lang == DEFAULT_LANGUAGE:
+            button.text = data["text"]
+            button.hover_text = data.get("hover_text", "")
+
+        button.url = data["url"]
+        button.target = data.get("target", "_self")
+        button.css_classes = data.get("css_classes", "")
+        button.icon = data.get("icon", "")
+        button.order = data.get("order", 0)
+        button.save()
+
+        return JsonResponse({"id": button.id})
+
+
+    return HttpResponseBadRequest()
+
+
+def button_edit(request, pk):
+    button = get_object_or_404(Button, pk=pk)
+
+    targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
+
+    if request.method == "GET":
+        return render(request, "pages/cms/buttons/button_edit.html", {
+            "button": button,
+            "targets": targets
+        })
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        lang = get_active_language(request)
+
+        setattr(button, f"text_{lang}", data["text"])
+        setattr(button, f"hover_text_{lang}", data.get("hover_text", ""))
+
+        if lang == DEFAULT_LANGUAGE:
+            button.text = data["text"]
+            button.hover_text = data.get("hover_text", "")
+
+        button.url = data["url"]
+        button.target = data.get("target", "_self")
+        button.css_classes = data.get("css_classes", "")
+        button.icon = data.get("icon", "")
+        button.order = data.get("order", 0)
+        button.save()
+
+        return JsonResponse({"success": True})
+
+
+    return HttpResponseBadRequest()
+
+
+def button_delete(request, pk):
+    if request.method == "POST":
+        button = get_object_or_404(Button, pk=pk)
+        button.delete()
+        return JsonResponse({"success": True})
+    return HttpResponseBadRequest()
+
