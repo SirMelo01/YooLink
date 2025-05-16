@@ -110,6 +110,28 @@ def load_index(request):
 
     return render(request, 'pages/index.html', context=context)
 
+
+
+def load_cmsinfo(request):
+
+    context = {
+    }
+
+
+    lang = get_language_from_request(request)  # Browser-Sprache holen
+    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
+    if lang not in available_languages:
+        lang = "en"
+
+    activate(lang)  # Sprache für diese Anfrage setzen
+
+    return render(request, 'pages/cmsinfo.html', context=context)
+
+
+
+
+
+
 from .forms import ContactForm
 def kontaktform(request):
     success = False
