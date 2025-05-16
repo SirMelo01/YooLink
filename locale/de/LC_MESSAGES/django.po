@@ -85,6 +85,8 @@ msgstr "Ablehnen"
 msgid "FOOTER_HEADING"
 msgstr ""
 "Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt."
+msgstr ""
+"Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt."
 
 #: yoolink/templates/base.html:456 yoolink/templates/cms-login-base.html:225
 msgid "FOOTER_USEFUL_LINKS"
@@ -143,6 +145,7 @@ msgstr "Veröffentlicht am"
 msgid "pricing_month"
 msgstr "Monat"
 
+#: yoolink/templates/pages/index.html:725
 #: yoolink/templates/pages/index.html:725
 msgid "pricing_one_off_payment"
 msgstr "Einmalzahlung"

@@ -141,6 +141,7 @@ msgid "pricing_month"
 msgstr "month"
 
 #: yoolink/templates/pages/index.html:725
+#: yoolink/templates/pages/index.html:725
 msgid "pricing_one_off_payment"
 msgstr "One-off payment"
 
