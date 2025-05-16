@@ -96,7 +96,7 @@
                                     Website</a>
                                 <a href="#"
                                     class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Dokumentation</a>
-                                <a href="#"
+                                <a href="https://yoolink.de/" target="_blank"
                                     class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Support</a>
                             </div>
                         </div>
@@ -142,6 +142,8 @@
                                     <!-- Active: "bg-gray-100", Not Active: "" -->
                                     <a href="{% url 'cms:settings-view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
                                         tabindex="-1" id="user-menu-item-0">Dein Profil</a>
+                                    <a href="{% url 'cms:logo-settings' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
+                                        tabindex="-1" id="user-menu-item-0">Logo verwalten</a>
                                     <a href="{% url 'cms:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white" role="menuitem"
                                         tabindex="-1" id="user-menu-item-2">Abmelden</a>
                                 </div>

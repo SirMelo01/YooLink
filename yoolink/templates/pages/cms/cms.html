@@ -23,7 +23,18 @@
                 class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"><i class="bi bi-plus-circle" class="size-8"></i></a>
         </div>
     </div>
-    
+
+    <!-- Dateien Card -->
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-file-earmark-arrow-up"></i></h2>
+        <p class="mb-4">Hier kannst du beliebige Dateien (Videos, PDFs, ZIPs etc.) hochladen und verwalten.</p>
+        <p class="mb-4">Dateien: <strong>{{anyfile_count}}</strong></p>
+        <div class="flex-grow"></div>
+        <div class="flex justify-center items-center mt-4">
+            <a href="{% url 'cms:anyfile-list' %}"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+        </div>
+    </div>
 
     <!-- Galerie Creator -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">

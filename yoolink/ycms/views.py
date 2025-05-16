@@ -3,7 +3,7 @@ import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import Button, PricingCard, PricingFeature, TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import AnyFile, Button, PricingCard, PricingFeature, TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -85,7 +85,8 @@ def cms(request):
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
         "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
-        'form': form
+        'form': form,
+        'anyfile_count': AnyFile.objects.count(),
     }
     return render(request, 'pages/cms/cms.html', data)
 
@@ -784,6 +785,29 @@ def site_view_main_faq(request):
         data["textContent"] = TextContent.objects.get(name='main_faq')
     return render(request, "pages/cms/content/sites/mainsite/FAQContent.html", data)
 
+# Kunden Site
+@login_required(login_url='login')
+def site_view_kunden(request):
+    data = {}
+    if TextContent.objects.filter(name="main_kunden").exists():
+        data["textContent"] = TextContent.objects.get(name='main_kunden')
+    if TextContent.objects.filter(name="main_kunden2").exists():
+        data["textContent2"] = TextContent.objects.get(name='main_kunden2')
+    return render(request, "pages/cms/content/sites/KundenSite.html", data)
+
+@login_required(login_url='login')
+def site_view_skills(request):
+    def get_text(name):
+        return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
+
+    return render(request, "pages/cms/content/sites/SkillsSite.html", {
+        "textContent_intro": get_text("main_skills_intro"),
+        "textContent_cms": get_text("main_skills_cms"),
+        "textContent_webdesign": get_text("main_skills_webdesign"),
+        "textContent_logos": get_text("main_skills_logos"),
+        "textContent_custom": get_text("main_skills_custom"),
+    })
+
 ######################
 # END SITE CONTENT   #
 ######################
@@ -837,22 +861,22 @@ def saveTextContent(request):
             inputs = custom['inputs']
 
             try:
-                with transaction.atomic():  # Sorgt dafür, dass nur ein Prozess die Datenbank ändert
+                with transaction.atomic():
                     textContent, created = TextContent.objects.get_or_create(name=key)
 
                 # Mehrsprachige Speicherung
-                setattr(textContent, f'header_{lang}', inputs.get('header', ''))
-                setattr(textContent, f'title_{lang}', inputs.get('title', ''))
-                setattr(textContent, f'description_{lang}', inputs.get('description', ''))
-                setattr(textContent, f'buttonText_{lang}', inputs.get('buttonText', ''))
-                 # Setze das Hauptfeld NUR wenn es die Standardsprache ist
-                if lang == DEFAULT_LANGUAGE:
-                    textContent.header = inputs.get('header', textContent.header)
-                    textContent.title = inputs.get('title', textContent.title)
-                    textContent.description = inputs.get('description', textContent.description)
-                    textContent.buttonText = inputs.get('buttonText', textContent.buttonText)
-                textContent.save()
+                for field in ['header', 'title', 'description', 'buttonText']:
+                    val = inputs.get(field, '')
+                    if created or val:  # Speichere nur bei create oder wenn nicht leer
+                        setattr(textContent, f'{field}_{lang}', val)
 
+                if lang == DEFAULT_LANGUAGE:
+                    for field in ['header', 'title', 'description', 'buttonText']:
+                        val = inputs.get(field, '')
+                        if created or val:
+                            setattr(textContent, field, val)
+
+                textContent.save()
             except IntegrityError:
                 return JsonResponse({'error': f'Fehler: {key} existiert bereits'}, status=400)
 
@@ -861,23 +885,22 @@ def saveTextContent(request):
             try:
                 with transaction.atomic():
                     textContent, created = TextContent.objects.get_or_create(name=name)
-                
-                setattr(textContent, f'header_{lang}', header)
-                setattr(textContent, f'title_{lang}', title)
-                setattr(textContent, f'description_{lang}', description)
-                setattr(textContent, f'buttonText_{lang}', buttonText)
-                 # Setze das Hauptfeld NUR wenn es die Standardsprache ist
+
+                for field, value in [('header', header), ('title', title), ('description', description), ('buttonText', buttonText)]:
+                    if created or value:
+                        setattr(textContent, f'{field}_{lang}', value)
+
                 if lang == DEFAULT_LANGUAGE:
-                    textContent.header = header
-                    textContent.title = title
-                    textContent.description = description
-                    textContent.buttonText = buttonText
+                    for field, value in [('header', header), ('title', title), ('description', description), ('buttonText', buttonText)]:
+                        if created or value:
+                            setattr(textContent, field, value)
+
                 textContent.save()
 
                 return JsonResponse({'success': 'Element wurde erfolgreich gespeichert'}, status=200)
-
             except IntegrityError:
                 return JsonResponse({'error': f'Fehler: {name} existiert bereits'}, status=400)
+
         return JsonResponse({'success': 'Elemente wurden erfolgreich gespeichert'}, status=200)
 
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)
@@ -1869,7 +1892,49 @@ def user_settings_update(request):
         return JsonResponse({'success': 'Die Einstellungen wurden erfolgreich gespeichert'})
     else:
         return JsonResponse({'error': 'Die Einstellungen konnten nicht gespeichert werden'})
-    
+
+@login_required(login_url='login')
+def logo_settings_view(request):
+    try:
+        settings = UserSettings.objects.get(user=request.user)
+    except UserSettings.DoesNotExist:
+        settings = UserSettings.objects.create(user=request.user)
+
+    return render(request, 'pages/cms/settings/profile.html', {'settings': settings})
+
+@login_required(login_url='login')
+def update_logo_favicon(request):
+    user_settings = UserSettings.objects.get(user=request.user)
+    updated = False
+
+    if request.method == 'POST':
+        if 'logo' in request.FILES:
+            user_settings.logo = request.FILES['logo']
+            updated = True
+        if 'favicon' in request.FILES:
+            user_settings.favicon = request.FILES['favicon']
+            updated = True
+        if updated:
+            user_settings.save()
+            return JsonResponse({'success': 'Datei erfolgreich aktualisiert'})
+    return JsonResponse({'error': 'Keine Datei übermittelt'})
+
+@login_required(login_url='login')
+def delete_logo_favicon(request):
+    if request.method == 'POST':
+        user_settings = UserSettings.objects.get(user=request.user)
+        file_type = request.POST.get('type')
+        if file_type == 'logo' and user_settings.logo:
+            user_settings.logo.delete(save=False)
+            user_settings.logo = ''
+        elif file_type == 'favicon' and user_settings.favicon:
+            user_settings.favicon.delete(save=False)
+            user_settings.favicon = ''
+        else:
+            return JsonResponse({'error': 'Ungültiger Typ oder keine Datei vorhanden'})
+        user_settings.save()
+        return JsonResponse({'success': f'{file_type.capitalize()} gelöscht'})
+    return JsonResponse({'error': 'Ungültige Anfrage'})
 
 """
 Opening Hours
@@ -2328,4 +2393,29 @@ def button_delete(request, pk):
         button.delete()
         return JsonResponse({"success": True})
     return HttpResponseBadRequest()
+
+
+# AnyFiles
+@login_required(login_url='login')
+def anyfile_upload_view(request):
+    if request.method == 'POST':
+        uploaded_file = request.FILES.get('file')
+        if uploaded_file:
+            AnyFile.objects.create(file=uploaded_file)
+            return HttpResponse('')
+    return JsonResponse({'post': 'false'})
+
+@login_required(login_url='login')
+def anyfile_delete_view(request, id):
+    try:
+        file = AnyFile.objects.get(id=id)
+        file.delete()
+        return JsonResponse({"success": "Datei erfolgreich gelöscht"})
+    except AnyFile.DoesNotExist:
+        return JsonResponse({"error": "Datei nicht gefunden"})
+
+@login_required(login_url='login')
+def anyfile_list_view(request):
+    files = AnyFile.objects.all()
+    return render(request, 'pages/cms/anyfiles.html', {'files': files})
 

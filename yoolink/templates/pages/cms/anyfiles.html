@@ -1,0 +1,79 @@
+{% extends 'cmsbase.html' %}
+{% load static compress %}
+{% block title %} {{ block.super }} | CMS | Dateien{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/libs/dropzone.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/cms/libs/dropzone.min.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl">CMS - Dateiupload</h1>
+    <a href="{% url 'cms:anyfile-list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Alle Dateien ansehen
+    </a>
+  </div>
+
+  <form action="{% url 'cms:anyfile-upload' %}" method="POST" class="dropzone mt-8" id="anyfile-dropzone">
+    {% csrf_token %}
+    <div class="fallback">
+      <input name="file" type="file" multiple />
+    </div>
+  </form>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+    {% for file in files %}
+      <div class="relative p-2 border rounded shadow">
+        <a href="{{ file.file.url }}" target="_blank" class="block text-blue-600 truncate">
+          📎 {{ file.title|default:file.file.name|truncatechars:40 }}
+        </a>
+        <button class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs delete-file" data-id="{{ file.id }}">✕</button>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script>
+  Dropzone.autoDiscover = false;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  $('.dropzone').dropzone({
+    addRemoveLinks: true,
+    removedfile: function(file) {
+      let id = file.upload?.uuid;
+      if (!id) return;
+
+      $.ajax({
+        type: 'POST',
+        url: `/anyfiles/delete/${id}/`,
+        data: { csrfmiddlewaretoken: csrftoken },
+        success: () => file.previewElement.remove()
+      });
+    },
+    success: function(file, response) {
+      file.upload.uuid = response.id; // falls du response.id zurückgibst
+    }
+  });
+
+  $('.delete-file').click(function() {
+    const id = $(this).data('id');
+    const elem = $(this).closest('.relative');
+
+    $.post(`/anyfiles/delete/${id}/`, {
+      csrfmiddlewaretoken: csrftoken
+    }, function(response) {
+      if (response.success) {
+        elem.remove();
+      } else {
+        alert(response.error);
+      }
+    });
+  });
+</script>
+{% endcompress js %}
+{% endblock %}

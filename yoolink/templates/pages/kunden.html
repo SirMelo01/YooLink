@@ -43,15 +43,13 @@
                 <div class="flex flex-1">
                   <div class="">
                     <p class="text-sm font-semibold text-left">Zahnarzt Dr. med. dent. Lorenz Holmer</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 01.11.2024</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 01.11.2024</p>
                   </div>
                 </div>
               </div>
-              
             </div>
           </article>
         </a>
-  
         <a class="mb-6" href="https://uhrmann-reisen.de/" target="_blank" rel="noopener noreferrer">
           <article 
             class="group transform h-full cursor-pointer rounded-2xl border-gray-400 border shadow-lg bg-white px-6 pt-6 pb-2 transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
@@ -76,7 +74,7 @@
                 <div class="flex flex-1">
                   <div class="">
                     <p class="text-sm font-semibold text-left">Uhrmann Reisen</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 10.05.2024</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 10.05.2024</p>
                   </div>
                 </div>
               </div>
@@ -107,7 +105,7 @@
                 <div class="flex flex-1">
                   <div class="">
                     <p class="text-sm font-semibold text-left">HD-Glas Autoglas-Service</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 19.04.2024</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 19.04.2024</p>
                   </div>
                 </div>
               </div>
@@ -139,7 +137,7 @@
                 <div class="flex flex-1">
                   <div class="">
                     <p class="text-sm font-semibold text-left">W&K Schweißtechnik GmbH</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 05.03.2024</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 05.03.2024</p>
                   </div>
                 </div>
               </div>
@@ -267,8 +265,8 @@
                 </div>
                 <div class="flex flex-1">
                   <div class="">
-                    <p class="text-sm font-semibold text-left">W&K Schweißtechnik GmbH</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 15.03.2025</p>
+                    <p class="text-sm font-semibold text-left">KNN Büroservice GmbH</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 15.03.2025</p>
                   </div>
                 </div>
               </div>
@@ -300,10 +298,57 @@
                 <div class="flex flex-1">
                   <div class="">
                     <p class="text-sm font-semibold text-left">Tanja Meißner</p>
-                    <p class="text-sm text-gray-500 text-left">Veröffentlicht am 24.04.2024</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 24.04.2024</p>
                   </div>
                 </div>
               </div>
+            </div>
+          </article>
+        </a>
+      </div>
+      <!-- Sonstige -->
+      <div class="flex justify-center mb-12 mt-8">
+        <div class="max-w-2xl lg:text-center" data-aos="fade-up">
+          <h1
+            class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+          >
+          {% if kundenText2 and kundenText2.title %}{{kundenText2.title}}{% else %}Spezielle Programmierungen{% endif %}
+          </h1>
+          <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
+            {% if kundenText2 and kundenText2.description %}{{kundenText2.description}}{% else %}Auch ganz spezielle Web-Entwicklungen sind für uns kein Problem und können nach Wunsch individuell erstellt werden{% endif %}
+          </p>
+        </div>
+      </div>
+      <div class="mx-auto grid grid-cols-1 gap-3 px-2 text-center md:grid-cols-2 lg:grid-cols-3">
+        <a class="mb-6" href="https://moviebattle.io/" target="_blank" rel="noopener noreferrer">
+          <article 
+            class="group transform h-full cursor-pointer rounded-2xl border-gray-400 border shadow-lg bg-white px-6 pt-6 pb-2 transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            data-aos="fade-up"
+            data-aos-delay="100">
+            
+            <div class="relative mb-4 rounded-2xl">
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/MovieBattle BG.png' %}" alt="" />
+    
+              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
+                moviebattle.io
+                <svg class="ml-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="mb-auto flex w-full items-center justify-between pb-4">
+              <div class="flex items-center">
+                <div class="pr-3">
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/moviebattle.ico' %}" alt="MovieBattle" title="MovieBattle" />
+                </div>
+                <div class="flex flex-1">
+                  <div class="">
+                    <p class="text-sm font-semibold text-left">MovieBattle</p>
+                    <p class="text-sm text-gray-500 text-left">{% trans "client_published_on" %} 10.08.2024</p>
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </article>
         </a>

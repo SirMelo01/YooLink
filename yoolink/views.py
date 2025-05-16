@@ -32,6 +32,9 @@ def load_kunden(request):
     if TextContent.objects.filter(name="main_kunden").exists():
         context["kundenText"] = TextContent.objects.get(name='main_kunden')
 
+    if TextContent.objects.filter(name="main_kunden2").exists():
+        context["kundenText2"] = TextContent.objects.get(name='main_kunden2')
+
     lang = get_language_from_request(request)  # Browser-Sprache holen
     available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
     if lang not in available_languages:
@@ -128,6 +131,26 @@ def kontaktform(request):
         form = ContactForm()
 
     return render(request, 'pages/kontakt.html', {'form': form, 'success': success})
+
+def skills_view(request):
+    context = {}
+    context.update(get_opening_hours())  # falls Öffnungszeiten unten benötigt werden
+
+    # Texte holen
+    context["textContent_intro"] = TextContent.objects.filter(name="main_skills_intro").first()
+    context["textContent_cms"] = TextContent.objects.filter(name="main_skills_cms").first()
+    context["textContent_webdesign"] = TextContent.objects.filter(name="main_skills_webdesign").first()
+    context["textContent_logos"] = TextContent.objects.filter(name="main_skills_logos").first()
+    context["textContent_custom"] = TextContent.objects.filter(name="main_skills_custom").first()
+
+    # Sprache setzen (wie bei Kunden)
+    lang = get_language_from_request(request)
+    available_languages = dict(settings.LANGUAGES)
+    if lang not in available_languages:
+        lang = "en"
+    activate(lang)
+
+    return render(request, 'pages/skills.html', context)
 
 def shop(request):
    context={"products": Product.objects.filter(is_active=True)}

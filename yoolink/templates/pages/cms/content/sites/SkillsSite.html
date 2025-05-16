@@ -1,0 +1,102 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{ block.super }} | CMS - Seiteninhalt {% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl"><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <span>Skills (/skills)</span></h1>
+    <div>
+      {% csrf_token %}
+      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+         id="saveTextData" name="main_skills">
+        Speichern
+      </a>
+    </div>
+  </div>
+
+  <!-- Einleitung -->
+  <div class="mt-8 flex justify-center w-full">
+    <div class="flex items-center max-w-4xl md:px-8">
+      <div class="max-w-2xl md:mx-auto sm:text-center lg:max-w-4xl text-content" key="main_skills_intro">
+        <input inputType="header" type="text"
+               class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-72 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+               value="{{ textContent_intro.header|default:'Unsere Fähigkeiten' }}">
+        <textarea inputType="description" rows="4"
+                  class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full py-2 px-4 mb-6 text-base font-medium tracking-tight text-teal-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_intro.description|default:"Wir entwickeln nicht nur moderne Weblösungen, sondern bieten ein ganzheitliches Leistungsspektrum – von CMS bis Logos und individuelle Webapps." }}</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMS -->
+  <div class="mt-8 flex justify-center w-full">
+    <div class="flex items-center max-w-4xl md:px-8">
+      <div class="max-w-2xl md:mx-auto sm:text-center lg:max-w-4xl text-content" key="main_skills_cms">
+        <input inputType="title" type="text"
+               class="bg-gray-200 mt-3 text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-4 text-2xl font-bold tracking-tight text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+               value="{{ textContent_cms.title|default:'Eigenes CMS' }}">
+        <textarea inputType="description" rows="6"
+                  class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 mb-4">{{ textContent_cms.description|default:"Unser eigens entwickeltes Content-Management-System ermöglicht dir intuitive Inhaltspflege – ganz ohne technische Hürden." }}</textarea>
+        <input inputType="buttonText"
+               value="{{ textContent_cms.buttonText|default:'Mehr erfahren' }}"
+               class="rounded-md bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Webdesign -->
+  <div class="mt-8 flex justify-center w-full">
+    <div class="flex items-center max-w-4xl md:px-8">
+      <div class="max-w-2xl md:mx-auto sm:text-center lg:max-w-4xl text-content" key="main_skills_webdesign">
+        <input inputType="title" type="text"
+               class="bg-gray-200 mt-3 text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-4 text-2xl font-bold tracking-tight text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+               value="{{ textContent_webdesign.title|default:'Webdesign' }}">
+        <textarea inputType="description" rows="6"
+                  class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 mb-4">{{ textContent_webdesign.description|default:"Ob Onepager oder komplexe Unternehmensseite – wir gestalten Websites, die zu dir und deinen Zielen passen." }}</textarea>
+        <input inputType="buttonText"
+               value="{{ textContent_webdesign.buttonText|default:'Kontakt' }}"
+               class="rounded-md bg-pink-400 hover:bg-pink-500 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Logos -->
+  <div class="mt-8 flex justify-center w-full">
+    <div class="flex items-center max-w-4xl md:px-8">
+      <div class="max-w-2xl md:mx-auto sm:text-center lg:max-w-4xl text-content" key="main_skills_logos">
+        <input inputType="title" type="text"
+               class="bg-gray-200 mt-3 text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-4 text-2xl font-bold tracking-tight text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+               value="{{ textContent_logos.title|default:'Logo Design' }}">
+        <textarea inputType="description" rows="6"
+                  class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 mb-4">{{ textContent_logos.description|default:"Wir entwickeln einzigartige Logos – von schlicht bis verspielt – genau auf dein Unternehmen abgestimmt." }}</textarea>
+        <input inputType="buttonText"
+               value="{{ textContent_logos.buttonText|default:'Ansehen' }}"
+               class="rounded-md bg-green-400 hover:bg-green-500 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Webentwicklung -->
+  <div class="mt-8 flex justify-center w-full mb-20">
+    <div class="flex items-center max-w-4xl md:px-8">
+      <div class="max-w-2xl md:mx-auto sm:text-center lg:max-w-4xl text-content" key="main_skills_custom">
+        <input inputType="title" type="text"
+               class="bg-gray-200 mt-3 text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-4 text-2xl font-bold tracking-tight text-teal-900 focus:outline-none focus:bg-white focus:border-blue-500"
+               value="{{ textContent_custom.title|default:'Custom Webentwicklung' }}">
+        <textarea inputType="description" rows="6"
+                  class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 mb-4">{{ textContent_custom.description|default:"Individuelle Anforderungen? Kein Problem. Von Webapps über API-Backends bis hin zu Real-Time-Projekten: Wir entwickeln maßgeschneiderte Lösungen." }}</textarea>
+        <input inputType="buttonText"
+               value="{{ textContent_custom.buttonText|default:'Beispiel ansehen' }}"
+               class="rounded-md bg-purple-400 hover:bg-purple-500 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+<script src="{% static 'js/cms/content/save-text.js' %}"></script>
+{% endcompress js %}
+{% endblock %}

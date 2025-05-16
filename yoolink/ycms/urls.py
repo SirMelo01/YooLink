@@ -51,6 +51,9 @@ urlpatterns = [
     path('seiten/hauptseite/Know-How/', views.site_view_main_know_how, name='site_hauptseite_know_how'),
     path('seiten/hauptseite/Kunden/', views.site_view_main_kunden, name='site_hauptseite_kunden'),
     path('seiten/hauptseite/FAQ/', views.site_view_main_faq, name='site_hauptseite_faq'),
+    path('seiten/Kunden/', views.site_view_kunden, name='site_kunden'),
+    path('seiten/skills/', views.site_view_skills, name='site_skills'),
+
     # Products
     path('products/', views.product_view, name='products'),
     path('products/search/', views.product_search, name='product_search'),
@@ -97,6 +100,10 @@ urlpatterns = [
     # Settings
     path('settings/', views.user_settings_view, name='settings-view'),
     path('settings/update/', views.user_settings_update, name='settings-update'),
+    path('settings/logo/', views.logo_settings_view, name='logo-settings'),
+    path('settings/logo/update/', views.update_logo_favicon, name='logo-update'),
+    path('settings/logo/delete/', views.delete_logo_favicon, name='logo-delete'),
+
     
     # Opening Hours
     path('openinghours/', views.opening_hours_view, name='openinghours-view'),
@@ -125,4 +132,10 @@ urlpatterns = [
     path("buttons/create/", views.button_create, name="button-create"),
     path("buttons/<int:pk>/edit/", views.button_edit, name="button-edit"),
     path("buttons/<int:pk>/delete/", views.button_delete, name="button-delete"),
+
+    # AnyFiles
+    path('anyfiles/upload/', views.anyfile_upload_view, name='anyfile-upload'),
+    path('anyfiles/', views.anyfile_list_view, name='anyfile-list'),
+    path('anyfiles/delete/<int:id>/', views.anyfile_delete_view, name='anyfile-delete'),
+
 ]

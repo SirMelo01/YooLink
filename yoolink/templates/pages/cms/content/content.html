@@ -6,26 +6,45 @@
 
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
-    <!-- Hauptseite Content Management Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-lg font-bold mb-4">Hauptseite</h2>
-        <p class="mb-4">Hier kannst du den Inhalt der Hauptseite verändern</p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-12">
-            <a href="{% url 'cms:site_hauptseite' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
-            <div class="flex-grow"></div>
-        </div>
+  <!-- Hauptseite Content Management Card -->
+  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+    <h2 class="text-lg font-bold mb-4">Hauptseite</h2>
+    <p class="mb-4">Hier kannst du den Inhalt der Hauptseite verändern</p>
+    <div class="flex-grow"></div>
+    <div class="flex justify-center items-center mt-12">
+      <a href="{% url 'cms:site_hauptseite' %}"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+      <div class="flex-grow"></div>
     </div>
+  </div>
+  <!-- Kunden Section -->
+  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+    <h2 class="text-lg font-bold mb-4">Kunden (/kunden)</h2>
+    <p class="mb-4">Hier kannst du den Inhalt der Kunden Seite anpassen</p>
+    <div class="flex-grow"></div>
+    <div class="flex justify-center mt-12">
+      <a href="{% url 'cms:site_kunden' %}"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+    </div>
+  </div>
+  <!-- Skills Section -->
+  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+      <h2 class="text-lg font-bold mb-4">Fähigkeiten (/skills)</h2>
+      <p class="mb-4">Hier kannst du den Inhalt der Skills-Seite bearbeiten</p>
+      <div class="flex-grow"></div>
+      <div class="flex justify-center mt-12">
+          <a href="{% url 'cms:site_skills' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+      </div>
+  </div>
 </div>
 
 
 
-  {% block javascriptend %}
-    {% compress js inline %}
-      <script defer src="{% static 'js/cms.js' %}"></script>
-    {% endcompress js %}
-  {% endblock javascriptend %}
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}
 
 
 

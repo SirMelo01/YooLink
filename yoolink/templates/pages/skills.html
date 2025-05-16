@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }} | Unsere Fähigkeiten{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+{% endblock %}
+
+{% load i18n %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-blue-50 to-white py-20 px-4">
+  <div class="max-w-5xl mx-auto text-center mb-28">
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6" data-aos="fade-down">
+      {% if textContent_intro and textContent_intro.header %}{{ textContent_intro.header }}{% else %}Unsere Fähigkeiten{% endif %}
+    </h1>
+    <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+      {% if textContent_intro and textContent_intro.description %}
+        {{ textContent_intro.description }}
+      {% else %}
+        Wir entwickeln nicht nur moderne Weblösungen, sondern bieten ein ganzheitliches Leistungsspektrum - von CMS bis Logos und individuelle Webapps.
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- CMS Section -->
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center mb-40 px-4">
+    <div data-aos="fade-right">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight relative inline-block mb-6">
+        {% if textContent_cms and textContent_cms.title %}{{ textContent_cms.title }}{% else %}Eigenes CMS{% endif %}
+        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+          <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-blue-500">
+            <path d="M0,10 Q50,20 100,10 T200,10" />
+          </svg>
+        </span>
+      </h2>
+      <p class="text-lg md:text-xl text-gray-600 mb-4">
+        {% if textContent_cms and textContent_cms.description %}
+          {{ textContent_cms.description }}
+        {% else %}
+          Unser eigens entwickeltes Content-Management-System ermöglicht dir intuitive Inhaltspflege – ganz ohne technische Hürden.
+        {% endif %}
+      </p>
+      <ul class="list-disc list-inside text-gray-500 text-base md:text-lg">
+        <!--<li>Einfache anpassungen</li>
+        <li>SEO-freundlich</li>
+        <li>Modular erweiterbar</li>-->
+        <li>{% trans "skills_easy_changes" %}</li>
+        <li>{% trans "skills_seo_friendly" %}</li>
+        <li>{% trans "skills_modular_extendable" %}</li>
+      </ul>
+      <a href="#"
+         class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition transform hover:-translate-y-1 hover:shadow-lg duration-300 ease-in-out">
+        {% if textContent_cms and textContent_cms.buttonText %}{{ textContent_cms.buttonText }}{% else %}Mehr erfahren{% endif %}
+      </a>
+    </div>
+    <div data-aos="fade-left">
+      <img src="{% static 'images/CMS-2.0.png' %}" alt="CMS Vorschau" class="rounded-xl shadow-xl" />
+    </div>
+  </div>
+
+  <!-- Webdesign Section -->
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center mb-40 px-4">
+    <div class="order-2 md:order-1" data-aos="fade-right">
+      <img src="{% static 'images/references/THP Full-min.png' %}" alt="Design Beispiel" class="rounded-xl shadow-xl" />
+    </div>
+    <div class="order-1 md:order-2" data-aos="fade-left">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight relative inline-block mb-6">
+        {% if textContent_webdesign and textContent_webdesign.title %}{{ textContent_webdesign.title }}{% else %}Webdesign{% endif %}
+        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+          <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-pink-400">
+            <path d="M0,10 Q50,20 100,10 T200,10" />
+          </svg>
+        </span>
+      </h2>
+      <p class="text-lg md:text-xl text-gray-600 mb-4">
+        {% if textContent_webdesign and textContent_webdesign.description %}
+          {{ textContent_webdesign.description }}
+        {% else %}
+          Ob Onepager oder komplexe Unternehmensseite - wir gestalten Websites, die zu dir und deinen Zielen passen. Immer responsive. Immer modern.
+        {% endif %}
+      </p>
+      <a href="{% url 'kontakt' %}" class="inline-block mt-6 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition transform hover:-translate-y-1 hover:shadow-lg duration-300 ease-in-out">
+        {% if textContent_webdesign and textContent_webdesign.buttonText %}{{ textContent_webdesign.buttonText }}{% else %}Kontakt{% endif %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Logos Section -->
+  <div class="max-w-6xl mx-auto mb-40 px-4 text-center" data-aos="fade-up">
+    <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight relative inline-block mb-6">
+      {% if textContent_logos and textContent_logos.title %}{{ textContent_logos.title }}{% else %}Logo Design{% endif %}
+      <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+        <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-green-500">
+          <path d="M0,10 Q50,20 100,10 T200,10" />
+        </svg>
+      </span>
+    </h2>
+    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+      {% if textContent_logos and textContent_logos.description %}
+        {{ textContent_logos.description }}
+      {% else %}
+        Wir entwickeln einzigartige Logos - von schlicht bis verspielt - genau auf dein Unternehmen abgestimmt.
+      {% endif %}
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+      <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" alt="Logo 1" class="h-20 object-contain" />
+      <img src="{% static 'images/references/knn-truck.svg' %}" alt="Logo 2" class="h-20 object-contain" />
+      <img src="{% static 'images/references/knn-truck.svg' %}" alt="Logo 3" class="h-20 object-contain" />
+      <img src="{% static 'images/references/knn-truck.svg' %}" alt="Logo 4" class="h-20 object-contain" />
+    </div>
+  </div>
+
+  <!-- Custom Development Section -->
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center mb-40 px-4">
+    <div data-aos="fade-right">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight relative inline-block mb-6">
+        {% if textContent_custom and textContent_custom.title %}{{ textContent_custom.title }}{% else %}Custom Webentwicklung{% endif %}
+        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+          <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-purple-400">
+            <path d="M0,10 Q50,20 100,10 T200,10" />
+          </svg>
+        </span>
+      </h2>
+      <p class="text-lg md:text-xl text-gray-600 mb-4">
+        {% if textContent_custom and textContent_custom.description %}
+          {{ textContent_custom.description }}
+        {% else %}
+          Individuelle Anforderungen? Kein Problem. Von Webapps über API-Backends bis hin zu Real-Time-Projekten: Wir entwickeln maßgeschneiderte Lösungen.
+        {% endif %}
+      </p>
+      <p class="text-sm text-gray-500">
+        {% trans "skills_example" %}: <a href="https://moviebattle.io" target="_blank" class="text-blue-600 underline hover:text-blue-800">moviebattle.io</a>
+      </p>
+    </div>
+    <div data-aos="fade-left">
+      <img src="{% static 'images/references/MovieBattle BG.png' %}" alt="MovieBattle Preview" class="rounded-xl shadow-xl" />
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascriptend %}
+  <script src="{% static 'js/aos.js' %}"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+  </script>
+{% endblock %}

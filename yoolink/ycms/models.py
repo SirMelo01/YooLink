@@ -12,6 +12,7 @@ from django.utils import timezone
 import uuid
 from django.urls import reverse
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 ## Produktiv und funktioniert
 
@@ -56,6 +57,103 @@ class fileentry(models.Model):
 
     def delete_model_only(self, *args, **kwargs):
         super(fileentry, self).delete(*args, **kwargs) 
+
+def unique_anyfile_name(instance, filename):
+    timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    base, ext = os.path.splitext(filename)
+    return f"yoolink/uploads/{slugify(base)}_{timestamp}{ext}"
+
+def validate_file_extension(value):
+    allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm',
+                          '.pdf', '.zip', '.docx', '.xlsx', '.txt']
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext not in allowed_extensions:
+        raise ValidationError(f'Dateiformat "{ext}" wird nicht unterstützt.')
+
+class AnyFile(models.Model):
+    file = models.FileField(upload_to=unique_anyfile_name, validators=[validate_file_extension])
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=200, default="Dateititel", blank=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return os.path.basename(self.file.name)
+
+    def delete(self, *args, **kwargs):
+        self.file.storage.delete(self.file.name)
+        super(AnyFile, self).delete(*args, **kwargs)
+
+def unique_video_name(instance, filename):
+    timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    base, ext = os.path.splitext(filename)
+    return f"yoolink/videos/{slugify(base)}_{timestamp}{ext}"
+
+def validate_video_extension(value):
+    allowed = ['.mp4', '.mov', '.webm']
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext not in allowed:
+        raise ValidationError(f'Dateiformat "{ext}" wird nicht unterstützt.')
+
+def validate_image_extension(value):
+    allowed = ['.jpg', '.jpeg', '.png', '.webp']
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext not in allowed:
+        raise ValidationError(f'Bildformat "{ext}" wird nicht unterstützt.')
+
+def validate_vtt_extension(value):
+    if not value.name.lower().endswith('.vtt'):
+        raise ValidationError('Nur .vtt Untertiteldateien sind erlaubt.')
+
+class VideoFile(models.Model):
+    file = models.FileField(
+        upload_to=unique_video_name,
+        validators=[validate_video_extension],
+        help_text="Video-Datei (.mp4, .mov, .webm)"
+    )
+    thumbnail = models.ImageField(
+        upload_to="yoolink/thumbnails/",
+        validators=[validate_image_extension],
+        blank=True,
+        null=True,
+        help_text="Poster-Thumbnail für Video"
+    )
+    subtitle_file = models.FileField(
+        upload_to="yoolink/subtitles/",
+        validators=[validate_vtt_extension],
+        blank=True,
+        null=True,
+        help_text="Optional: Untertitel im .vtt Format"
+    )
+
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=255, help_text="Titel für das Video", blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    description = models.TextField(help_text="Beschreibung / Caption des Videos", blank=True)
+    duration = models.DurationField(
+        blank=True,
+        null=True,
+        help_text="Laufzeit des Videos (z. B. für SEO oder schema.org)"
+    )
+    alt_text = models.CharField(max_length=255, help_text="Alt-Text für SEO & Barrierefreiheit", blank=True)
+    tags = models.CharField(max_length=255, blank=True, help_text="Kommaseparierte Tags (optional)")
+    is_public = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title or os.path.basename(self.file.name)
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.title:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.file:
+            self.file.storage.delete(self.file.name)
+        if self.thumbnail:
+            self.thumbnail.storage.delete(self.thumbnail.name)
+        if self.subtitle_file:
+            self.subtitle_file.storage.delete(self.subtitle_file.name)
+        super().delete(*args, **kwargs)
 
 
 def upload_to_galery_image(instance, filename):
@@ -361,7 +459,6 @@ class Message(models.Model):
     date = models.DateField(auto_now_add=True, null=True)
     seen = models.BooleanField(default=False)
 
-
 class TextContent(models.Model):
     name = models.CharField(max_length=50, default="", unique=True)
     header = models.CharField(max_length=100, default="")
@@ -369,7 +466,8 @@ class TextContent(models.Model):
     description = models.TextField(default="")
     buttonText = models.CharField(max_length=120, default="")
 
-
+def upload_to_user_settings(instance, filename):
+    return f"yoolink/settings/{instance.id}/{filename}"
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=255, default='')
@@ -383,6 +481,8 @@ class UserSettings(models.Model):
     vacation = models.BooleanField(default=False)
     vacationText = models.CharField(max_length=200, default='Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!')
     global_font = models.CharField(max_length=60, default='font-sans')
+    logo = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
+    favicon = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
 
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"
