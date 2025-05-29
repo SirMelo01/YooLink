@@ -16,18 +16,16 @@
         <div
             class="container flex flex-col items-center justify-between h-full max-w-6xl px-8 mx-auto -mt-32 lg:flex-row xl:px-0">
             <div
-                class="z-30 flex flex-col items-center w-full max-w-xl pt-48 text-center lg:items-start lg:w-1/2 lg:pt-40 xl:pt-40 lg:text-left">
+                class="z-30 xxl:-ml-24 flex flex-col items-center w-full max-w-xl pt-48 text-center lg:items-start lg:w-1/2 lg:pt-40 xl:pt-40 lg:text-left">
                 <h1 class="relative mb-4 text-3xl font-black leading-tight text-gray-900 sm:text-6xl xl:mb-8">
                     Verwalte deine eigene Website
                 </h1>
-                <p class="pr-0 mb-8 text-base text-gray-600 sm:text-lg xl:text-xl lg:pr-20">Are you ready to start your
-                    adventure and start building the next greatest SAAS app on the market?</p>
-                <a href="#_"
-                    class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-blue-900 hover:bg-blue-700 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">Signup
-                    Today!</a>
+                <p class="pr-0 mb-8 text-base text-gray-600 sm:text-lg xl:text-xl lg:pr-20">Bist du bereit, deine Website einfach und schnell selbst zu verwalten? - Mit dem Content Management System von YooLink</p>
+                <a href="{% url 'kontakt' %}"
+                    class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-blue-900 hover:bg-blue-700 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">Jetzt Anfragen!</a>
                 <!-- Integrates with section -->
                 <div class="flex-col hidden mt-8 sm:flex lg:mt-12">
-                    <p class="mb-4 text-sm font-medium tracking-widest text-gray-500 uppercase">Integrates With</p>
+                    <p class="mb-4 text-sm font-medium tracking-widest text-gray-500 uppercase">Integriert mit</p>
                     <div class="flex justify-center">
                         <svg class="h-14 mr-4 text-gray-500 duration-150 cursor-pointer fill-current transition-color hover:text-gray-600" 
                             viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
@@ -110,34 +108,45 @@
         <div class="max-w-screen-xl px-4 py-8 mx-auto space-y-12 lg:space-y-20 lg:py-24 lg:px-6">
             <!-- Row -->
             <div class="items-center gap-8 lg:grid lg:grid-cols-2 xl:gap-16">
-                <div class="text-gray-500 sm:text-lg">
-                    <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900">Verwalte den Inhalt der Website jederzeit und ohne Hilfe</h2>
-                    <p class="mb-8 font-light lg:text-xl">Deliver great service experiences fast - without the complexity of traditional ITSM solutions. Accelerate critical development work, eliminate toil, and deploy changes with ease.</p>
-                    <!--Hier Bilder einbinden-->
-                    <div class="flex space-x-4 pt-4 pr-10">
+                <div class="text-gray-500 sm:text-lg  pb-14 lg:pb-0">
+                    <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900">
+                        Verwalte den Inhalt der Website jederzeit und ohne Hilfe
+                    </h2>
+                    <p class="mb-8 font-light lg:text-xl">
+                        Deliver great service experiences fast - without the complexity of traditional ITSM solutions. Accelerate critical development work, eliminate toil, and deploy changes with ease.
+                    </p>
+
+                    <!-- Bilder-Klick-Bereich -->
+                    <div class="flex space-x-4 pt-4 pr-10" id="cardContainer">
                         <img
-                          class="w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105"
-                          src="{% static 'images/cmsinfo/cmsteamcard.png' %}"
-                          alt="CMS Info Card 1"
+                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% static 'images/cmsinfo/cmsteamcard.png' %}"
+                            alt="CMS Info Card 1"
+                            data-image="{% static 'images/cmsinfo/cmsteam.png' %}"
                         >
                         <img
-                          class="w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105"
-                          src="{% static 'images/cmsinfo/cmsfaqcard.png' %}"
-                          alt="CMS Info Card 2"
+                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% static 'images/cmsinfo/cmsfaqcard.png' %}"
+                            alt="CMS Info Card 2"
+                            data-image="{% static 'images/cmsinfo/cmsfaq.png' %}"
                         >
                         <img
-                          class="w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105"
-                          src="{% static 'images/cmsinfo/cmspreiscard.png' %}"
-                          alt="CMS Info Card 3"
+                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% static 'images/cmsinfo/cmspreiscard.png' %}"
+                            alt="CMS Info Card 3"
+                            data-image="{% static 'images/cmsinfo/cmspreis.png' %}"
                         >
                         <img
-                          class="w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105"
-                          src="{% static 'images/cmsinfo/cmswissencard.png' %}"
-                          alt="CMS Info Card 4"
+                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% static 'images/cmsinfo/cmswissencard.png' %}"
+                            alt="CMS Info Card 4"
+                            data-image="{% static 'images/cmsinfo/cmswissen.png' %}"
                         >
                     </div>
                 </div>
-                <img class="hidden w-full mb-4 rounded-lg lg:mb-0 lg:flex" src="{% static 'images/designImg/filler.png' %}" alt="dashboard feature image">
+
+                <!-- Hauptbild -->
+                <img id="mainImage" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl" src="{% static 'images/designImg/filler.png' %}" alt="dashboard feature image">
             </div>
 
 
@@ -194,11 +203,11 @@
                     </ul>
                     <p class="font-light lg:text-xl">Deliver great service experiences fast - without the complexity of traditional ITSM solutions.</p>
                 </div>
-                <img class="hidden w-full mb-4 rounded-lg lg:mb-0 lg:flex" src="{% static 'images/designImg/filler.png' %}" alt="dashboard feature image">
+                <img class="hidden w-full mb-4 rounded-lg lg:mb-0 lg:flex shadow-2xl" src="{% static 'images/cmsinfo/cmsblog.png' %}" alt="dashboard feature image">
             </div>
             <!-- Row -->
             <div class="items-center gap-8 lg:grid lg:grid-cols-2 xl:gap-16">
-                <img class="hidden w-full mb-4 rounded-lg lg:mb-0 lg:flex" src="{% static 'images/designImg/filler.png' %}" alt="feature image 2">
+                <img class="hidden w-full mb-4 rounded-lg lg:mb-0 lg:flex shadow-2xl" src="{% static 'images/cmsinfo/cmscompanydata.png' %}" alt="feature image 2">
                 <div class="text-gray-500 sm:text-lg">
                     <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900">Alle Unternehmensdaten auf einem Blick</h2>
                     <p class="mb-8 font-light lg:text-xl">Deliver great service experiences fast - without the complexity of traditional ITSM solutions. Accelerate critical development work, eliminate toil, and deploy changes with ease.</p>
@@ -245,8 +254,8 @@
                 <p class="font-light text-gray-500 sm:text-xl">Our rigorous security and compliance standards are at the heart of all we do. We work tirelessly to protect you and your customers.</p>
                 <div class="pt-6 mt-6 space-y-4 border-t border-gray-200">
                     <div>
-                      <a href="#" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
-                        Explore Legality Guide
+                      <a href="{% url 'kunden' %}" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
+                        Besuche unsere Kunden
                         <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                       </a>
                     </div>
@@ -261,22 +270,24 @@
             <div class="col-span-2 space-y-8 md:grid md:grid-cols-2 md:gap-12 md:space-y-0">
                 <div>
                     <svg class="w-10 h-10 mb-2 text-blue-900 md:w-12 md:h-12" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm14 1a1 1 0 11-2 0 1 1 0 012 0zM2 13a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2zm14 1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"></path></svg>
-                    <h3 class="mb-2 text-2xl font-bold">99.99% uptime</h3>
-                    <p class="font-light text-gray-500">For Landwind, with zero maintenance downtime</p>
+                    <h3 class="mb-2 text-2xl font-bold">99.99% Betriebszeit</h3>
+                    <p class="font-light text-gray-500">Websites von Yoolink werden ohne Ausfallzeiten gewartet.</p>
                 </div>
                 <div>
                     <svg class="w-10 h-10 mb-2 text-blue-900 md:w-12 md:h-12" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-                    <h3 class="mb-2 text-2xl font-bold">600M+ Users</h3>
-                    <p class="font-light text-gray-500">Trusted by over 600 milion users around the world</p>
+                    <h3 class="mb-2 text-2xl font-bold">10+ Benutzer</h3>
+                    <p class="font-light text-gray-500">Verschiedene Kunden aus allen möglichen Brachen vertrauen auf das System von YooLink.</p>
                 </div>
                 <div>
                     <svg class="w-10 h-10 mb-2 text-blue-900 md:w-12 md:h-12" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
-                    <h3 class="mb-2 text-2xl font-bold">100+ countries</h3>
-                    <p class="font-light text-gray-500">Have used Landwind to create functional websites</p>
+                    <h3 class="mb-2 text-2xl font-bold">In jeder Sprache</h3>
+                    <p class="font-light text-gray-500">Die Texte auf der Website können in jeder gewünschten Sprache gepfelgt werden.</p>
                 </div>
                 <div>
-                    <svg class="w-10 h-10 mb-2 text-blue-900 md:w-12 md:h-12" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg>
-                    <h3 class="mb-2 text-2xl font-bold">5+ Million</h3>
+                    <svg class="w-10 h-10 mb-2 text-blue-900 md:w-12 md:h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M1 5h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 1 0 0-2H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2Zm18 4h-1.424a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2h10.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Zm0 6H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 0 0 0 2h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Z"/>
+                    </svg>
+                    <h3 class="mb-2 text-2xl font-bold">Nahtlose integration</h3>
                     <p class="font-light text-gray-500">Transactions per day</p>
                 </div>
             </div>
@@ -289,9 +300,9 @@
     <section class="bg-gray-700">
         <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16 lg:px-6">
             <div class="max-w-screen-sm mx-auto text-center">
-                <h2 class="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white">Start your free trial today</h2>
-                <p class="mb-6 font-light text-white md:text-lg">Try Landwind Platform for 30 days. No credit card required.</p>
-                <a href="#" class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-blue-900 hover:bg-blue-700 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">Free trial for 30 days</a>
+                <h2 class="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white">Jetzt unverbindlich Kontakt aufnehmen</h2>
+                <p class="mb-6 font-light text-white md:text-lg">Du suchst nach einem flexiblen, leistungsstarken und einfachen CMS? Wir beraten dich persönlich!</p>
+                <a href="#" class="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-blue-900 hover:bg-blue-700 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">Lass uns gemeinsam starten</a>
             </div>
         </div>
     </section>
@@ -301,6 +312,52 @@
 <script defer src="{% static 'js/home.js' %}"></script>
 
 {% endcompress js %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cards = document.querySelectorAll(".cms-card");
+        const mainImage = document.getElementById("mainImage");
+
+        // Alle Bildquellen auslesen
+        const imageSources = Array.from(cards).map(card => card.getAttribute("data-image"));
+        let currentIndex = 0;
+        let autoRotate = true;
+
+        // Funktion zur Bildanzeige und Kartenauswahl
+        function setImage(index) {
+            const newImage = imageSources[index];
+            mainImage.src = newImage;
+
+            cards.forEach((card, i) => {
+                card.classList.remove("grayscale", "ring-4", "ring-blue-500");
+                if (i === index) {
+                    card.classList.add("grayscale", "ring-4", "ring-blue-500");
+                }
+            });
+        }
+
+        // Automatischer Wechsel
+        const interval = setInterval(() => {
+            if (!autoRotate) return;
+            currentIndex = (currentIndex + 1) % imageSources.length;
+            setImage(currentIndex);
+        }, 10000); // alle 20 Sekunden
+
+        // Manuelle Auswahl stoppt Auto-Modus
+        cards.forEach((card, index) => {
+            card.addEventListener("click", () => {
+                autoRotate = false;
+                currentIndex = index;
+                setImage(index);
+            });
+        });
+
+        // Initial erstes Bild anzeigen
+        setImage(0);
+    });
+</script>
+
+
+
 <script>
   AOS.init({
     duration: 800, // Dauer der Animation in ms
