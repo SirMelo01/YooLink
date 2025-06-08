@@ -125,12 +125,12 @@
   });
   // Validierung beim Absenden
   $('#video-upload-form').submit(function (e) {
+    e.preventDefault();
     const duration = $('#duration').val();
     const durationPattern = /^([0-1]?\d|2[0-3]):([0-5]?\d):([0-5]?\d)$/;
 
     if (duration && !durationPattern.test(duration)) {
       sendNotif('Bitte gib die Dauer im Format hh:mm:ss ein (z.B. 00:03:45).', "error");
-      e.preventDefault();
       return;
     }
 
