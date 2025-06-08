@@ -2433,7 +2433,7 @@ def create_video(request):
         is_public = request.POST.get('is_public', 'true') == 'true'
         duration = request.POST.get('duration') or None
 
-        video_instance = VideoFile.objects.create(
+        video_instance = VideoFile(
             file=video,
             thumbnail=thumbnail,
             subtitle_file=subtitle,
@@ -2444,6 +2444,7 @@ def create_video(request):
             is_public=is_public,
             duration=duration,
         )
+        video_instance.save()
         return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
 
     return render(request, 'pages/cms/video/video-create.html')
