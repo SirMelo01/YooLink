@@ -138,4 +138,10 @@ urlpatterns = [
     path('anyfiles/', views.anyfile_list_view, name='anyfile-list'),
     path('anyfiles/delete/<int:id>/', views.anyfile_delete_view, name='anyfile-delete'),
 
+    # Videos
+    path('videos/', views.list_videos, name='list_videos'),
+    path('videos/create/', views.create_video, name='create_video'),
+    path('videos/edit/<int:pk>/', views.edit_video, name='edit_video'),
+    path('videos/delete/<int:pk>/', views.delete_video, name='delete_video'),
+
 ]

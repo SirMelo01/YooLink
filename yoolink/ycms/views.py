@@ -3,7 +3,7 @@ import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.models import AnyFile, Button, PricingCard, PricingFeature, TeamMember, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
+from yoolink.ycms.models import AnyFile, Button, PricingCard, PricingFeature, TeamMember, VideoFile, fileentry, OpeningHours, ShippingAddress, Review, FAQ, UserSettings, Order, Message, OrderItem, Galerie, Category, Brand, Blog, GaleryImage, TextContent, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, F, DecimalField
@@ -2312,13 +2312,11 @@ def manage_features(request, pk):
 
     return HttpResponseBadRequest()
 
-
 def button_list(request):
     buttons = Button.objects.all().order_by("order")
     return render(request, "pages/cms/buttons/button_list.html", {
         "buttons": buttons
     })
-
 
 def button_create(request):
     if request.method == "GET":
@@ -2350,7 +2348,6 @@ def button_create(request):
 
 
     return HttpResponseBadRequest()
-
 
 def button_edit(request, pk):
     button = get_object_or_404(Button, pk=pk)
@@ -2386,14 +2383,12 @@ def button_edit(request, pk):
 
     return HttpResponseBadRequest()
 
-
 def button_delete(request, pk):
     if request.method == "POST":
         button = get_object_or_404(Button, pk=pk)
         button.delete()
         return JsonResponse({"success": True})
     return HttpResponseBadRequest()
-
 
 # AnyFiles
 @login_required(login_url='login')
@@ -2418,4 +2413,68 @@ def anyfile_delete_view(request, id):
 def anyfile_list_view(request):
     files = AnyFile.objects.all()
     return render(request, 'pages/cms/anyfiles.html', {'files': files})
+
+# Videos
+@login_required(login_url='login')
+def list_videos(request):
+    videos = VideoFile.objects.all().order_by('-uploaded_at')
+    return render(request, 'pages/cms/video/video-overview.html', {'videos': videos})
+
+@login_required(login_url='login')
+def create_video(request):
+    if request.method == 'POST':
+        video = request.FILES.get('file')
+        thumbnail = request.FILES.get('thumbnail')
+        subtitle = request.FILES.get('subtitle')
+        title = request.POST.get('title')
+        description = request.POST.get('description', '')
+        alt_text = request.POST.get('alt_text', '')
+        tags = request.POST.get('tags', '')
+        is_public = request.POST.get('is_public', 'true') == 'true'
+        duration = request.POST.get('duration') or None
+
+        video_instance = VideoFile.objects.create(
+            file=video,
+            thumbnail=thumbnail,
+            subtitle_file=subtitle,
+            title=title,
+            description=description,
+            alt_text=alt_text,
+            tags=tags,
+            is_public=is_public,
+            duration=duration,
+        )
+        return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
+
+    return render(request, 'pages/cms/video/video-create.html')
+
+@login_required(login_url='login')
+def edit_video(request, pk):
+    video = get_object_or_404(VideoFile, pk=pk)
+
+    if request.method == 'POST':
+        video.title = request.POST.get('title')
+        video.description = request.POST.get('description', '')
+        video.alt_text = request.POST.get('alt_text', '')
+        video.tags = request.POST.get('tags', '')
+        video.is_public = request.POST.get('is_public', 'true') == 'true'
+        video.duration = request.POST.get('duration') or None
+
+        if 'file' in request.FILES:
+            video.file = request.FILES['file']
+        if 'thumbnail' in request.FILES:
+            video.thumbnail = request.FILES['thumbnail']
+        if 'subtitle' in request.FILES:
+            video.subtitle_file = request.FILES['subtitle']
+
+        video.save()
+        return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
+
+    return render(request, 'pages/cms/video/video-edit.html', {'video': video})
+
+@login_required(login_url='login')
+def delete_video(request, pk):
+    video = get_object_or_404(VideoFile, pk=pk)
+    video.delete()
+    return JsonResponse({'success': True})
 

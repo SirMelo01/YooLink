@@ -132,7 +132,7 @@ class VideoFile(models.Model):
     duration = models.DurationField(
         blank=True,
         null=True,
-        help_text="Laufzeit des Videos (z. B. für SEO oder schema.org)"
+        help_text="Laufzeit des Videos (z.B. für SEO oder schema.org)"
     )
     alt_text = models.CharField(max_length=255, help_text="Alt-Text für SEO & Barrierefreiheit", blank=True)
     tags = models.CharField(max_length=255, blank=True, help_text="Kommaseparierte Tags (optional)")
