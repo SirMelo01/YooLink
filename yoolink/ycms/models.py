@@ -73,7 +73,7 @@ def validate_file_extension(value):
 class AnyFile(models.Model):
     file = models.FileField(upload_to=unique_anyfile_name, validators=[validate_file_extension])
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=200, default="Dateititel", blank=True)
+    title = models.CharField(max_length=200, default="", blank=True)
     description = models.TextField(blank=True)
 
     def __str__(self):

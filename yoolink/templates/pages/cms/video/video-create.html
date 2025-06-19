@@ -5,7 +5,19 @@
 
 {% block content %}
 <div class="container mx-auto mt-8 max-w-4xl">
-  <h1 class="text-2xl font-bold mb-6">Neues Video hochladen</h1>
+  <div class="flex justify-between">
+    <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
+        href="{% url 'cms:list_videos' %}" class="text-blue-500">Videos</a> / <span id="videoTitle">Video Titel</span>
+    </h1>
+    <div>
+      {% csrf_token %}
+      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+        id="createVideo">
+        Erstellen
+      </a>
+    </div>
+  </div>
+  <h1 class="text-2xl font-bold my-6">Neues Video hochladen</h1>
 
   <form id="video-upload-form" enctype="multipart/form-data" method="POST">
     {% csrf_token %}
@@ -13,19 +25,35 @@
     <!-- File Inputs -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Video-Datei</label>
-        <input type="file" name="file" accept="video/*"
-               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" required>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Video-Datei</label>
+        <input type="file" name="file" accept="video/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4
+             file:rounded-lg file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-100 file:text-blue-700
+             hover:file:bg-blue-200
+             focus:outline-none focus:ring-2 focus:ring-blue-300" required>
       </div>
+
+      <!-- Thumbnail -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Thumbnail</label>
-        <input type="file" name="thumbnail" accept="image/*"
-               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Thumbnail</label>
+        <input type="file" name="thumbnail" accept="image/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4
+             file:rounded-lg file:border-0
+             file:text-sm file:font-semibold
+             file:bg-green-100 file:text-green-700
+             hover:file:bg-green-200
+             focus:outline-none focus:ring-2 focus:ring-green-300">
       </div>
+
+      <!-- Untertitel -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Untertitel (.vtt)</label>
-        <input type="file" name="subtitle" accept=".vtt"
-               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Untertitel (.vtt)</label>
+        <input type="file" name="subtitle" accept=".vtt" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4
+             file:rounded-lg file:border-0
+             file:text-sm file:font-semibold
+             file:bg-gray-200 file:text-gray-800
+             hover:file:bg-gray-300
+             focus:outline-none focus:ring-2 focus:ring-gray-400">
       </div>
     </div>
 
@@ -34,10 +62,10 @@
       <!-- Titel -->
       <div class="relative">
         <input type="text" name="title" id="title"
-               class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
-               placeholder="Titel">
+          class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+          placeholder="Titel">
         <label for="title"
-               class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
+          class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
           Titel
         </label>
       </div>
@@ -45,10 +73,10 @@
       <!-- Alt-Text -->
       <div class="relative">
         <input type="text" name="alt_text" id="alt_text"
-               class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
-               placeholder="Alt-Text">
+          class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+          placeholder="Alt-Text">
         <label for="alt_text"
-               class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
+          class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
           Alt-Text
         </label>
       </div>
@@ -56,10 +84,10 @@
       <!-- Tags -->
       <div class="relative">
         <input type="text" name="tags" id="tags"
-               class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
-               placeholder="Tags">
+          class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+          placeholder="Tags">
         <label for="tags"
-               class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
+          class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
           Tags (kommagetrennt)
         </label>
       </div>
@@ -67,10 +95,10 @@
       <!-- Dauer -->
       <div class="relative">
         <input type="text" name="duration" id="duration"
-               class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
-               placeholder="Dauer">
+          class="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
+          placeholder="Dauer">
         <label for="duration"
-               class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
+          class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
           Dauer (hh:mm:ss)
         </label>
       </div>
@@ -78,38 +106,37 @@
       <!-- Beschreibung (volles Feld) -->
       <div class="md:col-span-2 relative">
         <textarea name="description" id="description" rows="4"
-                  class="peer w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500"
-                  placeholder="Beschreibung"></textarea>
+          class="peer w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500 pt-3"
+          placeholder="Beschreibung"></textarea>
         <label for="description"
-               class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
+          class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-gray-600">
           Beschreibung
         </label>
       </div>
     </div>
 
-    <!-- Öffentlich sichtbar -->
     <div class="mt-6">
-      <label class="inline-flex items-center">
-        <input type="checkbox" name="is_public" checked
-               class="form-checkbox h-5 w-5 text-blue-600">
-        <span class="ml-2 text-sm text-gray-700">Öffentlich sichtbar</span>
+      <label for="is_public" class="flex items-center cursor-pointer">
+        <!-- Toggle -->
+        <div class="relative">
+          <input type="checkbox" id="is_public" name="is_public" checked class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+          <div
+            class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transform peer-checked:translate-x-5 transition-transform">
+          </div>
+        </div>
+        <!-- Label text -->
+        <span class="ml-3 text-sm text-gray-700">Öffentlich sichtbar</span>
       </label>
     </div>
 
-    <!-- Submit Button -->
-    <div class="mt-6">
-      <button type="submit"
-              class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition">
-        Video erstellen
-      </button>
-    </div>
   </form>
 </div>
 {% endblock %}
 
 {% block javascriptend %}
 <script>
-    // Dauerfeld automatisch formatieren (hh:mm:ss)
+  // Dauerfeld automatisch formatieren (hh:mm:ss)
   const durationInput = document.getElementById('duration');
 
   durationInput.addEventListener('input', function (e) {
@@ -149,6 +176,17 @@
         }
       }
     });
+  });
+
+  // Live-Aktualisierung des Titels
+  $('#title').on('input', function () {
+    const value = $(this).val().trim();
+    $('#videoTitle').text(value || 'Video Titel');
+  });
+
+  // Klick auf "Erstellen"-Button triggert das Submit-Event
+  $('#createVideo').on('click', function () {
+    $('#video-upload-form').submit();
   });
 </script>
 

@@ -7,24 +7,31 @@
 <div class="container mx-auto mt-8">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">CMS - Videos</h1>
-    <a href="{% url 'cms:create_video' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    <a href="{% url 'cms:create_video' %}"
+      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
       + Neues Video
     </a>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     {% for video in videos %}
-      <div class="border rounded shadow p-4 relative bg-white">
-        <video src="{{ video.file.url }}" controls class="w-full h-48 mb-2"></video>
-        <h2 class="font-semibold truncate">{{ video.title|default:"(Kein Titel)" }}</h2>
-        <p class="text-sm text-gray-600 truncate">{{ video.description|truncatechars:100 }}</p>
-        <div class="mt-2 flex gap-2">
-          <a href="{% url 'cms:edit_video' video.pk %}" class="text-blue-600 hover:underline text-sm">Bearbeiten</a>
-          <button data-id="{{ video.id }}" class="text-red-600 hover:underline text-sm delete-video">Löschen</button>
-        </div>
+    <div class="shadow-lg p-4 relative bg-white rounded-2xl">
+      <video src="{{ video.file.url }}" controls class="w-full h-48 mb-2"></video>
+      <h2 class="font-semibold truncate">{{ video.title|default:"(Kein Titel)" }}</h2>
+      <p class="text-sm text-gray-600 truncate">{{ video.description|truncatechars:100 }}</p>
+      <div class="mt-2 flex gap-2">
+        <a href="{% url 'cms:edit_video' video.pk %}"
+          class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg shadow transition-transform duration-300 hover:-translate-y-1 hover:bg-blue-700">
+          <i class="bi bi-pencil-fill"></i> Bearbeiten
+        </a>
+        <button data-id="{{ video.id }}"
+          class="inline-flex items-center gap-2 px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg shadow transition-transform duration-300 hover:-translate-y-1 hover:bg-red-700 delete-video">
+          <i class="bi bi-trash-fill"></i> Löschen
+        </button>
       </div>
+    </div>
     {% empty %}
-      <p class="text-gray-500">Noch keine Videos vorhanden.</p>
+    <p class="text-gray-500">Noch keine Videos vorhanden.</p>
     {% endfor %}
   </div>
 </div>
@@ -32,12 +39,12 @@
 
 {% block javascriptend %}
 <script>
-  $('.delete-video').click(function() {
+  $('.delete-video').click(function () {
     const id = $(this).data('id');
     if (!confirm('Video wirklich löschen?')) return;
     $.post(`/cms/videos/delete/${id}/`, {
       csrfmiddlewaretoken: '{{ csrf_token }}'
-    }, function(response) {
+    }, function (response) {
       if (response.success) {
         location.reload();
       }
