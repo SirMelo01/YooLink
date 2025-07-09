@@ -9,41 +9,14 @@
 
 
 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
-    <!-- Image Manage Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">{% trans "CMS_TITLE_IMAGE" %} <i class="bi bi-image"></i></h2>
-        <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
-        <p class="mb-4">Bilder: <strong>{{file_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:images-view' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
-            <div class="flex-grow"></div>
-            <a href="{% url 'cms:upload' %}"
-                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"><i class="bi bi-plus-circle" class="size-8"></i></a>
-        </div>
-    </div>
-
-    <!-- Video Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Videos <i class="bi bi-file-earmark-play"></i></h2>
-        <p class="mb-4">Hier kannst du Videos hochladen und verwalten.</p>
-        <p class="mb-4">Dateien: <strong>{{videofile_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:list_videos' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
-        </div>
-    </div>
 
     <!-- Dateien Card -->
     <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-file-earmark-arrow-up"></i></h2>
-        <p class="mb-4">Hier kannst du beliebige Dateien (PDFs, ZIPs etc.) hochladen und verwalten.</p>
-        <p class="mb-4">Dateien: <strong>{{anyfile_count}}</strong></p>
+        <h2 class="text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-cloud-arrow-up"></i></h2>
+        <p class="mb-4">Hier kannst du alle Dateien verwalten, wie Bilder ({{file_count}}), Videos ({{videofile_count}}) oder andere Dateien ({{anyfile_count}}).</p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:anyfile-list' %}"
+            <a href="{% url 'cms:cms-files' %}"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
         </div>
     </div>

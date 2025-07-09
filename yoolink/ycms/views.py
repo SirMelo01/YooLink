@@ -59,6 +59,15 @@ def set_language(request, lang_code):
     return response
 
 @login_required(login_url='login')
+def cms_files(request):
+    data = {
+        "file_count":  fileentry.objects.count(),
+        'anyfile_count': AnyFile.objects.count(),
+        'videofile_count': VideoFile.objects.count(),
+    }
+    return render(request, 'pages/cms/files/files.html', data)
+
+@login_required(login_url='login')
 def cms(request):
 
     context = {'form': None, 'last': None}

@@ -144,4 +144,7 @@ urlpatterns = [
     path('videos/edit/<int:pk>/', views.edit_video, name='edit_video'),
     path('videos/delete/<int:pk>/', views.delete_video, name='delete_video'),
 
+    # Files
+    path("files/", views.cms_files, name="cms-files"),
+
 ]
