@@ -28,6 +28,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.middleware.csrf import get_token
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 from django.views.decorators.csrf import csrf_exempt
+from django.templatetags.static import static
 
 DEFAULT_LANGUAGE = "en"
 
@@ -742,8 +743,8 @@ def site_view_main_cms(request):
     data = {}
     if TextContent.objects.filter(name="main_cms").exists():
         data["textContent"] = TextContent.objects.get(name='main_cms')
-    if fileentry.objects.filter(place='main_cms').exists():
-        data["cmsImage"] = fileentry.objects.get(place='main_cms')
+    if VideoFile.objects.filter(place='main_cms').exists():
+        data["cmsVideo"] = VideoFile.objects.get(place='main_cms')
     return render(request, "pages/cms/content/sites/mainsite/CmsContent.html", data)
 
 # Main Site - Price Section
@@ -836,6 +837,7 @@ def saveTextContent(request):
         customText = json.loads(request.POST.get('customText', '[]'))
         images = json.loads(request.POST.get('images', '[]'))
         galerien = json.loads(request.POST.get('galerien', '[]'))
+        videos = json.loads(request.POST.get('videos', '[]'))
 
         # Checks Images and updates their key
         for image in images:
@@ -861,6 +863,18 @@ def saveTextContent(request):
                         extra.save()
                     galerie.place = key
                     galerie.save()
+
+        for video in videos:
+            if VideoFile.objects.filter(id=video['id']).exists():
+                vid = VideoFile.objects.get(id=video['id'])
+                key = video['key']
+                if key:
+                    if VideoFile.objects.filter(place=key).exists():
+                        extra_vid = VideoFile.objects.get(place=key)
+                        extra_vid.place = ""
+                        extra_vid.save()
+                    vid.place = key
+                    vid.save()
 
         customKeys = []
 
@@ -2489,3 +2503,29 @@ def delete_video(request, pk):
     video.delete()
     return JsonResponse({'success': True})
 
+@login_required(login_url='login')
+def list_all_videos(request):
+    """
+    Liefert alle VideoFile-Objekte als JSON für das Auswahl-Modal.
+    Struktur:
+      {
+        "video_urls": [
+          { "id": 12, "url": "...mp4", "poster": "...jpg" },
+          ...
+        ]
+      }
+    """
+    if request.method != "GET":
+        return JsonResponse({"error": "Only GET allowed"}, status=405)
+
+    result = []
+    for video in VideoFile.objects.all().order_by("-uploaded_at"):
+        result.append(
+            {
+                "id": video.id,
+                "url": video.file.url,
+                "poster": video.thumbnail.url if video.thumbnail else static("images/designImg/filler.png"),
+            }
+        )
+
+    return JsonResponse({"video_urls": result}, status=200)

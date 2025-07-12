@@ -1,22 +1,24 @@
 // Load images from backend
 $editImg = null;
 $editSlider = null;
+let $editVideo = null;   // global wie $editImg
 $(document).ready(function () {
 
     const $imageModal = $('#imageModal');
     const $galeryModal = $('#galeryModal');
+    const $videoModal = $('#videoModal');
 
-    $('.edit-img').click(function() {
-        
+    $('.edit-img').click(function () {
+
         $editImg = $(this).siblings('img');
         $imageModal.removeClass("hidden");
     });
 
-    $('#closeImageModal').click(function() {
+    $('#closeImageModal').click(function () {
         $imageModal.addClass("hidden");
     });
 
-    $('#reloadImages').click(function() {
+    $('#reloadImages').click(function () {
         loadImages(true)
     });
 
@@ -24,32 +26,51 @@ $(document).ready(function () {
      * Galery Functions
      */
 
-    $('#reloadGalerien').click(function() {
+    $('#reloadGalerien').click(function () {
         loadGalerien(true)
     });
 
-    $('#closeGaleryModal').click(function() {
+    $('#closeGaleryModal').click(function () {
         $galeryModal.addClass("hidden");
     });
 
-    $('.edit-galery').click(function() {
+    $('.edit-galery').click(function () {
         $editSlider = $(this).siblings('.carousel');
         $galeryModal.removeClass("hidden");
     });
 
-    const $imageModalContainer = $imageModal.find('.modal-container');
-    const $galeryModalContainer = $galeryModal.find('.modal-container');
+    const $modals = [$imageModal, $galeryModal, $videoModal];
+    const $modalContainers = $modals.map($m => $m.find('.modal-container'));
 
     $(document).mouseup(function (e) {
-        if (
-            !$imageModalContainer.is(e.target) &&
-            $imageModalContainer.has(e.target).length === 0 &&
-            !$galeryModalContainer.is(e.target) &&
-            $galeryModalContainer.has(e.target).length === 0
-          ) {
-            $imageModal.addClass('hidden');
-            $galeryModal.addClass('hidden');
-          }
+        let clickedOutsideAll = true;
+        for (const $container of $modalContainers) {
+            if ($container.is(e.target) || $container.has(e.target).length > 0) {
+                clickedOutsideAll = false;
+                break;
+            }
+        }
+
+        if (clickedOutsideAll) {
+            $modals.forEach($m => $m.addClass('hidden'));
+        }
+    });
+
+    /*
+    * VIDEO CODING
+    */
+
+    $('.edit-video').click(function () {
+        $editVideo = $(this).siblings('video');
+        $videoModal.removeClass('hidden');
+    });
+
+    $('#closeVideoModal').click(function () {
+        $videoModal.addClass('hidden');
+    });
+
+    $('#reloadVideos').click(function () {
+        loadVideos(true);
     });
 
 })
@@ -109,22 +130,70 @@ function loadGalerien(sendLoadMsg) {
                 $('#possibleGalerien').empty()
                 response.galerien.forEach(function (gallery) {
                     const $galleryItem = addTitleAndDescription(gallery.title, gallery.description, gallery.id);
-                    $galleryItem.click(function() {
+                    $galleryItem.click(function () {
                         const galeryId = $(this).attr("galeryId")
                         // Ajax Call To get Galery Details and add to slick
                         sendNotif("Diese Galerie wird geladen...", "notice")
                         selectGalery(galeryId);
                     })
                     $('#possibleGalerien').append($galleryItem)
-                    if (sendLoadMsg)sendNotif("Alle Galerien wurden geladen", "success");
+                    if (sendLoadMsg) sendNotif("Alle Galerien wurden geladen", "success");
                 });
             } else {
-                if (sendLoadMsg)sendNotif("Es wurden keine Galerien gefunden", "error");
+                if (sendLoadMsg) sendNotif("Es wurden keine Galerien gefunden", "error");
             }
         },
         error: function (xhr, status, error) {
             // Fehler bei der Anfrage
-            if (sendLoadMsg)sendNotif("Es kam zu einem unerwarteten Fehler, versuche es später nochmal", "error");
+            if (sendLoadMsg) sendNotif("Es kam zu einem unerwarteten Fehler, versuche es später nochmal", "error");
+        }
+    });
+}
+
+/**
+ * Videos per AJAX holen (ähnlich loadImages)
+ * erwartet JSON: { "video_urls": [ { "id": 3, "url": "...mp4", "poster": "...jpg" }, ... ] }
+ */
+function loadVideos(sendLoadMsg) {
+    $.ajax({
+        url: '/cms/videos/all/',   // → Endpoint im Backend
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if (response.video_urls && response.video_urls.length !== 0) {
+                $('#possibleVideos').empty();
+                response.video_urls.forEach(function (v) {
+                    /* kleines Thumbnail-Video */
+                    const $elem = $(`
+            <video
+              src="${v.url}"
+              poster="${v.poster}"
+              videoId="${v.id}"
+              class="h-40 w-full rounded-xl hover:shadow-2xl hover:cursor-pointer hover:scale-105"
+              preload="metadata">
+            </video>`
+                    );
+
+                    /* Klick = Auswahl */
+                    $elem.click(function () {
+                        if ($editVideo) {
+                            $editVideo.attr('src', $(this).attr('src'));
+                            $editVideo.attr('poster', $(this).attr('poster'));
+                            $editVideo.attr('videoId', $(this).attr('videoId'));
+                            $('#videoModal').addClass('hidden');
+                            sendNotif('Neues Video ausgewählt', 'success');
+                        }
+                    });
+
+                    $('#possibleVideos').append($elem);
+                });
+                if (sendLoadMsg) sendNotif('Alle Videos wurden geladen', 'success');
+            } else {
+                if (sendLoadMsg) sendNotif('Keine Videos gefunden', 'error');
+            }
+        },
+        error: function () {
+            if (sendLoadMsg) sendNotif('Unerwarteter Fehler beim Laden der Videos', 'error');
         }
     });
 }

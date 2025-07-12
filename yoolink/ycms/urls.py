@@ -140,6 +140,7 @@ urlpatterns = [
 
     # Videos
     path('videos/', views.list_videos, name='list_videos'),
+    path('videos/all/', views.list_all_videos, name='cms_videos_all'),
     path('videos/create/', views.create_video, name='create_video'),
     path('videos/edit/<int:pk>/', views.edit_video, name='edit_video'),
     path('videos/delete/<int:pk>/', views.delete_video, name='delete_video'),

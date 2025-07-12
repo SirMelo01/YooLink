@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "pages/cms/components/ImageSelectModal.html" %}
+{% include "pages/cms/components/VideoSelectModal.html" %}
 
 <div class="container mx-auto mt-8">
     <div class="flex justify-between">
@@ -25,12 +25,25 @@
             <!-- Foto-PC -->
             <div
                 class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-full overflow-hidden shadow-2xl rounded-md hidden lg:block">
-                <img class="absolute left-0 top-0 w-[45rem] max-w-none content-image" key="main_cms"
-                    imgId="{% if cmsImage %}{{cmsImage.id}}{% endif %}"
-                    src="{% if cmsImage %}{{ cmsImage.file.url }}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
-                    alt="Image">
-                <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img"><i class="bi bi-pencil-square"></i></span>
-            </div>
+                <video
+                    class="absolute left-0 top-0 w-[45rem] max-w-none content-video"
+                    key="main_cms"
+                    videoId="{% if cmsVideo %}{{ cmsVideo.id }}{% else %}-1{% endif %}"
+                    {% if cmsVideo %}
+                    src="{{ cmsVideo.file.url }}"
+                    poster="{{ cmsVideo.thumbnail.url }}"
+                    {% else %}
+                    src=""
+                    poster="{% static 'images/designImg/filler.png' %}"
+                    {% endif %}
+                    controls
+                ></video>
+
+                <span
+                    class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-video">
+                    <i class="bi bi-pencil-square"></i>
+                </span>
+                </div>
             <div class="lg:mx-0 lg:flex-auto lg:py-16 lg:text-left justify-center flex w-full flex-col items-center">
                 <div class="text-content" key="main_cms">
                     <input

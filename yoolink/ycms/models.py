@@ -137,6 +137,7 @@ class VideoFile(models.Model):
     alt_text = models.CharField(max_length=255, help_text="Alt-Text für SEO & Barrierefreiheit", blank=True)
     tags = models.CharField(max_length=255, blank=True, help_text="Kommaseparierte Tags (optional)")
     is_public = models.BooleanField(default=True)
+    place = models.CharField(max_length=60, default="")
 
     def __str__(self):
         return self.title or os.path.basename(self.file.name)
