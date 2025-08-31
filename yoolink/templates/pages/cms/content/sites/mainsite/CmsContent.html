@@ -25,25 +25,16 @@
             <!-- Foto-PC -->
             <div
                 class="relative lg:mt-16 lg:mb-28 h-auto m-8 -ml-24 w-full overflow-hidden shadow-2xl rounded-md hidden lg:block">
-                <video
-                    class="absolute left-0 top-0 w-[45rem] max-w-none content-video"
-                    key="main_cms"
-                    videoId="{% if cmsVideo %}{{ cmsVideo.id }}{% else %}-1{% endif %}"
-                    {% if cmsVideo %}
-                    src="{{ cmsVideo.file.url }}"
-                    poster="{{ cmsVideo.thumbnail.url }}"
-                    {% else %}
-                    src=""
-                    poster="{% static 'images/designImg/filler.png' %}"
-                    {% endif %}
-                    controls
-                ></video>
+                <video class="w-full h-auto object-cover rounded-md content-video" key="main_cms"
+                    videoId="{% if cmsVideo %}{{ cmsVideo.id }}{% else %}-1{% endif %}" {% if cmsVideo %}
+                    src="{{ cmsVideo.file.url }}" poster="{{ cmsVideo.thumbnail.url }}" {% else %} src=""
+                    poster="{% static 'images/designImg/filler.png' %}" {% endif %} controls></video>
 
                 <span
                     class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-video">
                     <i class="bi bi-pencil-square"></i>
                 </span>
-                </div>
+            </div>
             <div class="lg:mx-0 lg:flex-auto lg:py-16 lg:text-left justify-center flex w-full flex-col items-center">
                 <div class="text-content" key="main_cms">
                     <input
@@ -56,8 +47,7 @@
                         value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Content Management System{% endif %}">
                     <textarea rows="8"
                         class="bg-gray-200 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                        inputType="description" type="text">{% if textContent and textContent.description %}{{textContent.description}}{% else %} Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.  
-                    {% endif %}
+                        inputType="description" type="text">{% if textContent and textContent.description %}{{textContent.description}}{% else %} Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.{% endif %}
                     </textarea>
 
                     <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start mb-5">
@@ -72,20 +62,19 @@
             </div>
         </div>
 
+    </div>
+</div>
+{% endblock content %}
 
-        {% block javascriptend %}
-        {% compress js inline %}
-        <script defer src="{% static 'js/cms.js' %}"></script>
-        <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
-        <script src="{% static 'js/cms/content/save-text.js' %}"></script>
-        <script defer>
-            $(document).ready(function () {
-                loadImages(false);
-            })
-        </script>
-        {% endcompress js %}
-        {% endblock javascriptend %}
-
-
-
-        {% endblock content %}
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+<script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
+<script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script defer>
+    $(document).ready(function () {
+        loadVideos(false);
+    })
+</script>
+{% endcompress js %}
+{% endblock javascriptend %}

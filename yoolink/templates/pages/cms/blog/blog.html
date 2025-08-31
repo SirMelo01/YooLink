@@ -1,65 +1,127 @@
 {% extends 'cmsbase.html' %}
-{% load static compress %}
-{% block title %} {{block.super}} | CMS | Blogs{% endblock %}
-
+{% load static %}
+{% block title %} {{ block.super }} | CMS | Blogs {% endblock %}
 
 {% block content %}
+<div class="container mx-auto mt-8 max-w-7xl">
 
-<div class="container mx-auto mt-8">
-    <h1 class="text-2xl mb-5 hover:cursor">Blog - Overview</h1>
-    <a href="{% url 'cms:blog-add' %}" >
-    <button href="{% url 'cms:blog-add' %}" id="add-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
-        Hinzufügen
-    </button>
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+    <h1 class="text-2xl">
+      <a href="{% url 'cms:cms' %}" class="text-blue-500">CMS</a> / <span>Blogs</span>
+    </h1>
+    <a href="{% url 'cms:blog-add' %}">
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2">
+        <i class="bi bi-send"></i>
+        Erstellen
+      </button>
     </a>
-    <!-- Simple List -->
-    <div id="simpleList" class="list-group space-y bg-slate-200 shadow-xl rounded-lg p-6 mb-6">
-      {% csrf_token %}
-      {% for blog in blogs %}
-      <div class="list-group-item mb-4" data-id="{{ blog.id }}">
-        <div class="flex items-center w-full justify-between bg-slate-600 p-4 text-white rounded-lg">
-  
-          <div class="w-7/10 mr-4 flex flex-wrap">
-            <div class="bg-white text-black p-1 mr-5 rounded mt-1">
-                {{ blog.date }}
-            </div>
-            <div class="p-1 text-lg">
-                {{ blog.title }} 
-            </div>
-            <div class="p-1 text-sm mt-1">
-                | {{ blog.author }} 
-            </div>
-          </div>
-
-          <div class="w-3/10 inline-flex">
-            <a target="_blank" href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}" aria-label="Company" title="Company" class="items-center inline-flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mt-1 w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                </svg>
-            </a>
-            <a
-              href="{% url 'cms:blog-details' id=blog.id %}"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 update"
-              type="button">
-              <i class="bi bi-pencil-square"></i> Updaten
-            </a>
-            <button
-              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete"
-              type="button">
-              <i class="bi bi-trash"></i> Löschen
-            </button>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
   </div>
 
+  <!-- Filters -->
+  <form method="get" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    {% csrf_token %}
+    <input
+      type="text"
+      name="q"
+      value="{{ query }}"
+      placeholder="Suche nach Titel..."
+      class="w-full md:w-1/2 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+    >
+
+    <div class="flex gap-2">
+      <select
+        name="sort"
+        class="h-10 px-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+      >
+        <option value="-date" {% if sort == "-date" %}selected{% endif %}>Neueste zuerst</option>
+        <option value="date" {% if sort == "date" %}selected{% endif %}>Älteste zuerst</option>
+      </select>
+
+      <select
+        name="active"
+        class="h-10 px-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+      >
+        <option value="all" {% if active_filter == "all" %}selected{% endif %}>Alle</option>
+        <option value="true" {% if active_filter == "true" %}selected{% endif %}>Nur aktive</option>
+        <option value="false" {% if active_filter == "false" %}selected{% endif %}>Nur inaktive</option>
+      </select>
+
+      <button
+        type="submit"
+        class="h-10 bg-blue-500 hover:bg-blue-700 text-white px-4 font-medium rounded-lg shadow-sm transition duration-200 flex items-center gap-2"
+      >
+        <i class="bi bi-funnel"></i>
+        Filtern
+      </button>
+    </div>
+  </form>
+
+  <!-- Blog Cards -->
+  <div id="blogList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for blog in blogs %}
+    <div class="bg-white rounded-xl shadow-lg p-4 flex flex-col justify-between blog-card">
+
+      {% if blog.title_image %}
+      <img src="{{ blog.title_image.url }}" alt="Blog Image" class="w-full h-40 object-cover rounded mb-3">
+      {% else %}
+      <div class="w-full h-40 bg-gray-200 flex items-center justify-center rounded mb-3 text-gray-500">Kein Bild</div>
+      {% endif %}
+
+      <div>
+        <h2 class="text-xl font-semibold mb-1">{{ blog.title }}</h2>
+        <p class="text-sm text-gray-600 mb-2">von {{ blog.author }} am {{ blog.date }}</p>
+        <p class="text-sm text-gray-700">{{ blog.description|truncatewords:20 }}</p>
+      </div>
+
+      <div class="mt-4 flex justify-between items-center">
+        <span class="text-sm px-2 py-1 rounded 
+          {% if blog.active %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+          {% if blog.active %}Aktiv{% else %}Inaktiv{% endif %}
+        </span>
+        <div class="flex gap-2">
+          <a href="{{ blog.get_absolute_url }}" target="_blank" title="Ansehen"
+            class="text-blue-600 hover:text-blue-800">
+            <i class="bi bi-box-arrow-up-right text-xl"></i>
+          </a>
+          <a href="{% url 'cms:blog-details' blog.id %}" title="Bearbeiten"
+            class="text-yellow-600 hover:text-yellow-800">
+            <i class="bi bi-pencil-square text-xl"></i>
+          </a>
+          <button class="text-red-600 hover:text-red-800 delete-btn" data-id="{{ blog.id }}" title="Löschen">
+            <i class="bi bi-trash text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if not blogs %}
+  <p class="text-center text-gray-500 mt-8">Keine passenden Blogs gefunden.</p>
+{% endif %}
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <nav class="mt-8 flex justify-center gap-2">
+    {% if page_obj.has_previous %}
+    <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if active_filter %}&active={{ active_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&laquo;</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_filter %}&active={{ active_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Zurück</a>
+    {% endif %}
+
+    <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ page_obj.number }} / {{ page_obj.paginator.num_pages}}</span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_filter %}&active={{ active_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Weiter</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if active_filter %}&active={{ active_filter }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&raquo;</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+</div>
 {% endblock %}
 
-
 {% block javascriptend %}
-{% compress js inline %}
-  <script defer src="{% static 'js/cms/blog/blog-overview.js' %}"></script>
-{% endcompress js %}
-{% endblock javascriptend %}
+<script defer src="{% static 'js/cms/blog/blog-overview.js' %}"></script>
+{% endblock %}

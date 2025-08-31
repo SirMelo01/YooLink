@@ -138,6 +138,17 @@ class VideoFile(models.Model):
     tags = models.CharField(max_length=255, blank=True, help_text="Kommaseparierte Tags (optional)")
     is_public = models.BooleanField(default=True)
     place = models.CharField(max_length=60, default="")
+    autoplay = models.BooleanField(default=False, help_text="Video automatisch abspielen?")
+    muted = models.BooleanField(default=False, help_text="Video stumm starten?")
+    loop = models.BooleanField(default=False, help_text="Video in Endlosschleife?")
+    playsinline = models.BooleanField(default=True, help_text="Video inline abspielen (bes. für iOS)?")
+    show_controls = models.BooleanField(default=True, help_text="Standard Video Controls anzeigen?")
+    preload = models.CharField(
+        max_length=20,
+        choices=[('auto', 'Auto'), ('metadata', 'Nur Metadaten'), ('none', 'Nichts')],
+        default='metadata',
+        help_text="Preload-Verhalten beim Seitenladen"
+    )
 
     def __str__(self):
         return self.title or os.path.basename(self.file.name)

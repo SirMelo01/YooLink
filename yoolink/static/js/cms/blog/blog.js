@@ -4,6 +4,8 @@ var imageData = null;
 var $editSlider = null;
 var $editImg = null;
 var $editYoutube = null;
+var selectedVideoData = null;
+let selectedVideoElement = null;
 function loadSlick() {
     $('.carousel').slick({
         dots: true,  // Display navigation dots
@@ -166,7 +168,7 @@ $(document).ready(function () {
       */
     $('#addText').click(function () {
         // Create Container
-        const $container = $('<div class="relative" element-type="textArea">')
+        const $container = $('<div class="relative my-2" element-type="textArea">')
         $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'))
         $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'))
         const textAreaId = "textArea" + ($('.textArea').length + 1);
@@ -231,7 +233,7 @@ $(document).ready(function () {
       */
     $('#addVideo').click(function () {
         // Create Container
-        const $container = $('<div class="relative w-fit py-4 my-3" element-type="video">')
+        const $container = $('<div class="relative w-fit py-4 my-3" element-type="yt-video">')
         $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'))
         $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'))
         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-youtube"><i class="bi bi-pencil-square"></i></span>'))
@@ -271,11 +273,110 @@ $(document).ready(function () {
     });
 
     /**
+     * Add Real Video
+     */
+    $('#addVideoCMS').click(function () {
+        $.get("/cms/videos/all/", function (response) {
+            if (!response.video_urls || response.video_urls.length === 0) {
+                sendNotif("Keine Videos verfügbar", "error");
+                return;
+            }
+
+            const video = response.video_urls[0]; // z.B. erstes Video einfügen
+            const $container = $('<div class="relative py-4 my-3" element-type="video">');
+            $container.append($('<span class="absolute top-0 right-0 px-2 py-1 text-sm text-white bg-red-500 rounded-full z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'));
+            $container.append($('<span class="absolute top-0 right-1/2 px-2 py-1 text-sm text-white bg-blue-500 rounded-full z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'));
+            $container.append($('<span class="absolute top-0 left-0 px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-cmsvideo"><i class="bi bi-pencil-square"></i></span>'));
+
+            const $videoElem = $('<video>', {
+                title: video.title,
+                src: video.url,
+                poster: video.poster,
+                class: "rounded-2xl",
+                width: 560,
+                height: 315,
+                autoplay: video.autoplay,
+                muted: video.muted,
+                loop: video.loop,
+                playsinline: video.playsinline,
+                controls: video.show_controls,
+                preload: video.preload
+            });
+
+            // SEO relevante Daten als Data-Attributes
+            $videoElem.data({
+                description: video.description,
+                alt_text: video.alt_text,
+                tags: video.tags,
+                duration: video.duration
+            });
+
+            $container.append($videoElem);
+
+            $container.find('.del-elem').click(function () {
+                $(this).parent().remove();
+            });
+
+            // Edit-Handler
+            $container.find('.edit-cmsvideo').click(function () {
+                const $modal = $('#videoModal');
+                const $video = $(this).siblings('video');
+
+                // Setze das Ziel-Element für später
+                $modal.data('target', $(this).parent());
+                selectedVideoData = {
+                    url: $video.attr('src'),
+                    poster: $video.attr('poster'),
+                    title: $video.attr('title') || '',
+                    autoplay: $video.prop('autoplay'),
+                    muted: $video.prop('muted'),
+                    loop: $video.prop('loop'),
+                    playsinline: $video.prop('playsinline'),
+                    preload: $video.attr('preload') || 'metadata',
+                    width: $video.css('width') || $video.attr('width') || '',
+                    height: $video.css('height') || $video.attr('height') || ''
+                };
+
+                $('#videoTitle').val(selectedVideoData.title);
+                $('#videoAlt').val($video.data('alt_text') || '');
+                $('#videoAutoplay').prop('checked', selectedVideoData.autoplay);
+                $('#videoMuted').prop('checked', selectedVideoData.muted);
+                $('#videoLoop').prop('checked', selectedVideoData.loop);
+                $('#videoPlaysinline').prop('checked', selectedVideoData.playsinline);
+                $('#videoPreload').val(selectedVideoData.preload);
+
+                $('#videoWidth').val(selectedVideoData.width);
+                $('#videoHeight').val(selectedVideoData.height);
+
+                $('.cms-video-preview').removeClass('!border-blue-500');
+                $('#videoProperties').removeClass('hidden');
+                $('#videoModal').removeClass('hidden');
+                loadCMSVideos(); // Funktion zum Laden der Auswahl
+            });
+
+            $("#blogContent").append($container);
+            sendNotif("Ein Video wurde eingefügt", "success");
+            scrollToBottom();
+            $container.find('.edit-cmsvideo').click();
+        });
+    });
+
+    $('.cms-video-preview').click(function () {
+        const videoId = $(this).data("video-id");
+        const $target = $('#videoModal').data('target');
+
+        if ($target) {
+            updateBlogVideoFromCMS(videoId, $target);
+            $('#videoModal').addClass('hidden');
+        }
+    });
+
+    /**
      * Add Galerie to Blog
      */
     $('#addGalerie').click(function () {
         // Create Container
-        const $container = $('<div class="relative w-full mt-4 mb-4" element-type="galery" galery-id="0">')
+        const $container = $('<div class="relative w-full my-4" element-type="galery" galery-id="0">')
         $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'))
         $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'))
         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-slider"><i class="bi bi-pencil-square"></i></span>'))
@@ -680,6 +781,120 @@ $(document).ready(function () {
         
     })
 
+    // Modal schließen
+    $('#closeVideoModal').click(function () {
+        $('#videoModal').addClass('hidden');
+    });
+
+    // Modal öffnen und Videos laden
+    function openVideoModal(targetElement) {
+        $('#videoModal').removeClass('hidden');
+        $('#videoModal').data('target', targetElement);
+        loadCMSVideos();
+    }
+
+    // Modal-Videos neu laden
+    $('#reloadCMSVideos').click(function () {
+        loadCMSVideos();
+    });
+
+
+    function loadCMSVideos(preselectId = null) {
+        const $container = $('#availableVideos');
+        $container.empty();
+
+        $.get("/cms/videos/all/", function (response) {
+            if (!response.video_urls || response.video_urls.length === 0) {
+            $container.append('<p class="text-gray-600">Keine Videos verfügbar.</p>');
+            return;
+            }
+
+            response.video_urls.forEach(video => {
+            const $preview = $(`
+                <div class="relative cursor-pointer cms-video-preview group border-2 border-transparent rounded" data-video-id="${video.id}">
+                <video src="${video.url}" poster="${video.poster}" preload="metadata" muted
+                    class="w-full rounded shadow group-hover:shadow-lg transition">
+                </video>
+                </div>
+            `);
+
+            if (preselectId && video.id === preselectId) {
+                $preview.addClass('!border-blue-500');
+                selectVideoAndLoadProps(video.id);
+            }
+
+            $preview.click(function () {
+                $('.cms-video-preview').removeClass('!border-blue-500');
+                $(this).addClass('!border-blue-500');
+                selectedVideoElement = $(this);
+                selectVideoAndLoadProps(video.id);
+            });
+
+            $container.append($preview);
+            });
+        });
+    }
+
+    function selectVideoAndLoadProps(videoId) {
+        $.get(`/cms/videos/get/${videoId}/`, function (data) {
+            selectedVideoData = data;
+            $('#selectedVideoId').val(data.id);
+            $('#videoTitle').val(data.title || '');
+            $('#videoAlt').val(data.alt_text || '');
+            $('#videoAutoplay').prop('checked', data.autoplay);
+            $('#videoMuted').prop('checked', data.muted);
+            $('#videoLoop').prop('checked', data.loop);
+            $('#videoPlaysinline').prop('checked', data.playsinline);
+            $('#videoPreload').val(data.preload || 'metadata');
+        });
+    }
+
+    $('#selectVideo').click(function () {
+        const $target = $('#videoModal').data('target');
+        if (!$target) return;
+        const $video = $target.find('video');
+        if(selectedVideoData) {
+            $video.attr('src', selectedVideoData.url);
+            $video.attr('poster', selectedVideoData.poster);
+        }
+        $video.attr('title', $('#videoTitle').val() || '');
+
+        $video.prop('autoplay', $('#videoAutoplay').is(':checked'));
+        $video.prop('muted', $('#videoMuted').is(':checked'));
+        $video.prop('loop', $('#videoLoop').is(':checked'));
+        $video.prop('playsinline', $('#videoPlaysinline').is(':checked'));
+        $video.attr('preload', $('#videoPreload').val());
+
+        // Neu: Breite & Höhe setzen
+        const widthVal = $('#videoWidth').val();
+        const heightVal = $('#videoHeight').val();
+        if (widthVal) $video.css('width', widthVal);
+        if (heightVal) $video.css('height', heightVal);
+
+        $('#videoModal').addClass('hidden');
+        sendNotif("Video übernommen", "success");
+    });
+
+    function updateBlogVideoFromCMS(videoId, $targetContainer) {
+        $.get(`/cms/videos/get/${videoId}/`, function (data) {
+            const $video = $targetContainer.find('video');
+
+            $video.attr('src', data.url);
+            $video.attr('poster', data.poster);
+            $video.attr('title', data.title || '');
+
+            // Optional: Optionen setzen
+            $video.prop('autoplay', data.autoplay);
+            $video.prop('muted', data.muted);
+            $video.prop('loop', data.loop);
+            $video.prop('playsinline', data.playsinline);
+            $video.prop('controls', data.show_controls);
+            $video.attr('preload', data.preload);
+
+            sendNotif("Video aktualisiert", "success");
+        });
+    }
+
     function selectGalery(id) {
         $.ajax({
             url: "/cms/galery/getImages/", // Replace this with your API endpoint
@@ -764,7 +979,7 @@ $(document).ready(function () {
                 if (response.image_urls && response.image_urls.length != 0) {
                     $('#possibleImages').empty()
                     response.image_urls.forEach(function (url) {
-                        const $elem = $('<img src="' + url.url + '" class="h-28 w-full rounded-2xl col-span-1 mb-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">')
+                        const $elem = $('<img src="' + url.url + '" class="h-28 w-full rounded-2xl col-span-1 my-4 hover:shadow-2xl hover:cursor-pointer hover:scale-105">')
                         // Add Event Handler for selection
                         $elem.click(function () {
                             if ($editImg) {
@@ -882,7 +1097,7 @@ function receiveContent(blockContent) {
                     "name": "title-2",
                     "type": "h3",
                     "attributes": {
-                        "class": "text-xl font-semibold mb-4 lg:text-2xl",
+                        "class": "text-xl font-semibold my-4 lg:text-2xl",
                     },
                     "value": title2Input
                 })
@@ -893,7 +1108,7 @@ function receiveContent(blockContent) {
                     "name": "title-3",
                     "type": "h4",
                     "attributes": {
-                        "class": "text-lg font-medium mb-4 lg:text-xl",
+                        "class": "text-lg font-medium my-4 lg:text-xl",
                     },
                     "value": title3Input
                 })
@@ -906,7 +1121,7 @@ function receiveContent(blockContent) {
                         "name": "textArea",
                         "type": "p",
                         "attributes": {
-                            "class": "text-base mb-4",
+                            "class": "text-base my-4",
                         },
                         "value": myNicEditor.instanceById(textId).getContent()
                     })
@@ -926,7 +1141,7 @@ function receiveContent(blockContent) {
                     "attributes": {
                         "src": $img.attr('src'),
                         "title": $img.attr('title'),
-                        "class": "rounded-2xl mt-4 mb-4",
+                        "class": "rounded-2xl my-4",
                     },
                     "css": {
                         "height": height,
@@ -942,7 +1157,7 @@ function receiveContent(blockContent) {
                         "name": "code",
                         "type": "code",
                         "attributes": {
-                            "class": "rounded-2xl mt-4 mb-4 " + lang,
+                            "class": "rounded-2xl my-4 " + lang,
                             "data-prismjs-copy": "Copy"
                         },
                         "value": $(this).find('.code-source').val(),
@@ -954,7 +1169,7 @@ function receiveContent(blockContent) {
                     })
                 }
                 break;
-            case "video":
+            case "yt-video":
                 const $video = $(this).find('iframe')
                 cssHeight = $video.css('height');
                 cssWidth = $video.css('width');
@@ -962,7 +1177,7 @@ function receiveContent(blockContent) {
                 height = typeof $video[0].style !== 'undefined' && $video[0].style.height ? $video[0].style.height : cssHeight;
                 width = typeof $video[0].style !== 'undefined' && $video[0].style.width ? $video[0].style.width : cssWidth;
                 content.push({
-                    "name": "video",
+                    "name": "yt-video",
                     "type": "iframe",
                     "attributes": {
                         "width": width,
@@ -1015,6 +1230,63 @@ function receiveContent(blockContent) {
                     "imageClass": "w-full rounded-xl",
                 })
                 break;
+            case "video":
+                // 1) Bevorzugt echtes <video>
+                const $videoEl = $(this).find('video');
+                if ($videoEl.length) {
+                    // Größen ermitteln
+                    const cssH = $videoEl.css('height');
+                    const cssW = $videoEl.css('width');
+                    const height = ($videoEl[0].style && $videoEl[0].style.height) ? $videoEl[0].style.height : cssH;
+                    const width  = ($videoEl[0].style && $videoEl[0].style.width)  ? $videoEl[0].style.width  : cssW;
+                    // Attribute/Props einsammeln
+                    const src        = $videoEl.attr('src') || '';
+                    const poster     = $videoEl.attr('poster') || '';
+                    const title      = $videoEl.attr('title') || '';
+                    const preload    = $videoEl.attr('preload') || 'metadata';
+                    const autoplay    = !!$videoEl.prop('autoplay');
+                    const muted       = !!$videoEl.prop('muted');
+                    const loop        = !!$videoEl.prop('loop');
+                    const playsinline = !!$videoEl.prop('playsinline');
+                    const controls    = !!$videoEl.prop('controls');
+                    // SEO/Model Felder (data-Attribute)
+                    const dataAlt         = $videoEl.data('alt_text') || '';
+                    const dataDesc        = $videoEl.data('description') || '';
+                    const dataTags        = $videoEl.data('tags') || '';
+                    const dataDuration    = $videoEl.data('duration') || '';
+                    const dataVideoId     = $videoEl.data('video_id') || '';
+                    // Klassen zusammenführen
+                    const klass = ($videoEl.attr('class') || '').trim();
+                    const mergedClass = (klass ? klass + " " : "") + "my-8 rounded-2xl";
+                    // Attribute setzen (Booleans nur wenn true)
+                    const attrs = {
+                        "src": src,
+                        "poster": poster,
+                        "title": title,
+                        "preload": preload,
+                        "class": mergedClass,
+                        "data-alt_text": dataAlt,
+                        "data-description": dataDesc,
+                        "data-tags": dataTags,
+                        "data-duration": dataDuration,
+                        "data-video_id": dataVideoId,
+                    };
+                    if (autoplay)    attrs.autoplay = "autoplay";
+                    if (muted)       attrs.muted = "muted";
+                    if (loop)        attrs.loop = "loop";
+                    if (playsinline) attrs.playsinline = "playsinline";
+                    if (controls)    attrs.controls = "controls";
+                    content.push({
+                        "name": "video",
+                        "type": "video",
+                        "attributes": attrs,
+                        "css": {
+                            "height": height,
+                            "width": width
+                        }
+                    });
+                }
+                break; 
         }
     });
     return content;
@@ -1075,38 +1347,93 @@ function replaceLinks(text) {
 }
 
 /**
- * 
- * @param {*} jsonElem 
- * @returns the element
+ * Baut aus einem JSON-Baustein ein DOM-Element.
+ * Unterstützt speziell: <video> (Boolean-Props, CSS width/height)
+ * und "code" (in <pre> wrap).
+ *
+ * @param {*} jsonElem
+ * @returns jQuery-Element
  */
 function getWebElement(jsonElem) {
-    var elem = $('<' + jsonElem.type + ">");
+  const type = jsonElem.type || 'div';
+  let elem;
 
-    if (jsonElem.value) {
-        if (jsonElem.name == "code") {
-            elem.text(jsonElem.value)
-        } else {
-            elem.html(replaceLinks(jsonElem.value))
+  // 1) Spezialfall: echtes Video
+  if (jsonElem.name === 'video' && type === 'video') {
+    elem = $('<video>');
+
+    // Attribute setzen (string-Attribute)
+    if (jsonElem.attributes) {
+      // zuerst Standard-String-Attribute
+      const strAttrs = ['src', 'poster', 'title', 'preload', 'class', 'id'];
+      strAttrs.forEach(k => {
+        if (jsonElem.attributes[k] != null && jsonElem.attributes[k] !== false) {
+          elem.attr(k, jsonElem.attributes[k]);
         }
+      });
+
+      // SEO/Model-Daten als data-*
+      Object.keys(jsonElem.attributes).forEach(k => {
+        if (k.startsWith('data-')) {
+          elem.attr(k, jsonElem.attributes[k]);
+        }
+      });
+
+      // Boolean-Props korrekt anwenden
+      const boolMap = ['autoplay', 'muted', 'loop', 'playsinline', 'controls'];
+      boolMap.forEach(k => {
+        // im JSON steht meist "autoplay": "autoplay" (oder true)
+        const v = jsonElem.attributes[k];
+        if (v === true || v === 'true' || v === k || v === '1' || v === 'autoplay' || v === 'muted' || v === 'loop' || v === 'playsinline' || v === 'controls') {
+          elem.prop(k, true).attr(k, k); // prop + Präsenz-Attribut
+        }
+      });
     }
 
-    // Füge die Attribute dem Element hinzu
-    $.each(jsonElem.attributes, function (key, value) {
-        elem.attr(key, value);
-    });
-
+    // Größe immer per CSS setzen (unterstützt px/%)
     if (jsonElem.css) {
-        // Füge die CSSs dem Element hinzu
-        $.each(jsonElem.css, function (key, value) {
-            elem.css(key, value);
-        });
-    }
-
-    if (jsonElem.name === "code") {
-        elem = $('<pre>').append(elem)
+      if (jsonElem.css.width)  elem.css('width',  jsonElem.css.width);
+      if (jsonElem.css.height) elem.css('height', jsonElem.css.height);
+      // weitere CSS übernehmen
+      Object.keys(jsonElem.css).forEach(k => {
+        if (k !== 'width' && k !== 'height') elem.css(k, jsonElem.css[k]);
+      });
     }
 
     return elem;
+  }
+
+  // 2) Standard-Rendering (inkl. iframe, img, h*, p*, etc.)
+  elem = $('<' + type + '>');
+  if (jsonElem.value) {
+    if (jsonElem.name === 'code') {
+      elem.text(jsonElem.value);
+    } else {
+      elem.html(replaceLinks(jsonElem.value));
+    }
+  }
+
+  // Attribute setzen
+  if (jsonElem.attributes) {
+    $.each(jsonElem.attributes, function (key, value) {
+      // Für iframes darf alles wie gehabt als Attribut bleiben
+      elem.attr(key, value);
+    });
+  }
+
+  // CSS anwenden
+  if (jsonElem.css) {
+    $.each(jsonElem.css, function (key, value) {
+      elem.css(key, value);
+    });
+  }
+
+  // Code in <pre> wrappen
+  if (jsonElem.name === 'code') {
+    elem = $('<pre>').append(elem);
+  }
+
+  return elem;
 }
 
 /**

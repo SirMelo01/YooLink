@@ -1,29 +1,49 @@
 $(document).ready(function () {
-    var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
-    // Delete FAQ
-    $(document).on("click", ".delete", function () {
-        // Code for handling the click event on the "delete" button
-        var $listItem = $(this).closest('.list-group-item')
-        var id = $listItem.attr('data-id')
-        sendNotif("Blog wird gelöscht...Bitte warten", "notice")
+  const csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+  $(document).on("click", ".delete-btn", function () {
+    const id = $(this).data("id");
+    const card = $(this).closest(".blog-card");
+
+    Swal.fire({
+      title: "Blog wirklich löschen?",
+      text: "Diese Aktion kann nicht rückgängig gemacht werden!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e3342f", // rot
+      cancelButtonColor: "#6c757d",  // grau
+      confirmButtonText: "Ja, löschen!",
+      cancelButtonText: "Abbrechen",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        sendNotif("Blog wird gelöscht...Bitte warten", "notice");
+
         $.ajax({
-            url: id + "/delete/",
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: csrftoken,
-            },
-            dataType: 'json',
-            success: function (response) {
-                console.log(response);
-                if (response.success) { 
-                    $listItem.remove() 
-                    sendNotif('Dieser Blog wurde erfolgreich gelöscht', 'success')
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(xhr.responseText);
-                sendNotif('Es kam zu einem Fehler beim Löschen. Versuche es später nochmal', 'error')
+          url: `${id}/delete/`,
+          type: "POST",
+          data: { csrfmiddlewaretoken: csrftoken },
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              card.remove();
+              Swal.fire({
+                title: "Gelöscht!",
+                text: "Der Blog wurde erfolgreich entfernt.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+              });
             }
+          },
+          error: function () {
+            Swal.fire({
+              title: "Fehler",
+              text: "Beim Löschen ist ein Fehler aufgetreten.",
+              icon: "error",
+            });
+          },
         });
+      }
     });
+  });
 });

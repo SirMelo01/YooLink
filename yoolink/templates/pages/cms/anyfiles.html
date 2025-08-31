@@ -8,6 +8,17 @@
 {% endblock %}
 
 {% block content %}
+<!--Edit Title Modal -->
+<div id="editModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+  <div class="bg-white py-6 px-12 rounded shadow-lg w-full max-w-md modal-container">
+    <h2 class="text-lg font-bold mb-4">Titel bearbeiten</h2>
+    <input type="text" id="fileTitleInput" class="w-full p-2 border rounded mb-4" />
+    <div class="flex justify-end gap-2">
+      <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded">Abbrechen</button>
+      <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded">Speichern</button>
+    </div>
+  </div>
+</div>
 <div class="container mx-auto mt-8">
   <div class="flex justify-between">
     <h1 class="text-2xl"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Dateiupload</h1>
@@ -23,16 +34,65 @@
     </div>
   </form>
 
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
     {% for file in files %}
-      <div class="relative p-2 border rounded shadow">
-        <a href="{{ file.file.url }}" target="_blank" class="block text-blue-600 truncate">
-          📎 {{ file.title|default:file.file.name|truncatechars:40 }}
-        </a>
-        <button class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs delete-file" data-id="{{ file.id }}">✕</button>
+    <div class="relative p-4 border rounded shadow flex flex-col justify-between">
+      <a href="{{ file.file.url }}" target="_blank" class="text-blue-600 truncate flex items-center gap-2 mb-4">
+        {% with file.file.name|lower as filename %}
+        {% if ".jpg" in filename or ".jpeg" in filename or ".png" in filename or ".webp" in filename %}
+        <i class="bi bi-card-image text-yellow-600 text-xl"></i>
+        {% elif ".pdf" in filename %}
+        <i class="bi bi-file-earmark-pdf-fill text-red-600 text-xl"></i>
+        {% elif ".zip" in filename or ".rar" in filename %}
+        <i class="bi bi-file-earmark-zip-fill text-gray-600 text-xl"></i>
+        {% elif ".doc" in filename or ".docx" in filename %}
+        <i class="bi bi-file-earmark-word-fill text-blue-700 text-xl"></i>
+        {% elif ".xls" in filename or ".xlsx" in filename %}
+        <i class="bi bi-file-earmark-excel-fill text-green-600 text-xl"></i>
+        {% else %}
+        <i class="bi bi-file-earmark-fill text-gray-500 text-xl"></i>
+        {% endif %}
+        {% endwith %}
+        {{ file.title|default:file.file.name|truncatechars:40 }}
+      </a>
+
+      <div class="flex justify-end gap-2 mt-auto">
+        <button
+          class="edit-file bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
+          data-id="{{ file.id }}">
+          <i class="bi bi-pencil"></i> Anpassen
+        </button>
+        <button
+          class="delete-file bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
+          data-id="{{ file.id }}">
+          <i class="bi bi-trash"></i> Löschen
+        </button>
       </div>
+    </div>
+
     {% endfor %}
   </div>
+  {% if files.has_other_pages %}
+  <div class="flex justify-center mt-8">
+    <nav class="inline-flex items-center space-x-1">
+      {% if files.has_previous %}
+      <a href="?page={{ files.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">«</a>
+      {% endif %}
+
+      {% for num in files.paginator.page_range %}
+      {% if files.number == num %}
+      <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ num }}</span>
+      {% elif num > files.number|add:'-3' and num < files.number|add:'3' %} <a href="?page={{ num }}"
+        class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if files.has_next %}
+        <a href="?page={{ files.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">»</a>
+        {% endif %}
+    </nav>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
 
@@ -42,9 +102,18 @@
   Dropzone.autoDiscover = false;
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+  let successfulUploads = 0;
+  let failedUploads = 0;
+
   $('.dropzone').dropzone({
     addRemoveLinks: true,
-    removedfile: function(file) {
+
+    init: function () {
+      successfulUploads = 0;
+      failedUploads = 0;
+    },
+
+    removedfile: function (file) {
       let id = file.upload?.uuid;
       if (!id) return;
 
@@ -55,25 +124,127 @@
         success: () => file.previewElement.remove()
       });
     },
-    success: function(file, response) {
-      file.upload.uuid = response.id; // falls du response.id zurückgibst
+
+    success: function (file, response) {
+      file.upload.uuid = response.id;
+      successfulUploads++;
+    },
+
+    error: function (file, errorMessage) {
+      failedUploads++;
+    },
+
+    queuecomplete: function () {
+      if (failedUploads === 0 && successfulUploads > 0) {
+        Swal.fire({
+          title: 'Upload abgeschlossen!',
+          text: 'Alle Dateien wurden erfolgreich hochgeladen.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          location.reload();
+        });
+      } else if (failedUploads > 0) {
+        Swal.fire({
+          title: 'Einige Uploads sind fehlgeschlagen.',
+          text: `${failedUploads} Datei(en) konnten nicht hochgeladen werden.`,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+
+      // Reset zählende Variablen für nächsten Batch
+      successfulUploads = 0;
+      failedUploads = 0;
     }
   });
 
-  $('.delete-file').click(function() {
+
+  $('.delete-file').click(function () {
     const id = $(this).data('id');
     const elem = $(this).closest('.relative');
 
-    $.post(`/anyfiles/delete/${id}/`, {
-      csrfmiddlewaretoken: csrftoken
-    }, function(response) {
-      if (response.success) {
-        elem.remove();
-      } else {
-        alert(response.error);
+    Swal.fire({
+      title: 'Bist du sicher?',
+      text: 'Diese Datei wird dauerhaft gelöscht.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ja, löschen!',
+      cancelButtonText: 'Abbrechen'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.post(`/cms/anyfiles/delete/${id}/`, {
+          csrfmiddlewaretoken: csrftoken
+        }, function (response) {
+          if (response.success) {
+            elem.remove();
+            Swal.fire('Gelöscht!', 'Die Datei wurde gelöscht.', 'success');
+          } else {
+            Swal.fire('Fehler', response.error, 'error');
+          }
+        });
       }
     });
   });
+
+  let currentEditId = null;
+  let currentEditElem = null;
+
+  $('.edit-file').click(function () {
+    const id = $(this).data('id');
+    currentEditId = id;
+
+    const parent = $(this).closest('.relative');
+    const displayLink = parent.find('a');
+    const currentTitle = displayLink.text().trim();
+
+    $('#fileTitleInput').val(currentTitle);
+    currentEditElem = displayLink;
+    $('#editModal').removeClass('hidden');
+  });
+
+  $('#cancelEdit').click(function () {
+    $('#editModal').addClass('hidden');
+    currentEditId = null;
+    currentEditElem = null;
+  });
+
+  $('#saveEdit').click(function () {
+    const newTitle = $('#fileTitleInput').val().trim();
+
+    $.ajax({
+      url: `/cms/anyfiles/update/${currentEditId}/`,
+      method: 'POST',
+      data: {
+        csrfmiddlewaretoken: csrftoken,
+        title: newTitle
+      },
+      success: function (response) {
+        if (response.success) {
+          Swal.fire({
+            title: 'Erfolgreich gespeichert!',
+            icon: 'success',
+            timer: 1200,
+            showConfirmButton: false
+          });
+          const icon = currentEditElem.find('i');              
+          currentEditElem.html('');                            
+          currentEditElem.append(icon).append(' ' + newTitle);
+        } else {
+          Swal.fire('Fehler', response.error, 'error');
+        }
+        $('#editModal').addClass('hidden');
+      },
+      error: function (err) {
+        Swal.fire('Fehler', 'Es ist ein Fehler aufgetreten.', 'error');
+        $('#editModal').addClass('hidden');
+      }
+    });
+  });
+
 </script>
 {% endcompress js %}
 {% endblock %}

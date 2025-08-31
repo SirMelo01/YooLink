@@ -6,10 +6,10 @@
 {% block content %}
 <div class="container mx-auto mt-8">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Videos</h1>
+    <h1 class="text-2xl"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Videos</h1>
     <a href="{% url 'cms:create_video' %}"
-      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-      <i class="bi bi-plus-circle-fill mr-1"></i> Video
+      class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">
+      <i class="bi bi-send mr-1"></i> Neues Video
     </a>
   </div>
 
@@ -41,12 +41,29 @@
 <script>
   $('.delete-video').click(function () {
     const id = $(this).data('id');
-    if (!confirm('Video wirklich löschen?')) return;
-    $.post(`/cms/videos/delete/${id}/`, {
-      csrfmiddlewaretoken: '{{ csrf_token }}'
-    }, function (response) {
-      if (response.success) {
-        location.reload();
+
+    Swal.fire({
+      title: 'Bist du sicher?',
+      text: 'Dieses Video wird dauerhaft gelöscht.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ja, löschen!',
+      cancelButtonText: 'Abbrechen'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.post(`/cms/videos/delete/${id}/`, {
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function (response) {
+          if (response.success) {
+            Swal.fire('Gelöscht!', 'Das Video wurde gelöscht.', 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire('Fehler', response.error || 'Das Video konnte nicht gelöscht werden.', 'error');
+          }
+        });
       }
     });
   });

@@ -23,10 +23,10 @@
     <meta name="twitter:label2" content="Zeit zum Lesen">
     <meta name="twitter:data2" content="1 Minute">
 
-
     {% compress css inline %}
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/libs/sweetalert2.min.css' %}">
     <link href="{% static 'css/utils.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     <!-- Flag Icons -->
@@ -340,6 +340,7 @@
 
     {% compress js inline %}
     <script defer src="{% static 'js/base.js' %}"></script>
+    <script src="{% static 'js/libs/sweetalert.min.js' %}"></script>
     {% endcompress js %}
     {% block javascriptend %}
     {% endblock javascriptend %}

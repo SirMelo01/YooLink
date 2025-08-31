@@ -377,12 +377,38 @@ def update_faq_order(request):
 
 
 # --------------- [Blog] ---------------
+from django.core.paginator import Paginator
+
 @login_required(login_url='login')
 def blog_view(request):
-    data = {
-        "blogs":  Blog.objects.all().order_by('-date')
-    }
-    return render(request, "pages/cms/blog/blog.html", data)
+    query = request.GET.get("q", "")
+    sort = request.GET.get("sort", "-date")  # Standard: neueste zuerst
+    active_filter = request.GET.get("active", "all")
+
+    blogs = Blog.objects.all()
+
+    if query:
+        blogs = blogs.filter(title__icontains=query)
+
+    if active_filter == "true":
+        blogs = blogs.filter(active=True)
+    elif active_filter == "false":
+        blogs = blogs.filter(active=False)
+
+    blogs = blogs.order_by(sort)
+
+    paginator = Paginator(blogs, 6)  # 6 Blogs pro Seite
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "pages/cms/blog/blog.html", {
+        "page_obj": page_obj,
+        "blogs": page_obj.object_list,
+        "query": query,
+        "active_filter": active_filter,
+        "sort": sort,
+    })
+
 
 # Delete Blog
 @login_required(login_url='login')
@@ -2435,8 +2461,29 @@ def anyfile_delete_view(request, id):
 
 @login_required(login_url='login')
 def anyfile_list_view(request):
-    files = AnyFile.objects.all()
-    return render(request, 'pages/cms/anyfiles.html', {'files': files})
+    files = AnyFile.objects.all().order_by('-id') 
+
+    paginator = Paginator(files, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'pages/cms/anyfiles.html', {
+        'files': page_obj,
+        'page_obj': page_obj, 
+    })
+
+@login_required(login_url='login')
+def anyfile_update_view(request, id):
+    try:
+        file = AnyFile.objects.get(id=id)
+        if request.method == 'POST':
+            title = request.POST.get('title', '').strip()
+            file.title = title
+            file.save()
+            return JsonResponse({'success': True, 'title': file.title})
+        return JsonResponse({'error': 'Ungültige Methode'}, status=400)
+    except AnyFile.DoesNotExist:
+        return JsonResponse({'error': 'Datei nicht gefunden'}, status=404)
 
 # Videos
 @login_required(login_url='login')
@@ -2454,8 +2501,15 @@ def create_video(request):
         description = request.POST.get('description', '')
         alt_text = request.POST.get('alt_text', '')
         tags = request.POST.get('tags', '')
-        is_public = request.POST.get('is_public', 'true') == 'true'
         duration = request.POST.get('duration') or None
+        # boolean fields
+        is_public = request.POST.get('is_public', 'true') == 'true'
+        autoplay = request.POST.get('autoplay') == 'true'
+        muted = request.POST.get('muted') == 'true'
+        loop = request.POST.get('loop') == 'true'
+        playsinline = request.POST.get('playsinline') == 'true'
+        show_controls = request.POST.get('show_controls') == 'true'
+        preload = request.POST.get('preload', 'metadata')
 
         video_instance = VideoFile(
             file=video,
@@ -2467,11 +2521,28 @@ def create_video(request):
             tags=tags,
             is_public=is_public,
             duration=duration,
+            autoplay=autoplay,
+            muted=muted,
+            loop=loop,
+            playsinline=playsinline,
+            show_controls=show_controls,
+            preload=preload,
         )
         video_instance.save()
         return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
 
-    return render(request, 'pages/cms/video/video-create.html')
+    video_options = [
+        ("autoplay", "Autoplay"),
+        ("muted", "Stumm geschaltet"),
+        ("loop", "Loop"),
+        ("playsinline", "Auf Seite abspielen (Mobil)"),
+        ("show_controls", "Steuerelemente anzeigen"),
+    ]
+
+    return render(request, 'pages/cms/video/video-create.html', {
+        'video_options': video_options
+    })
+
 
 @login_required(login_url='login')
 def edit_video(request, pk):
@@ -2484,6 +2555,12 @@ def edit_video(request, pk):
         video.tags = request.POST.get('tags', '')
         video.is_public = request.POST.get('is_public', 'true') == 'true'
         video.duration = request.POST.get('duration') or None
+        video.autoplay = request.POST.get('autoplay') == 'true'
+        video.muted = request.POST.get('muted') == 'true'
+        video.loop = request.POST.get('loop') == 'true'
+        video.playsinline = request.POST.get('playsinline') == 'true'
+        video.show_controls = request.POST.get('show_controls') == 'true'
+        video.preload = request.POST.get('preload', 'metadata')
 
         if 'file' in request.FILES:
             video.file = request.FILES['file']
@@ -2495,7 +2572,17 @@ def edit_video(request, pk):
         video.save()
         return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
 
-    return render(request, 'pages/cms/video/video-edit.html', {'video': video})
+    options = ['autoplay', 'muted', 'loop', 'playsinline', 'show_controls']
+    option_states = {opt: getattr(video, opt, False) for opt in options}
+    video_options = [
+        ("autoplay", "Autoplay"),
+        ("muted", "Stumm geschaltet"),
+        ("loop", "Loop"),
+        ("playsinline", "Auf Seite abspielen (Mobil)"),
+        ("show_controls", "Steuerelemente anzeigen"),
+    ]
+
+    return render(request, 'pages/cms/video/video-edit.html', {'video': video, 'video_options': video_options, 'option_states': option_states})
 
 @login_required(login_url='login')
 def delete_video(request, pk):
@@ -2520,12 +2607,39 @@ def list_all_videos(request):
 
     result = []
     for video in VideoFile.objects.all().order_by("-uploaded_at"):
-        result.append(
-            {
-                "id": video.id,
-                "url": video.file.url,
-                "poster": video.thumbnail.url if video.thumbnail else static("images/designImg/filler.png"),
-            }
-        )
+        result.append({
+            "id": video.id,
+            "url": video.file.url,
+            "title": video.title,
+            "description": video.description or "",
+            "alt_text": video.alt_text or "",
+            "tags": video.tags or "",
+            "duration": video.duration,
+            "poster": video.thumbnail.url if video.thumbnail else static("images/designImg/filler.png"),
+            "autoplay": video.autoplay,
+            "muted": video.muted,
+            "loop": video.loop,
+            "playsinline": video.playsinline,
+            "show_controls": video.show_controls,
+            "preload": video.preload or "metadata"
+        })
 
     return JsonResponse({"video_urls": result}, status=200)
+
+@login_required(login_url='login')
+def get_video_details(request, pk):
+    video = get_object_or_404(VideoFile, pk=pk)
+
+    return JsonResponse({
+        "id": video.id,
+        "url": video.file.url,
+        "poster": video.thumbnail.url if video.thumbnail else static("images/designImg/filler.png"),
+        "title": video.title,
+        "description": video.description,
+        "autoplay": video.autoplay,
+        "muted": video.muted,
+        "loop": video.loop,
+        "playsinline": video.playsinline,
+        "show_controls": video.show_controls,
+        "preload": video.preload,
+    }, status=200)

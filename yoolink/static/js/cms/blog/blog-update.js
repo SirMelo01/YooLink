@@ -104,8 +104,8 @@ $(document).ready(function () {
                         });
                         $blogContent.append($container)
                         break;
-                    case 'video':
-                        $container.attr('element-type', 'video').addClass("w-fit py-4 my-3")
+                    case 'yt-video':
+                        $container.attr('element-type', 'yt-video').addClass("w-fit py-4 my-3")
                         $container.append(delSpan.clone()).append(moveHandle.clone())
                         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-youtube"><i class="bi bi-pencil-square"></i></span>'))
                         $('<iframe/>', element.attributes).appendTo($container)
@@ -132,7 +132,7 @@ $(document).ready(function () {
                         $blogContent.append($container)
                         break;
                     case 'galery':
-                        $container.attr('element-type', 'galery').addClass("w-full mt-4 mb-4")
+                        $container.attr('element-type', 'galery').addClass("w-full my-4")
                         $container.append(delSpan.clone()).append(moveHandle.clone())
                         $container.append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-slider"><i class="bi bi-pencil-square"></i></span>'))
                         const $carouselContainer = $('<div class="carousel rounded-lg">')
@@ -163,6 +163,80 @@ $(document).ready(function () {
                             $('#galleryModal').toggleClass("hidden");
                         });
                         $blogContent.append($container)
+                        break;
+                    case 'video':
+                        $container.attr('element-type', 'video').addClass("py-4 my-3")
+                            .append(delSpan.clone()).append(moveHandle.clone())
+                            .append($('<span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-cmsvideo"><i class="bi bi-pencil-square"></i></span>'));
+
+                        // <video> Element mit allen Attributen & CSS
+                        const $videoEl = $('<video>');
+                        if (element.attributes) {
+                            $.each(element.attributes, function (k, v) {
+                            if (k === 'class') {
+                                $videoEl.addClass(v); // behält "my-8 rounded-2xl" etc.
+                            } else if (k.startsWith('data-')) {
+                                // SEO Felder: data-*
+                                $videoEl.attr(k, v);
+                                const dataKey = k.replace(/^data-/, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+                                $videoEl.data(dataKey, v);
+                            } else if (['autoplay','muted','loop','playsinline','controls'].includes(k)) {
+                                // Boolean-Attribute als prop
+                                $videoEl.prop(k, true);
+                            } else {
+                                $videoEl.attr(k, v);
+                            }
+                            });
+                        }
+                        if (element.css) {
+                            if (element.css.width)  $videoEl.css('width',  element.css.width);
+                            if (element.css.height) $videoEl.css('height', element.css.height);
+                        }
+                        $container.append($videoEl);
+
+                        // Delete
+                        $container.find('.del-elem').click(function () { $(this).parent().remove() });
+
+                        // Edit: aktuelles Video -> Modal mit Props füllen + ggf. vorselektieren
+                        $container.find('.edit-cmsvideo').click(function () {
+                            const $modal = $('#videoModal');
+                            const $v = $(this).siblings('video');
+
+                            $modal.data('target', $(this).parent());
+
+                            // aktuelle Werte aus DOM ziehen
+                            const currentData = {
+                                id: $v.data('video_id') || null,
+                                url: $v.attr('src') || '',
+                                poster: $v.attr('poster') || '',
+                                title: $v.attr('title') || '',
+                                autoplay: $v.prop('autoplay'),
+                                muted: $v.prop('muted'),
+                                loop: $v.prop('loop'),
+                                playsinline: $v.prop('playsinline'),
+                                preload: $v.attr('preload') || 'metadata',
+                                width: $v.css('width') || $v.attr('width') || '',
+                                height: $v.css('height') || $v.attr('height') || '',
+                                alt_text: $v.data('alt_text') || ''
+                            };
+
+                            // Inputs füllen
+                            $('#videoTitle').val(currentData.title);
+                            $('#videoAlt').val(currentData.alt_text || '');
+                            $('#videoAutoplay').prop('checked', currentData.autoplay);
+                            $('#videoMuted').prop('checked', currentData.muted);
+                            $('#videoLoop').prop('checked', currentData.loop);
+                            $('#videoPlaysinline').prop('checked', currentData.playsinline);
+                            $('#videoPreload').val(currentData.preload);
+                            $('#videoWidth').val(currentData.width);
+                            $('#videoHeight').val(currentData.height);
+
+                            // Modal zeigen + Backend-Videos laden (vorselektieren, falls ID vorhanden)
+                            $('#videoProperties').removeClass('hidden');
+                            $('#videoModal').removeClass('hidden');
+                        });
+
+                        $blogContent.append($container);
                         break;
                     // Add more cases for other types if needed
                     default:

@@ -1,7 +1,7 @@
 // Load images from backend
 $editImg = null;
 $editSlider = null;
-let $editVideo = null;   // global wie $editImg
+$editVideo = null;   // global wie $editImg
 $(document).ready(function () {
 
     const $imageModal = $('#imageModal');
