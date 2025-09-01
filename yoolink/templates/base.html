@@ -119,7 +119,7 @@
               </a>
             </li>
             <li>
-              <a href="{% url 'home' %}#Cms" aria-label="CMS" title="CMS"
+              <a href="{% url 'ycmsinfo' %}" aria-label="CMS" title="CMS"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 {% trans "NAVBAR_CMS" %}
               </a>
@@ -222,36 +222,21 @@
                 <nav>
                   <ul class="space-y-4">
                     <li>
-                      <a href="{% url 'home' %}#Responsive" aria-label="Produkt" title="Produkt"
+                      <a href="{% url 'skills' %}" aria-label="Leistungen" title="Leistungen"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        {% trans "NAVBAR_RESPONSIVE" %}
+                        {% trans "NAVBAR_LEISTUNGEN" %}
                       </a>
                     </li>
                     <li>
-                      <a href="{% url 'home' %}#Cms" aria-label="Produkt" title="Produkt"
+                      <a href="{% url 'ycmsinfo' %}" aria-label="Produkt" title="Produkt"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         {% trans "NAVBAR_CMS" %}
                       </a>
                     </li>
-
-                    <!--
-                    <li>
-                      <a href="/" aria-label="Referenzen" title="Referenzen"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
-                        Referenzen
-                      </a>
-                    </li>
-                    -->
                     <li>
                       <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         {% trans "NAVBAR_PRICING" %}
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'home' %}#Team" aria-label="Team" title="Team"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        {% trans "NAVBAR_TEAM" %}
                       </a>
                     </li>
                     <li>
@@ -261,8 +246,8 @@
                       </a>
                     </li>
                     <li>
-                      <a href="{% url 'kontakt' %}" aria-label="Sign up" title="Sign up"
-                        class="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-400 rounded-2xl hover-overline-animation">
+                      <a href="{% url 'kontakt' %}" aria-label="Kontakt" title="Kontakt"
+                        class="items-center justify-center pt-3 text-center w-44 h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none bg-blue-900 rounded-2xl hover-overline-animation">
                         {% trans "NAVBAR_CONTACT_BTN" %}
                       </a>
                     </li>

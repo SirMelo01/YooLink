@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.5 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -191,6 +191,10 @@ select,
 textarea {
   font-family: inherit;
   /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
   font-size: 100%;
   /* 1 */
   font-weight: inherit;
@@ -338,6 +342,14 @@ ul,
 menu {
   list-style: none;
   margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
   padding: 0;
 }
 
@@ -965,8 +977,7 @@ video {
 }
 
 .me-2 {
-  -webkit-margin-end: 0.5rem;
-          margin-inline-end: 0.5rem;
+  margin-inline-end: 0.5rem;
 }
 
 .ml-1 {
@@ -1026,13 +1037,11 @@ video {
 }
 
 .ms-2 {
-  -webkit-margin-start: 0.5rem;
-          margin-inline-start: 0.5rem;
+  margin-inline-start: 0.5rem;
 }
 
 .ms-3 {
-  -webkit-margin-start: 0.75rem;
-          margin-inline-start: 0.75rem;
+  margin-inline-start: 0.75rem;
 }
 
 .mt-0 {
@@ -1197,6 +1206,10 @@ video {
 
 .h-4 {
   height: 1rem;
+}
+
+.h-40 {
+  height: 10rem;
 }
 
 .h-40 {
@@ -1887,16 +1900,16 @@ video {
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
 }
 
-.space-y-12 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(3rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(3rem * var(--tw-space-y-reverse));
-}
-
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.space-y-24 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(6rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(6rem * var(--tw-space-y-reverse));
 }
 
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
@@ -2401,15 +2414,6 @@ video {
   background-color: rgb(250 204 21 / var(--tw-bg-opacity));
 }
 
-.bg-yellow-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(234 179 8 / var(--tw-bg-opacity));
-}
-
-.bg-opacity-60 {
-  --tw-bg-opacity: 0.6;
-}
-
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
 }
@@ -2821,8 +2825,8 @@ video {
   text-align: center;
 }
 
-.text-right {
-  text-align: right;
+.text-justify {
+  text-align: justify;
 }
 
 .text-start {
@@ -4039,11 +4043,6 @@ video {
 .hover\:bg-violet-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(109 40 217 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-yellow-600:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(202 138 4 / var(--tw-bg-opacity));
 }
 
 .hover\:text-blue-100:hover {
@@ -5533,10 +5532,10 @@ video {
     row-gap: 4rem;
   }
 
-  .lg\:space-y-20 > :not([hidden]) ~ :not([hidden]) {
+  .lg\:space-y-40 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-y-reverse: 0;
-    margin-top: calc(5rem * calc(1 - var(--tw-space-y-reverse)));
-    margin-bottom: calc(5rem * var(--tw-space-y-reverse));
+    margin-top: calc(10rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(10rem * var(--tw-space-y-reverse));
   }
 
   .lg\:rounded-xl {
