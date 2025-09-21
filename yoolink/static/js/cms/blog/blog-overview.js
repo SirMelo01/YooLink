@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     Swal.fire({
       title: "Blog wirklich löschen?",
-      text: "Diese Aktion kann nicht rückgängig gemacht werden!",
+      text: "Es wird der originale Blog und alle Varianten gelöscht! \nDiese Aktion kann nicht rückgängig gemacht werden!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#e3342f", // rot

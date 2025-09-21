@@ -59,6 +59,37 @@ def set_language(request, lang_code):
     response.set_cookie('csrftoken', get_token(request))  # Falls CSRF-Token benötigt wird
     return response
 
+def get_or_create_translated_blog(request, id):
+    lang = get_active_language(request)
+    blog = get_object_or_404(Blog, id=id)
+
+    # Finde Original
+    original_blog = blog.original if blog.original else blog
+
+    # Wenn Original bereits die richtige Sprache hat → zurückgeben
+    if original_blog.language == lang:
+        return original_blog
+
+    # Prüfen ob Variante existiert
+    variant = original_blog.translations.filter(language=lang).first()
+    if variant:
+        return variant
+
+    # Neue Variante anlegen
+    new_blog = Blog.objects.create(
+        title=original_blog.title,
+        slug=original_blog.slug + '-' + lang,
+        title_image=original_blog.title_image,
+        author=original_blog.author,
+        body=original_blog.body,
+        code=original_blog.code,
+        active=False,
+        description=original_blog.description,
+        language=lang,
+        original=original_blog,
+    )
+    return new_blog
+
 @login_required(login_url='login')
 def cms_files(request):
     data = {
@@ -385,7 +416,8 @@ def blog_view(request):
     sort = request.GET.get("sort", "-date")  # Standard: neueste zuerst
     active_filter = request.GET.get("active", "all")
 
-    blogs = Blog.objects.all()
+    # Nur Original-Blogs anzeigen
+    blogs = Blog.objects.filter(original__isnull=True)
 
     if query:
         blogs = blogs.filter(title__icontains=query)
@@ -412,13 +444,18 @@ def blog_view(request):
 
 # Delete Blog
 @login_required(login_url='login')
+@login_required(login_url='login')
 def delete_blog(request, id):
-    if request.method == 'POST':
-        instance = get_object_or_404(Blog, id=id)
-        instance.delete()
-        return JsonResponse({'success': True}, status=200)
-    return JsonResponse({'success': False}, status=400)
+    if request.method != 'POST':
+        return JsonResponse({'success': False}, status=400)
 
+    blog = get_object_or_404(Blog, id=id)
+
+    if blog.original:
+        return JsonResponse({'error': 'Nur Original-Blogs dürfen gelöscht werden.'}, status=403)
+
+    blog.delete()
+    return JsonResponse({'success': True}, status=200)
 
 @login_required(login_url='login')
 def create_blog(request):
@@ -465,12 +502,14 @@ def create_blog(request):
     else:
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
+from django.utils.text import slugify
+
 @login_required(login_url='login')
 def update_blog(request, id):
     if request.method == 'POST':
         # The request is a POST request
         # Retrieve POST parameters
-        blog = get_object_or_404(Blog, id=id)
+        blog = get_or_create_translated_blog(request, id)
 
         title = request.POST.get('title')
         if blog.title != title and Blog.objects.filter(title=title).exists():
@@ -485,6 +524,12 @@ def update_blog(request, id):
             # Create
             blog.description = description
             blog.title = title
+            # 🧠 Slug setzen je nach Original oder Variante
+            base_slug = slugify(title)
+            if blog.original:
+                blog.slug = f"{base_slug}-{blog.language.lower()}"
+            else:
+                blog.slug = base_slug
             blog.body = body 
             blog.code = code 
             if active == "true":
@@ -506,6 +551,8 @@ def update_blog(request, id):
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
 
+
+
 @login_required(login_url='login')
 def add_blog(request):
             
@@ -517,8 +564,30 @@ def add_blog(request):
 
 @login_required(login_url='login')
 def blog_details(request, id):
-    
+    lang = get_active_language(request)
     blog = get_object_or_404(Blog, id=id)
+
+    original_blog = blog.original if blog.original else blog
+
+    if original_blog.language != lang:
+        translated_blog = original_blog.translations.filter(language=lang).first()
+        if translated_blog:
+            blog = translated_blog
+        else:
+            # Erstelle Sprachvariante durch Kopieren
+            blog = Blog.objects.create(
+                title=original_blog.title,
+                slug=original_blog.slug + '-' + lang,
+                title_image=original_blog.title_image,
+                author=original_blog.author,
+                body=original_blog.body,
+                code=original_blog.code,
+                active=False,
+                description=original_blog.description,
+                language=lang,
+                original=original_blog,
+            )
+
 
     data = {"blog": blog,"galerien": Galerie.objects.all()}
 
@@ -526,13 +595,8 @@ def blog_details(request, id):
 
 @login_required(login_url='login')
 def blog_code(request, id):
-    
-    blog = get_object_or_404(Blog, id=id)
-
-    data = {"code": blog.code, "success": "true"}
-
-    return JsonResponse(data)
-
+    blog = get_or_create_translated_blog(request, id)
+    return JsonResponse({"code": blog.code, "success": "true"})
 
 # --------------- [GALERY] ---------------
 # Render Galery Detail View

@@ -11,18 +11,53 @@ $(document).ready(function () {
     
     // Delete the Galery and redirect
     $('#deleteGalery').click(function () {
-        sendNotif('Die Galerie wird gelöscht...', 'info')
-        $.ajax({
-            type: 'post',
-            url: 'delete/',
-            data: { csrfmiddlewaretoken: csrftoken, },
-            success: function (response) {
-                if (response.error) {
-                    sendNotif('Die Galerie konnte nicht gelöscht werden', 'error')
-                    return;
-                }
-                sendNotif('Die Galerie wurde erfolgreich gelöscht!', 'success')
-                window.location.href = '/cms/galerien/';
+        Swal.fire({
+            title: "Galerie wirklich löschen?",
+            text: "Es werden alle Bilder, welche mit der Galerie verbunden sind gelöscht! Diese Aktion kann nicht rückgängig gemacht werden!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e3342f", // rot
+            cancelButtonColor: "#6c757d",  // grau
+            confirmButtonText: "Ja, löschen!",
+            cancelButtonText: "Abbrechen",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendNotif('Die Galerie wird gelöscht...', 'info');
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'delete/',
+                    data: {
+                        csrfmiddlewaretoken: csrftoken,
+                    },
+                    success: function (response) {
+                        if (response.error) {
+                            Swal.fire({
+                                title: "Fehler",
+                                text: "Die Galerie konnte nicht gelöscht werden.",
+                                icon: "error",
+                            });
+                            return;
+                        }
+
+                        Swal.fire({
+                            title: "Gelöscht!",
+                            text: "Die Galerie wurde erfolgreich entfernt.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            window.location.href = '/cms/galerien/';
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "Fehler",
+                            text: "Beim Löschen ist ein Fehler aufgetreten.",
+                            icon: "error",
+                        });
+                    }
+                });
             }
         });
     })

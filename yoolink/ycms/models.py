@@ -13,7 +13,7 @@ import uuid
 from django.urls import reverse
 from decimal import Decimal
 from django.core.exceptions import ValidationError
-
+from django.utils.translation import get_language, gettext_lazy as _
 ## Produktiv und funktioniert
 
 class FAQ(models.Model):
@@ -229,6 +229,26 @@ class Blog(models.Model):
     active = models.BooleanField(default=False)
     description = models.TextField(default="")
 
+    language = models.CharField(
+        max_length=10,
+        default='de',
+        choices=[
+            ('de', 'Deutsch'),
+            ('en', 'English'),
+            ('fr', 'Französisch'),
+            # weitere Sprachen bei Bedarf
+        ]
+    )
+
+    original = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='translations',
+        help_text=_("Bezieht sich auf den Original-Blog (z.B. auf Deutsch)")
+    )
+
     def delete(self, *args, **kwargs):
         self.title_image.storage.delete(self.title_image.name)
         super(Blog, self).delete(*args, **kwargs)
@@ -237,10 +257,10 @@ class Blog(models.Model):
         return self.title + ' | ' + str(self.author)
     
     def save(self, *args, **kwargs):
-        # Slugify the title and store it in the slug field
-        self.slug = slugify(self.title)
+        if not self.original:
+            # Nur Original-Blogs bekommen einen Slug
+            self.slug = slugify(self.title)
 
-        # Call the parent class's save method to actually save the model
         super(Blog, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
