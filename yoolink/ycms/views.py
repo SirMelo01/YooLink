@@ -265,11 +265,34 @@ def delete_file_by_name(request, name):
 # Displays all your uploaded images
 @login_required(login_url='login')
 def images_view(request):
-    files = fileentry.objects.all()
-    return render(request, "pages/cms/images.html", {"files": files})
+    # wie viele pro Seite (Default 24)
+    try:
+        per_page = max(1, min(200, int(request.GET.get('per_page', 24))))
+    except ValueError:
+        per_page = 24
 
+    qs = fileentry.objects.all().order_by('-uploaddate')
 
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
+    preserved = request.GET.copy()
+    preserved.pop('page', None)  # Page raus für die Links
+    querystring = preserved.urlencode()
+
+    return render(
+        request,
+        "pages/cms/images.html",
+        {
+            "files": page_obj.object_list,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "per_page": per_page,
+            "querystring": querystring,
+            "total_count": paginator.count,
+        },
+    )
 
 def resize_image(image):
     """
@@ -679,7 +702,34 @@ def update_galery_image(request, id):
 # Render Galery Overview
 @login_required(login_url='login')
 def galerien(request):
-    return render(request, "pages/cms/galery/galerien.html", {"galerien": Galerie.objects.all()})
+    # Per-Page sicher parsen (Default 12, max 200)
+    try:
+        per_page = max(1, min(200, int(request.GET.get('per_page', 12))))
+    except ValueError:
+        per_page = 12
+
+    qs = Galerie.objects.all().order_by('-created_at')
+
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    preserved = request.GET.copy()
+    preserved.pop('page', None)  # page aus Query entfernen
+    querystring = preserved.urlencode()
+
+    return render(
+        request,
+        "pages/cms/galery/galerien.html",
+        {
+            "galerien": page_obj.object_list,  # nur aktuelle Seite
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "per_page": per_page,
+            "querystring": querystring,
+            "total_count": paginator.count,
+        },
+    )
 
 # Create a galery
 @login_required(login_url='login')
@@ -2568,16 +2618,34 @@ def anyfile_uploader(request):
 
 @login_required(login_url='login')
 def anyfile_list_view(request):
-    files = AnyFile.objects.all().order_by('-id') 
+    # Per-Page (12/24/48/96), sicher parsen
+    try:
+        per_page = max(1, min(200, int(request.GET.get('per_page', 24))))
+    except ValueError:
+        per_page = 24
 
-    paginator = Paginator(files, 24)
-    page_number = request.GET.get('page')
+    qs = AnyFile.objects.all().order_by('-id')
+
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'pages/cms/files/anyfiles.html', {
-        'files': page_obj,
-        'page_obj': page_obj, 
-    })
+    preserved = request.GET.copy()
+    preserved.pop('page', None)  # page entfernen für die Links
+    querystring = preserved.urlencode()
+
+    return render(
+        request,
+        'pages/cms/files/anyfiles.html',
+        {
+            'files': page_obj.object_list,   # nur die aktuelle Seite im Grid
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'per_page': per_page,
+            'querystring': querystring,
+            'total_count': paginator.count,
+        }
+    )
 
 @login_required(login_url='login')
 def anyfile_update_view(request, id):
@@ -2634,8 +2702,34 @@ def anyfiles_all(request):
 # Videos
 @login_required(login_url='login')
 def list_videos(request):
-    videos = VideoFile.objects.all().order_by('-uploaded_at')
-    return render(request, 'pages/cms/video/video-overview.html', {'videos': videos})
+    # Per-Page sicher parsen (Default 24, max 200)
+    try:
+        per_page = max(1, min(200, int(request.GET.get('per_page', 24))))
+    except ValueError:
+        per_page = 24
+
+    qs = VideoFile.objects.all().order_by('-uploaded_at')
+
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    preserved = request.GET.copy()
+    preserved.pop('page', None)  # page aus Query entfernen, damit Links sauber sind
+    querystring = preserved.urlencode()
+
+    return render(
+        request,
+        'pages/cms/video/video-overview.html',
+        {
+            'videos': page_obj.object_list,   # nur die aktuelle Seite im Grid
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'per_page': per_page,
+            'querystring': querystring,
+            'total_count': paginator.count,
+        }
+    )
 
 @login_required(login_url='login')
 def create_video(request):

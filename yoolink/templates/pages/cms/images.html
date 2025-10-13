@@ -65,29 +65,109 @@
 </div>
 
 <div class="container mx-auto mt-8">
-    <div class="flex justify-between">
-        <h1 class="text-2xl "><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Bilderübersicht</h1>
-        <a href="{% url 'cms:upload' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2">
-            <i class="bi bi-upload"></i>
-            Bilder hochladen
-        </a>
-    </div>
-    <div class="grid grid-cols-4 gap-4 mt-8">
-        {% csrf_token %}
-        {% for file in files %}
-        <div class="relative">
-            <a href="{{file.file.url}}"><img place="{{file.place}}" key="{{file.id}}" src="{{file.file.url}}"
-                    title="{{file.title}}" alt="{{file.title}}" class="h-64 w-full border rounded-lg shadow-lg"></a>
-            <span class="bg-red-700 text-white rounded-full p-2 absolute top-0 right-0 hover:cursor-pointer deleter"
-                id="{{file.id}}">
-                <i class="bi bi-trash"></i>
-            </span>
-            <span
-                class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img"><i
-                    class="bi bi-pencil-square"></i></span>
-        </div>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <h1 class="text-2xl">
+      <a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Bilderübersicht
+      <span class="ml-2 text-sm text-gray-500">({{ total_count }} Bilder)</span>
+    </h1>
+
+    <div class="flex items-center gap-3">
+      {# Pro-Seite Auswahl (optional) #}
+      <form method="get" class="flex items-center gap-2">
+        <label class="text-sm text-gray-600">Pro Seite</label>
+        <select name="per_page" class="rounded-md border-gray-300 text-sm"
+                onchange="this.form.submit()">
+          <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
+          <option value="24" {% if per_page == 24 %}selected{% endif %}>24</option>
+          <option value="48" {% if per_page == 48 %}selected{% endif %}>48</option>
+          <option value="96" {% if per_page == 96 %}selected{% endif %}>96</option>
+        </select>
+        {% comment %} Erhalte andere GET-Parameter (falls du später Filter hinzufügst) {% endcomment %}
+        {% for key, val in request.GET.items %}
+          {% if key != 'per_page' and key != 'page' %}
+            <input type="hidden" name="{{ key }}" value="{{ val }}">
+          {% endif %}
         {% endfor %}
+      </form>
+
+      <a href="{% url 'cms:upload' %}"
+         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2">
+        <i class="bi bi-upload"></i>
+        Bilder hochladen
+      </a>
     </div>
+  </div>
+
+  {% csrf_token %}
+
+  {% if files %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+      {% for file in files %}
+        <div class="relative">
+          <a href="{{ file.file.url }}" target="_blank" rel="noopener">
+            <img place="{{ file.place }}" key="{{ file.id }}" src="{{ file.file.url }}"
+                 title="{{ file.title }}" alt="{{ file.title }}"
+                 class="h-64 w-full object-cover border rounded-lg shadow-lg">
+          </a>
+
+          <span class="bg-red-700 text-white rounded-full p-2 absolute top-2 right-2 hover:cursor-pointer deleter"
+                id="{{ file.id }}" title="Bild löschen">
+            <i class="bi bi-trash"></i>
+          </span>
+
+          <span class="absolute top-2 left-2 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img" title="Bearbeiten">
+            <i class="bi bi-pencil-square"></i>
+          </span>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="flex items-center justify-between mt-6" aria-label="Pagination">
+        <div class="text-sm text-gray-600">
+          Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
+          Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
+        </div>
+
+        <div class="inline-flex items-center space-x-1">
+          {% if page_obj.has_previous %}
+            <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
+               class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">
+              ‹ Zurück
+            </a>
+          {% else %}
+            <span class="px-3 py-1 rounded-md border text-sm text-gray-400">‹ Zurück</span>
+          {% endif %}
+
+          {# kompakte Seitenzahlen #}
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <span class="px-3 py-1 rounded-md bg-blue-500 text-white text-sm">{{ num }}</span>
+            {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+              <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}"
+                 class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">{{ num }}</a>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+              <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}"
+                 class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">{{ num }}</a>
+            {% elif forloop.first or forloop.last %}
+              <span class="px-2 text-gray-400">…</span>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}"
+               class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">
+              Weiter ›
+            </a>
+          {% else %}
+            <span class="px-3 py-1 rounded-md border text-sm text-gray-400">Weiter ›</span>
+          {% endif %}
+        </div>
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="mt-10 text-gray-500">Keine Bilder vorhanden.</div>
+  {% endif %}
 </div>
 
 {% endblock %}

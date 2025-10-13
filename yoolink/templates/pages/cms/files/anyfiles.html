@@ -16,71 +16,119 @@
   </div>
 </div>
 <div class="container mx-auto mt-8">
-  <div class="flex justify-between">
-    <h1 class="text-2xl"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Dateiupload</h1>
-    <a href="{% url 'cms:anyfile-uploader' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-      <i class="bi bi-file-earmark-plus"></i> Dateien hochladen
-    </a>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <h1 class="text-2xl">
+      <a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Dateiupload
+      <span class="ml-2 text-sm text-gray-500">({{ total_count }} Dateien)</span>
+    </h1>
+
+    <div class="flex items-center gap-3">
+      <!-- Pro-Seite Auswahl -->
+      <form method="get" class="flex items-center gap-2">
+        <label class="text-sm text-gray-600">Pro Seite</label>
+        <select name="per_page" class="rounded-md border-gray-300 text-sm" onchange="this.form.submit()">
+          <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
+          <option value="24" {% if per_page == 24 %}selected{% endif %}>24</option>
+          <option value="48" {% if per_page == 48 %}selected{% endif %}>48</option>
+          <option value="96" {% if per_page == 96 %}selected{% endif %}>96</option>
+        </select>
+        {# andere GET-Parameter erhalten #}
+        {% for key, val in request.GET.items %}
+          {% if key != 'per_page' and key != 'page' %}
+            <input type="hidden" name="{{ key }}" value="{{ val }}">
+          {% endif %}
+        {% endfor %}
+      </form>
+
+      <a href="{% url 'cms:anyfile-uploader' %}"
+         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <i class="bi bi-file-earmark-plus"></i> Dateien hochladen
+      </a>
+    </div>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-    {% for file in files %}
-    <div class="relative p-4 border rounded shadow flex flex-col justify-between">
-      <a href="{{ file.file.url }}" target="_blank" class="text-blue-600 truncate flex items-center gap-2 mb-4">
-        {% with file.file.name|lower as filename %}
-        {% if ".jpg" in filename or ".jpeg" in filename or ".png" in filename or ".webp" in filename %}
-        <i class="bi bi-card-image text-yellow-600 text-xl"></i>
-        {% elif ".pdf" in filename %}
-        <i class="bi bi-file-earmark-pdf-fill text-red-600 text-xl"></i>
-        {% elif ".zip" in filename or ".rar" in filename %}
-        <i class="bi bi-file-earmark-zip-fill text-gray-600 text-xl"></i>
-        {% elif ".doc" in filename or ".docx" in filename %}
-        <i class="bi bi-file-earmark-word-fill text-blue-700 text-xl"></i>
-        {% elif ".xls" in filename or ".xlsx" in filename %}
-        <i class="bi bi-file-earmark-excel-fill text-green-600 text-xl"></i>
-        {% else %}
-        <i class="bi bi-file-earmark-fill text-gray-500 text-xl"></i>
-        {% endif %}
-        {% endwith %}
-        {{ file.title|default:file.file.name|truncatechars:40 }}
-      </a>
+  {% csrf_token %}
 
-      <div class="flex justify-end gap-2 mt-auto">
-        <button
-          class="edit-file bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
-          data-id="{{ file.id }}">
-          <i class="bi bi-pencil"></i> Anpassen
-        </button>
-        <button
-          class="delete-file bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
-          data-id="{{ file.id }}">
-          <i class="bi bi-trash"></i> Löschen
-        </button>
-      </div>
+  {% if files %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+      {% for file in files %}
+        <div class="relative p-4 border rounded shadow flex flex-col justify-between">
+          <a href="{{ file.file.url }}" target="_blank" class="text-blue-600 truncate flex items-center gap-2 mb-4">
+            {% with file.file.name|lower as filename %}
+              {% if ".jpg" in filename or ".jpeg" in filename or ".png" in filename or ".webp" in filename %}
+                <i class="bi bi-card-image text-yellow-600 text-xl"></i>
+              {% elif ".pdf" in filename %}
+                <i class="bi bi-file-earmark-pdf-fill text-red-600 text-xl"></i>
+              {% elif ".zip" in filename or ".rar" in filename %}
+                <i class="bi bi-file-earmark-zip-fill text-gray-600 text-xl"></i>
+              {% elif ".doc" in filename or ".docx" in filename %}
+                <i class="bi bi-file-earmark-word-fill text-blue-700 text-xl"></i>
+              {% elif ".xls" in filename or ".xlsx" in filename %}
+                <i class="bi bi-file-earmark-excel-fill text-green-600 text-xl"></i>
+              {% else %}
+                <i class="bi bi-file-earmark-fill text-gray-500 text-xl"></i>
+              {% endif %}
+            {% endwith %}
+            {{ file.title|default:file.file.name|truncatechars:40 }}
+          </a>
+
+          <div class="flex justify-end gap-2 mt-auto">
+            <button
+              class="edit-file bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
+              data-id="{{ file.id }}">
+              <i class="bi bi-pencil"></i> Anpassen
+            </button>
+            <button
+              class="delete-file bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
+              data-id="{{ file.id }}">
+              <i class="bi bi-trash"></i> Löschen
+            </button>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 
-    {% endfor %}
-  </div>
-  {% if files.has_other_pages %}
-  <div class="flex justify-center mt-8">
-    <nav class="inline-flex items-center space-x-1">
-      {% if files.has_previous %}
-      <a href="?page={{ files.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">«</a>
-      {% endif %}
+    {# Pagination #}
+    {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="flex items-center justify-between mt-6" aria-label="Pagination">
+        <div class="text-sm text-gray-600">
+          Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
+          Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
+        </div>
 
-      {% for num in files.paginator.page_range %}
-      {% if files.number == num %}
-      <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ num }}</span>
-      {% elif num > files.number|add:'-3' and num < files.number|add:'3' %} <a href="?page={{ num }}"
-        class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200">{{ num }}</a>
-        {% endif %}
-        {% endfor %}
+        <div class="inline-flex items-center space-x-1">
+          {% if page_obj.has_previous %}
+            <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
+               class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">‹ Zurück</a>
+          {% else %}
+            <span class="px-3 py-1 rounded-md border text-sm text-gray-400">‹ Zurück</span>
+          {% endif %}
 
-        {% if files.has_next %}
-        <a href="?page={{ files.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">»</a>
-        {% endif %}
-    </nav>
-  </div>
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <span class="px-3 py-1 rounded-md bg-blue-500 text-white text-sm">{{ num }}</span>
+            {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+              <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}"
+                 class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">{{ num }}</a>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+              <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}"
+                 class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">{{ num }}</a>
+            {% elif forloop.first or forloop.last %}
+              <span class="px-2 text-gray-400">…</span>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}"
+               class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">Weiter ›</a>
+          {% else %}
+            <span class="px-3 py-1 rounded-md border text-sm text-gray-400">Weiter ›</span>
+          {% endif %}
+        </div>
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="mt-10 text-gray-500">Keine Dateien vorhanden.</div>
   {% endif %}
 </div>
 {% endblock %}
