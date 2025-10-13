@@ -136,6 +136,9 @@ urlpatterns = [
     # AnyFiles
     path('anyfiles/upload/', views.anyfile_upload_view, name='anyfile-upload'),
     path('anyfiles/', views.anyfile_list_view, name='anyfile-list'),
+    # am Ende bei AnyFiles ergänzen:
+    path('anyfiles/all/', views.anyfiles_all, name='anyfiles-all'),
+    path('anyfiles/uploader/', views.anyfile_uploader, name='anyfile-uploader'),
     path('anyfiles/delete/<int:id>/', views.anyfile_delete_view, name='anyfile-delete'),
     path('anyfiles/update/<int:id>/', views.anyfile_update_view, name='anyfile-update'),
     path('videos/get/<int:pk>/', views.get_video_details, name='get_video_details'),

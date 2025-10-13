@@ -6,6 +6,7 @@ var $editImg = null;
 var $editYoutube = null;
 var selectedVideoData = null;
 let selectedVideoElement = null;
+let selectedAnyfile = null; // {id,url,title,ext}
 function loadSlick() {
     $('.carousel').slick({
         dots: true,  // Display navigation dots
@@ -40,6 +41,20 @@ function loadNicEditors() {
     })
 }
 
+function fileIconForExt(ext) {
+    switch (ext) {
+        case '.jpg': case '.jpeg': case '.png': case '.gif': case '.webp':
+            return 'bi-card-image text-yellow-600';
+        case '.pdf': return 'bi-file-earmark-pdf-fill text-red-600';
+        case '.zip': case '.rar': return 'bi-file-earmark-zip-fill text-gray-600';
+        case '.doc': case '.docx': return 'bi-file-earmark-word-fill text-blue-700';
+        case '.xls': case '.xlsx': return 'bi-file-earmark-excel-fill text-green-600';
+        case '.mp4': case '.mov': case '.webm': return 'bi-file-earmark-play-fill text-purple-600';
+        case '.txt': return 'bi-file-earmark-text-fill text-gray-600';
+        default: return 'bi-file-earmark-fill text-gray-500';
+    }
+}
+
 $(document).ready(function () {
 
     // Inside myscript.js
@@ -49,7 +64,7 @@ $(document).ready(function () {
 
     // NicEditor (TextFields)
     myNicEditor = new nicEditor({
-        buttonList : ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'fontFormat', 'forecolor', 'bgcolor', 'link', 'unlink'] 
+        buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'fontFormat', 'forecolor', 'bgcolor', 'link', 'unlink']
     })
 
     loadSlick();
@@ -361,6 +376,14 @@ $(document).ready(function () {
         });
     });
 
+    // Open File modal
+    $('#addFile').click(function () {
+        $('#anyfileModal').removeClass('hidden');
+        selectedAnyfile = null;
+        $('#selectAnyfile').prop('disabled', true);
+        loadAnyfiles();
+    });
+
     $('.cms-video-preview').click(function () {
         const videoId = $(this).data("video-id");
         const $target = $('#videoModal').data('target');
@@ -503,7 +526,94 @@ $(document).ready(function () {
     $('#closeYoutubeModal').click(function () {
         $('#youtubeModal').toggleClass("hidden")
     })
+    $('#closeAnyfileModal').click(function () {
+        $('#anyfileModal').addClass('hidden');
+    });
 
+    /****************** AnyFile Logic *******************/
+    $('#reloadAnyfiles').click(function () {
+        loadAnyfiles($('#anyfileSearch').val().trim());
+    });
+    // Live-Filter (client-seitig)
+    $('#anyfileSearch').on('input', function () {
+        const q = $(this).val().toLowerCase();
+        $('#availableAnyfiles .anyfile-tile').each(function () {
+            const hay = ($(this).data('title') + ' ' + $(this).data('ext')).toLowerCase();
+            $(this).toggle(hay.includes(q));
+        });
+    });
+    // Laden
+    function loadAnyfiles() {
+        const $grid = $('#availableAnyfiles');
+        const $empty = $('#anyfileEmpty');
+        $grid.empty(); $empty.addClass('hidden');
+
+        $.get('/cms/anyfiles/all/', function (resp) {
+            if (!resp.files || resp.files.length === 0) {
+                $empty.removeClass('hidden'); return;
+            }
+            resp.files.forEach(f => {
+                const $tile = $(`
+            <div class="anyfile-tile border rounded p-3 hover:shadow cursor-pointer transition group"
+                data-id="${f.id}" data-url="${f.url}" data-title="${$('<div>').text(f.title).html()}" data-ext="${f.ext}">
+            <div class="flex items-center gap-2">
+                <i class="bi ${fileIconForExt(f.ext)} text-xl"></i>
+                <div class="truncate">
+                <div class="font-medium truncate" title="${f.title}">${f.title}</div>
+                <div class="text-xs text-gray-500">${f.ext}</div>
+                </div>
+            </div>
+            </div>
+        `);
+                $tile.on('click', function () {
+                    $('#availableAnyfiles .anyfile-tile').removeClass('border-2 border-blue-500');
+                    $(this).addClass('border-2 border-blue-500');
+                    selectedAnyfile = {
+                        id: $(this).data('id'),
+                        url: $(this).data('url'),
+                        title: $(this).data('title'),
+                        ext: $(this).data('ext'),
+                    };
+                    $('#selectAnyfile').prop('disabled', false);
+                });
+                $grid.append($tile);
+            });
+        });
+    }
+    // UI-Block erzeugen
+    function addAnyfileToContent(file) {
+        const $container = $('<div class="relative my-3" element-type="file">');
+        $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'));
+        $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'));
+
+        const icon = fileIconForExt(file.ext);
+        const $a = $(`
+    <a class="file-attachment flex items-center gap-2 p-3 border rounded hover:bg-gray-50"
+       href="${file.url}" target="_blank" rel="noopener"
+       data-id="${file.id}" data-ext="${file.ext}" title="${file.title}">
+      <i class="bi ${icon} text-xl"></i>
+      <span class="file-title truncate">${file.title}</span>
+    </a>
+  `);
+
+        $container.append($a);
+
+        // delete des Blocks
+        $container.find('.del-elem').click(function () {
+            $(this).parent().remove();
+        });
+
+        $('#blogContent').append($container);
+    }
+
+    $('#selectAnyfile').click(function () {
+        if (!selectedAnyfile) return;
+        addAnyfileToContent(selectedAnyfile);
+        $('#anyfileModal').addClass('hidden');
+        sendNotif('Datei hinzugefügt', 'success');
+        // Scroll nach unten (du hast schon scrollToBottom())
+        if (typeof scrollToBottom === 'function') scrollToBottom();
+    });
 
     // Save Blog
     $('#createBlog').click(function () {
@@ -525,14 +635,14 @@ $(document).ready(function () {
             disableSpinner($(this))
             return;
         }
-        
+
         var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
         // Get Code
         const $blockContent = $('#blogContent')
         // Select the first element with attr("element-type") = 'textArea' within elements with class 'relative' in 'blockContent'
         var $firstTextArea = $blockContent.children('.relative').find('.textArea').first();
-        if ($firstTextArea.length == 0){
+        if ($firstTextArea.length == 0) {
             sendNotif("Es muss mindestens ein gefüllter Text hinzugefügt werden!", "error")
             disableSpinner($(this))
             return;
@@ -596,7 +706,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 // Handle the success response here
-                if(response.error) {
+                if (response.error) {
                     sendNotif(response.error, "error")
                     return;
                 }
@@ -609,7 +719,7 @@ $(document).ready(function () {
                 $('#createBlog').prop("disabled", false);
                 $(this).find('svg').addClass('hidden');
             },
-            complete: function(result, status) {
+            complete: function (result, status) {
                 disableSpinner($('#createBlog'))
             }
         });
@@ -778,7 +888,7 @@ $(document).ready(function () {
         // Ajax Call To get Galery Details and add to slick
         sendNotif("Diese Galerie wird geladen...", "notice")
         selectGalery(galeryId);
-        
+
     })
 
     // Modal schließen
@@ -805,12 +915,12 @@ $(document).ready(function () {
 
         $.get("/cms/videos/all/", function (response) {
             if (!response.video_urls || response.video_urls.length === 0) {
-            $container.append('<p class="text-gray-600">Keine Videos verfügbar.</p>');
-            return;
+                $container.append('<p class="text-gray-600">Keine Videos verfügbar.</p>');
+                return;
             }
 
             response.video_urls.forEach(video => {
-            const $preview = $(`
+                const $preview = $(`
                 <div class="relative cursor-pointer cms-video-preview group border-2 border-transparent rounded" data-video-id="${video.id}">
                 <video src="${video.url}" poster="${video.poster}" preload="metadata" muted
                     class="w-full rounded shadow group-hover:shadow-lg transition">
@@ -818,19 +928,19 @@ $(document).ready(function () {
                 </div>
             `);
 
-            if (preselectId && video.id === preselectId) {
-                $preview.addClass('!border-blue-500');
-                selectVideoAndLoadProps(video.id);
-            }
+                if (preselectId && video.id === preselectId) {
+                    $preview.addClass('!border-blue-500');
+                    selectVideoAndLoadProps(video.id);
+                }
 
-            $preview.click(function () {
-                $('.cms-video-preview').removeClass('!border-blue-500');
-                $(this).addClass('!border-blue-500');
-                selectedVideoElement = $(this);
-                selectVideoAndLoadProps(video.id);
-            });
+                $preview.click(function () {
+                    $('.cms-video-preview').removeClass('!border-blue-500');
+                    $(this).addClass('!border-blue-500');
+                    selectedVideoElement = $(this);
+                    selectVideoAndLoadProps(video.id);
+                });
 
-            $container.append($preview);
+                $container.append($preview);
             });
         });
     }
@@ -853,7 +963,7 @@ $(document).ready(function () {
         const $target = $('#videoModal').data('target');
         if (!$target) return;
         const $video = $target.find('video');
-        if(selectedVideoData) {
+        if (selectedVideoData) {
             $video.attr('src', selectedVideoData.url);
             $video.attr('poster', selectedVideoData.poster);
         }
@@ -1028,7 +1138,7 @@ $(document).ready(function () {
                     $('#possibleGalerien').empty()
                     response.galerien.forEach(function (gallery) {
                         const $galleryItem = addTitleAndDescription(gallery.title, gallery.description, gallery.id);
-                        $galleryItem.click(function() {
+                        $galleryItem.click(function () {
                             const galeryId = $(this).attr("galeryId")
                             // Ajax Call To get Galery Details and add to slick
                             sendNotif("Diese Galerie wird geladen...", "notice")
@@ -1056,14 +1166,14 @@ $(document).ready(function () {
     $('.modal').each(function () {
         const modal = $(this);
         const modalContainer = modal.find('.modal-container');
-  
+
         // Close the modal when clicking outside of it (by targeting the parent modal)
         $(document).mouseup(function (e) {
             if (!modalContainer.is(e.target) && modalContainer.has(e.target).length === 0) {
                 modal.addClass('hidden');
-          }
+            }
         });
-      });
+    });
 
 });
 
@@ -1238,23 +1348,23 @@ function receiveContent(blockContent) {
                     const cssH = $videoEl.css('height');
                     const cssW = $videoEl.css('width');
                     const height = ($videoEl[0].style && $videoEl[0].style.height) ? $videoEl[0].style.height : cssH;
-                    const width  = ($videoEl[0].style && $videoEl[0].style.width)  ? $videoEl[0].style.width  : cssW;
+                    const width = ($videoEl[0].style && $videoEl[0].style.width) ? $videoEl[0].style.width : cssW;
                     // Attribute/Props einsammeln
-                    const src        = $videoEl.attr('src') || '';
-                    const poster     = $videoEl.attr('poster') || '';
-                    const title      = $videoEl.attr('title') || '';
-                    const preload    = $videoEl.attr('preload') || 'metadata';
-                    const autoplay    = !!$videoEl.prop('autoplay');
-                    const muted       = !!$videoEl.prop('muted');
-                    const loop        = !!$videoEl.prop('loop');
+                    const src = $videoEl.attr('src') || '';
+                    const poster = $videoEl.attr('poster') || '';
+                    const title = $videoEl.attr('title') || '';
+                    const preload = $videoEl.attr('preload') || 'metadata';
+                    const autoplay = !!$videoEl.prop('autoplay');
+                    const muted = !!$videoEl.prop('muted');
+                    const loop = !!$videoEl.prop('loop');
                     const playsinline = !!$videoEl.prop('playsinline');
-                    const controls    = !!$videoEl.prop('controls');
+                    const controls = !!$videoEl.prop('controls');
                     // SEO/Model Felder (data-Attribute)
-                    const dataAlt         = $videoEl.data('alt_text') || '';
-                    const dataDesc        = $videoEl.data('description') || '';
-                    const dataTags        = $videoEl.data('tags') || '';
-                    const dataDuration    = $videoEl.data('duration') || '';
-                    const dataVideoId     = $videoEl.data('video_id') || '';
+                    const dataAlt = $videoEl.data('alt_text') || '';
+                    const dataDesc = $videoEl.data('description') || '';
+                    const dataTags = $videoEl.data('tags') || '';
+                    const dataDuration = $videoEl.data('duration') || '';
+                    const dataVideoId = $videoEl.data('video_id') || '';
                     // Klassen zusammenführen
                     const klass = ($videoEl.attr('class') || '').trim();
                     const mergedClass = (klass ? klass + " " : "") + "my-8 rounded-2xl";
@@ -1271,11 +1381,11 @@ function receiveContent(blockContent) {
                         "data-duration": dataDuration,
                         "data-video_id": dataVideoId,
                     };
-                    if (autoplay)    attrs.autoplay = "autoplay";
-                    if (muted)       attrs.muted = "muted";
-                    if (loop)        attrs.loop = "loop";
+                    if (autoplay) attrs.autoplay = "autoplay";
+                    if (muted) attrs.muted = "muted";
+                    if (loop) attrs.loop = "loop";
                     if (playsinline) attrs.playsinline = "playsinline";
-                    if (controls)    attrs.controls = "controls";
+                    if (controls) attrs.controls = "controls";
                     content.push({
                         "name": "video",
                         "type": "video",
@@ -1286,7 +1396,26 @@ function receiveContent(blockContent) {
                         }
                     });
                 }
-                break; 
+                break;
+            case "file":
+                const $a = $(this).find('a.file-attachment');
+                content.push({
+                    "name": "file",
+                    "type": "a",
+                    "attributes": {
+                        "href": $a.attr('href'),
+                        "target": "_blank",
+                        "rel": "noopener",
+                        "title": $a.attr('title') || $a.find('.file-title').text(),
+                        "data-id": $a.data('id'),
+                        "data-ext": $a.data('ext'),
+                        "class": "file-attachment flex items-center gap-2 p-3 border rounded my-3"
+                    },
+                    // Text im Anchor (nutzen wir als sichtbaren Titel)
+                    "value": $a.find('.file-title').text()
+                });
+                break;
+
         }
     });
     return content;
@@ -1355,85 +1484,101 @@ function replaceLinks(text) {
  * @returns jQuery-Element
  */
 function getWebElement(jsonElem) {
-  const type = jsonElem.type || 'div';
-  let elem;
+    const type = jsonElem.type || 'div';
+    let elem;
 
-  // 1) Spezialfall: echtes Video
-  if (jsonElem.name === 'video' && type === 'video') {
-    elem = $('<video>');
+    // 1) Spezialfall: echtes Video
+    if (jsonElem.name === 'video' && type === 'video') {
+        elem = $('<video>');
 
-    // Attribute setzen (string-Attribute)
-    if (jsonElem.attributes) {
-      // zuerst Standard-String-Attribute
-      const strAttrs = ['src', 'poster', 'title', 'preload', 'class', 'id'];
-      strAttrs.forEach(k => {
-        if (jsonElem.attributes[k] != null && jsonElem.attributes[k] !== false) {
-          elem.attr(k, jsonElem.attributes[k]);
+        // Attribute setzen (string-Attribute)
+        if (jsonElem.attributes) {
+            // zuerst Standard-String-Attribute
+            const strAttrs = ['src', 'poster', 'title', 'preload', 'class', 'id'];
+            strAttrs.forEach(k => {
+                if (jsonElem.attributes[k] != null && jsonElem.attributes[k] !== false) {
+                    elem.attr(k, jsonElem.attributes[k]);
+                }
+            });
+
+            // SEO/Model-Daten als data-*
+            Object.keys(jsonElem.attributes).forEach(k => {
+                if (k.startsWith('data-')) {
+                    elem.attr(k, jsonElem.attributes[k]);
+                }
+            });
+
+            // Boolean-Props korrekt anwenden
+            const boolMap = ['autoplay', 'muted', 'loop', 'playsinline', 'controls'];
+            boolMap.forEach(k => {
+                // im JSON steht meist "autoplay": "autoplay" (oder true)
+                const v = jsonElem.attributes[k];
+                if (v === true || v === 'true' || v === k || v === '1' || v === 'autoplay' || v === 'muted' || v === 'loop' || v === 'playsinline' || v === 'controls') {
+                    elem.prop(k, true).attr(k, k); // prop + Präsenz-Attribut
+                }
+            });
         }
-      });
 
-      // SEO/Model-Daten als data-*
-      Object.keys(jsonElem.attributes).forEach(k => {
-        if (k.startsWith('data-')) {
-          elem.attr(k, jsonElem.attributes[k]);
+        // Größe immer per CSS setzen (unterstützt px/%)
+        if (jsonElem.css) {
+            if (jsonElem.css.width) elem.css('width', jsonElem.css.width);
+            if (jsonElem.css.height) elem.css('height', jsonElem.css.height);
+            // weitere CSS übernehmen
+            Object.keys(jsonElem.css).forEach(k => {
+                if (k !== 'width' && k !== 'height') elem.css(k, jsonElem.css[k]);
+            });
         }
-      });
 
-      // Boolean-Props korrekt anwenden
-      const boolMap = ['autoplay', 'muted', 'loop', 'playsinline', 'controls'];
-      boolMap.forEach(k => {
-        // im JSON steht meist "autoplay": "autoplay" (oder true)
-        const v = jsonElem.attributes[k];
-        if (v === true || v === 'true' || v === k || v === '1' || v === 'autoplay' || v === 'muted' || v === 'loop' || v === 'playsinline' || v === 'controls') {
-          elem.prop(k, true).attr(k, k); // prop + Präsenz-Attribut
-        }
-      });
+        return elem;
     }
 
-    // Größe immer per CSS setzen (unterstützt px/%)
+    // Spezialfall: Datei-Link mit Icon
+    if (jsonElem.name === 'file' && (jsonElem.type === 'a' || !jsonElem.type)) {
+        const ext = (jsonElem.attributes && (jsonElem.attributes['data-ext'] || jsonElem.attributes['data- ext'])) || '';
+        const iconCls = fileIconForExt(ext);
+        const $wrap = $('<div class="my-3">');
+        const $a = $('<a>');
+        if (jsonElem.attributes) {
+            Object.keys(jsonElem.attributes).forEach(k => $a.attr(k, jsonElem.attributes[k]));
+        }
+        $a.addClass('file-attachment');
+        if (jsonElem.value) $a.append($('<span class="file-title truncate">').text(jsonElem.value));
+        // Icon vorn einsetzen
+        $a.prepend($('<i>').addClass('bi ' + iconCls + ' text-xl mr-2'));
+        return $wrap.append($a);
+    }
+
+    // 2) Standard-Rendering (inkl. iframe, img, h*, p*, etc.)
+    elem = $('<' + type + '>');
+    if (jsonElem.value) {
+        if (jsonElem.name === 'code') {
+            elem.text(jsonElem.value);
+        } else {
+            elem.html(replaceLinks(jsonElem.value));
+        }
+    }
+
+    // Attribute setzen
+    if (jsonElem.attributes) {
+        $.each(jsonElem.attributes, function (key, value) {
+            // Für iframes darf alles wie gehabt als Attribut bleiben
+            elem.attr(key, value);
+        });
+    }
+
+    // CSS anwenden
     if (jsonElem.css) {
-      if (jsonElem.css.width)  elem.css('width',  jsonElem.css.width);
-      if (jsonElem.css.height) elem.css('height', jsonElem.css.height);
-      // weitere CSS übernehmen
-      Object.keys(jsonElem.css).forEach(k => {
-        if (k !== 'width' && k !== 'height') elem.css(k, jsonElem.css[k]);
-      });
+        $.each(jsonElem.css, function (key, value) {
+            elem.css(key, value);
+        });
+    }
+
+    // Code in <pre> wrappen
+    if (jsonElem.name === 'code') {
+        elem = $('<pre>').append(elem);
     }
 
     return elem;
-  }
-
-  // 2) Standard-Rendering (inkl. iframe, img, h*, p*, etc.)
-  elem = $('<' + type + '>');
-  if (jsonElem.value) {
-    if (jsonElem.name === 'code') {
-      elem.text(jsonElem.value);
-    } else {
-      elem.html(replaceLinks(jsonElem.value));
-    }
-  }
-
-  // Attribute setzen
-  if (jsonElem.attributes) {
-    $.each(jsonElem.attributes, function (key, value) {
-      // Für iframes darf alles wie gehabt als Attribut bleiben
-      elem.attr(key, value);
-    });
-  }
-
-  // CSS anwenden
-  if (jsonElem.css) {
-    $.each(jsonElem.css, function (key, value) {
-      elem.css(key, value);
-    });
-  }
-
-  // Code in <pre> wrappen
-  if (jsonElem.name === 'code') {
-    elem = $('<pre>').append(elem);
-  }
-
-  return elem;
 }
 
 /**

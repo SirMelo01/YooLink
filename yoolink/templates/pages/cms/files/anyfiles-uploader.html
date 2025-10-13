@@ -1,0 +1,109 @@
+{% extends 'cmsbase.html' %}
+{% load static compress %}
+{% block title %} {{ block.super }} | CMS | Dateien{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/libs/dropzone.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/cms/libs/dropzone.min.css' %}" />
+{% endblock %}
+
+{% block content %}
+<!--Edit Title Modal -->
+<div id="editModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+  <div class="bg-white py-6 px-12 rounded shadow-lg w-full max-w-md modal-container">
+    <h2 class="text-lg font-bold mb-4">Titel bearbeiten</h2>
+    <input type="text" id="fileTitleInput" class="w-full p-2 border rounded mb-4" />
+    {% csrf_token %}
+    <div class="flex justify-end gap-2">
+      <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded">Abbrechen</button>
+      <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded">Speichern</button>
+    </div>
+  </div>
+</div>
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Dateiupload</h1>
+    <a href="{% url 'cms:anyfile-list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Alle Dateien ansehen
+    </a>
+  </div>
+
+  <form action="{% url 'cms:anyfile-upload' %}" method="POST" class="dropzone mt-8" id="anyfile-dropzone">
+    {% csrf_token %}
+    <div class="fallback">
+      <input name="file" type="file" multiple />
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script>
+  Dropzone.autoDiscover = false;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  let successfulUploads = 0;
+  let failedUploads = 0;
+
+  $('.dropzone').dropzone({
+    addRemoveLinks: true,
+
+    init: function () {
+      successfulUploads = 0;
+      failedUploads = 0;
+    },
+
+    removedfile: function (file) {
+      let id = file.upload?.uuid;
+      if (!id) return;
+
+      $.ajax({
+        type: 'POST',
+        url: `/anyfiles/delete/${id}/`,
+        data: { csrfmiddlewaretoken: csrftoken },
+        success: () => file.previewElement.remove()
+      });
+    },
+
+    success: function (file, response) {
+      file.upload.uuid = response.id;
+      successfulUploads++;
+    },
+
+    error: function (file, errorMessage) {
+      failedUploads++;
+    },
+
+    queuecomplete: function () {
+      if (failedUploads === 0 && successfulUploads > 0) {
+        Swal.fire({
+          title: 'Upload abgeschlossen!',
+          text: 'Alle Dateien wurden erfolgreich hochgeladen.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          //location.reload();
+        });
+      } else if (failedUploads > 0) {
+        Swal.fire({
+          title: 'Einige Uploads sind fehlgeschlagen.',
+          text: `${failedUploads} Datei(en) konnten nicht hochgeladen werden.`,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+
+      // Reset zählende Variablen für nächsten Batch
+      successfulUploads = 0;
+      failedUploads = 0;
+    }
+  });
+
+
+
+
+</script>
+{% endcompress js %}
+{% endblock %}

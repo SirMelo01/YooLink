@@ -34,6 +34,24 @@
                 </div>
             </div>{% endif %} {% endfor %}
         </div>
+        {% if is_paginated %}
+        <nav class="mt-8 mb-16 flex justify-center items-center gap-2">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&laquo;</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Zurück</a>
+        {% endif %}
+
+        <span class="px-3 py-1 bg-blue-500 text-white rounded">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Weiter</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&raquo;</a>
+        {% endif %}
+        </nav>
+        {% endif %}
+
     </div>
 
 

@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
@@ -58,6 +59,35 @@ def set_language(request, lang_code):
     response.set_cookie('django_language', lang_code, max_age=60 * 60 * 24 * 30)  # 30 Tage speichern
     response.set_cookie('csrftoken', get_token(request))  # Falls CSRF-Token benötigt wird
     return response
+
+def set_mt_fields(instance, lang, payload):
+    """
+    payload = dict mit evtl. Keys: title, description, alt_text, tags, place
+    Setzt <field>_<lang>; für Default-Sprache zusätzlich das Basisfeld.
+    """
+    for field in ('title', 'description', 'alt_text', 'tags', 'place'):
+        val = (payload.get(field) or '').strip()
+        if val == '':
+            continue
+        setattr(instance, f'{field}_{lang}', val)
+        if lang == DEFAULT_LANGUAGE:
+            setattr(instance, field, val)
+
+def ensure_video_slug(instance, source_title):
+    """
+    Erzeuge einen eindeutigen Slug, falls keiner gesetzt ist.
+    Nutzt den übergebenen Titel (der in beliebiger Sprache sein kann),
+    ohne das Basisfeld (title) zu überschreiben.
+    """
+    if instance.slug:
+        return
+    base_slug = slugify(source_title) or 'video'
+    slug = base_slug
+    i = 1
+    while VideoFile.objects.filter(slug=slug).exists():
+        slug = f"{base_slug}-{i}"
+        i += 1
+    instance.slug = slug
 
 def get_or_create_translated_blog(request, id):
     lang = get_active_language(request)
@@ -2524,6 +2554,19 @@ def anyfile_delete_view(request, id):
         return JsonResponse({"error": "Datei nicht gefunden"})
 
 @login_required(login_url='login')
+def anyfile_uploader(request):
+    files = AnyFile.objects.all().order_by('-id') 
+
+    paginator = Paginator(files, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'pages/cms/files/anyfiles-uploader.html', {
+        'files': page_obj,
+        'page_obj': page_obj, 
+    })
+
+@login_required(login_url='login')
 def anyfile_list_view(request):
     files = AnyFile.objects.all().order_by('-id') 
 
@@ -2531,7 +2574,7 @@ def anyfile_list_view(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'pages/cms/anyfiles.html', {
+    return render(request, 'pages/cms/files/anyfiles.html', {
         'files': page_obj,
         'page_obj': page_obj, 
     })
@@ -2540,14 +2583,53 @@ def anyfile_list_view(request):
 def anyfile_update_view(request, id):
     try:
         file = AnyFile.objects.get(id=id)
-        if request.method == 'POST':
-            title = request.POST.get('title', '').strip()
-            file.title = title
-            file.save()
-            return JsonResponse({'success': True, 'title': file.title})
-        return JsonResponse({'error': 'Ungültige Methode'}, status=400)
     except AnyFile.DoesNotExist:
         return JsonResponse({'error': 'Datei nicht gefunden'}, status=404)
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Ungültige Methode'}, status=400)
+
+    title = (request.POST.get('title') or '').strip()
+    description = (request.POST.get('description') or '').strip()  # optional
+
+    # aktive Sprache holen (z. B. "de", "en", …)
+    lang = get_active_language(request)
+
+    # Titel in aktueller Sprache speichern
+    if title != '':
+        # modeltranslation: setzt z. B. title_de / title_en
+        setattr(file, f'title_{lang}', title)
+
+        # Wenn es die Default-Sprache ist, zusätzlich das Basisfeld pflegen
+        if lang == DEFAULT_LANGUAGE:
+            file.title = title
+
+    # Beschreibung ebenfalls unterstützen (falls im Form mitgegeben)
+    if description != '':
+        setattr(file, f'description_{lang}', description)
+        if lang == DEFAULT_LANGUAGE:
+            file.description = description
+
+    file.save()
+
+    # Für die Antwort den sprachspezifischen Wert zurückgeben
+    current_title = getattr(file, f'title_{lang}', None) or file.title
+
+    return JsonResponse({
+        'success': True,
+        'title': current_title,
+        'lang': lang,
+    })
+
+def anyfiles_all(request):
+    files = AnyFile.objects.order_by('-uploaded_at')
+    data = [{
+        "id": f.id,
+        "url": f.file.url,
+        "title": f.title or os.path.basename(f.file.name),
+        "ext": os.path.splitext(f.file.name)[1].lower()
+    } for f in files]
+    return JsonResponse({"files": data})
 
 # Videos
 @login_required(login_url='login')
@@ -2561,6 +2643,9 @@ def create_video(request):
         video = request.FILES.get('file')
         thumbnail = request.FILES.get('thumbnail')
         subtitle = request.FILES.get('subtitle')
+        # Sprache bestimmen
+        lang = get_active_language(request)
+
         title = request.POST.get('title')
         description = request.POST.get('description', '')
         alt_text = request.POST.get('alt_text', '')
@@ -2592,6 +2677,16 @@ def create_video(request):
             show_controls=show_controls,
             preload=preload,
         )
+
+        set_mt_fields(video_instance, lang, {
+            'title': title,
+            'description': description,
+            'alt_text': alt_text,
+            'tags': tags,
+        })
+
+        ensure_video_slug(video_instance, source_title=(title or 'video'))
+
         video_instance.save()
         return JsonResponse({'success': True, 'redirect': '/cms/videos/'})
 
@@ -2613,6 +2708,14 @@ def edit_video(request, pk):
     video = get_object_or_404(VideoFile, pk=pk)
 
     if request.method == 'POST':
+        lang = get_active_language(request)
+        # sprachspezifische Meta
+        set_mt_fields(video, lang, {
+            'title': request.POST.get('title', ''),
+            'description': request.POST.get('description', ''),
+            'alt_text': request.POST.get('alt_text', ''),
+            'tags': request.POST.get('tags', ''),
+        })
         video.title = request.POST.get('title')
         video.description = request.POST.get('description', '')
         video.alt_text = request.POST.get('alt_text', '')
@@ -2632,6 +2735,10 @@ def edit_video(request, pk):
             video.thumbnail = request.FILES['thumbnail']
         if 'subtitle' in request.FILES:
             video.subtitle_file = request.FILES['subtitle']
+
+        if not video.slug:
+            source_title = (request.POST.get('title') or video.title or 'video')
+            ensure_video_slug(video, source_title)
 
         video.save()
         return JsonResponse({'success': True, 'redirect': '/cms/videos/'})

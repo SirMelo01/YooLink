@@ -1,5 +1,5 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import FAQ, TextContent, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
+from .models import FAQ, AnyFile, TextContent, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
 
 @register(FAQ)
 class FAQTranslationOptions(TranslationOptions):
@@ -32,3 +32,15 @@ class PricingCardTranslationOptions(TranslationOptions):
 @register(PricingFeature)
 class PricingFeatureTranslationOptions(TranslationOptions):
     fields = ('text',)
+
+# Files
+# Beliebige Dateien (pdf, zip, docx, …)
+@register(AnyFile)
+class AnyFileTranslationOptions(TranslationOptions):
+    fields = ('title', 'description',)
+
+# Video-Dateien (mit SEO-Feldern)
+@register(VideoFile)
+class VideoFileTranslationOptions(TranslationOptions):
+    # WICHTIG: slug NICHT übersetzen (unique Konflikte). Nur Inhalte/SEO-Felder.
+    fields = ('title', 'description', 'alt_text', 'tags', 'place',)

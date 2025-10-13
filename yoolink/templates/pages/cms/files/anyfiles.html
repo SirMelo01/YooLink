@@ -2,17 +2,13 @@
 {% load static compress %}
 {% block title %} {{ block.super }} | CMS | Dateien{% endblock %}
 
-{% block javascript %}
-<script src="{% static 'js/libs/dropzone.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/cms/libs/dropzone.min.css' %}" />
-{% endblock %}
-
 {% block content %}
 <!--Edit Title Modal -->
 <div id="editModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
   <div class="bg-white py-6 px-12 rounded shadow-lg w-full max-w-md modal-container">
     <h2 class="text-lg font-bold mb-4">Titel bearbeiten</h2>
     <input type="text" id="fileTitleInput" class="w-full p-2 border rounded mb-4" />
+    {% csrf_token %}
     <div class="flex justify-end gap-2">
       <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded">Abbrechen</button>
       <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded">Speichern</button>
@@ -22,17 +18,10 @@
 <div class="container mx-auto mt-8">
   <div class="flex justify-between">
     <h1 class="text-2xl"><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Dateiupload</h1>
-    <a href="{% url 'cms:anyfile-list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Alle Dateien ansehen
+    <a href="{% url 'cms:anyfile-uploader' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+      <i class="bi bi-file-earmark-plus"></i> Dateien hochladen
     </a>
   </div>
-
-  <form action="{% url 'cms:anyfile-upload' %}" method="POST" class="dropzone mt-8" id="anyfile-dropzone">
-    {% csrf_token %}
-    <div class="fallback">
-      <input name="file" type="file" multiple />
-    </div>
-  </form>
 
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
     {% for file in files %}
@@ -99,71 +88,33 @@
 {% block javascriptend %}
 {% compress js inline %}
 <script>
-  Dropzone.autoDiscover = false;
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+// WARTEN bis DOM bereit ist (robust, auch bei Turbolinks/HTMX optional siehe unten)
+$(function () {
+  // CSRF finden (falls mehrere vorhanden, nimm das erste sichtbare; sonst erstes im DOM)
+  const $csrf = $('[name=csrfmiddlewaretoken]:visible').first().length 
+    ? $('[name=csrfmiddlewaretoken]:visible').first()
+    : $('[name=csrfmiddlewaretoken]').first();
+  const csrftoken = $csrf.val();
 
-  let successfulUploads = 0;
-  let failedUploads = 0;
+  // 🔴 Delete: delegiertes Event (funktioniert auch bei nachgeladenen Inhalten/Pagination)
+  $(document).on('click', '.delete-file', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-  $('.dropzone').dropzone({
-    addRemoveLinks: true,
-
-    init: function () {
-      successfulUploads = 0;
-      failedUploads = 0;
-    },
-
-    removedfile: function (file) {
-      let id = file.upload?.uuid;
-      if (!id) return;
-
-      $.ajax({
-        type: 'POST',
-        url: `/anyfiles/delete/${id}/`,
-        data: { csrfmiddlewaretoken: csrftoken },
-        success: () => file.previewElement.remove()
-      });
-    },
-
-    success: function (file, response) {
-      file.upload.uuid = response.id;
-      successfulUploads++;
-    },
-
-    error: function (file, errorMessage) {
-      failedUploads++;
-    },
-
-    queuecomplete: function () {
-      if (failedUploads === 0 && successfulUploads > 0) {
-        Swal.fire({
-          title: 'Upload abgeschlossen!',
-          text: 'Alle Dateien wurden erfolgreich hochgeladen.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false
-        }).then(() => {
-          location.reload();
-        });
-      } else if (failedUploads > 0) {
-        Swal.fire({
-          title: 'Einige Uploads sind fehlgeschlagen.',
-          text: `${failedUploads} Datei(en) konnten nicht hochgeladen werden.`,
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-      }
-
-      // Reset zählende Variablen für nächsten Batch
-      successfulUploads = 0;
-      failedUploads = 0;
-    }
-  });
-
-
-  $('.delete-file').click(function () {
     const id = $(this).data('id');
-    const elem = $(this).closest('.relative');
+    const $card = $(this).closest('.relative');
+
+    if (!id) {
+      console.warn('Kein data-id auf .delete-file gefunden');
+      return;
+    }
+
+    // Safety: ist Swal verfügbar?
+    if (typeof Swal === 'undefined') {
+      console.error('SweetAlert2 (Swal) nicht geladen.');
+      return;
+    }
 
     Swal.fire({
       title: 'Bist du sicher?',
@@ -175,75 +126,78 @@
       confirmButtonText: 'Ja, löschen!',
       cancelButtonText: 'Abbrechen'
     }).then((result) => {
-      if (result.isConfirmed) {
-        $.post(`/cms/anyfiles/delete/${id}/`, {
-          csrfmiddlewaretoken: csrftoken
-        }, function (response) {
-          if (response.success) {
-            elem.remove();
+      if (!result.isConfirmed) return;
+
+      $.ajax({
+        url: `/cms/anyfiles/delete/${id}/`,
+        method: 'POST',
+        data: { csrfmiddlewaretoken: csrftoken },
+        success: function (response) {
+          if (response && response.success) {
+            $card.remove();
             Swal.fire('Gelöscht!', 'Die Datei wurde gelöscht.', 'success');
           } else {
-            Swal.fire('Fehler', response.error, 'error');
+            Swal.fire('Fehler', (response && response.error) || 'Unbekannter Fehler', 'error');
           }
-        });
-      }
+        },
+        error: function (xhr) {
+          Swal.fire('Fehler', `HTTP ${xhr.status}: ${xhr.responseText || 'Es ist ein Fehler aufgetreten.'}`, 'error');
+        }
+      });
     });
   });
 
-  let currentEditId = null;
-  let currentEditElem = null;
+  // ✏️ Edit (delegiert lassen, analog zu oben)
+  $(document).on('click', '.edit-file', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-  $('.edit-file').click(function () {
     const id = $(this).data('id');
-    currentEditId = id;
+    window.currentEditId = id;
 
-    const parent = $(this).closest('.relative');
-    const displayLink = parent.find('a');
-    const currentTitle = displayLink.text().trim();
+    const $parent = $(this).closest('.relative');
+    const $displayLink = $parent.find('a').first();
+    const currentTitle = $displayLink.text().trim();
 
     $('#fileTitleInput').val(currentTitle);
-    currentEditElem = displayLink;
+    window.currentEditElem = $displayLink;
     $('#editModal').removeClass('hidden');
   });
 
-  $('#cancelEdit').click(function () {
+  $('#cancelEdit').on('click', function () {
     $('#editModal').addClass('hidden');
-    currentEditId = null;
-    currentEditElem = null;
+    window.currentEditId = null;
+    window.currentEditElem = null;
   });
 
-  $('#saveEdit').click(function () {
+  $('#saveEdit').on('click', function () {
     const newTitle = $('#fileTitleInput').val().trim();
 
     $.ajax({
-      url: `/cms/anyfiles/update/${currentEditId}/`,
+      url: `/cms/anyfiles/update/${window.currentEditId}/`,
       method: 'POST',
       data: {
-        csrfmiddlewaretoken: csrftoken,
+        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').first().val(),
         title: newTitle
       },
       success: function (response) {
-        if (response.success) {
-          Swal.fire({
-            title: 'Erfolgreich gespeichert!',
-            icon: 'success',
-            timer: 1200,
-            showConfirmButton: false
-          });
-          const icon = currentEditElem.find('i');              
-          currentEditElem.html('');                            
-          currentEditElem.append(icon).append(' ' + newTitle);
+        if (response && response.success) {
+          Swal.fire({ title: 'Erfolgreich gespeichert!', icon: 'success', timer: 1200, showConfirmButton: false });
+          const $icon = window.currentEditElem.find('i'); 
+          window.currentEditElem.empty().append($icon).append(' ' + newTitle);
         } else {
-          Swal.fire('Fehler', response.error, 'error');
+          Swal.fire('Fehler', (response && response.error) || 'Unbekannter Fehler', 'error');
         }
         $('#editModal').addClass('hidden');
       },
-      error: function (err) {
+      error: function () {
         Swal.fire('Fehler', 'Es ist ein Fehler aufgetreten.', 'error');
         $('#editModal').addClass('hidden');
       }
     });
   });
+});
+
 
 </script>
 {% endcompress js %}

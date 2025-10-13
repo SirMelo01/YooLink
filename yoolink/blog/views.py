@@ -19,23 +19,28 @@ class Load_Index_Blog(ListView):
     model = Blog
     template_name = 'blog/index_blog.html'
     context_object_name = 'blogs'
+    paginate_by = 6
+    ordering = '-date'
 
     def get_queryset(self):
-        lang = get_active_language(self.request)
+        self._lang = get_active_language(self.request)
+        return (Blog.objects
+                .filter(original__isnull=True, active=True)   # << nur aktive
+                .order_by(self.ordering)
+                .prefetch_related('translations'))
 
-        # Lade nur Original-Blogs (ohne original-Relation)
-        original_blogs = Blog.objects.filter(original__isnull=True)
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        lang = getattr(self, '_lang', None)
+        originals_on_page = ctx['object_list']
+        mapped = []
+        for blog in originals_on_page:
+            variant = blog.translations.filter(language=lang).first() if lang else None
+            mapped.append(variant or blog)
+        ctx['object_list'] = mapped
+        ctx['blogs'] = mapped
+        return ctx
 
-        blogs_with_lang_variants = []
-        for blog in original_blogs:
-            # Suche Sprachvariante für Browser-Sprache
-            translated = blog.translations.filter(language=lang).first()
-            if translated:
-                blogs_with_lang_variants.append(translated)
-            else:
-                blogs_with_lang_variants.append(blog)
-
-        return blogs_with_lang_variants
 
 class BlogDetailView(DetailView):
     model = Blog
