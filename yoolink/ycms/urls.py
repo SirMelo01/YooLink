@@ -153,4 +153,10 @@ urlpatterns = [
     # Files
     path("files/", views.cms_files, name="cms-files"),
 
+    # Notifications
+    path('notifications/', views.notifications_list, name='notifications-list'),
+    path('notifications/mark-all-read/', views.notifications_mark_all_read, name='notifications-mark-all-read'),
+    path('notifications/<int:pk>/mark-read/', views.notification_mark_read, name='notification-mark-read'),
+    path('notifications/<int:pk>/', views.notification_detail, name='notification-detail'),
+    path('notifications/<int:pk>/delete/', views.notification_delete, name='notification-delete'),
 ]

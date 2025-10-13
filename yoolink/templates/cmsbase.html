@@ -30,15 +30,12 @@
     <link href="{% static 'css/utils.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     <!-- Flag Icons -->
-    <link
-      rel="stylesheet"
-      href="{% static 'css/icons/flag-icons.min.css' %}"
-    />
+    <link rel="stylesheet" href="{% static 'css/icons/flag-icons.min.css' %}" />
     {% endcompress css %}
 
     <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
-        
-        {% compress js inline %}
+
+    {% compress js inline %}
     <script defer src="{% static 'js/loadinit.js' %}"></script>
     <script src="{% static 'js/cms.js' %}"></script>
     <!-- jQuery Bibliothek (https://jquery.com/)
@@ -65,25 +62,31 @@
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <a href="/cms" aria-label="Company" title="Company" class="items-center inline-flex">
-                                <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                viewBox="0 0 2000 2000" style="enable-background:new 0 0 2000 2000;" xml:space="preserve" class="h-10">
-                                  <style type="text/css">
-                                    .st0{fill:white;stroke:#000000;stroke-miterlimit:10;}
-                                  </style>
-                                  <g>
-                                    <path class="st0" d="M1803,1153.2c7.9-39.3,12-79.8,12-121.3C1815,688.4,1536.5,410,1193,410c-191.1,0-362.1,86.3-476.2,222.1
+                                <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 2000 2000"
+                                    style="enable-background:new 0 0 2000 2000;" xml:space="preserve" class="h-10">
+                                    <style type="text/css">
+                                        .st0 {
+                                            fill: white;
+                                            stroke: #000000;
+                                            stroke-miterlimit: 10;
+                                        }
+                                    </style>
+                                    <g>
+                                        <path class="st0" d="M1803,1153.2c7.9-39.3,12-79.8,12-121.3C1815,688.4,1536.5,410,1193,410c-191.1,0-362.1,86.3-476.2,222.1
                                         c-90.9,108.1-145.5,247.7-145.5,399.9c0,110.7,28.9,214.5,79.6,304.6c95.7-30.8,197.8-47.3,303.7-47.3c19.8,0,39.6,0.5,59.1,1.9
                                         c122.1,7,238.3,36.2,344.5,83.5c82.2,36.4,158.3,83.7,227,139.9c64.7,53.1,122.5,114.1,172,181.8
                                         c-180.5,184.3-432.3,298.8-710.8,298.8c-329.5,0-621.6-160.2-802.7-407.1C122.9,1423.3,51.5,1219.8,51.5,1000
                                         c0-549.5,445.5-995,995-995c294,0,558.4,127.6,740.5,330.4c3.4,3.8,6.7,7.5,9.9,11.3c3.2,3.8,6.5,7.5,9.7,11.4
-                                        c88.7,107.4,141.9,245.3,141.9,395.6C1948.5,905.9,1893.9,1045.3,1803,1153.2z"/>
-                                    <path class="st0" d="M1735.2,995.9c-38.6,24.8-84.6,39.1-133.8,39.1c-58.4,0-112.1-20.2-154.6-54c-37.9,89-126.2,151.5-229.1,151.5
+                                        c88.7,107.4,141.9,245.3,141.9,395.6C1948.5,905.9,1893.9,1045.3,1803,1153.2z" />
+                                        <path class="st0"
+                                            d="M1735.2,995.9c-38.6,24.8-84.6,39.1-133.8,39.1c-58.4,0-112.1-20.2-154.6-54c-37.9,89-126.2,151.5-229.1,151.5
                                         c-99.6,0-185.7-58.6-225.3-143.3c-40.1,27.8-88.8,44.1-141.3,44.1c-81,0-152.9-38.8-198.5-98.7c27.3-166.9,130.2-308.2,272.5-387.8
-                                        c0,0.2,0.2,0,0.2,0c78.4-43.9,168.9-68.8,265.3-68.8c109.2,0,211,32.1,296.2,87.5C1629.6,658,1726.3,815.3,1735.2,995.9z"/>
-                                  </g>
+                                        c0,0.2,0.2,0,0.2,0c78.4-43.9,168.9-68.8,265.3-68.8c109.2,0,211,32.1,296.2,87.5C1629.6,658,1726.3,815.3,1735.2,995.9z" />
+                                    </g>
                                 </svg>
                                 <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
-                              </a>
+                            </a>
                         </div>
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
@@ -105,44 +108,91 @@
                         <div class="ml-4 flex items-center md:ml-6">
                             <!-- Notifications (Bootstrap Icons) -->
                             <div class="relative ml-4" id="notif-wrapper">
-                                <button
-                                    id="notif-button"
-                                    type="button"
+                                <button id="notif-button" type="button"
                                     class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                    aria-haspopup="true"
-                                    aria-expanded="false"
-                                    aria-controls="notif-menu"
-                                >
+                                    aria-haspopup="true" aria-expanded="false" aria-controls="notif-menu"
+                                    aria-label="Benachrichtigungen{% if nav_unread_notifications_count %}, {{ nav_unread_notifications_count }} ungelesen{% endif %}">
                                     <span class="sr-only">Benachrichtigungen anzeigen</span>
                                     <i class="bi bi-bell text-xl leading-none align-middle"></i>
 
-                                    <!-- (Optional) Badge für ungelesene -->
-                                    <span class="absolute -top-0.5 -right-0.5 inline-flex h-2.5 w-2.5 items-center justify-center rounded-full bg-blue-500"></span>
+                                    {% if nav_unread_notifications_count %}
+                                    <span
+                                        class="js-nav-badge absolute -top-1 -right-1 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-blue-500 px-1"
+                                        title="{{ nav_unread_notifications_count }} ungelesen">
+                                        <span
+                                            class="js-nav-badge-text text-[10px] font-semibold text-white leading-none">
+                                            {% if nav_unread_notifications_count > 99 %}99+{% else %}{{nav_unread_notifications_count }}{% endif %}
+                                        </span>
+                                    </span>
+                                    {% endif %}
                                 </button>
 
-                                <!-- Dropdown -->
-                                <div
-                                    id="notif-menu"
-                                    class="hidden absolute right-0 z-20 mt-2 w-72 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                                    role="menu"
-                                    aria-labelledby="notif-button"
-                                    tabindex="-1"
-                                >
-                                    <div class="py-2">
-                                    <div class="px-4 py-3">
-                                        <p class="text-sm text-gray-500">Keine Nachrichten</p>
+
+                                {# Dropdown #}
+                                <div id="notif-menu"
+                                    class="hidden absolute right-0 z-20 mt-2 w-80 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                    role="menu" aria-labelledby="notif-button" tabindex="-1">
+                                    <div class="py-2 max-h-96 overflow-auto">
+                                    {% if nav_latest_unread_notifications %}
+                                        {% for n in nav_latest_unread_notifications %}
+                                        <a href="{{ n.get_absolute_url }}" class="flex items-start px-4 py-2 text-sm hover:bg-gray-50" role="menuitem">
+                                            <div class="mt-0.5 mr-2">
+                                            {% if n.order %}
+                                                <i class="bi bi-bag"></i>
+                                            {% elif n.priority == 'high' %}
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                            {% elif n.priority == 'low' %}
+                                                <i class="bi bi-info-circle"></i>
+                                            {% else %}
+                                                <i class="bi bi-bell"></i>
+                                            {% endif %}
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                            <div class="flex items-center">
+                                                <span class="font-medium truncate">
+                                                {% if n.order %}Bestellung #{{ n.order.pk }}{% else %}{{ n.title }}{% endif %}
+                                                </span>
+                                                <span class="ml-2 inline-flex items-center text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Neu</span>
+                                            </div>
+                                            <div class="text-gray-600 text-xs line-clamp-2">
+                                                {% if n.order %}
+                                                {{ n.description|default:"Neue Bestellung eingegangen." }}
+                                                {% else %}
+                                                {{ n.description }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-gray-400 text-[11px] mt-0.5">{{ n.created_at|date:"d.m.Y H:i" }}</div>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+
+                                        {% if nav_unread_overflow > 0 %}
+                                        <div class="px-4 py-1 text-[11px] text-gray-500">
+                                            … und {{ nav_unread_overflow }} weitere
+                                        </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="px-4 py-3">
+                                        <p class="text-sm text-gray-500">Keine neuen Benachrichtigungen</p>
+                                        </div>
+                                    {% endif %}
                                     </div>
-                                    <!-- Später: echte Items hier rendern -->
+
+                                    <div class="border-t border-gray-100">
+                                        <a href="{% url 'cms:notifications-list' %}"
+                                            class="flex items-center justify-between px-4 py-2 text-sm text-blue-600 hover:bg-gray-50"
+                                            role="menuitem">
+                                            <span>
+                                                Alle Benachrichtigungen ansehen
+                                                {% if nav_unread_notifications_count %}
+                                                <span class="js-footer-count">
+                                                    ({% if nav_unread_notifications_count > 99 %}99+{% else %}{{nav_unread_notifications_count }}{% endif %})
+                                                </span>
+                                                {% endif %}
+                                            </span>
+                                            <i class="bi bi-chevron-right ml-2"></i>
+                                        </a>
                                     </div>
-                                    <!-- Footer mit Trennlinie und Link -->
-  <div class="border-t border-gray-100">
-    <a href="/cms/notifications"
-       class="flex items-center justify-between px-4 py-2 text-sm text-blue-600 hover:bg-gray-50"
-       role="menuitem">
-      Alle Benachrichtigungen ansehen
-      <i class="bi bi-chevron-right ml-2"></i>
-    </a>
-  </div>
                                 </div>
                             </div>
 
@@ -169,16 +219,20 @@
                                         From: "transform opacity-100 scale-100"
                                         To: "transform opacity-0 scale-95"
                                 -->
-                                <div id="userDropDown" class="absolute hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                <div id="userDropDown"
+                                    class="absolute hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                     role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
                                     tabindex="-1">
                                     <!-- Active: "bg-gray-100", Not Active: "" -->
-                                    <a href="{% url 'cms:settings-view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"
-                                        tabindex="-1" id="user-menu-item-0">Dein Profil</a>
-                                    <a href="{% url 'cms:logo-settings' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"
-                                        tabindex="-1" id="user-menu-item-0">Logo verwalten</a>
-                                    <a href="{% url 'cms:logout' %}" class="block px-4 py-2 text-sm  hover:bg-red-500 hover:text-white text-red-500" role="menuitem"
-                                        tabindex="-1" id="user-menu-item-2">Abmelden</a>
+                                    <a href="{% url 'cms:settings-view' %}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white"
+                                        role="menuitem" tabindex="-1" id="user-menu-item-0">Dein Profil</a>
+                                    <a href="{% url 'cms:logo-settings' %}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white"
+                                        role="menuitem" tabindex="-1" id="user-menu-item-0">Logo verwalten</a>
+                                    <a href="{% url 'cms:logout' %}"
+                                        class="block px-4 py-2 text-sm  hover:bg-red-500 hover:text-white text-red-500"
+                                        role="menuitem" tabindex="-1" id="user-menu-item-2">Abmelden</a>
                                 </div>
                             </div>
                         </div>
@@ -263,43 +317,44 @@
                 <div class="relative inline-block text-left">
                     <button id="languageDropdownButtonDesktop"
                         class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <span id="selectedLangFlagDesktop" class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span> 
+                        <span id="selectedLangFlagDesktop"
+                            class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span>
                         <span id="selectedLangTextDesktop">
                             {% if request.LANGUAGE_CODE == 'de' %}
-                                Deutsch
+                            Deutsch
                             {% else %}
-                                English
+                            English
                             {% endif %}
                         </span>
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            aria-hidden="true">
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
                                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
-            
+
                     <div id="languageDropdownMenuDesktop"
                         class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div class="py-1">
-                            <button data-lang="de" data-flag="de" 
+                            <button data-lang="de" data-flag="de"
                                 data-text="{% if request.LANGUAGE_CODE == 'de' %}Deutsch{% else %}German{% endif %}"
                                 class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
-                                <span class="fi fi-de mr-2"></span> 
+                                <span class="fi fi-de mr-2"></span>
                                 {% if request.LANGUAGE_CODE == 'de' %}
-                                    Deutsch
+                                Deutsch
                                 {% else %}
-                                    German
+                                German
                                 {% endif %}
                             </button>
-                            <button data-lang="en" data-flag="gb" 
+                            <button data-lang="en" data-flag="gb"
                                 data-text="{% if request.LANGUAGE_CODE == 'de' %}Englisch{% else %}English{% endif %}"
                                 class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
-                                <span class="fi fi-gb mr-2"></span> 
+                                <span class="fi fi-gb mr-2"></span>
                                 {% if request.LANGUAGE_CODE == 'de' %}
-                                    Englisch
+                                Englisch
                                 {% else %}
-                                    English
+                                English
                                 {% endif %}
                             </button>
                         </div>
