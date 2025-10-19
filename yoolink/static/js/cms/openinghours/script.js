@@ -51,6 +51,17 @@ $(document).ready(function () {
         const vacationText = $('#vacationText').val();
         formData.append('vacationText', vacationText);
 
+        const vStart = $('#vacationStart').val(); // "YYYY-MM-DDTHH:MM" oder ""
+        const vEnd   = $('#vacationEnd').val();
+
+        if (vStart && vEnd && vStart > vEnd) {
+            sendNotif('Der Startzeitpunkt darf nicht nach dem Endzeitpunkt liegen.', 'error');
+            return;
+        }
+        
+        formData.append('vacation_start', vStart);
+        formData.append('vacation_end', vEnd);
+        
         $.ajax({
             type: 'POST',
             url: 'update/',

@@ -587,12 +587,31 @@ class UserSettings(models.Model):
     address = models.CharField(max_length=255, default='')
     vacation = models.BooleanField(default=False)
     vacationText = models.CharField(max_length=200, default='Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!')
+    vacation_start = models.DateTimeField(null=True, blank=True)
+    vacation_end   = models.DateTimeField(null=True, blank=True)
     global_font = models.CharField(max_length=60, default='font-sans')
     logo = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
     favicon = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
 
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"
+    
+    def clean(self):
+        if self.vacation_start and self.vacation_end and self.vacation_start > self.vacation_end:
+            raise ValidationError("Urlaubsbeginn darf nicht nach dem Urlaubsende liegen.")
+        
+    def is_vacation_banner_active(self):
+        """true, wenn Toggle an UND wir innerhalb des optionalen Zeitfensters sind."""
+        if not self.vacation:
+            return False
+        now = timezone.now()
+        if self.vacation_start and self.vacation_end:
+            return self.vacation_start <= now <= self.vacation_end
+        if self.vacation_start and not self.vacation_end:
+            return now >= self.vacation_start
+        if not self.vacation_start and self.vacation_end:
+            return now <= self.vacation_end
+        return True  # kein Fenster gesetzt -> sichtbar solange Toggle an
 
 class OpeningHours(models.Model):
     DAY_CHOICES = [

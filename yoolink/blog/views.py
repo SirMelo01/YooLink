@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from yoolink.ycms.models import Blog
 from django.utils.translation import get_language_from_request, activate
@@ -45,3 +45,30 @@ class Load_Index_Blog(ListView):
 class BlogDetailView(DetailView):
     model = Blog
     template_name = 'blog/blog_detail.html'
+    context_object_name = 'blog'
+
+    def get(self, request, *args, **kwargs):
+        # Objekt laden
+        self.object = self.get_object()
+
+        # 1) Canonical Slug sicherstellen
+        url_slug = kwargs.get('slug_title')
+        if url_slug != self.object.slug:
+            return redirect(self.object.get_absolute_url())
+
+        # 2) Sprachvariante prüfen → ggf. Redirect
+        lang = get_active_language(request)
+
+        # „Familie“: Original + Übersetzungen
+        root = self.object.original or self.object  # Original ist Root, sonst self
+        if root.language == lang:
+            target = root
+        else:
+            target = root.translations.filter(language=lang, active=True).first() or root
+
+        if target.pk != self.object.pk:
+            return redirect(target.get_absolute_url())
+
+        # passt → normal rendern
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)

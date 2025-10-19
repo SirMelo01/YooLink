@@ -1,5 +1,5 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import FAQ, AnyFile, TextContent, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
+from .models import FAQ, AnyFile, TextContent, UserSettings, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
 
 @register(FAQ)
 class FAQTranslationOptions(TranslationOptions):
@@ -44,3 +44,9 @@ class AnyFileTranslationOptions(TranslationOptions):
 class VideoFileTranslationOptions(TranslationOptions):
     # WICHTIG: slug NICHT übersetzen (unique Konflikte). Nur Inhalte/SEO-Felder.
     fields = ('title', 'description', 'alt_text', 'tags', 'place',)
+
+@register(UserSettings)
+class UserSettingsTranslationOptions(TranslationOptions):
+    fields = (
+        'vacationText',
+    )

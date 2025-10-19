@@ -68,6 +68,20 @@
                     type="checkbox" role="switch" id="vacationSwitch" />
                 </div>
             </div>
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label for="vacationStart" class="block text-sm text-gray-600 mb-1">Anzeigen von</label>
+                <input id="vacationStart" type="datetime-local"
+                    class="w-full rounded-md border-2 border-gray-200 bg-gray-200 px-3 py-2 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                    value="{% if settings.vacation_start %}{{ settings.vacation_start|date:'Y-m-d\\TH:i' }}{% endif %}">
+            </div>
+            <div>
+                <label for="vacationEnd" class="block text-sm text-gray-600 mb-1">Anzeigen bis</label>
+                <input id="vacationEnd" type="datetime-local"
+                    class="w-full rounded-md border-2 border-gray-200 bg-gray-200 px-3 py-2 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                    value="{% if settings.vacation_end %}{{ settings.vacation_end|date:'Y-m-d\\TH:i' }}{% endif %}">
+            </div>
+            </div>
             <textarea id="vacationText" rows="3" class="mt-6 w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 text-base leading-tight text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none md:text-lg" inputType="vacationText" type="text">{% if settings and settings.vacationText %}{{settings.vacationText}}{% else %}Wir sind vom 24.12. bis 01.01. im Urlaub. Ab dem 02.01. sind wir wieder für Sie da!{% endif %}</textarea>
         </div>
     </div>

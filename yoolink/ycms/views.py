@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 import re
@@ -152,7 +153,7 @@ def cms(request):
         "file_count":  fileentry.objects.count(),
         "button_count": Button.objects.count(),
         "galery_count":  Galerie.objects.count(),
-        "blog_count": Blog.objects.count(),
+        "blog_count": Blog.objects.filter(original__isnull=True).count(),
         "product_count": Product.objects.count(),
         "order_count": Order.objects.filter(verified=True).count(),
         "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
@@ -2160,6 +2161,7 @@ def opening_hours_view(request):
 
     return render(request, 'pages/cms/openinghours/openingHours.html', context)
 
+from django.utils import timezone as dj_timezone
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -2198,22 +2200,58 @@ def opening_hours_update(request):
         opening_hour.lunch_break_end = lunch_break_end if has_lunch_break else None
         opening_hour.save()
 
+    user_settings = UserSettings.objects.get(user=user)
 
-    user_settings = UserSettings.objects.get(user=user) 
+    # Toggle + Text
     vacation = request.POST.get('vacation', False)
+    user_settings.vacation = (str(vacation).lower() == 'true')
+
+    lang = get_active_language(request)
     vacationText = request.POST.get('vacationText')
-    if vacation == "true":
-        user_settings.vacation = True
+    if vacationText is not None:
+        setattr(user_settings, f'vacationText_{lang}', vacationText)
+        if lang == DEFAULT_LANGUAGE:
+            user_settings.vacationText = vacationText
+
+    # ▼ Neu: Zeitraum
+    v_start_raw = request.POST.get('vacation_start')  # "YYYY-MM-DDTHH:MM" oder ""
+    v_end_raw   = request.POST.get('vacation_end')
+
+    def parse_dt_local(val):
+        if not val:
+            return None
+        # Browser schicken mal ohne/mit Sekunden
+        for fmt in ("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"):
+            try:
+                naive = datetime.strptime(val, fmt)
+                # <<< WICHTIG: Default-TZ, nicht current!
+                tz = dj_timezone.get_default_timezone()      # i.d.R. Europe/Berlin
+                return dj_timezone.make_aware(naive, tz)
+            except ValueError:
+                continue
+        return None
+
+    v_start = parse_dt_local(v_start_raw)
+    v_end   = parse_dt_local(v_end_raw)
+
+    # Validierung
+    if v_start and v_end and v_start > v_end:
+        errors.append("Urlaubsbeginn darf nicht nach dem Urlaubsende liegen.")
     else:
-        user_settings.vacation = False
-    if vacationText:
-        user_settings.vacationText = vacationText
+        user_settings.vacation_start = v_start
+        user_settings.vacation_end   = v_end
+
+    # Speichern
+    try:
+        user_settings.clean()
+    except Exception as e:
+        errors.append(str(e))
+
     user_settings.save()
 
     if errors:
         return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)
-    else:
-        return JsonResponse({'success': 'Öffnungszeiten erfolgreich aktualisiert'})
+    return JsonResponse({'success': 'Öffnungszeiten erfolgreich aktualisiert'})
     
 @login_required(login_url='login')
 def shop(request):
