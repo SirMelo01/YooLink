@@ -69,11 +69,11 @@
         class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
       >
         <h1
-          class="max-w-xl mb-6 mt-8 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center"
+          class="max-w-xl mb-6 mt-8 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-6xl md:mx-auto text-center"
         >
           {{heroText.title}}
         </h1>
-        <p class="text-base leading-7 text-gray-600 md:text-lg">
+        <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
           {{heroText.description}}
         </p>
       </div>
@@ -204,7 +204,7 @@
           >
             {{responsiveText.title}}
           </h2>
-          <p class="text-base leading-7 text-gray-600 md:text-lg">
+          <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
             {{responsiveText.description}}
           </p>
           <br />
@@ -439,7 +439,7 @@
           <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
             {{ cmsText.title }}
           </h2>
-          <p class="mt-6 text-base leading-7 md:text-lg text-gray-600">
+          <p class="mt-6 text-base leading-7 md:text-lg xl:text-xl text-gray-600">
             {{ cmsText.description }}
           </p>
           <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
@@ -490,7 +490,7 @@
           <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {% if knowHowContent and knowHowContent.title %}{{knowHowContent.title}}{% endif %}
           </h2>
-          <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
+          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
             {% if knowHowContent and knowHowContent.description %}{{knowHowContent.description}}{% endif %}
           </p>
         </div>
@@ -563,7 +563,7 @@
           >
             {% if kundenText and kundenText.title %}{{kundenText.title}}{% endif %}
           </h2>
-          <p class="mt-6 text-base md:text-lg leading-8 text-gray-600">
+          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
             {% if kundenText and kundenText.description %}{{kundenText.description}}{% endif %}
           </p>
         </div>
@@ -707,7 +707,7 @@
             <span class="relative text-gray-900">{{priceText.title}}</span>
           </span>
         </h2>
-        <p class="text-base text-gray-700 md:text-lg">
+        <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
           {{priceText.description}}
         </p>
       </div>
@@ -767,7 +767,7 @@
       <h1 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
         {% if teamText.title %}{{teamText.title}}{% else %}Unser Team{% endif %}
       </h1>
-      <p class="text-base leading-8 text-gray-600 md:text-lg">
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
         {{teamText.description}}
       </p>
     </div>
@@ -952,7 +952,7 @@
             <span class="relative">{% if faqText and faqText.title %}{{faqText.title}}{% endif %}</span>
           </span>
         </h2>
-        <p class="text-base text-white md:text-lg">
+        <p class="text-base leading-7 text-white md:text-lg xl:text-xl">
           {% if faqText and faqText.description %}{{faqText.description}}{% endif %}
         </p>
       </div>
