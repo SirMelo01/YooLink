@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from yoolink.ycms.models import Blog, Product
 #from django.urls import reverse
-
+from django.utils.translation import get_language
 
 class StaticViewSitemap(Sitemap):
     changefreq = "daily"
@@ -23,12 +23,14 @@ class StaticViewSitemap(Sitemap):
         return reverse(item)
     
 class BlogSitemap(Sitemap):
-     changefreq = "weekly"
-     def items(self):
-          return Blog.objects.filter(active=True)
-     
-     def lastmod(self, obj):
-          return obj.last_updated
+    changefreq = "weekly"
+
+    def items(self):
+        lang = get_language() or 'de'
+        return Blog.objects.filter(active=True, language=lang)
+
+    def lastmod(self, obj):
+        return obj.last_updated
      
 class ProductSitemap(Sitemap):
      changefreq = "weekly"

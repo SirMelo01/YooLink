@@ -150,10 +150,133 @@
         });
     });
 
-    // Hinweis: Stelle sicher, dass deine Seite irgendwo einen Token rendert:
-    // <div class="container ...">{% csrf_token %}</div>
-    // Und gib dem „Neu“-Badge optional eine Klasse:
-    // <span class="js-badge-new ...">Neu</span>
+    // === Einzelne Spam-Nachricht als "Kein Spam" markieren ===
+    $(document).on('submit', 'form[action*="/notifications/"][action$="/mark-ham/"]', function (e) {
+        e.preventDefault();
+        const $form = $(this);
+        const $item = $form.closest('.notif-item');
+
+        $.ajax({
+            url: this.action,
+            method: 'POST',
+            headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function () {
+            // Aus der Spam-Liste entfernen
+            $item.slideUp(150, function () {
+                $(this).remove();
+            });
+
+            if (typeof sendNotif === 'function') {
+                sendNotif("Benachrichtigung wurde aus dem Spam verschoben.", "success");
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                title: "Aktualisiert",
+                text: "Die Benachrichtigung wurde aus dem Spam entfernt.",
+                icon: "success",
+                confirmButtonColor: "#3b82f6" // blue-500
+                });
+            }
+            },
+            error: function () {
+            if (typeof sendNotif === 'function') {
+                sendNotif("Konnte nicht aus dem Spam entfernt werden.", "error");
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                title: "Fehler",
+                text: "Aktion fehlgeschlagen. Bitte erneut versuchen.",
+                icon: "error",
+                confirmButtonColor: "#3b82f6"
+                });
+            }
+            }
+        });
+    });
+
+
+    // === Einzelne in Spam verschieben ===
+    $(document).on('submit', 'form[action*="/notifications/"][action$="/mark-spam/"]', function (e) {
+        e.preventDefault();
+        const $form = $(this);
+        const $item = $form.closest('.notif-item');
+
+        $.ajax({
+            url: this.action,
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function () {
+                // Element aus der Liste entfernen (Inbox zeigt ja kein Spam)
+                $item.slideUp(150, function () {
+                    $(this).remove();
+
+                    // Unread-Count neu aus DOM bestimmen (nur nicht-Spam in dieser Liste)
+                    const newCount = Math.max(getUnreadCountFromDOM(), 0);
+                    updateNavCounter(newCount);
+                    updatePageHeaderCount(newCount);
+                });
+
+                if (typeof sendNotif === 'function') {
+                    sendNotif("Benachrichtigung wurde in den Spam verschoben.", "success");
+                }
+            },
+            error: function () {
+                if (typeof sendNotif === 'function') {
+                    sendNotif("Konnte nicht in den Spam verschoben werden.", "error");
+                }
+            }
+        });
+    });
+
+    // === Alle Spam-Benachrichtigungen löschen (SPAM) ===
+    $(document).on('submit', '#spam-delete-all-form', function (e) {
+        e.preventDefault();
+        const actionUrl = this.action;
+
+        Swal.fire({
+            title: "Alle Spam-Benachrichtigungen löschen?",
+            text: "Diese Aktion kann nicht rückgängig gemacht werden.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e3342f", // rot
+            cancelButtonColor: "#6b7280",  // gray-500
+            confirmButtonText: "Ja, löschen",
+            cancelButtonText: "Abbrechen",
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            $.ajax({
+                url: actionUrl,
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function () {
+                    Swal.fire({
+                        title: "Gelöscht",
+                        text: "Alle Spam-Benachrichtigungen wurden gelöscht.",
+                        icon: "success",
+                        confirmButtonColor: "#3b82f6"
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Fehler",
+                        text: "Löschen fehlgeschlagen. Bitte erneut versuchen.",
+                        icon: "error",
+                        confirmButtonColor: "#3b82f6"
+                    });
+                }
+            });
+        });
+    });
 })(jQuery);
 
 // === Einzelne Notification löschen ===

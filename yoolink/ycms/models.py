@@ -500,10 +500,16 @@ class Message(models.Model):
 # Notifications
 class NotificationQuerySet(models.QuerySet):
     def unread(self):
-        return self.filter(seen=False)
+        return self.filter(seen=False, is_spam=False)
 
     def latest_first(self):
         return self.order_by('-created_at')
+
+    def not_spam(self):
+        return self.filter(is_spam=False)
+
+    def spam(self):
+        return self.filter(is_spam=True)
 
 class Notification(models.Model):
     class Priority(models.TextChoices):
@@ -520,6 +526,7 @@ class Notification(models.Model):
     )
     seen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_spam = models.BooleanField(default=False)
 
     # Optionaler Link zu Message
     message = models.ForeignKey(
@@ -547,6 +554,7 @@ class Notification(models.Model):
         indexes = [
             models.Index(fields=['seen']),
             models.Index(fields=['created_at']),
+            models.Index(fields=['is_spam'])
         ]
         ordering = ['-created_at']
 

@@ -429,6 +429,7 @@
 
     {% compress js inline %}
     <script defer src="{% static 'js/base.js' %}"></script>
+    <script defer src="{% static 'js/translation/cms-translation.js' %}"></script>
     <script src="{% static 'js/libs/sweetalert.min.js' %}"></script>
     {% endcompress js %}
     {% block javascriptend %}

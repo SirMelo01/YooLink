@@ -22,19 +22,33 @@ sitemaps = {
     'product': ProductSitemap,
 }
 
+from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls.i18n import set_language
+
 urlpatterns = [
-    path("", view=load_index, name="home"),
-    # Django Admin, use {% url 'admin:index' %}
+    # Admin und API können gerne ohne Sprachprefix bleiben
     path(settings.ADMIN_URL, admin.site.urls),
-    # Your stuff: custom urls includes go here
+    path("api/", include("config.api_router")),
+    path("auth-token/", obtain_auth_token),
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="api-schema"), name="api-docs"),
+    path('i18n/setlang/', set_language, name='set_language'),
+    path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
+    path('cart/', cart_view, name='cart-view'),
+    path('cart/success/', cart_verify_success_view, name='cart-verify-success-view'),
+    path('order/verify/', order_verify_view, name='order-verify'),
+    path('order/success/', order_verify_success_view, name='order-verify-success-view'),
     path("", include('django.contrib.auth.urls')),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap",),
+]
+
+urlpatterns += i18n_patterns(
+    path("", view=load_index, name="home"),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
     path("kontakt/", view=kontaktform, name="kontakt"),
     path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cmsinfo/", view=load_cmsinfo, name="ycmsinfo"),
-    path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
     path("kunden/", view=load_kunden, name="kunden"),
@@ -43,28 +57,8 @@ urlpatterns = [
     # Shop urls
     path("products/", view=shop, name="products"),
     path("products/<int:product_id>-<slug:slug>/", view=detail, name="product-detail"),
+)
 
-    path('cart/', cart_view, name='cart-view'),
-    path('cart/success/', cart_verify_success_view, name='cart-verify-success-view'),
-
-    path('order/verify/', order_verify_view, name='order-verify'),
-    path('order/success/', order_verify_success_view, name='order-verify-success-view'),
-
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# API URLS
-urlpatterns += [
-    # API base url
-    path("api/", include("config.api_router")),
-    # DRF auth token
-    path("auth-token/", obtain_auth_token),
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
-    path(
-        "api/docs/",
-        SpectacularSwaggerView.as_view(url_name="api-schema"),
-        name="api-docs",
-    ),
-]
 
 
 if settings.DEBUG:

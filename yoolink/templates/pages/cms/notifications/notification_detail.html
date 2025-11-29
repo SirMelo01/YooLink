@@ -18,7 +18,8 @@
         {% if notification.priority == 'high' %} bg-red-100 text-red-800
         {% elif notification.priority == 'low' %} bg-gray-100 text-gray-800
         {% else %} bg-blue-100 text-blue-800 {% endif %}">
-        {% if notification.priority == 'high' %}<i class="bi bi-exclamation-triangle-fill mr-1"></i>{% else %}<i class="bi bi-bell mr-1"></i>{% endif %}
+        {% if notification.priority == 'high' %}<i class="bi bi-exclamation-triangle-fill mr-1"></i>{% else %}<i
+          class="bi bi-bell mr-1"></i>{% endif %}
         {{ notification.get_priority_display }}
       </span>
     </div>
@@ -26,148 +27,159 @@
     <div class="mt-1 text-xs text-gray-500">
       {{ notification.created_at|date:"d.m.Y H:i" }}
       {% if notification.seen %}
-        · <span class="text-green-700">gelesen</span>
+      · <span class="text-green-700">gelesen</span>
       {% else %}
-        · <span class="text-blue-700">ungelesen</span>
+      · <span class="text-blue-700">ungelesen</span>
       {% endif %}
     </div>
 
     {% if not notification.message %}
-        {% if notification.description %}
-            <p class="mt-4 text-gray-700 whitespace-pre-line">{{ notification.description }}</p>
-        {% endif %}
+    {% if notification.description %}
+    <p class="mt-4 text-gray-700 whitespace-pre-line">{{ notification.description }}</p>
+    {% endif %}
     {% endif %}
 
     {# --- Wenn die Notification eine Message verlinkt, zeige die Kontakt-Details --- #}
     {% if notification.message %}
-      <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div class="flex items-center justify-between mb-3">
-          <div class="inline-flex items-center text-sm font-medium">
-            <i class="bi bi-envelope-open mr-2"></i> Kontaktanfrage
-          </div>
-          <span class="text-xs text-gray-500">
-            eingegangen am {{ notification.message.date|date:"d.m.Y" }}
-          </span>
+    <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div class="inline-flex items-center text-sm font-medium">
+          <i class="bi bi-envelope-open mr-2"></i> Kontaktanfrage
         </div>
+        <span class="text-xs text-gray-500">
+          eingegangen am {{ notification.message.date|date:"d.m.Y" }}
+        </span>
+      </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div>
-            <div class="text-gray-500 text-xs">Name</div>
-            <div class="font-medium">{{ notification.message.name }}</div>
-          </div>
-          <div>
-            <div class="text-gray-500 text-xs">E-Mail</div>
-            <div>
-              <a href="mailto:{{ notification.message.email }}" class="text-blue-600 hover:underline">
-                {{ notification.message.email }}
-              </a>
-            </div>
-          </div>
-
-          {% if notification.message.title %}
-          <div class="sm:col-span-2">
-            <div class="text-gray-500 text-xs">Betreff</div>
-            <div class="font-medium">{{ notification.message.title }}</div>
-          </div>
-          {% endif %}
-
-          <div class="sm:col-span-2">
-            <div class="text-gray-500 text-xs mb-1">Nachricht</div>
-            <div class="rounded-md bg-white border border-gray-200 p-3 text-gray-800 whitespace-pre-line">
-              {{ notification.message.message|linebreaksbr }}
-            </div>
-          </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div>
+          <div class="text-gray-500 text-xs">Name</div>
+          <div class="font-medium">{{ notification.message.name }}</div>
         </div>
-
-        <div class="mt-4 flex flex-wrap items-center gap-3">
-          <a href="mailto:{{ notification.message.email }}?subject={{ notification.message.title|default:_('Ihre Nachricht')|urlencode }}"
-             class="inline-flex items-center rounded-md bg-blue-500 text-white px-3 py-2 text-sm hover:bg-blue-600">
-            <i class="bi bi-reply-fill mr-2"></i> Per E-Mail antworten
-          </a>
-          <a href="{% url 'cms:notifications-list' %}"
-             class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
-            <i class="bi bi-list mr-2"></i> Zur Übersicht
-          </a>
-          {% if notification.external_target_url %}
-            <a href="{{ notification.external_target_url }}" target="_blank" rel="noopener"
-               class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
-              <i class="bi bi-box-arrow-up-right mr-2"></i> Verknüpfte Seite öffnen
+        <div>
+          <div class="text-gray-500 text-xs">E-Mail</div>
+          <div>
+            <a href="mailto:{{ notification.message.email }}" class="text-blue-600 hover:underline">
+              {{ notification.message.email }}
             </a>
-          {% endif %}
+          </div>
         </div>
-      </div>
-    {% elif notification.order %}
-  <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-    <div class="flex items-center justify-between mb-3">
-      <div class="inline-flex items-center text-sm font-medium">
-        <i class="bi bi-bag mr-2"></i> Bestellung #{{ notification.order.pk }}
-      </div>
-      <span class="text-xs text-gray-500">
-        erstellt am {{ notification.order.created_at|date:"d.m.Y H:i" }}
-      </span>
-    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-      <div>
-        <div class="text-gray-500 text-xs">Kunde</div>
-        <div class="font-medium">
-          {{ notification.order.buyer_address.get_buyer_name|default:'-' }}
+        {% if notification.message.title %}
+        <div class="sm:col-span-2">
+          <div class="text-gray-500 text-xs">Betreff</div>
+          <div class="font-medium">{{ notification.message.title }}</div>
+        </div>
+        {% endif %}
+
+        <div class="sm:col-span-2">
+          <div class="text-gray-500 text-xs mb-1">Nachricht</div>
+          <div class="rounded-md bg-white border border-gray-200 p-3 text-gray-800 whitespace-pre-line">
+            {{ notification.message.message|linebreaksbr }}
+          </div>
         </div>
       </div>
-      <div>
-        <div class="text-gray-500 text-xs">E-Mail</div>
-        <a href="mailto:{{ notification.order.buyer_email }}" class="text-blue-600 hover:underline">
-          {{ notification.order.buyer_email }}
+
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <a href="mailto:{{ notification.message.email }}?subject={{ notification.message.title|default:_('Ihre Nachricht')|urlencode }}"
+          class="inline-flex items-center rounded-md bg-blue-500 text-white px-3 py-2 text-sm hover:bg-blue-600">
+          <i class="bi bi-reply-fill mr-2"></i> Per E-Mail antworten
         </a>
-      </div>
-      <div>
-        <div class="text-gray-500 text-xs">Status</div>
-        <div class="font-medium">{{ notification.order.get_status_display }}</div>
-      </div>
-      <div>
-        <div class="text-gray-500 text-xs">Bezahlung</div>
-        <div class="font-medium">{{ notification.order.get_payment_display }}</div>
-      </div>
-      <div>
-        <div class="text-gray-500 text-xs">Versand</div>
-        <div class="font-medium">{{ notification.order.get_shipping_display }}</div>
-      </div>
-      <div>
-        <div class="text-gray-500 text-xs">Anzahl Artikel</div>
-        <div class="font-medium">{{ notification.order.total_quantity }}</div>
-      </div>
-      <div class="sm:col-span-2">
-        <div class="text-gray-500 text-xs">Gesamt</div>
-        <div class="font-semibold text-gray-900">{{ notification.order.total }} €</div>
-      </div>
-    </div>
-
-    <div class="mt-4 flex flex-wrap items-center gap-3">
-      <a href="{% url 'cms:order-detail-view' notification.order.pk %}"
-         class="inline-flex items-center rounded-md bg-blue-500 text-white px-3 py-2 text-sm hover:bg-blue-600">
-        <i class="bi bi-receipt mr-2"></i> Bestelldetail öffnen
-      </a>
-      <a href="{% url 'cms:notifications-list' %}"
-         class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
-        <i class="bi bi-list mr-2"></i> Zur Übersicht
-      </a>
-    </div>
-  </div>
-
-    {% else %}
-      {# Standard-Aktionsleiste für normale Notifications #}
-      <div class="mt-6 flex items-center gap-3">
         <a href="{% url 'cms:notifications-list' %}"
-           class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
-          <i class="bi bi-list mr-2"></i> Alle Benachrichtigungen
+          class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
+          <i class="bi bi-list mr-2"></i> Zur Übersicht
         </a>
         {% if notification.external_target_url %}
-          <a href="{{ notification.external_target_url }}" target="_blank" rel="noopener"
-             class="inline-flex items-center rounded-md bg-blue-600 text-white px-3 py-2 text-sm hover:bg-blue-700">
-            <i class="bi bi-box-arrow-up-right mr-2"></i> Verknüpfte Seite öffnen
-          </a>
+        <a href="{{ notification.external_target_url }}" target="_blank" rel="noopener"
+          class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
+          <i class="bi bi-box-arrow-up-right mr-2"></i> Verknüpfte Seite öffnen
+        </a>
         {% endif %}
       </div>
+      {% if not notification.is_spam %}
+      <div class="mt-6 flex items-center">
+        <form method="post" action="{% url 'cms:notification-mark-spam' notification.pk %}">
+          {% csrf_token %}
+          <button
+            class="inline-flex items-center rounded-md border border-red-300 px-3 py-2 text-sm text-red-700 hover:bg-red-50">
+            <i class="bi bi-slash-circle mr-2"></i> Als Spam markieren
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    {% elif notification.order %}
+    <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div class="inline-flex items-center text-sm font-medium">
+          <i class="bi bi-bag mr-2"></i> Bestellung #{{ notification.order.pk }}
+        </div>
+        <span class="text-xs text-gray-500">
+          erstellt am {{ notification.order.created_at|date:"d.m.Y H:i" }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div>
+          <div class="text-gray-500 text-xs">Kunde</div>
+          <div class="font-medium">
+            {{ notification.order.buyer_address.get_buyer_name|default:'-' }}
+          </div>
+        </div>
+        <div>
+          <div class="text-gray-500 text-xs">E-Mail</div>
+          <a href="mailto:{{ notification.order.buyer_email }}" class="text-blue-600 hover:underline">
+            {{ notification.order.buyer_email }}
+          </a>
+        </div>
+        <div>
+          <div class="text-gray-500 text-xs">Status</div>
+          <div class="font-medium">{{ notification.order.get_status_display }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500 text-xs">Bezahlung</div>
+          <div class="font-medium">{{ notification.order.get_payment_display }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500 text-xs">Versand</div>
+          <div class="font-medium">{{ notification.order.get_shipping_display }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500 text-xs">Anzahl Artikel</div>
+          <div class="font-medium">{{ notification.order.total_quantity }}</div>
+        </div>
+        <div class="sm:col-span-2">
+          <div class="text-gray-500 text-xs">Gesamt</div>
+          <div class="font-semibold text-gray-900">{{ notification.order.total }} €</div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <a href="{% url 'cms:order-detail-view' notification.order.pk %}"
+          class="inline-flex items-center rounded-md bg-blue-500 text-white px-3 py-2 text-sm hover:bg-blue-600">
+          <i class="bi bi-receipt mr-2"></i> Bestelldetail öffnen
+        </a>
+        <a href="{% url 'cms:notifications-list' %}"
+          class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
+          <i class="bi bi-list mr-2"></i> Zur Übersicht
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    {# Standard-Aktionsleiste für normale Notifications #}
+    <div class="mt-6 flex items-center gap-3">
+      <a href="{% url 'cms:notifications-list' %}"
+        class="inline-flex items-center rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50">
+        <i class="bi bi-list mr-2"></i> Alle Benachrichtigungen
+      </a>
+      {% if notification.external_target_url %}
+      <a href="{{ notification.external_target_url }}" target="_blank" rel="noopener"
+        class="inline-flex items-center rounded-md bg-blue-600 text-white px-3 py-2 text-sm hover:bg-blue-700">
+        <i class="bi bi-box-arrow-up-right mr-2"></i> Verknüpfte Seite öffnen
+      </a>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
 </div>

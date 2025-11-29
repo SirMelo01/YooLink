@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from yoolink.ycms.spam_detection import is_spam_message
+
 from .models import Message, Notification, Order
 
 @receiver(post_save, sender=Message)
@@ -11,12 +13,15 @@ def create_notification_for_message(sender, instance: Message, created, **kwargs
     if not created:
         return
 
+    spam_flag = is_spam_message(instance)
+
     Notification.objects.create(
-        title="Neue Kontaktanfrage",
+        title="Neue Kontaktanfrage" if not spam_flag else "Möglicher Spam (Kontaktformular)",
         description=(instance.title or instance.message[:120]),
-        priority=Notification.Priority.NORMAL,
+        priority=Notification.Priority.NORMAL if not spam_flag else Notification.Priority.LOW,
         message=instance,
-        link_url=''
+        link_url='',
+        is_spam=spam_flag,
     )
 
 @receiver(post_save, sender=Order)
