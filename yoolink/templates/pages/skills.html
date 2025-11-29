@@ -50,7 +50,7 @@
         <li>{% trans "skills_seo_friendly" %}</li>
         <li>{% trans "skills_modular_extendable" %}</li>
       </ul>
-      <a href="#"
+      <a href="{% url 'ycmsinfo' %}"
          class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition transform hover:-translate-y-1 hover:shadow-lg duration-300 ease-in-out">
         {% if textContent_cms and textContent_cms.buttonText %}{{ textContent_cms.buttonText }}{% else %}Mehr erfahren{% endif %}
       </a>
