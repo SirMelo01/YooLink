@@ -23,11 +23,15 @@ $(document).ready(function () {
       // Aktuellen Pfad holen
       var currentPath = window.location.pathname;
 
-      // Existierendes Sprachprefix (/de oder /en) entfernen
-      var strippedPath = currentPath.replace(/^\/(de|en)(\/|$)/, "/");
+      var strippedPath = currentPath.replace(/^\/en(\/|$)/, "/");
 
-      // Neuen Pfad mit Sprachprefix bauen
-      var targetPath = `/${selectedLang}${strippedPath}`;
+      var targetPath;
+      if (selectedLang === "de") {
+        // Keine Sprach-Prefix – Root ist DE
+        targetPath = strippedPath || "/";
+      } else {
+        targetPath = `/` + selectedLang + strippedPath;
+      }
 
       // Auf neue Sprach-URL weiterleiten
       window.location.href = targetPath;

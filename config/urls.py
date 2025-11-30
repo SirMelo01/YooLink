@@ -57,6 +57,7 @@ urlpatterns += i18n_patterns(
     # Shop urls
     path("products/", view=shop, name="products"),
     path("products/<int:product_id>-<slug:slug>/", view=detail, name="product-detail"),
+    prefix_default_language=False,
 )
 
 
