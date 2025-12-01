@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-30 14:28+0100\n"
+"POT-Creation-Date: 2025-12-01 19:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,10 @@ msgstr "Images"
 #: yoolink/templates/pages/cms/notifications/notification_detail.html:84
 msgid "Ihre Nachricht"
 msgstr ""
+
+#: yoolink/templates/pages/index.html:450
+msgid "learn_more"
+msgstr "Learn more"
 
 #: yoolink/templates/pages/index.html:595
 #: yoolink/templates/pages/index.html:628

@@ -4,16 +4,25 @@ from yoolink.ycms.models import Blog
 from django.utils.translation import get_language_from_request, activate
 from django.conf import settings
 
+from django.utils.translation import get_language
+
 def get_active_language(request):
-    """Holt die aktuelle Sprache aus dem Request oder setzt Fallback auf 'en'"""
-    lang = get_language_from_request(request)
+    """
+    Liefert die „aktive“ Sprache:
+    - bevorzugt das, was LocaleMiddleware gesetzt hat (request.LANGUAGE_CODE)
+    - Fallback: get_language()
+    - Fallback 2: settings.LANGUAGE_CODE
+    """
+    lang = getattr(request, "LANGUAGE_CODE", None) or get_language()
     available_languages = dict(settings.LANGUAGES)
 
     if lang not in available_languages:
-        lang = "en"
+        # Für dich: default ist Deutsch
+        lang = settings.LANGUAGE_CODE  # z.B. "de"
 
-    activate(lang)
+    # WICHTIG: KEIN activate(lang) hier!
     return lang
+
 
 class Load_Index_Blog(ListView):
     model = Blog

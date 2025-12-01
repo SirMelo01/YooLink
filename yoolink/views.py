@@ -30,13 +30,6 @@ def load_kunden(request):
     if TextContent.objects.filter(name="main_kunden2").exists():
         context["kundenText2"] = TextContent.objects.get(name='main_kunden2')
 
-    lang = get_language_from_request(request)  # Browser-Sprache holen
-    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
-    if lang not in available_languages:
-        lang = "en"
-
-    activate(lang)  # Sprache für diese Anfrage setzen
-
     return render(request, 'pages/kunden.html', context=context)
 
 def load_index(request):
@@ -99,13 +92,6 @@ def load_index(request):
 
     context.update(get_opening_hours())
 
-    lang = get_language_from_request(request)  # Browser-Sprache holen
-    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
-    if lang not in available_languages:
-        lang = "en"
-
-    activate(lang)  # Sprache für diese Anfrage setzen
-
     return render(request, 'pages/index.html', context=context)
 
 
@@ -114,14 +100,6 @@ def load_cmsinfo(request):
 
     context = {
     }
-
-
-    lang = get_language_from_request(request)  # Browser-Sprache holen
-    available_languages = dict(settings.LANGUAGES)  # Sprachen aus settings.py holen
-    if lang not in available_languages:
-        lang = "en"
-
-    activate(lang)  # Sprache für diese Anfrage setzen
 
     return render(request, 'pages/cmsinfo.html', context=context)
 
@@ -159,13 +137,6 @@ def skills_view(request):
     context["textContent_webdesign"] = TextContent.objects.filter(name="main_skills_webdesign").first()
     context["textContent_logos"] = TextContent.objects.filter(name="main_skills_logos").first()
     context["textContent_custom"] = TextContent.objects.filter(name="main_skills_custom").first()
-
-    # Sprache setzen (wie bei Kunden)
-    lang = get_language_from_request(request)
-    available_languages = dict(settings.LANGUAGES)
-    if lang not in available_languages:
-        lang = "en"
-    activate(lang)
 
     return render(request, 'pages/skills.html', context)
 
