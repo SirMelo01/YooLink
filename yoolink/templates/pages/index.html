@@ -9,6 +9,23 @@
 <script src="{% static 'js/aos.js' %}"></script>
 {% endblock css %}
 
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "Yoolink CMS – Demo",
+  "description": "Kurzes Produktvideo, das zeigt, wie unser CMS Tool aussieht.",
+  "thumbnailUrl": "https://fra1.digitaloceanspaces.com/yoolink/media/yoolink/images/cms_landingpage_20251227115013.jpeg",
+  "uploadDate": "2025-12-01",
+  "duration": "PT1M38S",
+  "contentUrl": "https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4",
+  "embedUrl": "{{ request.build_absolute_uri }}"
+}
+</script>
+{% endblock %}
+
 {% load i18n %}
 <!--Kontaktbuttons Beginn-->
 
