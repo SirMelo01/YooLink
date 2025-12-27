@@ -31,6 +31,7 @@ from django.middleware.csrf import get_token
 from .utils import send_payment_confirmation, send_ready_for_pickup_confirmation, send_shipping_confirmation
 from django.views.decorators.csrf import csrf_exempt
 from django.templatetags.static import static
+from django.utils import translation
 
 DEFAULT_LANGUAGE = "en"
 
@@ -45,20 +46,28 @@ def get_active_language(request):
     activate(lang)  # Sprache für diese Anfrage aktiv setzen
     return lang
 
-def set_language(request, lang_code):
+@login_required
+def cms_set_language(request, lang_code):
     """
-    Speichert die gewählte Sprache in einem Cookie und lädt die Seite neu.
+    Sprache nur für das CMS setzen (ohne /en-Prefix).
+    Nutzt Cookie (wie das eingebaute set_language).
     """
-
     available_languages = dict(settings.LANGUAGES)
+
     if lang_code not in available_languages:
         return JsonResponse({'error': 'Invalid language'}, status=400)
 
-    activate(lang_code)  # Sprache setzen
+    # Sprache für diese Request aktivieren
+    activate(lang_code)
 
+    # Cookie setzen – LocaleMiddleware liest das beim nächsten Request
     response = JsonResponse({'message': 'Language changed', 'language': lang_code})
-    response.set_cookie('django_language', lang_code, max_age=60 * 60 * 24 * 30)  # 30 Tage speichern
-    response.set_cookie('csrftoken', get_token(request))  # Falls CSRF-Token benötigt wird
+    response.set_cookie(
+        getattr(settings, "LANGUAGE_COOKIE_NAME", "django_language"),
+        lang_code,
+        max_age=60 * 60 * 24 * 30,  # 30 Tage
+        path="/",
+    )
     return response
 
 def set_mt_fields(instance, lang, payload):
@@ -2266,11 +2275,13 @@ def shop(request):
 # View to display all TeamMembers
 @login_required(login_url='login')
 def team_member_list(request):
-    team_members = TeamMember.objects.all()
+    team_members = TeamMember.objects.all().order_by("display_order", "id")
     context = {
         'team_members': team_members,
     }
     return render(request, 'pages/cms/team/team.html', context)
+
+from django.db.models import Max
 
 # View to handle the creation of a TeamMember
 @api_view(['POST'])
@@ -2288,9 +2299,13 @@ def create_team_member(request):
         image = request.POST.get('image', '').strip()
         age = request.POST.get('age')
         email = request.POST.get('email', '').strip()
-        years_with_team = int(request.POST.get('years_with_team', 0))
+        raw_years = (request.POST.get('years_with_team') or '').strip()
+        years_with_team = int(raw_years) if raw_years.isdigit() else 0
         position = request.POST.get('position', 'Mitarbeiter')
         note = request.POST.get('note', '')
+
+        max_order = TeamMember.objects.aggregate(m=Max('display_order'))['m'] or 0
+        next_order = max_order + 1
 
         # TeamMember erstellen
         try:
@@ -2299,7 +2314,8 @@ def create_team_member(request):
                 active=active,
                 years_with_team=years_with_team,
                 position=position,
-                note=note
+                note=note,
+                display_order=next_order,
             )
 
             # Optionale Felder nur setzen, wenn sie vorhanden und nicht leer sind
@@ -2351,7 +2367,8 @@ def update_team_member(request, id):
         return JsonResponse({'error': 'Voller Name ist erforderlich.'}, status=400)
 
     team_member.position = data.get('position', team_member.position)
-    team_member.years_with_team = int(data.get('years_with_team', team_member.years_with_team))
+    raw_years = (data.get('years_with_team') or '').strip()
+    team_member.years_with_team = int(raw_years) if raw_years.isdigit() else 0
 
     if 'age' in data and data['age']:
         team_member.age = int(data['age'])
@@ -2379,6 +2396,32 @@ def delete_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
     team_member.delete()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich gelöscht'})
+
+from django.views.decorators.http import require_POST
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reorder_team_members(request):
+    # akzeptiere sowohl JSON ("order":[1,2,3]) als auch Form-POST (order[]=1&order[]=2)
+    order = request.data.get('order')
+
+    if order is None:
+        order = request.POST.getlist('order[]') or request.POST.getlist('order')
+
+    if not order:
+        return JsonResponse({'error': 'Keine Reihenfolge übergeben.'}, status=400)
+
+    # ids cleanen
+    try:
+        ids = [int(x) for x in order]
+    except Exception:
+        return JsonResponse({'error': 'Ungültige ID-Liste.'}, status=400)
+
+    # update display_order (1..n)
+    for idx, member_id in enumerate(ids, start=1):
+        TeamMember.objects.filter(id=member_id).update(display_order=idx)
+
+    return JsonResponse({'success': 'Reihenfolge gespeichert'})
 
 ##################
 #    PRICING     #

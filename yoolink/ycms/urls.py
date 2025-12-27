@@ -115,9 +115,10 @@ urlpatterns = [
     path('team/<int:id>/', views.get_team_member, name='get-team-member'),
     path('team/<int:id>/update/', views.update_team_member, name='update-team-member'),
     path('team/<int:id>/delete/', views.delete_team_member, name='delete-team-member'),
+    path('team/reorder/', views.reorder_team_members, name='team-reorder'),
 
     # Utils
-    path('set-language/<str:lang_code>/', views.set_language, name='set-language'),
+    path('set-language/<str:lang_code>/', views.cms_set_language, name='set-language'),
 
     # Pricing
     path("pricing/", views.pricing_card_overview, name="pricingcard-list"),

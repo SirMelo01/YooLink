@@ -671,8 +671,13 @@ class TeamMember(models.Model):
     position = models.CharField(max_length=100, default="Mitarbeiter")
     note = models.TextField(default="")
 
+    display_order = models.PositiveIntegerField(default=0, db_index=True)
+
     def __str__(self):
         return self.full_name
+    
+    class Meta:
+        ordering = ["display_order", "id"]
     
 from django.db import models
 
