@@ -44,6 +44,8 @@
     <meta name="twitter:label2" content="Zeit zum Lesen">
     <meta name="twitter:data2" content="1 Minute">
 
+    {% block structured_data %}{% endblock %}
+
     {% compress css inline %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
       <link href="{% static 'css/utils.css' %}" rel="stylesheet">
