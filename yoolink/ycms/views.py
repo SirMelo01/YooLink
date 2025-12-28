@@ -168,7 +168,7 @@ def cms(request):
         "order_not_closed_count": Order.objects.exclude(status='COMPLETED').count(),
         'form': form,
         'anyfile_count': AnyFile.objects.count(),
-        'videofile_count': VideoFile.objects.count(),
+        'videofile_count': VideoFile.objects.count()
     }
     return render(request, 'pages/cms/cms.html', data)
 

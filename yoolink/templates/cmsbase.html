@@ -54,7 +54,7 @@
 
 <body class="">
     <!--Navbar Beginn-->
-
+    {% csrf_token %}
     <div class="min-h-full">
         <nav class="bg-gray-800">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -319,9 +319,9 @@
                     <button id="languageDropdownButtonDesktop"
                         class="inline-flex items-center w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <span id="selectedLangFlagDesktop"
-                            class="fi fi-{% if request.LANGUAGE_CODE == 'de' %}de{% else %}gb{% endif %} mr-2"></span>
+                            class="fi fi-{% if cms_language == 'de' %}de{% else %}gb{% endif %} mr-2"></span>
                         <span id="selectedLangTextDesktop">
-                            {% if request.LANGUAGE_CODE == 'de' %}
+                            {% if cms_language == 'de' %}
                             Deutsch
                             {% else %}
                             English
@@ -339,20 +339,20 @@
                         class="hidden absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div class="py-1">
                             <button data-lang="de" data-flag="de"
-                                data-text="{% if request.LANGUAGE_CODE == 'de' %}Deutsch{% else %}German{% endif %}"
+                                data-text="{% if cms_language == 'de' %}Deutsch{% else %}German{% endif %}"
                                 class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
                                 <span class="fi fi-de mr-2"></span>
-                                {% if request.LANGUAGE_CODE == 'de' %}
+                                {% if cms_language and cms_language == 'de' %}
                                 Deutsch
                                 {% else %}
                                 German
                                 {% endif %}
                             </button>
                             <button data-lang="en" data-flag="gb"
-                                data-text="{% if request.LANGUAGE_CODE == 'de' %}Englisch{% else %}English{% endif %}"
+                                data-text="{% if cms_language == 'de' %}Englisch{% else %}English{% endif %}"
                                 class="language-option flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">
                                 <span class="fi fi-gb mr-2"></span>
-                                {% if request.LANGUAGE_CODE == 'de' %}
+                                {% if cms_language and cms_language == 'de' %}
                                 Englisch
                                 {% else %}
                                 English

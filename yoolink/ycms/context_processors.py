@@ -1,3 +1,4 @@
+from yoolink.ycms.views import get_active_language
 from .models import Notification, UserSettings
 
 def user_settings_context(request):
@@ -20,4 +21,12 @@ def notifications_context(request):
         'nav_latest_unread_notifications': latest_unread,      # Dropdown-Liste (nur ungelesen)
         'nav_unread_overflow': overflow,                       # „…und X weitere“
         'nav_unread_limit': limit,
+    }
+
+def cms_language_context(request):
+    if not request.path.startswith('/cms/'):
+        return {}
+    
+    return {
+        "cms_language": get_active_language(request)
     }

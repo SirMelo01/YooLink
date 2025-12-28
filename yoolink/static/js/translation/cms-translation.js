@@ -1,33 +1,34 @@
 // static/js/cms-translation.js
 
 $(document).ready(function () {
+
   function setupLanguageDropdown(buttonId, menuId, flagId, textId) {
     // Dropdown anzeigen/verstecken
     $(`#${buttonId}`).on("click", function () {
       $(`#${menuId}`).toggleClass("hidden");
     });
 
-    // Sprache ändern (ALTE LOGIK mit AJAX auf /cms/set-language/<lang>/)
+    // Sprache ändern – jetzt wieder über /cms/set-language/<lang>/
     $(`#${menuId} .language-option`).on("click", function () {
       var selectedLang = $(this).attr("data-lang");
       var selectedFlag = $(this).attr("data-flag");
       var selectedText = $(this).attr("data-text");
 
+      // UI direkt aktualisieren
+      $(`#${flagId}`).attr("class", `fi fi-${selectedFlag} mr-2`);
+      $(`#${textId}`).text(selectedText);
+
       $.ajax({
         url: `/cms/set-language/${selectedLang}/`,
         type: "GET",
         success: function (response) {
-          if (response.message) {
-            // Flagge und Text im Button aktualisieren
-            $(`#${flagId}`).attr("class", `fi fi-${selectedFlag} mr-2`);
-            $(`#${textId}`).text(selectedText);
-
-            // Seite neu laden, damit Django die Sprache übernimmt
-            location.reload();
+          if (response && response.language) {
+            // Seite neu laden, damit request.LANGUAGE_CODE aktualisiert ist
+            window.location.reload();
           }
         },
         error: function (xhr, status, error) {
-          console.error("Fehler beim Ändern der Sprache:", error);
+          console.error("Fehler beim Ändern der Sprache im CMS:", error);
         }
       });
     });
@@ -40,7 +41,7 @@ $(document).ready(function () {
     });
   }
 
-  // CMS hat aktuell nur Desktop-Dropdown – Mobile schadet aber nicht, falls später ergänzt
+  // Desktop
   setupLanguageDropdown(
     "languageDropdownButtonDesktop",
     "languageDropdownMenuDesktop",
@@ -48,7 +49,7 @@ $(document).ready(function () {
     "selectedLangTextDesktop"
   );
 
-  // Falls du irgendwann auch im CMS ein mobiles Dropdown nutzt:
+  // Optional Mobile für später
   setupLanguageDropdown(
     "languageDropdownButtonMobile",
     "languageDropdownMenuMobile",
