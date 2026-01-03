@@ -5395,11 +5395,6 @@ video {
     line-height: 2.25rem;
   }
 
-  .md\:text-5xl {
-    font-size: 3rem;
-    line-height: 1;
-  }
-
   .md\:text-\[100px\] {
     font-size: 100px;
   }
