@@ -5400,11 +5400,6 @@ video {
     line-height: 1;
   }
 
-  .md\:text-6xl {
-    font-size: 3.75rem;
-    line-height: 1;
-  }
-
   .md\:text-\[100px\] {
     font-size: 100px;
   }
