@@ -31,7 +31,7 @@
 {% block Wellen %}
 <!-- Wellen Beginn -->
 <section class="bg-white wave-wrapper">
-  <div class="wave-container">
+  <div class="wave-container overflow-x-hidden">
 
     <svg
       class="waves"
@@ -75,7 +75,6 @@
       </g>
     </svg>
     <!-- Boot -->
-    <!-- Boot -->
 <div class="boat">
   <div class="boat-flip">
     <div class="boat-inner">
@@ -115,11 +114,11 @@
     <div data-aos="fade-right">
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none relative inline-block mb-6">
         {% if textContent_cms and textContent_cms.title %}{{ textContent_cms.title }}{% else %}Eigenes CMS{% endif %}
-        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+        <!--<span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
           <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-blue-500">
             <path d="M0,10 Q50,20 100,10 T200,10" />
           </svg>
-        </span>
+        </span>-->  
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl mb-4">
         {% if textContent_cms and textContent_cms.description %}
@@ -136,8 +135,9 @@
         <li>{% trans "skills_seo_friendly" %}</li>
         <li>{% trans "skills_modular_extendable" %}</li>
       </ul>
+
       <a href="{% url 'ycmsinfo' %}"
-         class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition transform hover:-translate-y-1 hover:shadow-lg duration-300 ease-in-out">
+         class="inline-block mt-6 bg-blue-900 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 hover:scale-105 duration-300 ease-in-out">
         {% if textContent_cms and textContent_cms.buttonText %}{{ textContent_cms.buttonText }}{% else %}Mehr erfahren{% endif %}
       </a>
     </div>
@@ -154,11 +154,11 @@
     <div class="order-1 md:order-2" data-aos="fade-left">
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none relative inline-block mb-6">
         {% if textContent_webdesign and textContent_webdesign.title %}{{ textContent_webdesign.title }}{% else %}Webdesign{% endif %}
-        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+        <!--<span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
           <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-pink-400">
             <path d="M0,10 Q50,20 100,10 T200,10" />
           </svg>
-        </span>
+        </span>-->
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl mb-4">
         {% if textContent_webdesign and textContent_webdesign.description %}
@@ -167,7 +167,7 @@
           Ob Onepager oder komplexe Unternehmensseite - wir gestalten Websites, die zu dir und deinen Zielen passen. Immer responsive. Immer modern.
         {% endif %}
       </p>
-      <a href="{% url 'kunden' %}" class="inline-block mt-6 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition transform hover:-translate-y-1 hover:shadow-lg duration-300 ease-in-out">
+      <a href="{% url 'kunden' %}" class="inline-block mt-6 bg-blue-900 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 hover:scale-105 duration-300 ease-in-out">
         {% if textContent_webdesign and textContent_webdesign.buttonText %}{{ textContent_webdesign.buttonText }}{% else %}Referenzen{% endif %}
       </a>
     </div>
@@ -177,11 +177,11 @@
   <div class="max-w-6xl mx-auto mb-40 px-4 text-center" data-aos="fade-up">
     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none relative inline-block mb-6">
       {% if textContent_logos and textContent_logos.title %}{{ textContent_logos.title }}{% else %}Logo Design{% endif %}
-      <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+      <!--<span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
         <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-green-500">
           <path d="M0,10 Q50,20 100,10 T200,10" />
         </svg>
-      </span>
+      </span>-->
     </h2>
     <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl mb-8 max-w-3xl mx-auto">
       {% if textContent_logos and textContent_logos.description %}
@@ -203,11 +203,11 @@
     <div data-aos="fade-right">
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none relative inline-block mb-6">
         {% if textContent_custom and textContent_custom.title %}{{ textContent_custom.title }}{% else %}Custom Webentwicklung{% endif %}
-        <span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
+        <!--<span class="absolute left-0 bottom-0 w-full h-4 -mb-2">
           <svg viewBox="0 0 200 20" preserveAspectRatio="none" class="w-full h-full fill-purple-400">
             <path d="M0,10 Q50,20 100,10 T200,10" />
           </svg>
-        </span>
+        </span>-->
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl mb-4">
         {% if textContent_custom and textContent_custom.description %}
@@ -232,7 +232,8 @@
   <script>
     AOS.init({
       duration: 800,
-      once: true
+      once: true,
+      disable: "phone"
     });
   </script>
 {% endblock %}
