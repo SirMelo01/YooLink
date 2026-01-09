@@ -52,7 +52,7 @@
 .boat {
   position: absolute;
   left: -10%; /* startet links außerhalb */
-  bottom: -20px; /* noch tiefer auf den Wellen */
+  bottom: -8px; /* noch tiefer auf den Wellen */
   font-size: 180px; /* Desktop: noch größer */
   animation: boat-horizontal 30s linear infinite, boat-vertical 3s ease-in-out infinite;
   pointer-events: none;
@@ -97,15 +97,178 @@
 
   .boat {
     font-size: 100px; /* mobile passt */
-    bottom: -20px; /* mobile auch tiefer */
+    bottom: -8px; /* mobile auch tiefer */
   }
 }
 
+/* =========================
+   BOOT (clean + works)
+   ========================= */
 
+/* =========================
+   BOOT (clean + works)
+   ========================= */
 
+/* Damit das Boot nicht weggeclippt wird */
+.wave-wrapper,
+.wave-container {
+  overflow: visible;
+}
 
+/* NUR Boot resetten (Tailwind bleibt unangetastet) */
+.boat,
+.boat * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+/* Nur für Boot-ULs, damit Browser/Tailwind margins nicht reinfunken */
+.boat ul {
+  margin: 0;
+  padding: 0;
+}
 
+.no-bullet {
+  list-style: none;
+}
+
+/* Fenster-Liste */
+.inline-list {
+  list-style: none;
+  overflow: hidden;
+  margin-left: -1.375rem;
+  padding: 0;
+}
+.inline-list > li {
+  float: left;
+  margin-left: 1.375rem;
+  display: block;
+}
+
+/* Boot fährt horizontal (positioniert relativ zur wave-container) */
+.boat {
+  position: absolute;
+  left: -15%;
+  bottom: -20px;
+  z-index: 50;
+  pointer-events: none;
+  animation: boat-horizontal 30s linear infinite;
+
+  /* Größer */
+  transform: scale(1.35);
+  transform-origin: left bottom;
+}
+
+/* FLIP WRAPPER: spiegelt Boot, ohne die boat-rock-transform zu zerstören */
+.boat-flip {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+/* Boot schaukelt (transform liegt NUR hier, damit es sich nicht überschreibt) */
+.boat-inner {
+  position: relative;
+  animation: boat-rock 3s ease-in-out infinite;
+}
+
+/* Animationen */
+@keyframes boat-horizontal {
+  0%   { left: -15%; }
+  100% { left: 115%; }
+}
+
+@keyframes boat-rock {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-6px) rotate(-2deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+  75%      { transform: translateY(-6px) rotate(-1deg); }
+}
+
+/* Boot-Körper */
+.boat-body {
+  width: 100px;
+  height: 20px;
+  background: #e25c45;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 20px;
+}
+
+/* Deck: nicht mehr weiß -> besserer Kontrast */
+.white-body {
+  width: 65px;
+  height: 16px;
+  background: #dbe7f3;              /* helles blau-grau statt weiß */
+  margin: 0 13px;
+  border-top-left-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.08); /* leichte Kontur auf hell */
+}
+
+.windows {
+  margin: 0 12px !important;
+}
+
+.boat .circle {
+  background: #8c7a5e; /* minimal dunkler als vorher */
+  width: 7px;
+  height: 7px;
+  margin: 5px 3px;
+  border-radius: 50%;
+}
+
+/* ===== Fix: Rauch + Schornstein sollen keinen "Abstand" erzeugen ===== */
+/* Parent für absolute Positionierung */
+.boat-inner > ul.no-bullet {
+  position: relative;
+}
+
+/* Schornstein direkt aufs Boot setzen */
+.smokestack {
+  width: 10px;
+  height: 17px;
+  background: #8c7a5e; /* etwas dunkler für Kontrast */
+
+  position: absolute;
+  left: 45px;
+  bottom: 36px;
+
+  margin-left: 0;
+}
+
+/* Rauch direkt über den Schornstein */
+.fume {
+  position: absolute;
+  left: 0;
+  bottom: 55px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Rauch dunkler + besser sichtbar */
+.fume li {
+  background-color: rgba(50, 50, 50, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
+}
+
+.fume1 { width: 7px;  height: 7px;  margin-left: 48px; animation: smokeup 2.0s linear infinite; }
+.fume2 { width: 9px;  height: 9px;  margin-left: 38px; animation: smokeup 2.1s linear infinite; }
+.fume3 { width: 12px; height: 12px; margin-left: 48px; animation: smokeup 2.2s linear infinite; }
+.fume4 { width: 15px; height: 15px; margin-left: 38px; animation: smokeup 2.3s linear infinite; }
+
+@keyframes smokeup {
+  0%   { transform: translateY(0); opacity: 1; }
+  80%  { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .boat {
+    bottom: -20px;
+    transform: scale(1.15);
+  }
+}
 
 
 
