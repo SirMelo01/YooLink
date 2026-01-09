@@ -48,27 +48,6 @@
   position: relative;
 }
 
-/* === Boot === */
-.boat {
-  position: absolute;
-  left: -10%; /* startet links außerhalb */
-  bottom: -8px; /* noch tiefer auf den Wellen */
-  font-size: 180px; /* Desktop: noch größer */
-  animation: boat-horizontal 30s linear infinite, boat-vertical 3s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 5;
-}
-
-/* Horizontal: Boot fährt von links nach rechts */
-@keyframes boat-horizontal {
-  0% {
-    left: -10%;
-  }
-  100% {
-    left: 110%;
-  }
-}
-
 /* Vertikal: Boot „schaukelt“ wie die Welle, proportional zur Größe */
 @keyframes boat-vertical {
   0% {
@@ -100,10 +79,6 @@
     bottom: -8px; /* mobile auch tiefer */
   }
 }
-
-/* =========================
-   BOOT (clean + works)
-   ========================= */
 
 /* =========================
    BOOT (clean + works)
@@ -150,13 +125,13 @@
 .boat {
   position: absolute;
   left: -15%;
-  bottom: -20px;
-  z-index: 50;
+  bottom: -10px;
+  z-index: 5;
   pointer-events: none;
   animation: boat-horizontal 30s linear infinite;
 
   /* Größer */
-  transform: scale(1.35);
+  transform: scale(2.00);
   transform-origin: left bottom;
 }
 
@@ -189,16 +164,17 @@
 .boat-body {
   width: 100px;
   height: 20px;
-  background: #e25c45;
+  background: #e30449;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 20px;
 }
+
 
 /* Deck: nicht mehr weiß -> besserer Kontrast */
 .white-body {
   width: 65px;
   height: 16px;
-  background: #dbe7f3;              /* helles blau-grau statt weiß */
+  background: #f7e349;              /* helles blau-grau statt weiß */
   margin: 0 13px;
   border-top-left-radius: 20px;
   border: 1px solid rgba(0,0,0,0.08); /* leichte Kontur auf hell */
@@ -208,13 +184,90 @@
   margin: 0 12px !important;
 }
 
+
+
 .boat .circle {
-  background: #8c7a5e; /* minimal dunkler als vorher */
+  background-image: linear-gradient(45deg, #c9e5d9, #fff);
+  animation: shadow-change 1s linear infinite;
+  /*background: #bf1111;  minimal dunkler als vorher */
   width: 7px;
   height: 7px;
   margin: 5px 3px;
   border-radius: 50%;
+  border: 2px solid #8c7a5e;
 }
+
+
+@keyframes shadow-change {
+  0%,
+  100% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 0%,
+      #c9e5d9 20%,
+      #fff 21%,
+      #fff 39%,
+      #c9e5d9 40%,
+      #fff 41%,
+      #fff 59%,
+      #c9e5d9 60%
+    );
+  }
+  20% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 20%,
+      #c9e5d9 40%,
+      #fff 41%,
+      #fff 59%,
+      #c9e5d9 60%,
+      #fff 61%,
+      #fff 79%,
+      #c9e5d9 80%
+    );
+  }
+  40% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 40%,
+      #c9e5d9 60%,
+      #fff 61%,
+      #fff 79%,
+      #c9e5d9 80%,
+      #fff 81%,
+      #fff 99%,
+      #c9e5d9 0%
+    );
+  }
+  60% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 60%,
+      #c9e5d9 80%,
+      #fff 81%,
+      #fff 99%,
+      #c9e5d9 0%,
+      #fff 1%,
+      #fff 19%,
+      #c9e5d9 20%
+    );
+  }
+  80% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 80%,
+      #c9e5d9 0%,
+      #fff 1%,
+      #fff 19%,
+      #c9e5d9 20%,
+      #fff 21%,
+      #fff 39%,
+      #c9e5d9 40%
+    );
+  }
+}
+
+
 
 /* ===== Fix: Rauch + Schornstein sollen keinen "Abstand" erzeugen ===== */
 /* Parent für absolute Positionierung */
@@ -224,9 +277,9 @@
 
 /* Schornstein direkt aufs Boot setzen */
 .smokestack {
-  width: 10px;
-  height: 17px;
-  background: #8c7a5e; /* etwas dunkler für Kontrast */
+  width: 8px;
+  height: 12px;
+  background: #7e7669; /* etwas dunkler für Kontrast */
 
   position: absolute;
   left: 45px;
