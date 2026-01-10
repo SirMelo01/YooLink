@@ -53,6 +53,7 @@ urlpatterns = [
     path('seiten/hauptseite/FAQ/', views.site_view_main_faq, name='site_hauptseite_faq'),
     path('seiten/Kunden/', views.site_view_kunden, name='site_kunden'),
     path('seiten/skills/', views.site_view_skills, name='site_skills'),
+    path('seiten/cmsinfo/', views.site_view_cmsinfo, name='site_cmsinfo'),
 
     # Products
     path('products/', views.product_view, name='products'),

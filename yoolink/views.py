@@ -95,16 +95,27 @@ def load_index(request):
     return render(request, 'pages/index.html', context=context)
 
 
-
 def load_cmsinfo(request):
+    context = {}
 
-    context = {
-    }
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    context["textContent_hero"] = TextContent.objects.filter(name="main_cmsinfo_hero").first()
+    context["textContent_sec1"] = get_text("main_cmsinfo_sec1")
+    context["textContent_sec2"] = get_text("main_cmsinfo_sec2")
+    context["textContent_blog"] = get_text("main_cmsinfo_blog")
+    context["textContent_company"] = get_text("main_cmsinfo_company")
+    context["textContent_trust"] = get_text("main_cmsinfo_trust")
+
+    context["textContent_stat1"] = get_text("main_cmsinfo_stat1")
+    context["textContent_stat2"] = get_text("main_cmsinfo_stat2")
+    context["textContent_stat3"] = get_text("main_cmsinfo_stat3")
+    context["textContent_stat4"] = get_text("main_cmsinfo_stat4")
+
+    context["textContent_bottomcta"] = get_text("main_cmsinfo_bottomcta")
 
     return render(request, 'pages/cmsinfo.html', context=context)
-
-
-
 
 
 

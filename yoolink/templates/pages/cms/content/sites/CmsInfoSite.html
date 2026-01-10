@@ -1,0 +1,152 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{ block.super }} | CMS - Seiteninhalt {% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl">
+      <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a>
+      / <span>CMS Info (/cmsinfo)</span>
+    </h1>
+    <div>
+      {% csrf_token %}
+      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+         id="saveTextData" name="main_cmsinfo">
+        Speichern
+      </a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_hero">
+      <p class="text-sm text-gray-500 mb-2">Hero</p>
+      <input inputType="header" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_hero.header|default:'Verwalte deine eigene Website' }}">
+      <textarea inputType="description" rows="4"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_hero.description|default:"Bist du bereit, deine Website einfach und schnell selbst zu verwalten? - Mit dem Content Management System von YooLink" }}</textarea>
+      <input inputType="buttonText"
+             value="{{ textContent_hero.buttonText|default:'Jetzt Anfragen!' }}"
+             class="mt-3 rounded-md bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_sec1">
+      <p class="text-sm text-gray-500 mb-2">Section 1</p>
+      <input inputType="title" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_sec1.title|default:'Verwalte den Inhalt der Website jederzeit und ohne Hilfe' }}">
+      <textarea inputType="description" rows="6"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_sec1.description|default:"Deine Website ist in verschiedene Sektionen unterteilt – z. B. Team, FAQ, Preise oder Know-How. In unserem CMS kannst du in jeder dieser Sektionen die Inhalte eigenständig bearbeiten – jederzeit und ohne technisches Vorwissen. Das Layout und Design bleiben dabei immer erhalten." }}</textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_sec2">
+      <p class="text-sm text-gray-500 mb-2">Section 2</p>
+      <input inputType="title" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_sec2.title|default:'Bilder, Videos und Galerien flexibel gestalten' }}">
+      <textarea inputType="description" rows="6"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_sec2.description|default:"Lade ganz einfach Bilder, Videos und andere Dateien wie PDFs in unser CMS hoch. Organisiere deine Medien effizient, indem du Bilder zu Galerien zusammenfasst und deine Inhalte zentral verwaltest. Unser System macht das Hochladen, Strukturieren und Bearbeiten von Dateien besonders einfach – für eine reibungslose und schnelle Medienverwaltung." }}</textarea>
+    </div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_blog">
+      <p class="text-sm text-gray-500 mb-2">Blog</p>
+      <input inputType="title" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_blog.title|default:'Verbessere das Ranking deiner Website mit unserem Blog-Builder' }}">
+      <textarea inputType="description" rows="6"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_blog.description|default:"Erstelle mit unserem integrierten Blog-Tool ganz einfach professionelle Blogbeiträge – ideal für effektives SEO und starke Online-Präsenz. Füge Texte, Bilder,Videos, Galerien, Code-Snippets oder PDFs hinzu und passe das Layout flexibel an. So hast du volle Kontrolle über Struktur, Inhalt und Wirkung deiner Beiträge." }}</textarea>
+    </div>
+  </div>
+
+  <!-- COMPANY -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_company">
+      <p class="text-sm text-gray-500 mb-2">Company</p>
+      <input inputType="title" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_company.title|default:'Alle Unternehmensdaten auf einem Blick verwalten' }}">
+      <textarea inputType="description" rows="6"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_company.description|default:"Pflege alle wichtigen Informationen deines Unternehmens zentral und übersichtlich. Ob Kontaktdaten, Adresse, Unternehmensname oder Logo – alle Einträge lassen sich ganz einfach bearbeiten und werden automatisch auf deiner Website angezeigt. So bleibt dein Online-Auftritt stets aktuell und professionell." }}</textarea>
+    </div>
+  </div>
+
+  <!-- TRUST -->
+  <div class="mt-10 flex justify-center w-full">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_trust">
+      <p class="text-sm text-gray-500 mb-2">Trust / Zahlen</p>
+      <input inputType="header" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base font-semibold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_trust.header|default:'Von Unternehmen im Einsatz' }}">
+      <input inputType="title" type="text"
+             class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_trust.title|default:'Vertrauen von Anfang an – Zahlen, die für sich sprechen' }}">
+      <textarea inputType="description" rows="4"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_trust.description|default:"Obwohl wir noch am Anfang stehen, setzen bereits zahlreiche Teams auf YooLink. Wir entwickeln unser System stetig weiter – mit Fokus auf Stabilität, Nutzerfreundlichkeit und Sicherheit." }}</textarea>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    <div class="text-content" key="main_cmsinfo_stat1">
+      <p class="text-sm text-gray-500 mb-2">Stat 1</p>
+      <input inputType="title" type="text" class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_stat1.title|default:'99.99% Betriebszeit' }}">
+      <textarea inputType="description" rows="2" class="bg-gray-200 mt-2 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_stat1.description|default:"Unsere Systeme laufen zuverlässig - ohne merkbare Ausfälle." }}</textarea>
+    </div>
+
+    <div class="text-content" key="main_cmsinfo_stat2">
+      <p class="text-sm text-gray-500 mb-2">Stat 2</p>
+      <input inputType="title" type="text" class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_stat2.title|default:'10+ aktive Nutzer' }}">
+      <textarea inputType="description" rows="2" class="bg-gray-200 mt-2 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_stat2.description|default:"Teams aus unterschiedlichsten Branchen nutzen YooLink bereits heute." }}</textarea>
+    </div>
+
+    <div class="text-content" key="main_cmsinfo_stat3">
+      <p class="text-sm text-gray-500 mb-2">Stat 3</p>
+      <input inputType="title" type="text" class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_stat3.title|default:'Mehrsprachigkeit inklusive' }}">
+      <textarea inputType="description" rows="2" class="bg-gray-200 mt-2 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_stat3.description|default:"Pflege deine Website-Inhalte ganz einfach in jeder gewünschten Sprache." }}</textarea>
+    </div>
+
+    <div class="text-content" key="main_cmsinfo_stat4">
+      <p class="text-sm text-gray-500 mb-2">Stat 4</p>
+      <input inputType="title" type="text" class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_stat4.title|default:'Nahtlose integration' }}">
+      <textarea inputType="description" rows="2" class="bg-gray-200 mt-2 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_stat4.description|default:"YooLink lässt sich unkompliziert in bestehende Workflows integrieren." }}</textarea>
+    </div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="mt-12 flex justify-center w-full mb-20">
+    <div class="max-w-4xl w-full text-content" key="main_cmsinfo_bottomcta">
+      <p class="text-sm text-gray-500 mb-2">Bottom CTA</p>
+      <input inputType="title" type="text"
+             class="bg-gray-200 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-2xl font-bold focus:outline-none focus:bg-white focus:border-blue-500"
+             value="{{ textContent_bottomcta.title|default:'Jetzt unverbindlich Kontakt aufnehmen' }}">
+      <textarea inputType="description" rows="3"
+                class="bg-gray-200 mt-3 border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500">{{ textContent_bottomcta.description|default:"Du suchst nach einem flexiblen, leistungsstarken und einfachen CMS? Wir beraten dich persönlich!" }}</textarea>
+      <input inputType="buttonText"
+             value="{{ textContent_bottomcta.buttonText|default:'Lass uns gemeinsam starten' }}"
+             class="mt-3 rounded-md bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm font-semibold shadow-sm" />
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+<script src="{% static 'js/cms/content/save-text.js' %}"></script>
+{% endcompress js %}
+{% endblock %}

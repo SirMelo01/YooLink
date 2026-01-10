@@ -999,6 +999,28 @@ def site_view_skills(request):
         "textContent_custom": get_text("main_skills_custom"),
     })
 
+# views.py (CMS Content Page)
+@login_required(login_url='login')
+def site_view_cmsinfo(request):
+    def get_text(name):
+        return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
+
+    return render(request, "pages/cms/content/sites/CmsInfoSite.html", {
+        "textContent_hero": get_text("main_cmsinfo_hero"),
+        "textContent_sec1": get_text("main_cmsinfo_sec1"),
+        "textContent_sec2": get_text("main_cmsinfo_sec2"),
+        "textContent_blog": get_text("main_cmsinfo_blog"),
+        "textContent_company": get_text("main_cmsinfo_company"),
+        "textContent_trust": get_text("main_cmsinfo_trust"),
+
+        "textContent_stat1": get_text("main_cmsinfo_stat1"),
+        "textContent_stat2": get_text("main_cmsinfo_stat2"),
+        "textContent_stat3": get_text("main_cmsinfo_stat3"),
+        "textContent_stat4": get_text("main_cmsinfo_stat4"),
+
+        "textContent_bottomcta": get_text("main_cmsinfo_bottomcta"),
+    })
+
 ######################
 # END SITE CONTENT   #
 ######################

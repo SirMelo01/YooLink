@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
   <!-- Hauptseite Content Management Card -->
   <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
@@ -36,9 +35,19 @@
           <a href="{% url 'cms:site_skills' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
       </div>
   </div>
+  <!-- CMS Info Section -->
+  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
+    <h2 class="text-lg font-bold mb-4">CMS Info (/cmsinfo)</h2>
+    <p class="mb-4">Hier kannst du den Inhalt der CMS Info Seite anpassen</p>
+    <div class="flex-grow"></div>
+    <div class="flex justify-center mt-12">
+      <a href="{% url 'cms:site_cmsinfo' %}"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Verwalten
+      </a>
+    </div>
+  </div>
 </div>
-
-
 
 {% block javascriptend %}
 {% compress js inline %}
