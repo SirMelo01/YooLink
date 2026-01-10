@@ -1,3 +1,8 @@
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 /* === Wellen (unverändert) === */
 .waves {
   position: relative;
@@ -48,27 +53,6 @@
   position: relative;
 }
 
-/* === Boot === */
-.boat {
-  position: absolute;
-  left: -10%; /* startet links außerhalb */
-  bottom: -8px; /* noch tiefer auf den Wellen */
-  font-size: 180px; /* Desktop: noch größer */
-  animation: boat-horizontal 30s linear infinite, boat-vertical 3s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 5;
-}
-
-/* Horizontal: Boot fährt von links nach rechts */
-@keyframes boat-horizontal {
-  0% {
-    left: -10%;
-  }
-  100% {
-    left: 110%;
-  }
-}
-
 /* Vertikal: Boot „schaukelt“ wie die Welle, proportional zur Größe */
 @keyframes boat-vertical {
   0% {
@@ -100,10 +84,6 @@
     bottom: -8px; /* mobile auch tiefer */
   }
 }
-
-/* =========================
-   BOOT (clean + works)
-   ========================= */
 
 /* =========================
    BOOT (clean + works)
@@ -149,14 +129,14 @@
 /* Boot fährt horizontal (positioniert relativ zur wave-container) */
 .boat {
   position: absolute;
-  left: -15%;
-  bottom: -20px;
-  z-index: 50;
+  left: -200px;
+  bottom: -10px;
+  z-index: 5;
   pointer-events: none;
   animation: boat-horizontal 30s linear infinite;
 
   /* Größer */
-  transform: scale(1.35);
+  transform: scale(2.00);
   transform-origin: left bottom;
 }
 
@@ -172,10 +152,9 @@
   animation: boat-rock 3s ease-in-out infinite;
 }
 
-/* Animationen */
 @keyframes boat-horizontal {
-  0%   { left: -15%; }
-  100% { left: 115%; }
+  0%   { left: -200px; }
+  100% { left: 100vw; }
 }
 
 @keyframes boat-rock {
@@ -189,16 +168,17 @@
 .boat-body {
   width: 100px;
   height: 20px;
-  background: #e25c45;
+  background: #e30449;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 20px;
 }
+
 
 /* Deck: nicht mehr weiß -> besserer Kontrast */
 .white-body {
   width: 65px;
   height: 16px;
-  background: #dbe7f3;              /* helles blau-grau statt weiß */
+  background: #f7e349;              /* helles blau-grau statt weiß */
   margin: 0 13px;
   border-top-left-radius: 20px;
   border: 1px solid rgba(0,0,0,0.08); /* leichte Kontur auf hell */
@@ -208,13 +188,90 @@
   margin: 0 12px !important;
 }
 
+
+
 .boat .circle {
-  background: #8c7a5e; /* minimal dunkler als vorher */
+  background-image: linear-gradient(45deg, #c9e5d9, #fff);
+  animation: shadow-change 1s linear infinite;
+  /*background: #bf1111;  minimal dunkler als vorher */
   width: 7px;
   height: 7px;
   margin: 5px 3px;
   border-radius: 50%;
+  border: 2px solid #8c7a5e;
 }
+
+
+@keyframes shadow-change {
+  0%,
+  100% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 0%,
+      #c9e5d9 20%,
+      #fff 21%,
+      #fff 39%,
+      #c9e5d9 40%,
+      #fff 41%,
+      #fff 59%,
+      #c9e5d9 60%
+    );
+  }
+  20% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 20%,
+      #c9e5d9 40%,
+      #fff 41%,
+      #fff 59%,
+      #c9e5d9 60%,
+      #fff 61%,
+      #fff 79%,
+      #c9e5d9 80%
+    );
+  }
+  40% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 40%,
+      #c9e5d9 60%,
+      #fff 61%,
+      #fff 79%,
+      #c9e5d9 80%,
+      #fff 81%,
+      #fff 99%,
+      #c9e5d9 0%
+    );
+  }
+  60% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 60%,
+      #c9e5d9 80%,
+      #fff 81%,
+      #fff 99%,
+      #c9e5d9 0%,
+      #fff 1%,
+      #fff 19%,
+      #c9e5d9 20%
+    );
+  }
+  80% {
+    background-image: linear-gradient(
+      45deg,
+      #c9e5d9 80%,
+      #c9e5d9 0%,
+      #fff 1%,
+      #fff 19%,
+      #c9e5d9 20%,
+      #fff 21%,
+      #fff 39%,
+      #c9e5d9 40%
+    );
+  }
+}
+
+
 
 /* ===== Fix: Rauch + Schornstein sollen keinen "Abstand" erzeugen ===== */
 /* Parent für absolute Positionierung */
@@ -224,9 +281,9 @@
 
 /* Schornstein direkt aufs Boot setzen */
 .smokestack {
-  width: 10px;
-  height: 17px;
-  background: #8c7a5e; /* etwas dunkler für Kontrast */
+  width: 8px;
+  height: 12px;
+  background: #7e7669; /* etwas dunkler für Kontrast */
 
   position: absolute;
   left: 45px;
@@ -266,230 +323,6 @@
 @media (max-width: 768px) {
   .boat {
     bottom: -20px;
-    transform: scale(1.15);
+    transform: scale(1.7);
   }
 }
-
-
-
-
-/* NEUES DESIGN
-
-HTML: 
-	<body>
-
-		<section class="main">
-
-			<div class="absolute boat">
-				<ul class="no-bullet">
-					<ul class="no-bullet fume">
-						<li class="fume4"></li>
-						<li class="fume3"></li>
-						<li class="fume2"></li>
-						<li class="fume1"></li>
-					</ul>
-					<li class="smokestack"></li>
-					<li class="white-body">
-						<ul class="windows inline-list">
-							<li class="circle"></li>
-							<li class="circle"></li>
-							<li class="circle"></li>
-						</ul>
-					</li>
-					<li class="boat-body"></li>
-				</ul>
-			</div>
-
-			
-		</section>
-
-	</body>
-
-
-  CSS:
-  * {margin: 0; padding: 0}
-
-
-
-*, *:before, *:after {
--moz-box-sizing: border-box;
--webkit-box-sizing: border-box;
-box-sizing: border-box;
-}
-
-section {
-    width: 100%;
-    overflow: hidden;
-    position: absolute;
-}
-
-ul {  margin-bottom: 1.25rem;
-}
-
-ul.no-bullet {
-list-style: none;
-}
-
-.inline-list {
-  margin: 0 auto 1.0625rem auto;
-  margin-left: -1.375rem;
-  margin-right: 0;
-  padding: 0;
-  list-style: none;
-  overflow: hidden; }
-  .inline-list > li {
-    list-style: none;
-    float: left;
-    margin-left: 1.375rem;
-    display: block; }
-    .inline-list > li > * {
-      display: block; }
-
-
-.main {
-    background-color: #0c3545;
-    height: 100%;
-}
-
-.absolute {
-    position: absolute;
-}
-
-
-.boat {
-    bottom: 10px;
-    z-index: 1;
-    -webkit-animation: boatanimate 30s linear infinite;
-    -moz-animation: boatanimate 30s linear infinite;
-    -o-animation: boatanimate 30s linear infinite;
-    animation: boatanimate 30s linear infinite;
-}
-
-@-webkit-keyframes boatanimate {
-    0% {right:250px;}
-    100% {right:1040px;}
-}
-
-@-moz-keyframes boatanimate {
-    0% {right:250px;}
-    100% {right:1040px;}
-}
-
-@-o-keyframes boatanimate {
-    0% {right:250px;}
-    100% {right:1040px;}
-}
-
-@keyframes boatanimate {
-    0% {right:250px;}
-    100% {right:1040px;}
-}
-
-.boat-body {
-    width: 100px;
-    height: 20px;
-    background: #e25c45;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 20px;
-}
-
-.white-body {
-    width: 65px;
-    height: 16px;
-    background: #FFF;
-    margin: 0px 13px;
-    border-top-left-radius: 20px;
-}
-
-.windows {
-    margin: 0px 12px !important;
-}
-
-
-.boat .circle {
-    background: #a18e6e;
-    width: 7px;
-    height: 7px;
-    margin: 5px 3px;
-    border-radius: 50%;
-}
-
-.smokestack {
-    width: 10px;
-    height: 17px;
-    background: #a18e6e;
-    bottom: 30px;
-    margin-left: 45px;
-}
-
-
-.fume {
-    margin:0px;
-}
-
-.fume li {
-    background-color: white;
-    border-radius: 50%;
-}
-
-.fume1 {
-    width: 7px;
-    height: 7px;
-    margin-left: 48px;
-    -webkit-animation: smokeup 2.0s linear infinite;
-    -moz-animation: smokeup 2.0s linear infinite;
-    -o-animation: smokeup 2.0s linear infinite;
-    animation: smokeup 2.0s linear infinite;
-}
-
-.fume2 {
-    width: 9px;
-    height: 9px;
-    margin-left: 38px;
-    -webkit-animation: smokeup 2.1s linear infinite;
-    -moz-animation: smokeup 2.1s linear infinite;
-    -o-animation: smokeup 2.1s linear infinite;
-    animation: smokeup 2.1s linear infinite;}
-
-.fume3 {
-    width: 12px;
-    height: 12px;
-    margin-left: 48px;
-    -webkit-animation: smokeup 2.2s linear infinite;
-    -moz-animation: smokeup 2.2s linear infinite;
-    -o-animation: smokeup 2.2s linear infinite;
-    animation: smokeup 2.2s linear infinite;}
-
-.fume4 {
-    width: 15px;
-    height: 15px;
-    margin-left: 38px;
-    -webkit-animation: smokeup 2.3s linear infinite;
-    -moz-animation: smokeup 2.3s linear infinite;
-    -o-animation: smokeup 2.3s linear infinite;
-    animation: smokeup 2.3s linear infinite;}
-
-@-webkit-keyframes smokeup {
-    0% {margin-bottom:-3px; opacity: 1}
-    80% {margin-bottom:7px; opacity: 0}
-    100% {margin-bottom:7px; opacity: 0}
-}
-
-@-moz-keyframes smokeup {
-    0% {margin-bottom:-3px; opacity: 1}
-    80% {margin-bottom:7px; opacity: 0}
-    100% {margin-bottom:7px; opacity: 0}
-}
-
-@-o-keyframes smokeup {
-    0% {margin-bottom:-3px; opacity: 1}
-    80% {margin-bottom:7px; opacity: 0}
-    100% {margin-bottom:7px; opacity: 0}
-}
-
-@keyframes smokeup {
-    0% {margin-bottom:-3px; opacity: 1}
-    80% {margin-bottom:7px; opacity: 0}
-    100% {margin-bottom:7px; opacity: 0}
-}
-*/
