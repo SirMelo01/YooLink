@@ -105,6 +105,10 @@ def load_cmsinfo(request):
     context["textContent_sec1"] = get_text("main_cmsinfo_sec1")
     context["textContent_sec2"] = get_text("main_cmsinfo_sec2")
     context["textContent_blog"] = get_text("main_cmsinfo_blog")
+    context["textContent_blog_bullet1"] = get_text("main_cmsinfo_blog_bullet1")
+    context["textContent_blog_bullet2"] = get_text("main_cmsinfo_blog_bullet2")
+    context["textContent_blog_bullet3"] = get_text("main_cmsinfo_blog_bullet3")
+
     context["textContent_company"] = get_text("main_cmsinfo_company")
     context["textContent_trust"] = get_text("main_cmsinfo_trust")
 
@@ -114,6 +118,12 @@ def load_cmsinfo(request):
     context["textContent_stat4"] = get_text("main_cmsinfo_stat4")
 
     context["textContent_bottomcta"] = get_text("main_cmsinfo_bottomcta")
+
+    context["textContent_company_bullet1"] = get_text("main_cmsinfo_company_bullet1")
+    context["textContent_company_bullet2"] = get_text("main_cmsinfo_company_bullet2")
+    context["textContent_company_bullet3"] = get_text("main_cmsinfo_company_bullet3")
+    context["textContent_company_bullet4"] = get_text("main_cmsinfo_company_bullet4")
+
 
     return render(request, 'pages/cmsinfo.html', context=context)
 
