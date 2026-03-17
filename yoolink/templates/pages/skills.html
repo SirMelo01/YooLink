@@ -1,7 +1,5 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "base.html" %} {% load compress static %} {% block title %}{{ block.super }} | Webdesign, CMS & Logo Design {% endblock title %} {% block content %}
 
-{% block title %}{{ block.super }} | Webdesign, CMS & Logo Design {% endblock %}
 
 {% block css %}
 {% compress css inline %}
@@ -17,7 +15,6 @@
 
 {% load i18n %}
 
-{% block content %}
 <section class="bg-white py-20 px-4">
   <div class="max-w-5xl mx-auto text-center mb-28">
     <h1 class="text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-6xl mb-6" data-aos="fade-down">
