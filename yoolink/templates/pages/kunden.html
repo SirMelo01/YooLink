@@ -1,7 +1,17 @@
-{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} 
+{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} | Unsere Referenzen & Kunden{% endblock title %} {% block content %} 
+
+{% block css %}
+{% compress css inline %}
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-<script src="{% static 'js/aos.js' %}"></script>
+{% endcompress css %} 
 {% endblock css %}
+
+{% block javascript %}
+{% compress js inline %}
+<script defer src="{% static 'js/aos.js' %}"></script>
+{% endcompress %}
+{% endblock javascript %}
+
 {% load i18n %}
 
 <section id="references" class="bg-blue-100 pb-16 pt-10">
@@ -27,7 +37,7 @@
             data-aos-delay="100">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/SteuerkanzleiSagerer.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/SteuerkanzleiSagerer.png' %}" alt="Website-Vorschau Steuerkanzlei Sagerer" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Steuerkanzlei Sagerer" title="Steuerkanzlei Sagerer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 steuerkanzlei-sagerer.de
@@ -39,7 +49,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="pr-3 flex items-center">
                 <div class="h-12 w-12 flex items-center justify-center rounded-md bg-white">
-                  <img class="h-8 w-8 object-contain" src="{% static 'images/references/steuerkanzleisagererlogo.png' %}" alt="Steuerkanzlei Sagerer" title="Steuerkanzlei Sagerer" />
+                  <img class="h-8 w-8 object-contain" src="{% static 'images/references/steuerkanzleisagererlogo.png' %}" alt="Steuerkanzlei Sagerer Logo" title="Steuerkanzlei Sagerer" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -59,7 +69,7 @@
             data-aos-delay="300">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/TruckClaim.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/TruckClaim.png' %}" alt="Website-Vorschau KNN Truck Claiim" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 knn-truckclaim.com
@@ -187,7 +197,7 @@
             data-aos-delay="100">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/ZahnarztHolmer.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/ZahnarztHolmer.png' %}" alt="Website-Vorschau Zahnarzt Dr. Holmer" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 zahnarzt-dr-holmer.de
@@ -199,7 +209,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/Holmer-Logo.jpg' %}" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/Holmer-Logo.jpg' %}" alt="Zahnarzt Holmer Logo" title="Zahnarzt Holmer" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -218,7 +228,7 @@
             data-aos-delay="200">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/Uhrmannreisen.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/Uhrmannreisen.png' %}" alt="Website-Vorschau Uhrmann Reisen" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://uhrmann-reisen.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 uhrmann-reisen.de
@@ -230,7 +240,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <h2 class="text-[#592e86] font-bold tracking-wide text-4xl">U</h2>
+                  <p class="text-[#592e86] font-bold tracking-wide text-4xl">U</p>
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -249,7 +259,7 @@
             data-aos-delay="300">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/HDGlas.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/HDGlas.png' %}" alt="Website-Vorschau HD-Glas" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://hd-glas.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 hd-glas.de
@@ -261,7 +271,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/HDGlas-Logo.png' %}" alt="" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/HDGlas-Logo.png' %}" alt="HD-Glas Logo" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -281,7 +291,7 @@
             data-aos-delay="300">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/RSAutoglas.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/RSAutoglas.png' %}" alt="Website-Vorschau RSAutoglas" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://rsautoglas.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 rsautoglas.de
@@ -293,7 +303,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/rsautoglaslogo.png' %}" alt="" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/rsautoglaslogo.png' %}" alt="RSAutoglas Logo" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -313,7 +323,7 @@
             data-aos-delay="300">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/THP.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/THP.png' %}" alt="Website-Vorschau Tierheilpraxis Meissner" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://hd-glas.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 tierheilpraxis-meissner.net
@@ -325,7 +335,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/THP Logo.png' %}" alt="" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/THP_Logo.png' %}" alt="Tierheilpraxis Meissner Logo" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -341,11 +351,11 @@
       <!-- Sonstige -->
       <div class="flex justify-center mb-12 mt-8">
         <div class="max-w-2xl lg:text-center" data-aos="fade-up">
-          <h1
+          <h2
             class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
           {% if kundenText2 and kundenText2.title %}{{kundenText2.title}}{% else %}Spezielle Programmierungen{% endif %}
-          </h1>
+          </h2>
           <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
             {% if kundenText2 and kundenText2.description %}{{kundenText2.description}}{% else %}Auch ganz spezielle Web-Entwicklungen sind für uns kein Problem und können nach Wunsch individuell erstellt werden{% endif %}
           </p>
@@ -359,9 +369,9 @@
             data-aos-delay="100">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/MovieBattle BG.png' %}" alt="" />
+              <img class="max-h-80 h-56 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/MovieBattle_BG.png' %}" alt="Website-Vorschau MovieBattle" />
     
-              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
+              <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="MovieBattle" title="MovieBattle" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 moviebattle.io
                 <svg class="ml-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>

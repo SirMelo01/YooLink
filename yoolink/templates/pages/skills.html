@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ block.super }} | Unsere Fähigkeiten{% endblock %}
+{% block title %}{{ block.super }} | Webdesign, CMS & Logo Design {% endblock %}
 
 {% block css %}
-  <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-<link href="{% static 'css/wellenundboot.css' %}" rel="stylesheet" />
-{% endblock %}
+{% compress css inline %}
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+{% endcompress css %} 
+{% endblock css %}
+
+{% block javascript %}
+{% compress js inline %}
+<script defer src="{% static 'js/aos.js' %}"></script>
+{% endcompress %}
+{% endblock javascript %}
 
 {% load i18n %}
 
@@ -142,14 +149,14 @@
       </a>
     </div>
     <div data-aos="fade-left">
-      <img src="{% static 'images/CMS-2.0.png' %}" alt="CMS Vorschau" class="rounded-xl shadow-xl" />
+      <img src="{% static 'images/CMS-2.0.png' %}" loading="lazy" alt="CMS Vorschau" class="rounded-xl shadow-xl" />
     </div>
   </div>
 
   <!-- Webdesign Section -->
   <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center mb-40 px-4">
     <div class="order-2 md:order-1" data-aos="fade-right">
-      <img src="{% static 'images/references/THP Full-min.png' %}" alt="Design Beispiel" class="rounded-xl shadow-xl" />
+      <img src="{% static 'images/references/THP_Full-min.png' %}" loading="lazy" alt="Website-Vorschau Tierheilpraxis Meissner" class="rounded-xl shadow-xl" />
     </div>
     <div class="order-1 md:order-2" data-aos="fade-left">
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none relative inline-block mb-6">
@@ -191,10 +198,10 @@
       {% endif %}
     </p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
-      <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" alt="Logo 1" class="h-20 object-contain" />
-      <img src="{% static 'images/references/knn-truck.svg' %}" alt="Logo 2" class="h-20 object-contain" />
-      <img src="{% static 'images/references/yoolinklogo.png' %}" alt="Logo 3" class="h-20 object-contain" />
-      <img src="{% static 'images/references/rsautoglaslogo.png' %}" alt="Logo 4" class="h-20 object-contain" />
+      <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" loading="lazy" alt="Tierheilpraxis Meissner Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="Yoolink Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RSAutoglas Logo" class="h-20 object-contain" />
     </div>
   </div>
 
@@ -221,7 +228,7 @@
       </p>
     </div>
     <div data-aos="fade-left">
-      <img src="{% static 'images/references/MovieBattle BG.png' %}" alt="MovieBattle Preview" class="rounded-xl shadow-xl" />
+      <img src="{% static 'images/references/MovieBattle_BG.png' %}" alt="MovieBattle Preview" class="rounded-xl shadow-xl" />
     </div>
   </div>
 </section>
