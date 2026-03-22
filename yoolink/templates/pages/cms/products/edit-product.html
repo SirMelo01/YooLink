@@ -1,13 +1,13 @@
 {% extends 'cmsbase.html' %}
 {% load compress static %}
-{% block title %} {{block.super}} | CMS | Produkt bearbeiten {% endblock %}
+
+{% block title %}{{ block.super }} | CMS | Produkt bearbeiten{% endblock %}
+
 {% block javascript %}
-{% load compress static %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
-<!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
+
 <style>
-  /* Custom CSS for styling the scrollbar */
   .autocomplete-list::-webkit-scrollbar {
     width: 12px;
   }
@@ -22,235 +22,747 @@
     border-radius: 6px;
   }
 
-  /* Additional styles for the added countries list */
-
-  .added-country {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f0f0f0;
+  .product-gallery-wrapper .slick-prev,
+  .product-gallery-wrapper .slick-next {
+    z-index: 20;
+    width: 36px;
+    height: 36px;
   }
 
-  .remove-country-btn {
-    cursor: pointer;
-    color: #e53e3e;
+  .product-gallery-wrapper .slick-prev {
+    left: 8px;
+  }
+
+  .product-gallery-wrapper .slick-next {
+    right: 8px;
+  }
+
+  .product-gallery-wrapper .slick-prev:before,
+  .product-gallery-wrapper .slick-next:before {
+    font-size: 28px;
+    color: #2563eb;
+    opacity: 1;
+  }
+
+  .product-gallery-wrapper .slick-dots {
+    bottom: -30px;
+  }
+
+  .product-gallery-wrapper .slick-slide {
+    padding: 0 4px;
+  }
+
+  .collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.28s ease, opacity 0.22s ease, margin 0.22s ease;
+    max-height: 5000px;
+    opacity: 1;
+  }
+
+  .collapsible-card.is-collapsed .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0 !important;
+  }
+
+  .collapsible-trigger-icon {
+    transition: transform 0.25s ease;
+  }
+
+  .collapsible-card.is-collapsed .collapsible-trigger-icon {
+    transform: rotate(-90deg);
   }
 </style>
 {% endblock %}
+
 {% block content %}
 
-
-<!-- **************** Add-Category-Modal **************** -->
-<!-- Will be opened if the user clicks on one of the info buttons -->
-
 {% include "pages/cms/components/GalerySelectModal.html" %}
+{% include "pages/cms/components/AnyFileSelectModal.html" %}
 
-<!-- Delete Modal -->
-{% include "pages/cms/components/DeleteModal.html" %}
+<div class="container mx-auto max-w-7xl px-3 py-8 lg:px-0">
+  <div class="sticky top-4 z-30 mb-8 rounded-2xl border border-gray-200 bg-white/95 px-5 py-4 shadow-sm backdrop-blur">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold text-gray-900">
+          <a href="{% url 'cms:products' %}" class="text-blue-500 hover:text-blue-700">Produkte</a>
+          <span class="mx-2 text-gray-400">/</span>
+          <span id="titleSpan">{{ product.title }}</span>
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">Bearbeite Produktdaten, Medien, Galerie, Spezifikationen und Dateianhänge</p>
+      </div>
 
-<!-- Form -->
-<div class="container mx-auto mt-8 max-w-6xl px-3 lg:px-0">
-  <!-- Header -->
-  <div class="flex justify-between">
-    <h1 class="text-2xl"><a href="{% url 'cms:products' %}" class="text-blue-500">Produkte</a> /<span
-        id="titleSpan">{{product.title}} </span></h1>
-    <div class="flex">
-      <a class="mr-6 rounded flex items-center bg-green-500 px-4 py-2 font-bold text-white hover:cursor-pointer hover:bg-green-700"
-        id="updateProduct"> <i class="bi bi-plus-circle mr-2"></i> <svg
-          class="mr-3 h-5 w-5 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-          </path>
-        </svg> Speichern </a>
-      <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
-        id="deleteProduct">
-        Löschen
-      </a>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          id="updateProduct"
+          class="flex items-center rounded-xl bg-green-500 px-4 py-2 font-semibold text-white transition hover:bg-green-700"
+        >
+          <i class="bi bi-save mr-2"></i>
+          <svg class="mr-2 hidden h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Speichern
+        </button>
+
+        <button
+          type="button"
+          id="deleteProduct"
+          class="rounded-xl bg-red-500 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
+        >
+          Löschen
+        </button>
+      </div>
     </div>
   </div>
-  <!-- Form -->
-  <form action="" id="updateProductForm" class="mt-8">
-    {% csrf_token %}
-    <!--{% csrf_token %}-->
-    <div class="grid grid-cols-2 gap-6">
-      <div class="space-y-3">
-        <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Titel </label>
-        <input
-          class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-          id="title" type="text" value="{{product.title}}" required />
-        <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Beschreibung
-        </label>
-        <textarea rows="4"
-          class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-          id="description" type="text" required>{{product.description}}</textarea>
-        <div class="mb-6 mt-6 flex w-full justify-between">
-          <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Aktiv </label>
-          <input {% if product.is_active %}checked{% endif %}
-            class="checked:focus:border-primary mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="activeSwitch" />
-          <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> In Stock </label>
-          <input {% if product.is_in_stock %}checked{% endif %}
-            class="checked:focus:border-primary mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="stockSwitch" />
-        </div>
-      </div>
-      <div>
-        <label class="mb-2 block w-40 self-center pb-3 font-bold text-gray-500 md:mb-0" for="title"> Titelbild </label>
-        <div class="flex gap-4">
-          <div class="extraOutline m-auto w-full rounded-lg bg-white">
-            <div class="file_upload relative w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover p-5"
-              id="fileUpload">
-              <svg class="mx-auto mb-4 w-24 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              <div class="input_field mx-auto flex w-max flex-col text-center">
-                <label>
-                  <input required id="titleImgUpload" class="hidden w-36 cursor-pointer text-sm" type="file"
-                    accept="image/jpg,image/png,image/jpeg,image/gif" />
-                  <div
-                    class="text cursor-pointer rounded border border-gray-300 bg-indigo-600 p-1 px-3 font-semibold text-white hover:bg-indigo-500">
-                    Auswählen</div>
-                </label>
 
-                <!--<div class="title text-indigo-500 uppercase" id="fileText">Keine ausgewählt</div>-->
+  <form action="" id="updateProductForm" class="space-y-6">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div class="space-y-6 xl:col-span-2">
+
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Stammdaten</h2>
+              <p class="text-sm text-gray-500">Titel, Beschreibung, Hersteller und Kategorien</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="space-y-5 border-t border-gray-100 pt-5">
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700" for="title">Titel</label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  value="{{ product.title }}"
+                  required
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                  placeholder="Produktname"
+                />
+              </div>
+
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700" for="description">Beschreibung</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="6"
+                  required
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                  placeholder="Beschreibe das Produkt"
+                >{{ product.description }}</textarea>
+              </div>
+
+              <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div class="relative">
+                  <label class="mb-2 block text-sm font-semibold text-gray-700" for="autocomplete-hersteller-input">Hersteller</label>
+                  <input
+                    id="autocomplete-hersteller-input"
+                    type="text"
+                    value="{% if product.brand %}{{ product.brand.name }}{% endif %}"
+                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                    placeholder="Hersteller suchen oder eingeben"
+                  />
+                  <div
+                    id="autocomplete-hersteller-list"
+                    class="autocomplete-list absolute left-0 z-10 mt-2 hidden max-h-44 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+                  ></div>
+                </div>
+
+                <div class="relative">
+                  <label class="mb-2 block text-sm font-semibold text-gray-700" for="autocomplete-category-input">Kategorien</label>
+                  <div class="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      id="autocomplete-category-input"
+                      type="text"
+                      class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                      placeholder="Kategorie suchen oder eingeben"
+                    />
+                    <button
+                      id="addCategory"
+                      type="button"
+                      class="shrink-0 rounded-xl bg-green-500 px-4 py-3 font-semibold text-white transition hover:bg-green-700"
+                    >
+                      Hinzufügen
+                    </button>
+                  </div>
+                  <div
+                    id="autocomplete-category-list"
+                    class="autocomplete-list absolute left-0 z-10 mt-2 hidden max-h-44 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">Ausgewählte Kategorien</label>
+                <div id="added-category-list" class="flex min-h-[3rem] flex-wrap gap-2 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-3">
+                  {% for category in product.categories.all %}
+                    <div
+                      data-category="{{ category.name }}"
+                      class="added-category flex items-center rounded-full bg-blue-100 px-3 py-1.5 text-sm text-blue-900"
+                    >
+                      <span class="category-name">{{ category.name }}</span>
+                      <span class="remove-category-btn cursor-pointer pl-2 text-lg font-semibold text-red-500">&times;</span>
+                    </div>
+                  {% empty %}
+                    <div class="text-sm text-gray-500">Noch keine Kategorien gewählt</div>
+                  {% endfor %}
+                </div>
               </div>
             </div>
           </div>
-          <div class="extraOutline m-auto w-full rounded-lg bg-white">
-            <div
-              class="file_upload relative h-48 w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover flex justify-center items-center">
-              <img id="productImage"
-                src="{{product.title_image.url}}"
-                alt="" class="h-full rounded-xl">
-            </div>
-          </div>
         </div>
-      </div>
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <div class="flex space-x-2">
-            <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="onlineSwitch"> Lieferbar </label>
-          <input {% if product.online_sell %}checked{% endif %}
-            class="checked:focus:border-primary mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="onlineSwitch" />
-          </div>
-          
-          <div>
-            <label class="mb-1 block w-full self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Produktgewicht (in kg) </label>
-            <input
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              id="weight" type="text" value="{{product.weight}}" placeholder="1,5" required />
-          </div>
-        </div>
-       
-        <div class="mb-6 mt-2 flex w-full items-center space-x-7">
-          <div>
-            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Preis </label>
-            <input
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              id="price" type="text" value="{{product.price}}" placeholder="205,20" required />
-          </div>
-          <div>
-            <label class="mb-1 block w-40 self-center pr-4 font-bold text-gray-500 md:mb-0" for="title"> Reduzierter
-              Preis </label>
-            <input
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              id="reducedPrice" type="text" value="{{ product.discount_price }}" placeholder="200" />
-          </div>
-  
-          <input {% if product.is_reduced %}checked{% endif %}
-            class="checked:focus:border-primary mr-2 mt-4 h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="reducedSwitch" />
-        </div>
-      </div>
-      
 
-      <!-- Hersteller Autocomplete  -->
-      <div class="space-y-4">
-        <div class="relative">
-          <div class="mb-1 flex justify-between">
-            <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Hersteller
-            </label>
-          </div>
-          <input id="autocomplete-hersteller-input" type="text"
-            class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-            value="{% if product.brand %}{{ product.brand.name }}{% endif %}" placeholder="Hersteller">
-          <div id="autocomplete-hersteller-list"
-            class="absolute autocomplete-list left-0 z-10 mt-2 hidden max-h-44 w-64 overflow-y-scroll rounded-lg border bg-white shadow-lg">
-            <!-- Autocomplete options will be added here dynamically -->
-          </div>
-        </div>
-        <!-- Hersteller Autocomplete  -->
-        <div class="relative">
-          <div class="mb-1 flex justify-between">
-            <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Kategorien
-            </label>
-          </div>
-          <div class="flex justify-between">
-            <input id="autocomplete-category-input" type="text"
-              class="w-full appearance-none rounded-lg border-2 border-gray-200 bg-gray-200 px-4 py-2 leading-tight text-gray-700 focus:border-blue-500 focus:bg-white focus:outline-none"
-              placeholder="Suche nach Kategorie..." />
-            <div id="autocomplete-category-list"
-              class="absolute autocomplete-list left-0 z-10 mt-10 hidden max-h-44 w-64 overflow-y-scroll rounded-lg border bg-white shadow-lg">
-              <!-- Autocomplete options will be added here dynamically -->
-            </div>
-            <button id="addCategory" type="button"
-              class="ml-2 rounded-lg bg-green-400 p-1 text-base font-semibold text-white hover:bg-green-500">Hinzufügen</button>
-          </div>
-        </div>
-        <!-- Kategorien Liste -->
-        <div id="added-category-list" class="flex flex-wrap gap-1">
-          <!-- Added countries will be displayed here -->
-          {% for category in product.categories.all %}
-          <div data-category="{{ category.name }}"
-            class="mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5 added-category">
-            <span class="category-name">{{ category.name }}</span>
-            <span class="cursor-pointer pl-2 text-lg font-semibold text-red-500 remove-category-btn">&times;</span>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div>
-        <div>
-          <div class="flex items-center justify-between px-4">
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
             <div>
-              <label class="mb-1 block w-24 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Galerie
-              </label>
+              <h2 class="text-lg font-semibold text-gray-900">Spezifikationen</h2>
+              <p class="text-sm text-gray-500">Beliebige Merkmale wie Länge, Breite, PS, Material oder Farbe</p>
             </div>
-            <button type="button"
-              class="bg-blue-500 edit-galery hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer">
-              Ändern
-            </button>
-          </div>
-          <div id="productGalery" class="carousel mx-20 rounded-lg">
-            {% if product.gallery %}
-              {% if product.gallery.images %}
-                {% for image in product.gallery.images.all %}
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="border-t border-gray-100 pt-5">
+              <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <img src="{{image.upload.url}}" class="w-full rounded-xl" style="height: 16rem;">
+                  <h3 class="text-base font-semibold text-gray-900">Produktdetails</h3>
+                  <p class="text-sm text-gray-500">Füge beliebig viele Spezifikationen hinzu</p>
                 </div>
+
+                <button
+                  type="button"
+                  id="addSpecificationRow"
+                  class="rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Spezifikation hinzufügen
+                </button>
+              </div>
+
+              <div id="productSpecificationsList" class="space-y-3">
+                {% for spec in product.specifications.all %}
+                  <div class="specification-row grid grid-cols-1 gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
+                    <div>
+                      <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">Bezeichnung</label>
+                      <input
+                        type="text"
+                        class="specification-key w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 focus:border-blue-500 focus:outline-none"
+                        placeholder="z.B. PS"
+                        value="{{ spec.key }}"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">Wert</label>
+                      <input
+                        type="text"
+                        class="specification-value w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 focus:border-blue-500 focus:outline-none"
+                        placeholder="z.B. 150"
+                        value="{{ spec.value }}"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      class="remove-specification-row rounded-xl bg-red-50 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-100 md:col-span-2 lg:col-span-1 lg:min-w-[120px] lg:self-end"
+                    >
+                      Entfernen
+                    </button>
+                  </div>
                 {% endfor %}
-              {% endif %}
-            {% endif %}
+              </div>
+
+              <div
+                id="noSpecificationsPlaceholder"
+                class="{% if product.specifications.count %}hidden{% endif %} mt-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500"
+              >
+                Noch keine Spezifikationen vorhanden
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Preis und Verfügbarkeit</h2>
+              <p class="text-sm text-gray-500">Preislogik und Shopstatus des Produkts</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="grid grid-cols-1 gap-5 border-t border-gray-100 pt-5 lg:grid-cols-2">
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700" for="price">Preis</label>
+                <input
+                  id="price"
+                  name="price"
+                  type="text"
+                  value="{{ product.price }}"
+                  required
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                  placeholder="205,20"
+                />
+              </div>
+
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700" for="reducedPrice">Reduzierter Preis</label>
+                <input
+                  id="reducedPrice"
+                  name="reducedPrice"
+                  type="text"
+                  value="{{ product.discount_price|default_if_none:'' }}"
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                  placeholder="199,90"
+                />
+              </div>
+
+              <div class="lg:col-span-2 xl:max-w-sm">
+                <label class="mb-2 block text-sm font-semibold text-gray-700" for="weight">Produktgewicht in kg</label>
+                <input
+                  id="weight"
+                  name="weight"
+                  type="text"
+                  value="{{ product.weight }}"
+                  required
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+                  placeholder="1,5"
+                />
+              </div>
+
+              <div class="lg:col-span-2">
+                <label class="mb-3 block text-sm font-semibold text-gray-700">Status</label>
+
+                <div class="grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-3">
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Aktiv</p>
+                        <p class="mt-1 text-xs text-gray-500">Öffentlich sichtbar</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.is_active %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="activeSwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">In Stock</p>
+                        <p class="mt-1 text-xs text-gray-500">Lagerbestand vorhanden</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.is_in_stock %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="stockSwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Lieferbar</p>
+                        <p class="mt-1 text-xs text-gray-500">Online bestellbar</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.online_sell %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="onlineSwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Reduziert</p>
+                        <p class="mt-1 text-xs text-gray-500">Sonderpreis aktiv</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.is_reduced %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="reducedSwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Showcase only</p>
+                        <p class="mt-1 text-xs text-gray-500">Nur Präsentation, kein Online Kauf</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.showcase_only %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="showcaseOnlySwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:border-blue-400 hover:bg-white cursor-pointer">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Preis im Showcase anzeigen</p>
+                        <p class="mt-1 text-xs text-gray-500">Preis sichtbar lassen, aber ohne Kaufaktion</p>
+                      </div>
+
+                      <span class="relative inline-flex h-6 w-11 items-center">
+                        <input {% if product.show_price_when_showcase %}checked{% endif %}
+                          type="checkbox"
+                          role="switch"
+                          id="showPriceWhenShowcaseSwitch"
+                          class="peer sr-only"
+                        />
+                        <span class="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Dateien</h2>
+              <p class="text-sm text-gray-500">Beliebig viele Dateien dem Produkt zuordnen</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="border-t border-gray-100 pt-5">
+              <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-900">Zugeordnete Dateien</h3>
+                  <p class="text-sm text-gray-500">Dateien auswählen, entfernen und direkt überblicken</p>
+                </div>
+
+                <button
+                  type="button"
+                  class="edit-files rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Dateien auswählen
+                </button>
+              </div>
+
+              <div id="selectedProductFiles" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {% for file in product.files.all %}
+                  <div
+                    class="selected-product-file flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+                    data-file-id="{{ file.id }}"
+                    data-file-url="{{ file.file.url }}"
+                    data-file-title="{{ file.title|default:file.file.name }}"
+                    data-file-ext="{{ file.file.name|lower }}"
+                  >
+                    <div class="min-w-0">
+                      <p class="truncate font-medium text-gray-900">{{ file.title|default:file.file.name }}</p>
+                      <p class="text-sm text-gray-500">{{ file.file.name }}</p>
+                    </div>
+                    <button
+                      type="button"
+                      class="remove-product-file rounded-lg px-3 py-1 text-sm font-semibold text-red-600 hover:bg-red-50"
+                    >
+                      Entfernen
+                    </button>
+                  </div>
+                {% empty %}
+                  <div class="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                    Noch keine Dateien zugeordnet
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Titelbild</h2>
+              <p class="text-sm text-gray-500">Bild ersetzen und Vorschau direkt sehen</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="space-y-4 border-t border-gray-100 pt-5">
+              <div class="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-5 text-center">
+                <svg class="mx-auto mb-4 w-20 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+
+                <label class="inline-block">
+                  <input
+                    id="titleImgUpload"
+                    class="hidden"
+                    type="file"
+                    accept="image/jpg,image/png,image/jpeg,image/gif"
+                  />
+                  <span class="inline-block cursor-pointer rounded-xl bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-500">
+                    Neues Bild auswählen
+                  </span>
+                </label>
+
+                <p class="mt-3 text-sm text-gray-500">Das aktuelle Bild bleibt erhalten, wenn du nichts auswählst</p>
+              </div>
+
+              <div class="flex min-h-[18rem] items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                {% if product.title_image %}
+                  <img id="productImage" src="{{ product.title_image.url }}" alt="{{ product.title }}" class="max-h-72 rounded-xl object-contain">
+                {% else %}
+                  <img id="productImage" src="{% static 'images/placeholder-image.png' %}" alt="Kein Bild" class="max-h-72 rounded-xl object-contain">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible>
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Galerie</h2>
+              <p class="text-sm text-gray-500">Zusätzliche Bilder dem Produkt zuordnen</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="border-t border-gray-100 pt-5">
+              <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-900">Bildergalerie</h3>
+                  <p class="text-sm text-gray-500">Zusätzliche Bilder auswählen und direkt prüfen</p>
+                </div>
+
+                <button
+                  type="button"
+                  class="edit-galery rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Wählen
+                </button>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <div class="product-gallery-wrapper relative mx-auto max-w-md">
+                  <div id="productGalery" class="carousel rounded-xl">
+                    {% if product.gallery %}
+                      {% for image in product.gallery.images.all %}
+                        <div>
+                          <img src="{{ image.upload.url }}" class="h-72 w-full rounded-xl object-cover" alt="">
+                        </div>
+                      {% empty %}
+                        <div class="flex h-72 items-center justify-center rounded-xl border border-dashed border-gray-300 text-sm text-gray-500">
+                          Die ausgewählte Galerie enthält keine Bilder
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <div class="flex h-72 items-center justify-center rounded-xl border border-dashed border-gray-300 text-sm text-gray-500">
+                        Noch keine Galerie ausgewählt
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapsible-card rounded-2xl border border-gray-200 bg-white shadow-sm pb-4" data-collapsible data-collapsed="true">
+          <button
+            type="button"
+            class="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+            data-collapsible-trigger
+          >
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Hinweise</h2>
+              <p class="text-sm text-gray-500">Wichtige Informationen zum Speichern und Bearbeiten</p>
+            </div>
+
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+              <svg class="collapsible-trigger-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </button>
+
+          <div class="collapsible-content px-5 pb-5">
+            <div class="border-t border-gray-100 pt-5">
+              <div class="grid grid-cols-1 gap-3">
+                <div class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-gray-700">Preis und reduzierter Preis werden beim Speichern geprüft</p>
+                </div>
+
+                <div class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-gray-700">Ohne neues Titelbild bleibt das aktuelle Bild bestehen</p>
+                </div>
+
+                <div class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-gray-700">Dateien können in beliebiger Anzahl zugeordnet werden</p>
+                </div>
+
+                <div class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-gray-700">Galerie und Dateien werden direkt am Produkt gespeichert</p>
+                </div>
+
+                <div class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-gray-700">Spezifikationen können frei pro Produkt gepflegt werden</p>
+                </div>
+
+                <div class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                  <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
+                    </svg>
+                  </span>
+                  <p class="text-sm leading-6 text-amber-800">Showcase Produkte sind nicht für den Online Kauf gedacht</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="mb-6 mt-6"></div>
   </form>
 </div>
 
-
-
+<div
+  id="productFormConfig"
+  data-categories-url="{% url 'cms:get-categories' %}"
+  data-products-url="{% url 'cms:products' %}"
+  data-update-url="{% url 'cms:product-detail-update' product_id=product.id slug=product.slug %}"
+  data-delete-url="{% url 'cms:product-detail-delete' product_id=product.id slug=product.slug %}"
+  data-galleries-url="{% url 'cms:all-galerien' %}"
+  data-gallery-images-url="{% url 'cms:galery-get-images' %}"
+  data-anyfiles-url="{% url 'cms:anyfiles-all' %}"
+></div>
 
 {% endblock %}
 
@@ -258,23 +770,42 @@
 {% compress js inline %}
 <script src="{% static 'js/cms/products/product-detail.js' %}"></script>
 <script src="{% static 'js/cms/products/product-galery.js' %}"></script>
-<!-- Needed for Galery -->
+<script src="{% static 'js/cms/products/product-files.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+
 <script>
   $('.carousel').slick({
-    dots: true,  // Display navigation dots
-    arrows: true,  // Display navigation arrows
-    infinite: true,  // Enable infinite looping
-    slidesToShow: 1,  // Number of slides to show at once
-    slidesToScroll: 1,  // Number of slides to scroll at a time
+    dots: true,
+    arrows: true,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
-    // Add any other configuration options as needed
-  });
-</script>
-<script defer>
+    autoplaySpeed: 3000
+  })
+
+  function setCollapsibleState(card, collapsed) {
+    if (collapsed) {
+      card.classList.add('is-collapsed')
+    } else {
+      card.classList.remove('is-collapsed')
+    }
+  }
+
   $(document).ready(function () {
-    loadGalerien(false);
+    loadGalerien(false)
+
+    $('[data-collapsible]').each(function () {
+      const card = this
+      const shouldStartCollapsed = card.dataset.collapsed === 'true'
+      setCollapsibleState(card, shouldStartCollapsed)
+    })
+
+    $(document).on('click', '[data-collapsible-trigger]', function () {
+      const card = $(this).closest('[data-collapsible]')[0]
+      const isCollapsed = card.classList.contains('is-collapsed')
+      setCollapsibleState(card, !isCollapsed)
+    })
   })
 </script>
 {% endcompress js %}

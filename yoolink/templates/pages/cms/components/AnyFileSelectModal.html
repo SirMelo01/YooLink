@@ -1,0 +1,55 @@
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-500 bg-opacity-75" id="anyFileModal">
+  <div class="modal-container max-h-full w-full max-w-5xl rounded-2xl bg-white p-4 shadow-lg">
+    <div class="flex items-center justify-between border-b p-4">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">Dateien auswählen</h3>
+        <p class="text-sm text-gray-500">Mehrere Dateien gleichzeitig dem Produkt zuordnen</p>
+      </div>
+      <button
+        type="button"
+        id="closeAnyFileModal"
+        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="p-4">
+      <div class="mb-4 flex items-center gap-3">
+        <input
+          id="anyFileSearch"
+          type="text"
+          placeholder="Datei suchen"
+          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 focus:border-blue-500 focus:bg-white focus:outline-none"
+        >
+        <button
+          id="reloadAnyFiles"
+          type="button"
+          class="rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-700"
+        >
+          Laden
+        </button>
+        <a
+          href="{% url 'cms:anyfile-list' %}"
+          target="_blank"
+          class="rounded-xl bg-green-500 px-4 py-2 font-semibold text-white hover:bg-green-700"
+        >
+          Verwalten
+        </a>
+      </div>
+
+      <div id="possibleAnyFiles" class="grid max-h-[32rem] grid-cols-1 gap-3 overflow-y-auto md:grid-cols-2 xl:grid-cols-3">
+      </div>
+    </div>
+
+    <div class="flex justify-end border-t p-4">
+      <button
+        type="button"
+        id="confirmAnyFiles"
+        class="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-white hover:bg-blue-700"
+      >
+        Auswahl übernehmen
+      </button>
+    </div>
+  </div>
+</div>

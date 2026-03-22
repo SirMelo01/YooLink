@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, Product
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings
 import datetime
 from django.http import HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
@@ -160,20 +160,3 @@ def skills_view(request):
     context["textContent_custom"] = TextContent.objects.filter(name="main_skills_custom").first()
 
     return render(request, 'pages/skills.html', context)
-
-def shop(request):
-   context={"products": Product.objects.filter(is_active=True)}
-   context.update(get_opening_hours())
-   return render(request, 'pages/shop.html', context)
-
-def detail(request, product_id, slug):
-    product = get_object_or_404(Product, id=product_id, slug=slug)
-    last_url = request.META.get('HTTP_REFERER')
-    if not product.is_active:
-        return render(request, "pages/errors/error.html", {
-            "error": "Dieses Produkt ist nicht mehr verfügbar",
-            "saveLink": last_url if last_url else '/'
-        })
-    context={"product": product}
-    context.update(get_opening_hours())
-    return render(request, 'pages/detail.html', context)

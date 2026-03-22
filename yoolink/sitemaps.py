@@ -1,7 +1,8 @@
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import reverse
 from django.utils import timezone
-from yoolink.ycms.models import Blog, Product
+from yoolink.ycms.applications.shop.models import Product
+from yoolink.ycms.models import Blog
 #from django.urls import reverse
 from django.utils.translation import get_language
 

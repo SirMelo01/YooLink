@@ -51,7 +51,7 @@
             <p class="text-xs text-green-600">Versandkosten basierend auf Bestellwert</p>
             <div class="mt-10 flex items-center justify-center space-x-4">
               <input id="amount" type="number" min="1" class="w-20 appearance-none rounded-xl border border-gray-300 px-4 py-2 leading-tight text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value="1" placeholder="1" />
-              <button productId="{{product.id}}" id="addToCart" class="flex items-center rounded-full bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-700">
+              <button data-product-id="{{product.id}}" id="addToCart" class="flex items-center rounded-full bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-700">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-plus mr-2 h-5 w-5" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5" />
                   <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />

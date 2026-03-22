@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, shop, detail, load_cmsinfo, skills_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, skills_view
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
@@ -14,7 +14,7 @@ from django.urls import path, include
 from django.contrib.sitemaps.views import sitemap
 from yoolink.sitemaps import StaticViewSitemap, BlogSitemap, ProductSitemap
 
-from yoolink.ycms.views import cart_verify_success_view, cart_view, order_verify_success_view, order_verify_view
+from yoolink.ycms.applications.shop.views import cart_verify_success_view, cart_view, order_verify_success_view, order_verify_view
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -22,8 +22,7 @@ sitemaps = {
     'product': ProductSitemap,
 }
 
-from django.conf.urls.i18n import i18n_patterns
-from django.conf.urls.i18n import set_language
+from django.conf.urls.i18n import i18n_patterns, set_language
 
 urlpatterns = [
     # Admin und API können gerne ohne Sprachprefix bleiben
@@ -38,6 +37,7 @@ urlpatterns = [
     path('cart/success/', cart_verify_success_view, name='cart-verify-success-view'),
     path('order/verify/', order_verify_view, name='order-verify'),
     path('order/success/', order_verify_success_view, name='order-verify-success-view'),
+    path("shop/", include("yoolink.ycms.applications.shop.public_urls")),
     path("", include('django.contrib.auth.urls')),
 ]
 
@@ -53,16 +53,14 @@ urlpatterns += i18n_patterns(
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
     path("kunden/", view=load_kunden, name="kunden"),
     path("skills/", view=skills_view, name="skills"),
-
-    # Shop urls
-    path("products/", view=shop, name="products"),
-    path("products/<int:product_id>-<slug:slug>/", view=detail, name="product-detail"),
+    path("products/", include("yoolink.ycms.applications.shop.public_product_urls")),
     prefix_default_language=False,
 )
 
 
 
 if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # This allows the error pages to be debugged during development, just visit
     # these url in browser to see how these error pages look like.
     urlpatterns += [

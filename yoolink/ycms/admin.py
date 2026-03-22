@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Button, Galerie, Notification, OpeningHours, PricingCard, PricingFeature, ShippingAddress, TeamMember, UserSettings, GaleryImage, FAQ, Product, VideoFile, fileentry, Blog, Message, TextContent, Order, OrderItem, Review, Brand, Category
+from .models import Button, Galerie, Notification, OpeningHours, PricingCard, PricingFeature, TeamMember, UserSettings, GaleryImage, FAQ, VideoFile, fileentry, Blog, Message, TextContent
 
 # Register your models here.
 
@@ -10,15 +10,8 @@ admin.site.register(FAQ)
 admin.site.register(fileentry)
 admin.site.register(Blog)
 admin.site.register(TextContent)
-admin.site.register(Product)
-admin.site.register(Category)
-admin.site.register(Brand)
-admin.site.register(OrderItem)
-admin.site.register(Order)
-admin.site.register(Review)
 admin.site.register(UserSettings)
 admin.site.register(OpeningHours)
-admin.site.register(ShippingAddress)
 admin.site.register(TeamMember)
 admin.site.register(PricingFeature)
 admin.site.register(Button)
