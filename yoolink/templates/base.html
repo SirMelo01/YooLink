@@ -18,6 +18,26 @@
     <link rel="icon" type="image/png" href="{% static 'favicon/favicon-32x32.png' %}" sizes="32x32" />
     <link rel="icon" type="image/png" href="{% static 'favicon/favicon-16x16.png' %}" sizes="16x16" />
 
+
+
+
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}YooLink - Webdesign Agentur Deggendorf{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Transparenz, Sichtbarkeit und ein junges dynamisches Team.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://yoolink.de{% static 'images/og-preview.png' %}{% endblock %}">
+    <meta property="og:url" content="https://yoolink.de{{ request.path }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YooLinkDE">
+    <meta name="twitter:title" content="{% block twitter_title %}YooLink - Webdesign Agentur Deggendorf{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Transparenz, Sichtbarkeit und ein junges dynamisches Team.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}https://yoolink.de{% static 'images/og-preview.png' %}{% endblock %}">
+
+
+
     {% block structured_data %}{% endblock %}
 
     {% compress css inline %}
