@@ -3,45 +3,50 @@
 {% block title %}{{block.super}} | Impressum{% endblock title %}
 
 {% block content %}
-<div class="flex flex-wrap  ml-3 justify-normal md:justify-evenly mt-12 ">
-    <div class="mr-5 ">
-     <h1 class="text-3xl text-blue-900">
-        Impressum
-      </h1>
-      <p class="italic">Angaben gemäß § 5 TMG</p>
-      <br>
-      <p class="text-md">Sebastian Rauch</p>
-      <p class="text-md">Am Altbach 6</p>
-      <p class="text-md">94491 Hengersberg</p>
-      <h2 class="text-md mt-3">
-        Vertreten durch:
-      </h2>
-      <p class="text-md">Sebastian Rauch</p>
-      <br>
-    </div>
-    <div class="mb-5 md:mb-0  md:ml-0  ">
-      <h2 class="text-3xl mb-2 text-blue-900">
-        Kontakt
-      </h2>
-      <p class="text-md">Telefon: </p>
-      <p class="text-md">E-mail: yoolink@t-online.de</p>
-      <h2 class="text-md mt-3s">
-        Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
-      </h2>
-      <p class="text-md">Sebastian Rauch</p>
-      <p class="text-md">Am Altbach 6</p>
-      <p class="text-md">94491 Hengersberg</p>
-    </div>
+<div class="container pt-10 pb-16 w-full mx-auto px-2 md:px-40">
+  <div>
+    <h1 class="text-3xl font-bold text-center sm:text-5xl text-gray-900">Impressum</h1>
   </div>
-    <br>
-    <br>
-  <div class="hidden lg:block">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
+  <div class="mt-8">
+    <h2 class="text-lg md:text-2xl">YooLink</h2>
+    <p>Angaben gemäß § 5 TMG</p>
+    <p>Inhaber: <b>Sebastian Rauch</b></p>
   </div>
+
+  <div class="mt-6">
+    <h2 class="text-lg md:text-2xl">Anschrift</h2>
+    <p>Am Altbach 6</p>
+    <p>94491 Hengersberg</p>
+    <p>Deutschland</p>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="text-lg md:text-2xl">Kontakt</h2>
+    <p>Telefon: <a href="tel:+491705977862" class="hover:underline">+49 170 5977862</a></p>
+    <p>E-Mail: <a href="mailto:info@yoolink.de" class="hover:underline">info@yoolink.de</a></p>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="text-lg md:text-2xl">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+    <p>Sebastian Rauch</p>
+    <p>Anschrift wie oben</p>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="text-lg md:text-2xl">Haftungshinweis</h2>
+    <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+  </div>
+
+  <div class="mt-6 mb-8">
+    <h2 class="text-lg md:text-2xl">Copyright</h2>
+    <p>© YooLink – Sebastian Rauch. Alle Rechte vorbehalten.</p>
+    <p>Text, Bilder, Grafiken und Videos unterliegen dem Schutz des Urheberrechts. Der Inhalt dieser Website darf nicht zu kommerziellen Zwecken kopiert, verbreitet oder verändert werden.</p>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="text-lg md:text-2xl">Steuerliche Angaben</h2>
+    <p>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
+  </div>
+</div>
   {%endblock content%}

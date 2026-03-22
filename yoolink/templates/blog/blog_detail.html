@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% load compress static %}
+{% block title %}{{ blog.title }} | Blog | {{block.super}}{% endblock title %}
 
-{% block javascript %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
-<!-- Add the slick-theme.css if you want default styling -->
-<link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
-<link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
-<link href="{% static 'css/blog.css' %}" rel="stylesheet" type="text/css">
+{% block css %}
+{% compress css inline %}
+<link rel="stylesheet" href="{% static 'css/cms/slick/slick-carousel.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/cms/slick/slick-theme.css' %}"/>
+<link href="{% static 'css/prism/prism.css' %}" rel="stylesheet">
+<link href="{% static 'css/blog.css' %}" rel="stylesheet">
+{% endcompress %}
 {% endblock %}
 
-{% block title %}{{block.super}} | Blog | {{ blog.title }}{% endblock title %}
 
 {% block content %}
 
@@ -20,7 +21,7 @@
                 <address class="flex items-center mb-6 not-italic">
                     <div class="inline-flex items-center mr-3 text-sm text-gray-900">
                         <img class="mr-4 w-16 h-16 rounded-full objec-cover"
-                            src="{% static 'images/designImg/profil.webp' %}" alt="">
+                            src="{% static 'images/designImg/profil.webp' %}" alt="Profilbild {{ blog.author }}">
                         <div>
                             <div rel="author" class="text-xl font-bold text-gray-900">{{ blog.author }}</div>
                             <p class="text-base font-light text-gray-500"><time pubdate datetime="{{ blog.date }}"
@@ -28,7 +29,6 @@
                         </div>
                     </div>
                 </address>
-                <!--<h1 class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{{ blog.title }}</h1>-->
             </header>
             {% if blog.active %}
             {{ blog.body | safe }}
@@ -36,7 +36,7 @@
             <p>Dieser Blog ist nicht aktiv!</p>
             {% endif %}
             
-            <br /><br /><br /><br />
+            <div class="pb-16"></div>
             <a href="{% url 'blog:blog' %}"
                 class="bg-blue-900 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md">
                 Zurück
