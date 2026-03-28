@@ -86,7 +86,20 @@ INSTALLED_APPS += ["anymail"]  # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_PORT = env("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
+EMAIL_TIMEOUT = 5
 ANYMAIL = {}
 
 # django-compressor

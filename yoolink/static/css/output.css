@@ -2304,6 +2304,11 @@ video {
   border-color: transparent;
 }
 
+.border-red-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 202 202 / var(--tw-border-opacity));
+}
+
 .border-t-transparent {
   border-top-color: transparent;
 }
@@ -6208,6 +6213,11 @@ video {
 
   .lg\:text-\[14px\] {
     font-size: 14px;
+  }
+
+  .lg\:text-6xl {
+    font-size: 3.75rem;
+    line-height: 1;
   }
 }
 

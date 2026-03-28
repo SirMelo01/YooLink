@@ -160,3 +160,6 @@ def skills_view(request):
     context["textContent_custom"] = TextContent.objects.filter(name="main_skills_custom").first()
 
     return render(request, 'pages/skills.html', context)
+
+# Authentication
+

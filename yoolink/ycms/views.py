@@ -177,24 +177,29 @@ def custom_logout(request):
     return redirect('home')
 
 def Login_Cms(request):
-    admin = False
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            user_authenticated = user.objects.get(username=user.get_username())
-            
-            login(request, user)
-            return redirect('pages/cms/cms.html')
-        else:
-            #messages.error(request, "Falsche Anmeldeinformationen. Bitte versuchen Sie es erneut.")
-            return redirect('pages/home.html')
-       
-    return render(request, 'registration/login.html', {
-        'currentPath': request.get_full_path
-    })
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+
+        authenticated_user = authenticate(
+            request,
+            username=username,
+            password=password,
+        )
+
+        if authenticated_user is not None:
+            login(request, authenticated_user)
+            return redirect("pages/cms/cms.html")
+
+        return redirect("/")
+
+    return render(
+        request,
+        "registration/login.html",
+        {
+            "currentPath": request.get_full_path(),
+        },
+    )
 
 
 # --------------- [FILES] ---------------

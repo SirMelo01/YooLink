@@ -27,7 +27,13 @@ CACHES = {
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend",
+)
+
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    default="dev@yoolink.local",
 )
 
 # WhiteNoise

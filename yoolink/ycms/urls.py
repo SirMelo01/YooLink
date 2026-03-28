@@ -1,6 +1,14 @@
 from django.urls import path, include
 from . import views
 
+from .auth_views import (
+    CMSPasswordChangeDoneView,
+    CMSPasswordChangeView,
+    CMSPasswordResetCompleteView,
+    CMSPasswordResetConfirmView,
+    CMSPasswordResetDoneView,
+    CMSPasswordResetRequestView,
+)
 
 app_name = "cms"
 
@@ -132,4 +140,13 @@ urlpatterns = [
 
     # Shop CMS
     path("shop/", include("yoolink.ycms.applications.shop.cms_urls")),
+
+    # Auth
+    path("account/password/", CMSPasswordChangeView.as_view(), name="password_change"),
+    path("account/password/done/", CMSPasswordChangeDoneView.as_view(), name="password_change_done"),
+
+    path("password-reset/", CMSPasswordResetRequestView.as_view(), name="password_reset"),
+    path("password-reset/done/", CMSPasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("reset/<uidb64>/<token>/", CMSPasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("reset/done/", CMSPasswordResetCompleteView.as_view(), name="password_reset_complete"),
 ]

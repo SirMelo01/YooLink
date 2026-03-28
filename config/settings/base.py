@@ -251,21 +251,6 @@ SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
 
-# EMAIL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
-EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-EMAIL_PORT = env("EMAIL_PORT", default=587)
-EMAIL_USE_TLS = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
-EMAIL_TIMEOUT = 5
-
 EMAIL_OWNER = 'yoolink@t-online.de'
 DASHBOARD_URL = 'https://yoolink.de/'
 
