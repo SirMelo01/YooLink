@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.applications.shop.models import Product
 from yoolink.ycms.models import AnyFile, Button, Notification, PricingCard, PricingFeature, TeamMember, VideoFile, fileentry, OpeningHours, FAQ, UserSettings, Order, Message, Galerie, Blog, GaleryImage, TextContent
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
@@ -31,8 +32,17 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt
 from django.templatetags.static import static
 from django.utils import translation
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_POST
+from django.utils import timezone
+from datetime import timedelta
+from random import SystemRandom
+from yoolink.ycms.tasks import send_login_2fa_email
 
 DEFAULT_LANGUAGE = "en"
+
+
 
 def get_active_language(request):
     """Holt die aktuelle Sprache aus dem Request oder setzt Fallback auf 'en'"""
@@ -171,15 +181,138 @@ def cms(request):
     }
     return render(request, 'pages/cms/cms.html', data)
 
-# Custom Logout function
+
+#########################################
+############ Authentication #############
+#########################################
+
+User = get_user_model()
+
+CMS_2FA_SESSION_USER_ID = "cms_2fa_user_id"
+CMS_2FA_SESSION_BACKEND = "cms_2fa_backend"
+CMS_2FA_SESSION_ATTEMPTS = "cms_2fa_attempts"
+CMS_2FA_MAX_ATTEMPTS = 5
+
+def _generate_2fa_code():
+    return f"{SystemRandom().randrange(0, 1000000):06d}"
+
+def _mask_email(email):
+    if not email or "@" not in email:
+        return email
+
+    local_part, domain_part = email.split("@", 1)
+
+    if len(local_part) <= 2:
+        masked_local = local_part[0] + "*" * max(len(local_part) - 1, 1)
+    else:
+        masked_local = local_part[:2] + "*" * (len(local_part) - 2)
+
+    return f"{masked_local}@{domain_part}"
+
+def _store_login_2fa_session(request, authenticated_user):
+    request.session[CMS_2FA_SESSION_USER_ID] = authenticated_user.id
+    request.session[CMS_2FA_SESSION_BACKEND] = authenticated_user.backend
+    request.session[CMS_2FA_SESSION_ATTEMPTS] = 0
+
+
+def _clear_login_2fa_session(request):
+    request.session.pop(CMS_2FA_SESSION_USER_ID, None)
+    request.session.pop(CMS_2FA_SESSION_BACKEND, None)
+    request.session.pop(CMS_2FA_SESSION_ATTEMPTS, None)
+
+def _issue_login_2fa_code(user_settings, user):
+    email = (user_settings.email or "").strip()
+
+    if not email:
+        raise ValidationError("Für die E-Mail-2FA ist keine E-Mail-Adresse hinterlegt.")
+
+    validate_email(email)
+
+    code = _generate_2fa_code()
+    expires_at = timezone.now() + timedelta(minutes=10)
+
+    user_settings.two_factor_email_code = code
+    user_settings.two_factor_email_code_expires_at = expires_at
+    user_settings.two_factor_email_verified = False
+    user_settings.save(update_fields=[
+        "two_factor_email_code",
+        "two_factor_email_code_expires_at",
+        "two_factor_email_verified",
+    ])
+
+    try:
+        send_login_2fa_email.delay(
+            recipient_email=email,
+            recipient_name=user_settings.full_name or user.get_username(),
+            code=code,
+            expires_at=expires_at.isoformat(),
+        )
+    except Exception as exc:
+        user_settings.two_factor_email_code = ""
+        user_settings.two_factor_email_code_expires_at = None
+        user_settings.save(update_fields=[
+            "two_factor_email_code",
+            "two_factor_email_code_expires_at",
+        ])
+        raise RuntimeError("Die Bestätigungs-E-Mail konnte nicht vorbereitet werden.") from exc
+
+    return code, expires_at, email
+
+def _queue_login_2fa_for_user(user_settings, user):
+    code, expires_at, email = _issue_login_2fa_code(user_settings, user)
+    return code, expires_at, email
+
 def custom_logout(request):
+    _clear_login_2fa_session(request)
     logout(request)
-    return redirect('home')
+    return redirect("ycms:login")
 
 def Login_Cms(request):
+    if request.user.is_authenticated:
+        return redirect("ycms:cms")
+
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
+
+        if not username and not password:
+            login_error = "Bitte Nutzername und Passwort eingeben."
+            messages.error(request, login_error)
+            return render(
+                request,
+                "registration/login.html",
+                {
+                    "currentPath": request.get_full_path(),
+                    "login_error": login_error,
+                    "username_value": username,
+                },
+            )
+
+        if not username:
+            login_error = "Bitte einen Nutzernamen eingeben."
+            messages.error(request, login_error)
+            return render(
+                request,
+                "registration/login.html",
+                {
+                    "currentPath": request.get_full_path(),
+                    "login_error": login_error,
+                    "username_value": username,
+                },
+            )
+
+        if not password:
+            login_error = "Bitte ein Passwort eingeben."
+            messages.error(request, login_error)
+            return render(
+                request,
+                "registration/login.html",
+                {
+                    "currentPath": request.get_full_path(),
+                    "login_error": login_error,
+                    "username_value": username,
+                },
+            )
 
         authenticated_user = authenticate(
             request,
@@ -187,11 +320,51 @@ def Login_Cms(request):
             password=password,
         )
 
-        if authenticated_user is not None:
-            login(request, authenticated_user)
-            return redirect("pages/cms/cms.html")
+        if authenticated_user is None:
+            login_error = "Benutzername oder Passwort ist ungültig."
+            messages.error(request, login_error)
+            return render(
+                request,
+                "registration/login.html",
+                {
+                    "currentPath": request.get_full_path(),
+                    "login_error": login_error,
+                    "username_value": username,
+                },
+            )
 
-        return redirect("/")
+        user_settings = _get_user_settings(authenticated_user)
+
+        if user_settings.two_factor_email_enabled:
+            try:
+                _queue_login_2fa_for_user(user_settings, authenticated_user)
+            except ValidationError as exc:
+                return render(
+                    request,
+                    "registration/login.html",
+                    {
+                        "currentPath": request.get_full_path(),
+                        "login_error": str(exc),
+                        "username_value": username,
+                    },
+                )
+            except RuntimeError:
+                return render(
+                    request,
+                    "registration/login.html",
+                    {
+                        "currentPath": request.get_full_path(),
+                        "login_error": "Der Sicherheitscode konnte nicht per E-Mail versendet werden.",
+                        "username_value": username,
+                    },
+                )
+
+            _store_login_2fa_session(request, authenticated_user)
+
+            return redirect("ycms:login-2fa")
+
+        login(request, authenticated_user)
+        return redirect("ycms:cms")
 
     return render(
         request,
@@ -201,6 +374,145 @@ def Login_Cms(request):
         },
     )
 
+def Login_Cms_2FA_Verify(request):
+    pending_user_id = request.session.get(CMS_2FA_SESSION_USER_ID)
+    backend = request.session.get(CMS_2FA_SESSION_BACKEND)
+
+    if not pending_user_id or not backend:
+        return redirect("ycms:login")
+
+    try:
+        pending_user = User.objects.get(id=pending_user_id)
+    except User.DoesNotExist:
+        _clear_login_2fa_session(request)
+        return redirect("ycms:login")
+
+    user_settings = _get_user_settings(pending_user)
+    masked_email = _mask_email(user_settings.email)
+
+    if request.method == "POST":
+        action = request.POST.get("action", "verify")
+
+        if action == "resend":
+            try:
+                _queue_login_2fa_for_user(user_settings, pending_user)
+                request.session[CMS_2FA_SESSION_ATTEMPTS] = 0
+                return render(
+                    request,
+                    "registration/login_2fa.html",
+                    {
+                        "masked_email": masked_email,
+                        "success_message": "Ein neuer Sicherheitscode wurde versendet.",
+                    },
+                )
+            except ValidationError as exc:
+                return render(
+                    request,
+                    "registration/login_2fa.html",
+                    {
+                        "masked_email": masked_email,
+                        "error_message": str(exc),
+                    },
+                )
+            except RuntimeError:
+                return render(
+                    request,
+                    "registration/login_2fa.html",
+                    {
+                        "masked_email": masked_email,
+                        "error_message": "Der Sicherheitscode konnte nicht erneut versendet werden.",
+                    },
+                )
+
+        entered_code = request.POST.get("code", "").strip()
+
+        if not entered_code:
+            return render(
+                request,
+                "registration/login_2fa.html",
+                {
+                    "masked_email": masked_email,
+                    "error_message": "Bitte gib den Sicherheitscode ein.",
+                },
+            )
+
+        if not user_settings.two_factor_email_code:
+            return render(
+                request,
+                "registration/login_2fa.html",
+                {
+                    "masked_email": masked_email,
+                    "error_message": "Es wurde noch kein Sicherheitscode erzeugt.",
+                },
+            )
+
+        if (
+            user_settings.two_factor_email_code_expires_at
+            and timezone.now() > user_settings.two_factor_email_code_expires_at
+        ):
+            user_settings.two_factor_email_code = ""
+            user_settings.two_factor_email_code_expires_at = None
+            user_settings.two_factor_email_verified = False
+            user_settings.save(update_fields=[
+                "two_factor_email_code",
+                "two_factor_email_code_expires_at",
+                "two_factor_email_verified",
+            ])
+
+            return render(
+                request,
+                "registration/login_2fa.html",
+                {
+                    "masked_email": masked_email,
+                    "error_message": "Der Sicherheitscode ist abgelaufen. Bitte fordere einen neuen Code an.",
+                },
+            )
+
+        if entered_code != user_settings.two_factor_email_code:
+            attempts = int(request.session.get(CMS_2FA_SESSION_ATTEMPTS, 0)) + 1
+            request.session[CMS_2FA_SESSION_ATTEMPTS] = attempts
+
+            if attempts >= CMS_2FA_MAX_ATTEMPTS:
+                _clear_login_2fa_session(request)
+                return render(
+                    request,
+                    "registration/login_2fa.html",
+                    {
+                        "masked_email": masked_email,
+                        "error_message": "Zu viele Fehlversuche. Bitte melde dich erneut an.",
+                    },
+                )
+
+            return render(
+                request,
+                "registration/login_2fa.html",
+                {
+                    "masked_email": masked_email,
+                    "error_message": "Der eingegebene Sicherheitscode ist ungültig.",
+                },
+            )
+
+        user_settings.two_factor_email_verified = True
+        user_settings.two_factor_email_code = ""
+        user_settings.two_factor_email_code_expires_at = None
+        user_settings.save(update_fields=[
+            "two_factor_email_verified",
+            "two_factor_email_code",
+            "two_factor_email_code_expires_at",
+        ])
+
+        login(request, pending_user, backend=backend)
+        _clear_login_2fa_session(request)
+
+        return redirect("ycms:cms")
+
+    return render(
+        request,
+        "registration/login_2fa.html",
+        {
+            "masked_email": masked_email,
+        },
+    )
 
 # --------------- [FILES] ---------------
 # Displays Document Upload Page
@@ -1187,61 +1499,116 @@ def email_send(request):
         # Wenn das Formular nicht gültig ist (z. B. durch ein fehlerhaftes reCAPTCHA), wird ein Fehler zurückgegeben
         return Response({'error': 'Formular-Validierung fehlgeschlagen. Bitte versuchen Sie es erneut.'}, status=status.HTTP_400_BAD_REQUEST)
 
+#########################################
+############### Settings ################
+#########################################
+def _get_user_settings(user):
+    user_settings, _ = UserSettings.objects.get_or_create(
+        user=user,
+        defaults={"email": user.email or ""}
+    )
 
-# Settings
+    if not user_settings.email and user.email:
+        user_settings.email = user.email
+        user_settings.save(update_fields=["email"])
+
+    return user_settings
+
+
 @login_required(login_url='login')
 def user_settings_view(request):
-    # Retrieve the UserSettings for the currently logged-in user or any specific user
-    
-    if not UserSettings.objects.filter(user=request.user):
-        UserSettings.objects.create(
-            user = request.user
-        )
-    
-    user_settings = UserSettings.objects.get(user=request.user) 
+    user_settings = _get_user_settings(request.user)
 
     context = {
         'settings': user_settings,
-        # Other context variables if needed
     }
-
     return render(request, 'pages/cms/settings/settings.html', context)
+
 
 @login_required(login_url='login')
 def user_settings_update(request):
-    if request.method == 'POST':
-        user_settings = UserSettings.objects.get(user=request.user)
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Ungültige Anfrage'}, status=405)
 
-        # Update user settings based on the received data
-        user_settings.email = request.POST.get('email', '')
-        user_settings.full_name = request.POST.get('full_name', '')
-        user_settings.company_name = request.POST.get('company_name', '')
-        user_settings.tel_number = request.POST.get('tel_number', '')
-        user_settings.fax_number = request.POST.get('fax_number', '')
-        user_settings.mobile_number = request.POST.get('mobile_number', '')
-        user_settings.website = request.POST.get('website', '')
-        user_settings.address = request.POST.get('address', '')
-        user_settings.global_font = request.POST.get('global_font', '')
+    user_settings = _get_user_settings(request.user)
 
-        # Save the updated user settings
-        user_settings.save()
+    email = request.POST.get('email', '').strip()
+    full_name = request.POST.get('full_name', '').strip()
+    company_name = request.POST.get('company_name', '').strip()
+    tel_number = request.POST.get('tel_number', '').strip()
+    fax_number = request.POST.get('fax_number', '').strip()
+    mobile_number = request.POST.get('mobile_number', '').strip()
+    website = request.POST.get('website', '').strip()
+    address = request.POST.get('address', '').strip()
+    global_font = request.POST.get('global_font', '').strip()
 
-        return JsonResponse({'success': 'Die Einstellungen wurden erfolgreich gespeichert'})
-    else:
-        return JsonResponse({'error': 'Die Einstellungen konnten nicht gespeichert werden'})
+    allowed_fonts = {'', 'font-sans', 'font-serif', 'font-mono'}
+    if global_font not in allowed_fonts:
+        global_font = 'font-sans'
+
+    if email:
+        try:
+            validate_email(email)
+        except ValidationError:
+            return JsonResponse({'error': 'Bitte gib eine gültige E-Mail-Adresse ein.'}, status=400)
+
+    old_email = (user_settings.email or '').strip().lower()
+
+    if user_settings.two_factor_email_enabled and not email:
+        return JsonResponse(
+            {'error': 'Solange die E-Mail-2FA aktiv ist, darf die E-Mail-Adresse nicht leer sein.'},
+            status=400
+        )
+
+    user_settings.email = email
+    user_settings.full_name = full_name
+    user_settings.company_name = company_name
+    user_settings.tel_number = tel_number
+    user_settings.fax_number = fax_number
+    user_settings.mobile_number = mobile_number
+    user_settings.website = website
+    user_settings.address = address
+    user_settings.global_font = global_font
+
+    two_factor_reset = (
+        user_settings.two_factor_email_enabled and
+        old_email != email.lower()
+    )
+
+    if two_factor_reset:
+        user_settings.two_factor_email_enabled = False
+        user_settings.two_factor_email_verified = False
+        user_settings.two_factor_email_code = ''
+        user_settings.two_factor_email_code_expires_at = None
+
+    user_settings.save()
+
+    if request.user.email != email:
+        request.user.email = email
+        request.user.save(update_fields=['email'])
+
+    success_message = 'Die Einstellungen wurden erfolgreich gespeichert.'
+    if two_factor_reset:
+        success_message += ' Die E-Mail wurde geändert, daher wurde die E-Mail-2FA aus Sicherheitsgründen deaktiviert.'
+
+    return JsonResponse({'success': success_message})
+
 
 @login_required(login_url='login')
 def logo_settings_view(request):
-    try:
-        settings = UserSettings.objects.get(user=request.user)
-    except UserSettings.DoesNotExist:
-        settings = UserSettings.objects.create(user=request.user)
+    user_settings = _get_user_settings(request.user)
+    return render(request, 'pages/cms/settings/profile.html', {'settings': user_settings})
 
-    return render(request, 'pages/cms/settings/profile.html', {'settings': settings})
+
+@login_required(login_url='login')
+def security_settings_view(request):
+    user_settings = _get_user_settings(request.user)
+    return render(request, 'pages/cms/settings/security.html', {'settings': user_settings})
+
 
 @login_required(login_url='login')
 def update_logo_favicon(request):
-    user_settings = UserSettings.objects.get(user=request.user)
+    user_settings = _get_user_settings(request.user)
     updated = False
 
     if request.method == 'POST':
@@ -1254,24 +1621,118 @@ def update_logo_favicon(request):
         if updated:
             user_settings.save()
             return JsonResponse({'success': 'Datei erfolgreich aktualisiert'})
-    return JsonResponse({'error': 'Keine Datei übermittelt'})
+
+    return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
+
 
 @login_required(login_url='login')
 def delete_logo_favicon(request):
-    if request.method == 'POST':
-        user_settings = UserSettings.objects.get(user=request.user)
-        file_type = request.POST.get('type')
-        if file_type == 'logo' and user_settings.logo:
-            user_settings.logo.delete(save=False)
-            user_settings.logo = ''
-        elif file_type == 'favicon' and user_settings.favicon:
-            user_settings.favicon.delete(save=False)
-            user_settings.favicon = ''
-        else:
-            return JsonResponse({'error': 'Ungültiger Typ oder keine Datei vorhanden'})
-        user_settings.save()
-        return JsonResponse({'success': f'{file_type.capitalize()} gelöscht'})
-    return JsonResponse({'error': 'Ungültige Anfrage'})
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Ungültige Anfrage'}, status=405)
+
+    user_settings = _get_user_settings(request.user)
+    file_type = request.POST.get('type')
+
+    if file_type == 'logo' and user_settings.logo:
+        user_settings.logo.delete(save=False)
+        user_settings.logo = ''
+    elif file_type == 'favicon' and user_settings.favicon:
+        user_settings.favicon.delete(save=False)
+        user_settings.favicon = ''
+    else:
+        return JsonResponse({'error': 'Ungültiger Typ oder keine Datei vorhanden'}, status=400)
+
+    user_settings.save()
+    return JsonResponse({'success': f'{file_type.capitalize()} gelöscht'})
+
+
+@require_POST
+@login_required(login_url='login')
+def send_email_2fa_code(request):
+    user_settings = _get_user_settings(request.user)
+    email = (user_settings.email or '').strip()
+
+    if not email:
+        return JsonResponse(
+            {'error': 'Bitte speichere zuerst eine E-Mail-Adresse in deinem Profil.'},
+            status=400
+        )
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse({'error': 'Die hinterlegte E-Mail-Adresse ist ungültig.'}, status=400)
+
+    try:
+        _issue_login_2fa_code(user_settings, request.user)
+    except ValidationError as exc:
+        return JsonResponse({'error': str(exc)}, status=400)
+    except RuntimeError:
+        return JsonResponse({'error': 'Die Bestätigungs-E-Mail konnte nicht versendet werden.'}, status=500)
+
+    return JsonResponse({'success': f'Der Bestätigungscode wurde an {email} gesendet.'})
+
+
+@require_POST
+@login_required(login_url='login')
+def verify_email_2fa_code(request):
+    user_settings = _get_user_settings(request.user)
+    code = request.POST.get('code', '').strip()
+
+    if not code:
+        return JsonResponse({'error': 'Bitte gib den Bestätigungscode ein.'}, status=400)
+
+    if not user_settings.two_factor_email_code:
+        return JsonResponse({'error': 'Es wurde noch kein Code angefordert.'}, status=400)
+
+    if user_settings.two_factor_email_code_expires_at and timezone.now() > user_settings.two_factor_email_code_expires_at:
+        user_settings.two_factor_email_code = ''
+        user_settings.two_factor_email_code_expires_at = None
+        user_settings.two_factor_email_verified = False
+        user_settings.save(update_fields=[
+            'two_factor_email_code',
+            'two_factor_email_code_expires_at',
+            'two_factor_email_verified',
+        ])
+        return JsonResponse({'error': 'Der Code ist abgelaufen. Bitte fordere einen neuen an.'}, status=400)
+
+    if code != user_settings.two_factor_email_code:
+        return JsonResponse({'error': 'Der eingegebene Code ist ungültig.'}, status=400)
+
+    if not (user_settings.email or '').strip():
+        return JsonResponse({'error': 'Für die Aktivierung muss eine E-Mail-Adresse hinterlegt sein.'}, status=400)
+
+    user_settings.two_factor_email_enabled = True
+    user_settings.two_factor_email_verified = True
+    user_settings.two_factor_email_code = ''
+    user_settings.two_factor_email_code_expires_at = None
+    user_settings.save(update_fields=[
+        'two_factor_email_enabled',
+        'two_factor_email_verified',
+        'two_factor_email_code',
+        'two_factor_email_code_expires_at',
+    ])
+
+    return JsonResponse({'success': 'Die E-Mail-2FA wurde erfolgreich aktiviert.'})
+
+
+@require_POST
+@login_required(login_url='login')
+def disable_email_2fa(request):
+    user_settings = _get_user_settings(request.user)
+
+    user_settings.two_factor_email_enabled = False
+    user_settings.two_factor_email_verified = False
+    user_settings.two_factor_email_code = ''
+    user_settings.two_factor_email_code_expires_at = None
+    user_settings.save(update_fields=[
+        'two_factor_email_enabled',
+        'two_factor_email_verified',
+        'two_factor_email_code',
+        'two_factor_email_code_expires_at',
+    ])
+
+    return JsonResponse({'success': 'Die E-Mail-2FA wurde deaktiviert.'})
 
 """
 Opening Hours

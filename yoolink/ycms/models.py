@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-
+from django.db.models import Q
 from django.db import models
 import os
 from PIL import Image
@@ -387,12 +387,28 @@ class UserSettings(models.Model):
     logo = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
     favicon = models.ImageField(upload_to=upload_to_user_settings, default="", blank=True)
 
+    two_factor_email_enabled = models.BooleanField(default=False)
+    two_factor_email_verified = models.BooleanField(default=False)
+    two_factor_email_code = models.CharField(max_length=6, blank=True, default='')
+    two_factor_email_code_expires_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=Q(two_factor_email_enabled=False) | ~Q(email=''),
+                name='two_factor_requires_email',
+            ),
+        ]
+
     def __str__(self):
         return f"{self.full_name}'s Einstellungen"
     
     def clean(self):
         if self.vacation_start and self.vacation_end and self.vacation_start > self.vacation_end:
             raise ValidationError("Urlaubsbeginn darf nicht nach dem Urlaubsende liegen.")
+
+        if self.two_factor_email_enabled and not (self.email or '').strip():
+            raise ValidationError("Für die E-Mail-2FA muss eine E-Mail-Adresse hinterlegt sein.")
         
     def is_vacation_banner_active(self):
         """true, wenn Toggle an UND wir innerhalb des optionalen Zeitfensters sind."""

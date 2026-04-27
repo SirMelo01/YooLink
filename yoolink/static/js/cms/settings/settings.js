@@ -1,42 +1,71 @@
-$(document).ready(function() {
-    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+$(document).ready(function () {
+    const $csrf = $('input[name="csrfmiddlewaretoken"]');
+    const csrfToken = $csrf.val();
+    const $updateButton = $('#updateSettings');
 
-    $('#updateSettings').on('click', function() {
-        var email = $('#email').val();
-        var full_name = $('#full_name').val();
-        var company_name = $('#company_name').val();
-        var tel_number = $('#tel_number').val();
-        var fax_number = $('#fax_number').val();
-        var mobile_number = $('#mobile_number').val();
-        var website = $('#website').val();
-        var address = $('#address').val();
-        var global_font = $('#global_font').val();
+    function getErrorMessage(xhr, fallbackMessage) {
+        const response = xhr.responseJSON;
 
-        // AJAX-Anfrage zum Aktualisieren der Benutzereinstellungen
+        if (response && response.error) {
+            return response.error;
+        }
+
+        return fallbackMessage || 'Es kam zu einem Fehler. Versuche es erneut.';
+    }
+
+    function setButtonLoading($button, loadingText) {
+        $button.data('original-text', $button.text());
+        $button.prop('disabled', true).addClass('opacity-70 cursor-not-allowed');
+        $button.text(loadingText);
+    }
+
+    function resetButton($button) {
+        const originalText = $button.data('original-text');
+
+        if (originalText) {
+            $button.text(originalText);
+        }
+
+        $button.prop('disabled', false).removeClass('opacity-70 cursor-not-allowed');
+    }
+
+    function getPayload() {
+        return {
+            email: $.trim($('#email').val()),
+            full_name: $.trim($('#full_name').val()),
+            company_name: $.trim($('#company_name').val()),
+            tel_number: $.trim($('#tel_number').val()),
+            fax_number: $.trim($('#fax_number').val()),
+            mobile_number: $.trim($('#mobile_number').val()),
+            website: $.trim($('#website').val()),
+            address: $.trim($('#address').val()),
+            global_font: $('#global_font').val(),
+            csrfmiddlewaretoken: csrfToken
+        };
+    }
+
+    $updateButton.on('click', function () {
+        const url = $updateButton.data('url') || 'update/';
+
+        setButtonLoading($updateButton, 'Speichert...');
+
         $.ajax({
             type: 'POST',
-            url: 'update/',  // Die URL aktualisieren
-            data: {
-                'email': email,
-                'full_name': full_name,
-                'company_name': company_name,
-                'tel_number': tel_number,
-                'fax_number': fax_number,
-                'mobile_number': mobile_number,
-                'website': website,
-                'address': address,
-                'global_font': global_font,
-                'csrfmiddlewaretoken': csrfToken
-            },
-            success: function(response) {
-                if(response.success) {
+            url: url,
+            data: getPayload(),
+            success: function (response) {
+                if (response.success) {
                     sendNotif(response.success, 'success');
-                } else {
-                    sendNotif(response.error ? response.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error');
+                    return;
                 }
+
+                sendNotif(response.error || 'Es kam zu einem Fehler. Versuche es erneut.', 'error');
             },
-            error: function(error) {
-                sendNotif(error.error ? error.error : 'Es kam zu einem Fehler. Versuche es erneut.', 'error');
+            error: function (xhr) {
+                sendNotif(getErrorMessage(xhr), 'error');
+            },
+            complete: function () {
+                resetButton($updateButton);
             }
         });
     });

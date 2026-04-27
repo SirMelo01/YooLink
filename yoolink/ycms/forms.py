@@ -141,8 +141,8 @@ class UsernameOrEmailPasswordResetForm(forms.Form):
         use_https=False,
         token_generator=default_token_generator,
         from_email=None,
-        subject_template_name="ycms/auth/password_reset_subject.txt",
-        email_template_name="ycms/auth/password_reset_email.txt",
+        subject_template_name="pages/cms/auth/password_reset_subject.txt",
+        email_template_name="pages/cms/auth/password_reset_email.txt",
     ):
         login = self.cleaned_data["login"].strip()
         current_site = get_current_site(request)

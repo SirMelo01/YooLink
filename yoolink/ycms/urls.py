@@ -15,6 +15,7 @@ app_name = "cms"
 urlpatterns = [
     path("", views.cms, name="cms"),
     path("login/", views.Login_Cms, name="login"),
+    path("login/2fa/", views.Login_Cms_2FA_Verify, name="login-2fa"),
     path("logout/", views.custom_logout, name="logout"),
 
     # Images
@@ -75,9 +76,15 @@ urlpatterns = [
     # Settings
     path("settings/", views.user_settings_view, name="settings-view"),
     path("settings/update/", views.user_settings_update, name="settings-update"),
+
     path("settings/logo/", views.logo_settings_view, name="logo-settings"),
     path("settings/logo/update/", views.update_logo_favicon, name="logo-update"),
     path("settings/logo/delete/", views.delete_logo_favicon, name="logo-delete"),
+
+    path("settings/security/", views.security_settings_view, name="security-settings"),
+    path("settings/security/send-code/", views.send_email_2fa_code, name="security-send-code"),
+    path("settings/security/verify-code/", views.verify_email_2fa_code, name="security-verify-code"),
+    path("settings/security/disable-2fa/", views.disable_email_2fa, name="security-disable-2fa"),
 
     # Opening Hours
     path("openinghours/", views.opening_hours_view, name="openinghours-view"),

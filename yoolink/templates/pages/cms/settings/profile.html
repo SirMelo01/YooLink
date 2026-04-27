@@ -1,43 +1,78 @@
 {% extends 'cmsbase.html' %}
 {% load compress static %}
-{% block title %}{{ block.super }} | CMS | Logo{% endblock %}
+{% block title %}{{ block.super }} | CMS | Branding{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-6 max-w-3xl px-2">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <h1 class="text-2xl font-semibold">Logo & Favicon</h1>
-    <p class="text-slate-700">Verwalte dein Logo und dein Favicon</p>
-
-    <div class="mt-6 bg-blue-50 p-4 rounded-xl shadow-lg">
-        <h2 class="text-xl font-medium mb-4">Logo</h2>
-        {% if settings.logo %}
-        <img src="{{ settings.logo.url }}" alt="Logo" class="max-h-16 mb-4">
-        {% endif %}
-        <input type="file" id="logo" class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md" />
-        <button id="uploadLogo"
-            class="mt-2 bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 inline-flex items-center gap-2">
-            <i class="bi bi-upload"></i> Hochladen
-        </button>
-        <button id="deleteLogo"
-            class="mt-2 ml-2 bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 inline-flex items-center gap-2">
-            <i class="bi bi-trash-fill"></i> Löschen
-        </button>
+<div class="mx-auto mt-6 max-w-7xl px-2 pb-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900">Branding</h1>
+        <p class="mt-2 text-slate-600">Verwalte dein Logo und dein Favicon.</p>
     </div>
 
-    <div class="mt-6 bg-blue-50 p-4 rounded-xl shadow-lg">
-        <h2 class="text-xl font-medium mb-4">Favicon</h2>
-        {% if settings.favicon %}
-        <img src="{{ settings.favicon.url }}" alt="Favicon" class="max-h-16 mb-4">
-        {% endif %}
-        <input type="file" id="favicon" class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md" />
-        <button id="uploadFavicon"
-            class="mt-2 bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 inline-flex items-center gap-2">
-            <i class="bi bi-upload"></i> Hochladen
-        </button>
-        <button id="deleteFavicon"
-            class="mt-2 ml-2 bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 inline-flex items-center gap-2">
-            <i class="bi bi-trash-fill"></i> Löschen
-        </button>
+    <div class="grid gap-6 lg:grid-cols-[260px,minmax(0,1fr)]">
+        {% include 'pages/cms/settings/partials/settings_sidebar.html' with active_page='branding' %}
+
+        <section class="">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm mb-5">
+                <div class="mb-5">
+                    <h2 class="text-xl font-semibold text-slate-900">Logo</h2>
+                    <p class="mt-1 text-sm text-slate-500">Dieses Bild wird im CMS und im Frontend als Unternehmenslogo genutzt.</p>
+                </div>
+
+                {% if settings.logo %}
+                    <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <img src="{{ settings.logo.url }}" alt="Logo" class="max-h-20">
+                    </div>
+                {% endif %}
+
+                <input type="file" id="logo" class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="uploadLogo"
+                            class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                            data-url="{% url 'cms:logo-update' %}">
+                        <i class="bi bi-upload"></i>
+                        Hochladen
+                    </button>
+                    <button id="deleteLogo"
+                            class="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+                            data-url="{% url 'cms:logo-delete' %}">
+                        <i class="bi bi-trash-fill"></i>
+                        Löschen
+                    </button>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="mb-5">
+                    <h2 class="text-xl font-semibold text-slate-900">Favicon</h2>
+                    <p class="mt-1 text-sm text-slate-500">Das Favicon wird im Browser Tab und in Bookmarks angezeigt.</p>
+                </div>
+
+                {% if settings.favicon %}
+                    <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <img src="{{ settings.favicon.url }}" alt="Favicon" class="max-h-20">
+                    </div>
+                {% endif %}
+
+                <input type="file" id="favicon" class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="uploadFavicon"
+                            class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                            data-url="{% url 'cms:logo-update' %}">
+                        <i class="bi bi-upload"></i>
+                        Hochladen
+                    </button>
+                    <button id="deleteFavicon"
+                            class="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+                            data-url="{% url 'cms:logo-delete' %}">
+                        <i class="bi bi-trash-fill"></i>
+                        Löschen
+                    </button>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 {% endblock %}
