@@ -1,13 +1,19 @@
-{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} - Webdesign Agentur{% endblock title %} {% block content %} {% block css %} 
+{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} | Webdesign Agentur{% endblock title %} {% block content %} 
+
+{% block css %} 
 {% compress css inline %}
 <link href="{% static 'css/cardslider.css' %}" rel="stylesheet" />
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
-<link href="{% static 'css/fische.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
-{% endcompress css %} 
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-<script src="{% static 'js/aos.js' %}"></script>
+{% endcompress css %} 
 {% endblock css %}
+
+{% block javascript %}
+{% compress js inline %}
+<script defer src="{% static 'js/aos.js' %}"></script>
+{% endcompress %}
+{% endblock javascript %}
 
 
 {% block structured_data %}
@@ -20,7 +26,7 @@
   "thumbnailUrl": "https://fra1.digitaloceanspaces.com/yoolink/media/yoolink/images/cms_landingpage_20251227115013.jpeg",
   "uploadDate": "2025-12-01T09:30:00Z",
   "duration": "PT1M38S",
-  "contentUrl": "https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4",
+  "contentUrl": "https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS-20Preview.mp4",
   "embedUrl": "{{ request.build_absolute_uri }}"
 }
 </script>
@@ -30,8 +36,7 @@
 <!--Kontaktbuttons Beginn-->
 
 {% block kontaktbuttons %}
-<a href="{% url 'kontakt' %}">
-  <button type="button">
+<a href="{% url 'kontakt' %}" aria-label="Kontakt per E-Mail">
     <div
       class="hidden md:block fixed z-50 bottom-12 right-8 bg-blue-900 rounded-full shadow-2xl p-3"
     >
@@ -49,10 +54,8 @@
         />
       </svg>
     </div>
-  </button>
 </a>
-<a href="tel:+491705977862">
-  <button>
+<a href="tel:+491705977862" aria-label="Kontakt per Telefon">
     <div
       class="hidden md:block fixed z-50 bottom-28 right-8 bg-blue-900 rounded-full shadow-2xl p-3"
     >
@@ -69,7 +72,6 @@
         />
       </svg>
     </div>
-  </button>
 </a>
 {% endblock kontaktbuttons %}
 
@@ -99,38 +101,13 @@
     <!--Cardslider Beginn-->
     <figure class="icon-cards mt-3">
       <div class="icon-cards__content">
-        {% if heroImages %} {% for img in heroImages %}
+        {% for img in heroImages %}
         <div
           class="icon-cards__item d-flex align-items-center justify-content-center"
         >
-          <img src="{{img.upload.url}}" alt="{{img.title}}" />
+          <img src="{{img.upload.url}}" fetchpriority="high" alt="{{img.title}}" />
         </div>
-        {% endfor %} {% else %}
-        <div
-          class="icon-cards__item d-flex align-items-center justify-content-center"
-        >
-          <img
-            src="{% static 'images/Template1.png' %}"
-            alt="Template Design"
-          />
-        </div>
-        <div
-          class="icon-cards__item d-flex align-items-center justify-content-center"
-        >
-          <img
-            src="{% static 'images/Template2.png' %}"
-            alt="Template Design"
-          />
-        </div>
-        <div
-          class="icon-cards__item d-flex align-items-center justify-content-center"
-        >
-          <img
-            src="{% static 'images/Template3.png' %}"
-            alt="Template Design"
-          />
-        </div>
-        {% endif %}
+        {% endfor %}
       </div>
     </figure>
     <div
@@ -210,11 +187,11 @@
         data-aos-delay="100">
         <div class="w-6xl mb-5">
           <div>
-            <h3
+            <span
               class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
             >
               {{responsiveText.header}}
-            </h3>
+          </span>
           </div>
           <h2
             class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
@@ -248,6 +225,7 @@
                 value=""
                 class="sr-only peer"
                 onclick="toggleResponsive()"
+                aria-label="Ansicht wechseln zwischen Desktop und Mobile"
               />
               <div
                 class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"
@@ -278,33 +256,33 @@
           id="browser"
         >
           <img
-            src="{% static 'images/MacBookPro16.png' %}"
+            src="{% static 'images/MacBookPro16.png' %}" loading="lazy"
             class="absolute xs:object-top lg:object-center h-full w-full object-contain z-10"
             alt="MacBookPro16 Bezel"
           />
           <span id="desktopSlider">
             {% if responsiveDesktopImages %} {% for image in responsiveDesktopImages %} {% if forloop.first %}
             <img
-              src="{{image.upload.url}}"
+              src="{{image.upload.url}}" loading="lazy"
               class="relative h-full w-full object-contain xs:object-top lg:object-center"
               title="{{image.title}}"
               alt="{{image.title}}"
             />
             {% else %}
             <img
-              src="{{image.upload.url}}"
+              src="{{image.upload.url}}" loading="lazy"
               class="hidden relative h-full w-full object-contain xs:object-top lg:object-center"
               title="{{image.title}}"
               alt="{{image.title}}"
             />
             {% endif %} {% endfor %} {% else %}
             <img
-              src="{% static 'images/MacBook-RSAutoglas1.png' %}"
+              src="{% static 'images/MacBook-RSAutoglas1.png' %}" loading="lazy"
               class="relative h-full w-full object-contain xs:object-top lg:object-center"
               alt="MacBookPro16 Bezel RS-Autoglas"
             />
             <img
-              src="{% static 'images/MacBook-RSAutoglas2.png' %}"
+              src="{% static 'images/MacBook-RSAutoglas2.png' %}" loading="lazy"
               class="hidden relative h-full w-full object-contain xs:object-top lg:object-center"
               alt="MacBookPro16 Bezel RS-Autoglas"
             />
@@ -318,34 +296,34 @@
           data-aos="fade-up"
           data-aos-delay="300"
         >
-          <img
-            src="{% static 'images/iPhone-Frame.png' %}"
+          <img 
+            src="{% static 'images/iPhone-Frame.png' %}" loading="lazy"
             class="absolute h-full w-full object-contain z-10"
             alt="iPhone-Frame Bezel"
           />
           <span id="handySlider">
             {% if responsiveHandyImages %} {% for image in responsiveHandyImages %} {% if forloop.first %}
             <img
-              src="{{image.upload.url}}"
+              src="{{image.upload.url}}" loading="lazy"
               class="relative h-full w-full object-contain"
               title="{{image.title}}"
               alt="{{image.title}}"
             />
             {% else %}
             <img
-              src="{{image.upload.url}}"
+              src="{{image.upload.url}}" loading="lazy"
               class="hidden relative h-full w-full object-contain"
               title="{{image.title}}"
               alt="{{image.title}}"
             />
             {% endif %} {% endfor %} {% else %}
             <img
-              src="{% static 'images/iPhone-RSAutoglas.png' %}"
+              src="{% static 'images/iPhone-RSAutoglas.png' %}" loading="lazy"
               class="relative h-full w-full object-contain"
               alt="iPhone-Frame Bezel RS-Autoglas"
             />
             <img
-              src="{% static 'images/iPhone-RSAutoglas2.png' %}"
+              src="{% static 'images/iPhone-RSAutoglas2.png' %}" loading="lazy"
               class="hidden relative h-full w-full object-contain"
               alt="iPhone-Frame Bezel RS-Autoglas"
             />
@@ -358,67 +336,6 @@
   {% endblock ResponsiveDesign %}
   <!--ResponsiveDesign End-->
 
-  <!--Referenzen Beginn
-    {% block Referenzen %}
-    <section class="bg-blue-100">
-      <br/><br/><br/><br/><br/>
-      <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
-        <div class="flex flex-col mb-6 lg:justify-between lg:flex-row md:mb-8">
-          <h2 class="max-w-lg mb-5 font-sans text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl sm:leading-none md:mb-6 group">
-            <span class="inline-block mb-1 sm:mb-4">
-              Referenzen<br class="hidden md:block" />
-              der Kunden
-            </span>
-            <div class="h-1 ml-auto duration-300 origin-left transform bg-deep-purple-accent-400 scale-x-30 group-hover:scale-x-100"></div>
-          </h2>
-          <p class="text-gray-700 lg:text-md lg:max-w-md">
-            Gerne können Sie sich ein Bild von unseren erfolgreichen Projekten
-            machen und diese als Refernez oder Inspiration für die eigene
-            Website nuten.
-          </p>
-        </div>
-      <div class="grid gap-6 row-gap-5 mb-8 lg:grid-cols-4 sm:row-gap-6 sm:grid-cols-2">
-        <a href="/" aria-label="View Item">
-          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="{% static 'images/RSAutoglas-Logo.png' %}" alt=""/>
-            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-              <p class="mb-4 text-lg font-bold text-gray-100">RS-Autoglas</p>
-              <p class="text-sm tracking-wide text-gray-300">RS-Autoglas ist ein....</p>
-            </div>
-          </div>
-        </a>
-        <a href="/" aria-label="View Item">
-          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-              <p class="text-sm tracking-wide text-gray-300">....</p>
-            </div>
-          </div>
-        </a>
-        <a href="/" aria-label="View Item">
-          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-              <p class="text-sm tracking-wide text-gray-300">....</p>
-            </div>
-          </div>
-        </a>
-        <a href="/" aria-label="View Item">
-          <div class="relative overflow-hidden transition duration-200 transform rounded shadow-lg hover:-translate-y-2 hover:shadow-2xl">
-            <img class="object-cover w-full h-56 md:h-64 xl:h-80" src="" alt=""/>
-            <div class="absolute inset-0 px-6 py-4 transition-opacity duration-200 bg-blue-900 bg-opacity-75 opacity-0 hover:opacity-100">
-              <p class="mb-4 text-lg font-bold text-gray-100">Hier könnte Ihr Name stehen</p>
-              <p class="text-sm tracking-wide text-gray-300">....</p>
-            </div>
-          </div>
-        </a>
-
-      </div>
-    </section>
-    {% endblock Referenzen %}
-    Referenzen End-->
 
   <!--CMS Beginn-->
   {% block CMSDetail %}
@@ -426,23 +343,15 @@
     <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-4">
       <div class="relative isolate overflow-visible px-6 sm:px-16 lg:flex lg:items-center lg:gap-x-20 lg:px-8">
         
+  
         <!-- Foto-PC -->
         <div 
         class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block"
         data-aos="fade-right" data-aos-delay="100">
-          <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
-            <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
+          <video autoplay muted loop playsinline preload="none" poster="https://fra1.digitaloceanspaces.com/yoolink/media/yoolink/images/cms_landingpage_20251227115013.jpeg" class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+            <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS-Preview.mp4" type="video/mp4" />
             Dein Browser unterstützt kein HTML5-Video.
           </video>
-        <!--<div class="relative w-full lg:w-1/2 overflow-hidden rounded-md shadow-2xl hidden lg:block" 
-        data-aos="fade-right"
-        data-aos-delay="100">
-          <img
-            class="w-full h-auto object-cover"
-            title="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-            src="{% if cmsImage %}{{cmsImage.file.url}}{% else %}{% static 'images/cms-screen.png' %}{% endif %}"
-            alt="{% if cmsImage %}{{cmsImage.title}}{% endif %}"
-          />-->
         </div>
   
         <!-- Text -->
@@ -450,9 +359,9 @@
           class="w-full lg:w-1/2 mt-10 lg:mt-0"
           data-aos="fade-left"
           data-aos-delay="100">
-          <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
+          <span class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
             {{ cmsText.header }}
-          </h3>
+          </span>
           <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
             {{ cmsText.title }}
           </h2>
@@ -472,8 +381,8 @@
           <div 
           class="relative h-80 mt-16 overflow-hidden rounded-md block lg:hidden"
           data-aos="fade-right" data-aos-delay="100">
-            <video autoplay muted loop playsinline class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
-              <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS%20Preview.mp4" type="video/mp4" />
+            <video autoplay muted loop playsinline preload="none" poster="https://fra1.digitaloceanspaces.com/yoolink/media/yoolink/images/cms_landingpage_20251227115013.jpeg" class="w-full h-auto object-cover rounded-md" title="Demo: CMS-Seite bearbeiten">
+              <source src="https://yoolink.fra1.digitaloceanspaces.com/media/yoolink/video/CMS-Preview.mp4" type="video/mp4" />
               Dein Browser unterstützt kein HTML5-Video.
             </video>
           <!--<div
@@ -501,9 +410,9 @@
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <!-- Headline und Text -->
         <div class="mx-auto max-w-2xl lg:text-center" data-aos="fade-up">
-          <h3 class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
+          <span class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase">
             {% if knowHowContent and knowHowContent.header %}{{knowHowContent.header}}{% endif %}
-          </h3>
+          </span>
           <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {% if knowHowContent and knowHowContent.title %}{{knowHowContent.title}}{% endif %}
           </h2>
@@ -570,11 +479,11 @@
     <div class="container mx-auto">
       <div class="flex justify-center mb-12">
         <div class="max-w-2xl lg:text-center" data-aos="fade-up">
-          <h3
+          <span
             class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase "
           >
             {% if kundenText and kundenText.header %}{{kundenText.header}}{% endif %}
-          </h3>
+        </span>
           <h2
             class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
@@ -592,7 +501,7 @@
             data-aos="fade-up"
             data-aos-delay="100">
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/ZahnarztHolmer.png' %}" alt="" />
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/ZahnarztHolmer.png' %}" loading="lazy" alt="Website-Vorschau Zahnarzt Dr. Holmer" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" alt="Zahnarzt Holmer" title="Zahnarzt Holmer"  href="https://zahnarzt-dr-holmer.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 zahnarzt-dr-holmer.de
@@ -604,7 +513,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/Holmer-Logo.jpg' %}" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/Holmer-Logo.jpg' %}" loading="lazy" alt="Zahnarzt Holmer" title="Zahnarzt Holmer" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -625,7 +534,7 @@
             data-aos-delay="200">
           
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/Uhrmannreisen.png' %}" alt="" />
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/Uhrmannreisen.png' %}" loading="lazy" alt="Website-Vorschau Uhrmann Reisen" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 uhrmann-reisen.de
@@ -637,7 +546,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <h2 class="text-[#592e86] font-bold tracking-wide text-4xl">U</h2>
+                  <p class="text-[#592e86] font-bold tracking-wide text-4xl">U</p>
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -656,7 +565,7 @@
             data-aos-delay="300">
             
             <div class="relative mb-4 rounded-2xl">
-              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/HDGlas.png' %}" alt="" />
+              <img class="max-h-80 w-full transform rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105" src="{% static 'images/references/HDGlas.png' %}" loading="lazy" alt="Website-Vorschau HD-Glas" />
     
               <span class="absolute bottom-0 left-0 z-10 flex h-3/5 w-full transform items-center justify-center rounded-b-2xl text-xl text-white opacity-0 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100" href="https://hd-glas.de/" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));">
                 hd-glas.de
@@ -668,7 +577,7 @@
             <div class="mb-auto flex w-full items-center justify-between pb-4">
               <div class="flex items-center">
                 <div class="pr-3">
-                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/HDGlas-Logo.png' %}" alt="" />
+                  <img class="h-12 w-12 rounded-full object-cover" src="{% static 'images/references/HDGlas-Logo.png' %}" loading="lazy" alt="HD-Glas Logo" />
                 </div>
                 <div class="flex flex-1">
                   <div class="">
@@ -688,7 +597,7 @@
           data-aos-delay="400">
             <a
               href="/kunden"
-              aria-label="Webdesign-Vorlagen"
+              aria-label="Alle unsere Kunden ansehen"
               class="flex items-center justify-center h-12 px-6 font-medium text-white"
             >
             {% if kundenText and kundenText.buttonText %}{{kundenText.buttonText}}{% endif %}
@@ -711,11 +620,11 @@
         data-aos="fade-up"
       >
         <div>
-          <h3
+          <span
             class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
           >
             {{priceText.header}}
-          </h3>
+        </span>
         </div>
         <h2
           class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto"
@@ -776,14 +685,14 @@
       class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
     >
     <div class="mx-auto mb-10 lg:max-w-xl text-center" data-aos="fade-up" data-aos-delay="100">
-      <h2
+      <span
         class="inline-block px-3 py-1 text-xs font-semibold tracking-wider rounded-full bg-blue-900 text-white uppercase"
       >
         {{teamText.header}}
+      </span>
+      <h2 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
+        {% if teamText.title %}{{teamText.title}}{% else %}Das sind wir!{% endif %}
       </h2>
-      <h1 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
-        {% if teamText.title %}{{teamText.title}}{% else %}Unser Team{% endif %}
-      </h1>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
         {{teamText.description}}
       </p>
@@ -796,8 +705,8 @@
             <div class="hey" data-aos="fade-up-left" data-aos-delay="{{ forloop.counter0|add:1 }}00">
               <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
                 <img
+                  src="{{ member.image }}" loading="lazy"
                   class="absolute object-cover w-full h-full rounded-xl"
-                  src="{{ member.image }}"
                   alt="{{ member.full_name }}"
                 />
               </div>
@@ -814,7 +723,7 @@
                 <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
                   <img
                     class="absolute object-cover w-full h-full rounded-xl"
-                    src="{{ member.image }}"
+                    src="{{ member.image }}" loading="lazy"
                     alt="{{ member.full_name }}"
                   />
                 </div>
@@ -835,7 +744,7 @@
           <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
             <img
               class="absolute object-cover w-full h-full rounded-xl"
-              src="{% static 'images/Sebastian.jpeg' %}"
+              src="{% static 'images/Sebastian.jpeg' %}" loading="lazy"
               alt="Sebastian Rauch"
             />
           </div>
@@ -848,7 +757,7 @@
           <div class="relative pb-56 mb-4 rounded shadow lg:pb-64">
             <img
               class="absolute object-cover w-full h-full rounded-xl"
-              src="{% static 'images/Lennert.jpg' %}"
+              src="{% static 'images/Lennert.jpg' %}" loading="lazy"
               alt="Lennert Meißner"
             />
           </div>

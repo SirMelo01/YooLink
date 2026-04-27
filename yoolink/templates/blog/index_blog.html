@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress static %}
 
-{% block title %}{{block.super}} | Blog{% endblock title %}
+{% block title %}{{block.super}} | Blog - Webdesign Tipps und News{% endblock title %}
 
 {% block content %}
     
@@ -18,7 +18,7 @@
             <div>
                 <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug  %}"><img
                         class="w-full object-cover h-60 rounded-xl hover:shadow-lg hover:shadow-blue-500/50"
-                        src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}"
+                        loading="lazy" src="{% if blog.title_image %} {{ blog.title_image.url}} {% endif %}"
                         alt="{{blog.title}}"></a>
                 <div class="mt-4 space-y-2">
                     <p class="text-slate-500">{{blog.last_updated}}</p>
@@ -35,7 +35,7 @@
             </div>{% endif %} {% endfor %}
         </div>
         {% if is_paginated %}
-        <nav class="mt-8 mb-16 flex justify-center items-center gap-2">
+        <nav class="mt-8 mb-16 flex justify-center items-center gap-2" aria-label="Blog Seitennavigation">
         {% if page_obj.has_previous %}
             <a href="?page=1" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&laquo;</a>
             <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Zurück</a>
