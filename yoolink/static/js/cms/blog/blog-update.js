@@ -306,10 +306,17 @@ $(document).ready(function () {
         enableSpinner($(this))
 
         const title = $('#blogTitle').val()
+        const description = ($('#blogDescription').val() || '').trim()
         var files = $('#titleImgUpload').prop("files");
 
         if (title === "" || title === undefined) {
             sendNotif("Bitte gebe einen Titel für den Blog (rechts) ein.", "error");
+            disableSpinner($(this))
+            return;
+        }
+
+        if (description === "") {
+            sendNotif("Bitte gebe eine Beschreibung fuer den Blog ein.", "error")
             disableSpinner($(this))
             return;
         }
@@ -349,7 +356,6 @@ $(document).ready(function () {
         } else {
             $modalBody.removeClass('flex flex-col items-center items-end')
         }
-        $modalBody.append($('<h1 class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl">').text($('#blogTitle').val()))
         content.forEach(function (element) {
             // Führe eine Aktion für jedes Element aus
             const $elem = (element.name !== "galery") ? getWebElement(element) : getGaleryElement(element)
@@ -362,7 +368,7 @@ $(document).ready(function () {
         formData.append('body', $directCodeContainer.html());
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
-        formData.append('description', plainText);
+        formData.append('description', description);
         if (files.length > 0) formData.append('title_image', files[0], "blogTitleImage");
         // Send the Ajax POST request //
         $.ajax({

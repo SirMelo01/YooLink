@@ -32,6 +32,7 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt
 from django.templatetags.static import static
 from django.utils import translation
+from django.utils.html import strip_tags
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_POST
@@ -793,14 +794,53 @@ def update_faq_order(request):
 # --------------- [Blog] ---------------
 from django.core.paginator import Paginator
 
+def _strip_generated_blog_intro(body, title, description):
+    if not body:
+        return body
+
+    prefix = ""
+    rest = body
+    wrapper_match = re.match(r"^(\s*<div\b[^>]*>\s*)(.*)$", rest, flags=re.IGNORECASE | re.DOTALL)
+    if wrapper_match:
+        prefix = wrapper_match.group(1)
+        rest = wrapper_match.group(2)
+
+    def remove_leading_tag(html, tag_name, expected_text):
+        expected_text = (expected_text or "").strip()
+        if not expected_text:
+            return html
+
+        tag_match = re.match(
+            rf"^\s*<{tag_name}\b[^>]*>.*?</{tag_name}>",
+            html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if not tag_match:
+            return html
+
+        tag_html = tag_match.group(0)
+        tag_text = " ".join(strip_tags(tag_html).split())
+        expected_text = " ".join(expected_text.split())
+        if tag_text == expected_text:
+            return html[tag_match.end():]
+
+        return html
+
+    rest = remove_leading_tag(rest, "h1", title)
+    rest = remove_leading_tag(rest, "p", description)
+    return prefix + rest
+
 @login_required(login_url='login')
 def blog_view(request):
     query = request.GET.get("q", "")
     sort = request.GET.get("sort", "-date")  # Standard: neueste zuerst
     active_filter = request.GET.get("active", "all")
+    allowed_sorts = {"-date", "date", "-last_updated", "last_updated", "title"}
+    if sort not in allowed_sorts:
+        sort = "-date"
 
     # Nur Original-Blogs anzeigen
-    blogs = Blog.objects.filter(original__isnull=True)
+    blogs = Blog.objects.filter(original__isnull=True).select_related("author").prefetch_related("translations")
 
     if query:
         blogs = blogs.filter(title__icontains=query)
@@ -815,6 +855,7 @@ def blog_view(request):
     paginator = Paginator(blogs, 6)  # 6 Blogs pro Seite
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    base_blogs = Blog.objects.filter(original__isnull=True)
 
     return render(request, "pages/cms/blog/blog.html", {
         "page_obj": page_obj,
@@ -822,6 +863,10 @@ def blog_view(request):
         "query": query,
         "active_filter": active_filter,
         "sort": sort,
+        "total_blog_count": base_blogs.count(),
+        "active_blog_count": base_blogs.filter(active=True).count(),
+        "draft_blog_count": base_blogs.filter(active=False).count(),
+        "translation_count": Blog.objects.filter(original__isnull=False).count(),
     })
 
 
@@ -851,7 +896,7 @@ def create_blog(request):
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
 
         body = request.POST.get('body')
-        description = request.POST.get('description', '')
+        description = (request.POST.get('description') or '').strip()
         code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)
         
@@ -860,6 +905,11 @@ def create_blog(request):
         #return JsonResponse({'title': title, 'body': body, 'code': code})
 
         if title:
+            if not description:
+                return JsonResponse({'error': 'Die Beschreibung darf nicht leer sein!'}, status=400)
+
+            body = _strip_generated_blog_intro(body, title, description)
+
             # Create
             blog = Blog(title=title, body=body, code=code, author=request.user)
             if active == "true":
@@ -867,10 +917,11 @@ def create_blog(request):
             else:
                 blog.active = False
             blog.save()
-            resized_image = resize_image(title_image)
-            scaled_image = scale_image(resized_image)
-            compressed_image = compress_image(scaled_image)
-            blog.title_image = compressed_image
+            if title_image:
+                resized_image = resize_image(title_image)
+                scaled_image = scale_image(resized_image)
+                compressed_image = compress_image(scaled_image)
+                blog.title_image = compressed_image
             blog.description = description
             blog.save()
             return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
@@ -897,13 +948,18 @@ def update_blog(request, id):
         title = request.POST.get('title')
         if blog.title != title and Blog.objects.filter(title=title).exists():
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
-        description = request.POST.get('description', '')
+        description = (request.POST.get('description') or '').strip()
         body = request.POST.get('body')
         code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)
         title_image = request.FILES.get('title_image', '')
 
         if title:
+            if not description:
+                return JsonResponse({'error': 'Die Beschreibung darf nicht leer sein!'}, status=400)
+
+            body = _strip_generated_blog_intro(body, title, description)
+
             # Create
             blog.description = description
             blog.title = title

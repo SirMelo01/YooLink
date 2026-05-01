@@ -8,8 +8,8 @@
     <title>{% block title %}YooLink{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
-    <meta name="description" content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Ihrem Internetauftritt herauszuholen.">
-    <link rel="canonical" href="https://yoolink.de{{ request.path }}">
+    <meta name="description" content="{% block meta_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Ihrem Internetauftritt herauszuholen.{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}https://yoolink.de{{ request.path }}{% endblock %}">
     <link rel="alternate" hreflang="de" href="https://yoolink.de{{ request.path }}">
     <link rel="alternate" hreflang="en" href="https://yoolink.de/en{{ request.path }}">
 
@@ -26,8 +26,8 @@
     <meta property="og:title" content="{% block og_title %}YooLink - Webdesign Agentur Deggendorf{% endblock %}">
     <meta property="og:description" content="{% block og_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Transparenz, Sichtbarkeit und ein junges dynamisches Team.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}https://yoolink.de{% static 'images/og-preview.png' %}{% endblock %}">
-    <meta property="og:url" content="https://yoolink.de{{ request.path }}">
-    <meta property="og:type" content="website">
+    <meta property="og:url" content="{% block og_url %}https://yoolink.de{{ request.path }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">

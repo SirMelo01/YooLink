@@ -17,6 +17,25 @@
     </a>
   </div>
 
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <p class="text-sm text-gray-500">Gesamt</p>
+      <p class="text-2xl font-bold text-gray-900">{{ total_blog_count }}</p>
+    </div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <p class="text-sm text-gray-500">Veroeffentlicht</p>
+      <p class="text-2xl font-bold text-green-700">{{ active_blog_count }}</p>
+    </div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <p class="text-sm text-gray-500">Entwuerfe</p>
+      <p class="text-2xl font-bold text-red-700">{{ draft_blog_count }}</p>
+    </div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <p class="text-sm text-gray-500">Sprachvarianten</p>
+      <p class="text-2xl font-bold text-blue-700">{{ translation_count }}</p>
+    </div>
+  </div>
+
   <!-- Filters -->
   <form method="get" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
     {% csrf_token %}
@@ -35,6 +54,8 @@
       >
         <option value="-date" {% if sort == "-date" %}selected{% endif %}>Neueste zuerst</option>
         <option value="date" {% if sort == "date" %}selected{% endif %}>Älteste zuerst</option>
+        <option value="-last_updated" {% if sort == "-last_updated" %}selected{% endif %}>Zuletzt bearbeitet</option>
+        <option value="title" {% if sort == "title" %}selected{% endif %}>Titel A-Z</option>
       </select>
 
       <select
@@ -62,14 +83,14 @@
     <div class="bg-white rounded-xl shadow-lg p-4 flex flex-col justify-between blog-card">
 
       {% if blog.title_image %}
-      <img src="{{ blog.title_image.url }}" alt="Blog Image" class="w-full h-40 object-cover rounded mb-3">
+      <img src="{{ blog.title_image.url }}" alt="{{ blog.title }}" class="w-full h-40 object-cover rounded mb-3">
       {% else %}
       <div class="w-full h-40 bg-gray-200 flex items-center justify-center rounded mb-3 text-gray-500">Kein Bild</div>
       {% endif %}
 
       <div>
         <h2 class="text-xl font-semibold mb-1">{{ blog.title }}</h2>
-        <p class="text-sm text-gray-600 mb-2">von {{ blog.author }} am {{ blog.date }}</p>
+        <p class="text-sm text-gray-600 mb-2">von {{ blog.author }} am {{ blog.date }} · aktualisiert {{ blog.last_updated }}</p>
         <p class="text-sm text-gray-700">{{ blog.description|truncatewords:20 }}</p>
           <!-- Sprachvarianten -->
           <div class="flex flex-wrap items-center gap-2 text-xs mt-2">

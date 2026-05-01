@@ -36,7 +36,7 @@
 
 <!-- **************** Content **************** -->
 
-<div id="buttonBar" class="w-full border border-gray-200 rounded-2xl flex p-4 mb-3 bg-white z-[45] transition-all duration-300">
+<div id="buttonBar" class="sticky top-0 w-full border border-gray-200 rounded-2xl flex flex-wrap gap-3 p-4 mb-3 bg-white z-[45] shadow-sm transition-shadow duration-300">
     <button id="addTitle" class="px-4 py-2 mx-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
         <i class="bi bi-fonts"></i> Titel I
     </button>
@@ -74,7 +74,6 @@
         <i class="bi bi-file-earmark"></i>
     </button>
 </div>
-<div id="buttonBarPlaceholder" class="h-[0px] transition-all duration-300"></div>
 
 <div class="grid grid-cols-3 gap-4">
     <div class="nested-sortable w-full p-4 border border-gray-200 shadow-xl rounded-2xl min-h-[10rem] col-span-2" id="blogContent">
@@ -109,6 +108,17 @@
                     value="{{blog.title}}"
                     class="text-lg w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative"
                     placeholder="Titel">
+        </div>
+
+        <div class="p-4">
+            <label class="block leading-5 font-medium text-gray-700 text-lg mb-2" for="blogDescription">Beschreibung</label>
+            <p class="mb-2 text-sm text-gray-500">Pflichtfeld fuer Blogkarten, Vorschau und SEO Meta Description.</p>
+            <textarea
+                id="blogDescription"
+                rows="4"
+                maxlength="320"
+                class="text-base w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative"
+                placeholder="Kurze Zusammenfassung des Blogartikels">{{ blog.description }}</textarea>
         </div>
         
 
@@ -172,30 +182,6 @@
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog-update.js' %}"></script>
-<script>
-  $(document).ready(function () {
-    const $buttonBar = $('#buttonBar');
-    const $placeholder = $('#buttonBarPlaceholder');
-    const initialOffsetTop = $buttonBar.offset().top;
-    const barHeight = $buttonBar.outerHeight();
-
-    $(window).on('scroll', function () {
-      if ($(window).scrollTop() > initialOffsetTop + 10) {
-        if (!$buttonBar.hasClass('fixed')) {
-          $buttonBar.addClass('fixed top-0 left-0 right-0 shadow-md')
-                    .removeClass('rounded-2xl mb-3');
-          $placeholder.css('height', barHeight + 'px');
-        }
-      } else {
-        if ($buttonBar.hasClass('fixed')) {
-          $buttonBar.removeClass('fixed top-0 left-0 right-0 shadow-md')
-                    .addClass('rounded-2xl mb-3');
-          $placeholder.css('height', '0px');
-        }
-      }
-    });
-  });
-</script>
 {% endcompress js %}
 <script src="{% static 'js/prism/prism.js' %}" data-manual></script>
 

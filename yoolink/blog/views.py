@@ -1,12 +1,13 @@
 from html import escape
 from html.parser import HTMLParser
 
+from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from yoolink.ycms.models import Blog
-from django.utils.translation import get_language_from_request, activate
 from django.conf import settings
-
+from django.utils.html import strip_tags
+from django.utils.text import Truncator
 from django.utils.translation import get_language
 
 
@@ -158,7 +159,7 @@ class Load_Index_Blog(ListView):
         originals_on_page = ctx['object_list']
         mapped = []
         for blog in originals_on_page:
-            variant = blog.translations.filter(language=lang).first() if lang else None
+            variant = blog.translations.filter(language=lang, active=True).first() if lang else None
             mapped.append(variant or blog)
         ctx['object_list'] = mapped
         ctx['blogs'] = mapped
@@ -170,14 +171,72 @@ class BlogDetailView(DetailView):
     template_name = 'blog/blog_detail.html'
     context_object_name = 'blog'
 
+    def get_queryset(self):
+        queryset = (
+            Blog.objects
+            .select_related("author", "original")
+            .prefetch_related("translations")
+        )
+
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            return queryset
+
+        return queryset.filter(active=True)
+
+    def _reading_time(self, blog):
+        word_count = len(strip_tags(blog.body or "").split())
+        return max(1, round(word_count / 220))
+
+    def _excerpt(self, blog):
+        source = blog.description or strip_tags(blog.body or "")
+        return Truncator(" ".join(source.split())).chars(155)
+
+    def _absolute_image_url(self, blog):
+        if not blog.title_image:
+            return ""
+        return self.request.build_absolute_uri(blog.title_image.url)
+
+    def _localized_blog(self, blog, lang):
+        if blog.language == lang and blog.active:
+            return blog
+        variant = blog.translations.filter(language=lang, active=True).first() if lang else None
+        return variant or blog
+
+    def _related_blogs(self, blog, lang):
+        root = blog.original or blog
+        related_roots = (
+            Blog.objects
+            .filter(original__isnull=True, active=True)
+            .exclude(pk=root.pk)
+            .prefetch_related("translations")
+            .order_by("-date")[:6]
+        )
+
+        related = []
+        for related_blog in related_roots:
+            related.append(self._localized_blog(related_blog, lang))
+            if len(related) >= 3:
+                break
+        return related
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["consent_safe_body"] = consent_gate_iframes(context["blog"].body)
+        blog = context["blog"]
+        lang = get_active_language(self.request)
+        context["consent_safe_body"] = consent_gate_iframes(blog.body)
+        context["blog_excerpt"] = self._excerpt(blog)
+        context["blog_reading_time"] = self._reading_time(blog)
+        context["blog_image_url"] = self._absolute_image_url(blog)
+        context["canonical_url"] = self.request.build_absolute_uri(blog.get_absolute_url())
+        context["related_blogs"] = self._related_blogs(blog, lang)
         return context
 
     def get(self, request, *args, **kwargs):
         # Objekt laden
         self.object = self.get_object()
+
+        if not self.object.active and not (request.user.is_authenticated and request.user.is_staff):
+            raise Http404("Blog nicht gefunden")
 
         # 1) Canonical Slug sicherstellen
         url_slug = kwargs.get('slug_title')

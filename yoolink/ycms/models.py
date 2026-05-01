@@ -224,6 +224,24 @@ def upload_to_blog_image(instance, filename):
     return f"yoolink/blogs/{instance.id}/{filename}"
 def default_code():
     return dict()
+
+def generate_unique_blog_slug(instance, base_slug):
+    slug = base_slug or "blog"
+    unique_slug = slug
+    counter = 2
+    queryset = Blog.objects.filter(slug=unique_slug)
+    if instance.pk:
+        queryset = queryset.exclude(pk=instance.pk)
+
+    while queryset.exists():
+        unique_slug = f"{slug}-{counter}"
+        queryset = Blog.objects.filter(slug=unique_slug)
+        if instance.pk:
+            queryset = queryset.exclude(pk=instance.pk)
+        counter += 1
+
+    return unique_slug
+
 class Blog(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, default='default-slug', max_length=255)
@@ -257,7 +275,8 @@ class Blog(models.Model):
     )
 
     def delete(self, *args, **kwargs):
-        self.title_image.storage.delete(self.title_image.name)
+        if self.title_image:
+            self.title_image.storage.delete(self.title_image.name)
         super(Blog, self).delete(*args, **kwargs)
     
     def __str__(self):
@@ -265,8 +284,9 @@ class Blog(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.original:
-            # Nur Original-Blogs bekommen einen Slug
-            self.slug = slugify(self.title)
+            self.slug = generate_unique_blog_slug(self, slugify(self.title))
+        elif self.slug:
+            self.slug = generate_unique_blog_slug(self, self.slug)
 
         super(Blog, self).save(*args, **kwargs)
 

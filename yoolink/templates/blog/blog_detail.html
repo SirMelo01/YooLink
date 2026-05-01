@@ -1,6 +1,36 @@
 {% extends "base.html" %}
 {% load compress static %}
-{% block title %}{{ blog.title }} | Blog | {{block.super}}{% endblock title %}
+
+{% block title %}{{ blog.title }} | Blog | {{ block.super }}{% endblock title %}
+{% block meta_description %}{{ blog_excerpt }}{% endblock %}
+{% block canonical_url %}{{ canonical_url }}{% endblock %}
+{% block og_title %}{{ blog.title }} | YooLink Blog{% endblock %}
+{% block og_description %}{{ blog_excerpt }}{% endblock %}
+{% block og_image %}{% if blog_image_url %}{{ blog_image_url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block og_url %}{{ canonical_url }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block twitter_title %}{{ blog.title }} | YooLink Blog{% endblock %}
+{% block twitter_description %}{{ blog_excerpt }}{% endblock %}
+{% block twitter_image %}{% if blog_image_url %}{{ blog_image_url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ blog.title|escapejs }}",
+  "description": "{{ blog_excerpt|escapejs }}",
+  "datePublished": "{{ blog.date|date:'c' }}",
+  "dateModified": "{{ blog.last_updated|date:'c' }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ blog.author|escapejs }}"
+  },
+  "mainEntityOfPage": "{{ canonical_url }}"{% if blog_image_url %},
+  "image": "{{ blog_image_url }}"{% endif %}
+}
+</script>
+{% endblock %}
 
 {% block css %}
 {% compress css inline %}
@@ -11,81 +41,104 @@
 {% endcompress %}
 {% endblock %}
 
-
 {% block content %}
-
-<main class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white">
-    <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">
-        <article class="space-y-6 mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue">
-            <header class="mb-4 lg:mb-6 not-format">
-                <address class="flex items-center mb-6 not-italic">
-                    <div class="inline-flex items-center mr-3 text-sm text-gray-900">
-                        <img class="mr-4 w-16 h-16 rounded-full objec-cover"
-                            src="{% static 'images/designImg/profil.webp' %}" alt="Profilbild {{ blog.author }}">
-                        <div>
-                            <div rel="author" class="text-xl font-bold text-gray-900">{{ blog.author }}</div>
-                            <p class="text-base font-light text-gray-500"><time pubdate datetime="{{ blog.date }}"
-                                    title="{{ blog.date }}">{{ blog.date }}</time></p>
-                        </div>
-                    </div>
-                </address>
-            </header>
-            {% if blog.active %}
-            {{ consent_safe_body | safe }}
-            {% else %}
-            <p>Dieser Blog ist nicht aktiv!</p>
-            {% endif %}
-            
-            <div class="pb-16"></div>
-            <a href="{% url 'blog:blog' %}"
-                class="bg-blue-900 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md">
-                Zurück
-            </a>
-        </article>
-
+<main class="bg-white">
+  <section class="border-b border-slate-200 bg-slate-50">
+    <div class="mx-auto max-w-6xl px-4 py-10 lg:py-14">
+      <a href="{% url 'blog:blog' %}" class="inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-900">
+        <i class="bi bi-arrow-left mr-2"></i> Alle Artikel
+      </a>
+      <div class="mt-6 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">YooLink Blog</p>
+          <h1 class="mt-3 text-4xl font-extrabold leading-tight text-slate-950 md:text-5xl">{{ blog.title }}</h1>
+          {% if blog.description %}
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{{ blog.description }}</p>
+          {% endif %}
+          <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-slate-600">
+            <span class="inline-flex items-center gap-2"><i class="bi bi-person"></i>{{ blog.author }}</span>
+            <time class="inline-flex items-center gap-2" pubdate datetime="{{ blog.date|date:'Y-m-d' }}">
+              <i class="bi bi-calendar3"></i>{{ blog.date|date:"d.m.Y" }}
+            </time>
+            <span class="inline-flex items-center gap-2"><i class="bi bi-clock"></i>{{ blog_reading_time }} Min. Lesezeit</span>
+          </div>
+        </div>
+        {% if blog.title_image %}
+        <img class="aspect-[4/3] w-full rounded-lg object-cover shadow-sm" src="{{ blog.title_image.url }}" alt="{{ blog.title }}">
+        {% endif %}
+      </div>
     </div>
+  </section>
+
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:py-14">
+    <article class="min-w-0 space-y-6 format format-sm sm:format-base lg:format-lg format-blue">
+      {% if blog.active %}
+        {{ consent_safe_body|safe }}
+      {% else %}
+        <div class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
+          Dieser Blog ist aktuell nicht aktiv und nur im CMS sichtbar.
+        </div>
+      {% endif %}
+    </article>
+
+    <aside class="lg:sticky lg:top-6 lg:self-start">
+      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-950">Weitere Artikel</h2>
+        <div class="mt-4 space-y-4">
+          {% for related in related_blogs %}
+          <a href="{{ related.get_absolute_url }}" class="group block">
+            {% if related.title_image %}
+            <img class="mb-3 aspect-[16/9] w-full rounded-md object-cover" src="{{ related.title_image.url }}" alt="{{ related.title }}">
+            {% endif %}
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ related.last_updated|date:"d.m.Y" }}</p>
+            <h3 class="mt-1 text-base font-bold leading-snug text-slate-900 group-hover:text-blue-700">{{ related.title }}</h3>
+            {% if related.description %}
+            <p class="mt-1 text-sm leading-6 text-slate-600">{{ related.description|truncatechars:110 }}</p>
+            {% endif %}
+          </a>
+          {% empty %}
+          <p class="text-sm leading-6 text-slate-600">Weitere Artikel erscheinen hier, sobald sie veroeffentlicht sind.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
+  </div>
 </main>
-
-
 {% endblock content %}
 
 {% block javascriptend %}
 {% compress js inline %}
-<script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
-<script src="{% static 'js/prism/prism.js' %}" data-manual></script>
+<script defer type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
+<script defer src="{% static 'js/prism/prism.js' %}" data-manual></script>
 <script>
-    $(document).ready(function () {
-        $('.carousel').slick({
-            dots: true,  // Display navigation dots
-            arrows: true,  // Display navigation arrows
-            infinite: true,  // Enable infinite looping
-            slidesToShow: 1,  // Number of slides to show at once
-            slidesToScroll: 1,  // Number of slides to scroll at a time
-            autoplay: true,
-            autoplaySpeed: 3000,
-            // Add any other configuration options as needed
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    var $ = window.jQuery;
+    if (!$) return;
 
-        // Bind Next function to the Next button
-        // Bind Next function to the Next button of each carousel
-        $('.next-button').on('click', function () {
-            var carousel = $(this).closest('.carousel-container').find('.carousel');
-            carousel.slick('slickNext');
-        });
-
-        // Bind Previous function to the Previous button of each carousel
-        $('.prev-button').on('click', function () {
-            var carousel = $(this).closest('.carousel-container').find('.carousel');
-            carousel.slick('slickPrev');
-        });
-
-        // Load Carousels
-        setTimeout(function () {
-            Prism.highlightAll();
-        }, 500)
-
+    $('.carousel').slick({
+      dots: true,
+      arrows: true,
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 3000
     });
+
+    $('.next-button').on('click', function () {
+      var carousel = $(this).closest('.carousel-container').find('.carousel');
+      carousel.slick('slickNext');
+    });
+
+    $('.prev-button').on('click', function () {
+      var carousel = $(this).closest('.carousel-container').find('.carousel');
+      carousel.slick('slickPrev');
+    });
+
+    setTimeout(function () {
+      Prism.highlightAll();
+    }, 500);
+  });
 </script>
 {% endcompress js %}
-
 {% endblock javascriptend %}

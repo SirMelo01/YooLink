@@ -622,10 +622,17 @@ $(document).ready(function () {
 
         // Check for errors
         const title = $('#blogTitle').val()
+        const description = ($('#blogDescription').val() || '').trim()
         var files = $('#titleImgUpload').prop("files");
 
         if (title === "" || title === undefined) {
             sendNotif("Bitte gebe einen Titel für den Blog (rechts) ein.", "error")
+            disableSpinner($(this))
+            return;
+        }
+
+        if (description === "") {
+            sendNotif("Bitte gebe eine Beschreibung fuer den Blog ein.", "error")
             disableSpinner($(this))
             return;
         }
@@ -672,7 +679,6 @@ $(document).ready(function () {
         } else {
             $modalBody.removeClass('flex flex-col items-center items-end')
         }
-        $modalBody.append($('<h1 id="previewTitle" class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl">').text($('#blogTitle').val()))
         //$modalBody.append($copy)
         content.forEach(function (element) {
             // Führe eine Aktion für jedes Element aus
@@ -690,7 +696,7 @@ $(document).ready(function () {
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
         formData.append('title_image', title_image, "blogTitleImage");
-        formData.append('description', plainText);
+        formData.append('description', description);
 
         // Send the Ajax POST request //
         $.ajax({
