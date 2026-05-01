@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, PrivacyPolicy
 import datetime
 from django.http import HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
@@ -126,6 +126,29 @@ def load_cmsinfo(request):
 
 
     return render(request, 'pages/cmsinfo.html', context=context)
+
+
+def datenschutz_view(request):
+    owner_data = UserSettings.get_site_owner()
+    policy = PrivacyPolicy.objects.first()
+    privacy_content_html = ""
+    use_policy = policy is not None
+
+    if policy:
+        if policy.use_html and policy.content_html.strip():
+            privacy_content_html = policy.render_content(owner_data)
+        elif policy.content_text.strip():
+            privacy_content_html = policy.render_content(owner_data)
+
+    return render(
+        request,
+        'pages/datenschutz.html',
+        {
+            'privacy_content_html': privacy_content_html,
+            'use_policy': use_policy,
+            'owner_data': owner_data,
+        },
+    )
 
 
 

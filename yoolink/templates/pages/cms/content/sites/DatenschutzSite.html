@@ -1,0 +1,76 @@
+{% extends "cmsbase.html" %}
+{% load compress static %}
+{% block title %} {{ block.super }} | CMS - Datenschutz {% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+  <div class="flex justify-between">
+    <h1 class="text-2xl">
+      <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a>
+      / <span>Datenschutz (/datenschutz)</span>
+    </h1>
+    <div>
+      {% csrf_token %}
+      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+         id="savePrivacyPolicy">
+        Speichern
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold mb-2">Inhalt</h2>
+      <p class="text-sm text-gray-600 mb-4">
+        Bitte fuege hier den HTML-Block ein, z. B. aus E-Recht24.
+      </p>
+
+      <div id="htmlTextWrapper" class="mb-2">
+        <label class="text-sm font-semibold block mb-2">HTML (z. B. von E-Recht24)</label>
+        <textarea id="privacyContentHtml" rows="18"
+          class="w-full rounded-lg border border-gray-300 p-3 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">{% if policy %}{{ policy.content_html }}{% endif %}</textarea>
+      </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold mb-3">Dynamische Platzhalter</h2>
+      <p class="text-sm text-gray-600 mb-4">
+        Diese Werte werden automatisch aus den User Settings ersetzt und koennen nicht frei ueberschrieben werden.
+        Falls sie im eingefuegten HTML vorkommen, werden sie automatisch als Platzhalter gespeichert.
+      </p>
+      <div class="space-y-2 text-sm font-mono">
+        <div>[[OWNER_NAME]]</div>
+        <div>[[ADDRESS]]</div>
+        <div>[[EMAIL]]</div>
+        <div>[[TEL]]</div>
+        <div>[[FAX]]</div>
+        <div>[[MOBILE]]</div>
+        <div>[[WEBSITE]]</div>
+      </div>
+
+      <h3 class="text-lg font-bold mt-6 mb-3">Aktuelle Daten</h3>
+      {% if owner_data %}
+        <div class="text-sm text-gray-700 space-y-2">
+          <div><span class="font-semibold">Name:</span> {{ owner_data.full_name|default:"-" }}</div>
+          <div><span class="font-semibold">Firma:</span> {{ owner_data.company_name|default:"-" }}</div>
+          <div><span class="font-semibold">Adresse:</span> {{ owner_data.address|default:"-" }}</div>
+          <div><span class="font-semibold">E-Mail:</span> {{ owner_data.email|default:"-" }}</div>
+          <div><span class="font-semibold">Telefon:</span> {{ owner_data.tel_number|default:"-" }}</div>
+          <div><span class="font-semibold">Fax:</span> {{ owner_data.fax_number|default:"-" }}</div>
+          <div><span class="font-semibold">Mobil:</span> {{ owner_data.mobile_number|default:"-" }}</div>
+          <div><span class="font-semibold">Website:</span> {{ owner_data.website|default:"-" }}</div>
+        </div>
+      {% else %}
+        <p class="text-sm text-gray-500">Keine User Settings gefunden.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascriptend %}
+{% compress js inline %}
+<script defer src="{% static 'js/cms.js' %}"></script>
+<script defer src="{% static 'js/cms/content/privacy.js' %}"></script>
+{% endcompress js %}
+{% endblock %}

@@ -69,6 +69,8 @@ urlpatterns = [
     path("seiten/Kunden/", views.site_view_kunden, name="site_kunden"),
     path("seiten/skills/", views.site_view_skills, name="site_skills"),
     path("seiten/cmsinfo/", views.site_view_cmsinfo, name="site_cmsinfo"),
+    path("seiten/datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),
+    path("seiten/datenschutz/save/", views.save_privacy_policy, name="save_privacy_policy"),
 
     # Email
     path("email/request/", views.email_send, name="send-email"),

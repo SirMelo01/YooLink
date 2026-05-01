@@ -3,9 +3,9 @@ from .models import Notification, UserSettings
 
 def user_settings_context(request):
     context = {}
-    user_settings_qs = UserSettings.objects.filter(user__is_staff=False)
-    if user_settings_qs.exists():
-        context['owner_data'] = user_settings_qs.first()
+    owner_data = UserSettings.get_site_owner()
+    if owner_data:
+        context['owner_data'] = owner_data
     return context
 
 def notifications_context(request):

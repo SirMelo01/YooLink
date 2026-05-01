@@ -79,6 +79,9 @@
 
 
 <div class="datenschutz container py-10 w-full mx-auto px-2 md:px-40">
+  {% if use_policy %}
+    {{ privacy_content_html|safe }}
+  {% else %}
   <h1>Datenschutz&shy;erkl&auml;rung</h1>
   <h2>1. Datenschutz auf einen Blick</h2>
   <h3>Allgemeine Hinweise</h3> 
@@ -115,8 +118,19 @@
   <p>Wir weisen darauf hin, dass die Daten&uuml;bertragung im Internet (z.&nbsp;B. bei der Kommunikation per E-Mail) Sicherheitsl&uuml;cken aufweisen kann. Ein l&uuml;ckenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht m&ouml;glich.</p>
   <h3>Hinweis zur verantwortlichen Stelle</h3>
   <p>Die verantwortliche Stelle f&uuml;r die Datenverarbeitung auf dieser Website ist:</p>
-  <p>Sebastian Rauch<br />Am Altbach 6<br />94491 Hengersberg</p>
-  <p>Telefon: 0170 5977862<br />E-Mail: info@yoolink.de</p>
+  <p>
+    {% if owner_data %}
+      {% if owner_data.company_name %}{{ owner_data.company_name }}<br />{% endif %}
+      {% if owner_data.full_name %}{{ owner_data.full_name }}<br />{% endif %}
+      {% if owner_data.address %}{{ owner_data.address }}{% endif %}
+    {% else %}
+      Sebastian Rauch<br />Am Altbach 6<br />94491 Hengersberg
+    {% endif %}
+  </p>
+  <p>
+    Telefon: {% if owner_data and owner_data.tel_number %}{{ owner_data.tel_number }}{% else %}0170 5977862{% endif %}<br />
+    E-Mail: {% if owner_data and owner_data.email %}{{ owner_data.email }}{% else %}info@yoolink.de{% endif %}
+  </p>
   <p>Verantwortliche Stelle ist die nat&uuml;rliche oder juristische Person, die allein oder gemeinsam mit anderen &uuml;ber die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z.&nbsp;B. Namen, E-Mail-Adressen o. &Auml;.) entscheidet.</p>
 
 
@@ -162,6 +176,7 @@
 
 
 
+  {% endif %}
 </div>
 
 

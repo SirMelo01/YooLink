@@ -6,7 +6,7 @@ from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.applications.shop.models import Product
-from yoolink.ycms.models import AnyFile, Button, Notification, PricingCard, PricingFeature, TeamMember, VideoFile, fileentry, OpeningHours, FAQ, UserSettings, Order, Message, Galerie, Blog, GaleryImage, TextContent
+from yoolink.ycms.models import AnyFile, Button, Notification, PricingCard, PricingFeature, TeamMember, VideoFile, fileentry, OpeningHours, FAQ, UserSettings, Order, Message, Galerie, Blog, GaleryImage, TextContent, PrivacyPolicy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib import messages
@@ -1348,6 +1348,21 @@ def site_view_cmsinfo(request):
         "textContent_bottomcta": get_text("main_cmsinfo_bottomcta"),
     })
 
+
+@login_required(login_url='login')
+def site_view_datenschutz(request):
+    policy = PrivacyPolicy.objects.first()
+    owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
+
+    return render(
+        request,
+        "pages/cms/content/sites/DatenschutzSite.html",
+        {
+            "policy": policy,
+            "owner_data": owner_data,
+        },
+    )
+
 ######################
 # END SITE CONTENT   #
 ######################
@@ -1457,6 +1472,23 @@ def saveTextContent(request):
         return JsonResponse({'success': 'Elemente wurden erfolgreich gespeichert'}, status=200)
 
     return JsonResponse({'error': 'Etwas ist falsch gelaufen. Versuche es später nochmal'}, status=400)
+
+
+@login_required(login_url='login')
+def save_privacy_policy(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Ungültige Anfrage'}, status=405)
+
+    content_html = request.POST.get("content_html", "")
+
+    owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
+    policy, _ = PrivacyPolicy.objects.get_or_create(pk=1)
+
+    policy.use_html = True
+    policy.content_html = PrivacyPolicy.prepare_content(content_html, owner_data, as_html=True)
+    policy.save(update_fields=["use_html", "content_html", "updated_at"])
+
+    return JsonResponse({'success': 'Datenschutzerklaerung wurde gespeichert'}, status=200)
 
 @api_view(['POST'])
 @authentication_classes([])

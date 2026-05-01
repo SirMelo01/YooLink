@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, skills_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, skills_view, datenschutz_view
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
@@ -46,7 +46,7 @@ urlpatterns += i18n_patterns(
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
     path("kontakt/", view=kontaktform, name="kontakt"),
-    path("datenschutz/", TemplateView.as_view(template_name="pages/datenschutz.html"), name="datenschutz"),
+    path("datenschutz/", view=datenschutz_view, name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("cmsinfo/", view=load_cmsinfo, name="ycmsinfo"),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
