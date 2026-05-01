@@ -1,3 +1,6 @@
+from html import escape
+from html.parser import HTMLParser
+
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from yoolink.ycms.models import Blog
@@ -5,6 +8,117 @@ from django.utils.translation import get_language_from_request, activate
 from django.conf import settings
 
 from django.utils.translation import get_language
+
+
+class ConsentIframeParser(HTMLParser):
+    """Move iframe sources behind the consent gate without sanitizing CMS HTML."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=False)
+        self.output = []
+        self._wrap_iframe_stack = []
+
+    def _render_attrs(self, attrs):
+        rendered = []
+        for key, value in attrs:
+            if value is None:
+                rendered.append(f" {key}")
+            else:
+                rendered.append(f' {key}="{escape(value, quote=True)}"')
+        return "".join(rendered)
+
+    def _consent_attrs(self, attrs):
+        src = None
+        class_value = ""
+        next_attrs = []
+
+        for key, value in attrs:
+            key_lower = key.lower()
+            if key_lower == "src":
+                src = value
+            elif key_lower == "class":
+                class_value = value or ""
+            else:
+                next_attrs.append((key, value))
+
+        if not src:
+            return attrs
+
+        classes = class_value.split()
+        if "hidden" not in classes:
+            classes.append("hidden")
+
+        next_attrs.append(("class", " ".join(classes)))
+        next_attrs.append(("data-cookie-src", src))
+        return next_attrs
+
+    def _placeholder(self):
+        return (
+            '<div class="rounded-xl border border-slate-300 bg-slate-50 p-4 text-slate-700" data-cookie-placeholder>'
+            '<p class="font-semibold text-gray-800">Externer Inhalt ist deaktiviert.</p>'
+            '<p class="mt-1 text-sm text-gray-600">'
+            'Dieser Inhalt wird erst nach Ihrer Einwilligung fuer externe Medien geladen.'
+            '</p>'
+            '<button type="button" class="mt-3 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-center font-bold text-slate-900 transition hover:bg-slate-100" '
+            'data-consent-action="open-settings">Cookie-Auswahl oeffnen</button>'
+            '</div>'
+        )
+
+    def _wrapper_open(self):
+        return '<div class="my-4">'
+
+    def _wrapper_close(self):
+        return "</div>"
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "iframe" and any(key.lower() == "src" for key, _ in attrs):
+            self.output.append(self._wrapper_open())
+            self.output.append(self._placeholder())
+            attrs = self._consent_attrs(attrs)
+            self._wrap_iframe_stack.append(True)
+            self.output.append(f"<{tag}{self._render_attrs(attrs)}>")
+            return
+        self.output.append(f"<{tag}{self._render_attrs(attrs)}>")
+
+    def handle_startendtag(self, tag, attrs):
+        if tag.lower() == "iframe" and any(key.lower() == "src" for key, _ in attrs):
+            self.output.append(self._wrapper_open())
+            self.output.append(self._placeholder())
+            attrs = self._consent_attrs(attrs)
+            self.output.append(f"<{tag}{self._render_attrs(attrs)} />")
+            self.output.append(self._wrapper_close())
+            return
+        self.output.append(f"<{tag}{self._render_attrs(attrs)} />")
+
+    def handle_endtag(self, tag):
+        if tag.lower() == "iframe" and self._wrap_iframe_stack:
+            self._wrap_iframe_stack.pop()
+            self.output.append(f"</{tag}>")
+            self.output.append(self._wrapper_close())
+            return
+        self.output.append(f"</{tag}>")
+
+    def handle_data(self, data):
+        self.output.append(data)
+
+    def handle_entityref(self, name):
+        self.output.append(f"&{name};")
+
+    def handle_charref(self, name):
+        self.output.append(f"&#{name};")
+
+    def handle_comment(self, data):
+        self.output.append(f"<!--{data}-->")
+
+    def get_html(self):
+        return "".join(self.output)
+
+
+def consent_gate_iframes(html):
+    parser = ConsentIframeParser()
+    parser.feed(html or "")
+    parser.close()
+    return parser.get_html()
 
 def get_active_language(request):
     """
@@ -55,6 +169,11 @@ class BlogDetailView(DetailView):
     model = Blog
     template_name = 'blog/blog_detail.html'
     context_object_name = 'blog'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["consent_safe_body"] = consent_gate_iframes(context["blog"].body)
+        return context
 
     def get(self, request, *args, **kwargs):
         # Objekt laden

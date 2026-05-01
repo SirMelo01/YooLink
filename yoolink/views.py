@@ -146,7 +146,16 @@ def kontaktform(request):
     else:
         form = ContactForm()
 
-    return render(request, 'pages/kontakt.html', {'form': form, 'success': success})
+    return render(
+        request,
+        'pages/kontakt.html',
+        {
+            'form': form,
+            'success': success,
+            'recaptcha_public_key': settings.RECAPTCHA_PUBLIC_KEY,
+            'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
+        },
+    )
 
 def skills_view(request):
     context = {}

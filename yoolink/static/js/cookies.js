@@ -1,77 +1,61 @@
-var form = document.querySelector("form");
-var cookieslider = document.getElementById("cookie");
-var analyticslider = document.getElementById("analytics");
-var fontslider = document.getElementById("font");
+(function () {
+  "use strict";
 
-function cookiereload2() {
-  if (cookieslider.checked === true) {
-    document.cookie =
-      "Cookie-Consent=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  } else {
-    document.cookie =
-      "Cookie-Consent=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  }
-
-  if (analyticslider.checked === true) {
-    document.cookie =
-      "Cookie-Analytic=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  } else {
-    document.cookie =
-      "Cookie-Analytic=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  }
-
-  if (fontslider.checked === true) {
-    document.cookie =
-      "Cookie-Font=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  } else {
-    document.cookie =
-      "Cookie-Font=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  }
-}
-
-onload = function () {
-  if (cookieselect === "true") {
-    cookieslider.checked = true;
-  }
-
-  if (cookieanalyticselect === "true") {
-    analyticslider.checked = true;
-  }
-
-  if (cookiefontselect === "true") {
-    fontslider.checked = true;
-  }
-};
-
-cookieslider.addEventListener("change", (e) => {
-  if (cookieslider.checked === true) {
-    analyticslider.checked = true;
-    fontslider.checked = true;
-  } else {
-    analyticslider.checked = false;
-    fontslider.checked = false;
-  }
-  cookiereload2();
-});
-
-analyticslider.addEventListener("change", (e) => {
-  if (analyticslider.checked === true) {
-    if (fontslider.checked === true) {
-      cookieslider.checked = true;
+  function ready(callback) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", callback);
+    } else {
+      callback();
     }
-  } else {
-    cookieslider.checked = false;
   }
-  cookiereload2();
-});
 
-fontslider.addEventListener("change", (e) => {
-  if (fontslider.checked === true) {
-    if (analyticslider.checked === true) {
-      cookieslider.checked = true;
+  ready(function () {
+    const form = document.querySelector("[data-cookie-settings-form]");
+    if (!form || !window.YooLinkConsent) return;
+
+    const status = document.querySelector("[data-cookie-settings-status]");
+    const toggles = form.querySelectorAll("[data-consent-toggle]");
+
+    function sync() {
+      const categories = window.YooLinkConsent.categories();
+      toggles.forEach((toggle) => {
+        toggle.checked = Boolean(categories[toggle.dataset.consentToggle]);
+      });
     }
-  } else {
-    cookieslider.checked = false;
-  }
-  cookiereload2();
-});
+
+    function showStatus(message) {
+      if (!status) return;
+      status.textContent = message;
+      status.classList.remove("hidden");
+      window.setTimeout(() => status.classList.add("hidden"), 3500);
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const next = {};
+      toggles.forEach((toggle) => {
+        next[toggle.dataset.consentToggle] = toggle.checked;
+      });
+      window.YooLinkConsent.save(next);
+      showStatus("Ihre Cookie-Auswahl wurde gespeichert.");
+    });
+
+    document.querySelectorAll("[data-cookie-settings-action]").forEach((button) => {
+      button.addEventListener("click", function () {
+        const action = button.dataset.cookieSettingsAction;
+        if (action === "accept-all") {
+          window.YooLinkConsent.acceptAll();
+          sync();
+          showStatus("Alle optionalen Dienste wurden akzeptiert.");
+        } else if (action === "reject-all") {
+          window.YooLinkConsent.rejectAll();
+          sync();
+          showStatus("Alle optionalen Dienste wurden abgelehnt.");
+        }
+      });
+    });
+
+    document.addEventListener("yoolink:consentChanged", sync);
+    sync();
+  });
+})();

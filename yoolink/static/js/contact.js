@@ -1,8 +1,24 @@
 
 $(document).ready(function() {
+    function updateSubmitState() {
+        const consent = window.YooLinkConsent && window.YooLinkConsent.categories();
+        const hasExternalConsent = Boolean(consent && consent.external);
+        const captchaReady = $('[data-recaptcha-container]').attr('data-rendered') === 'true';
+        $('#contactSubmit').prop('disabled', !(hasExternalConsent && captchaReady));
+    }
+
+    document.addEventListener("yoolink:consentChanged", updateSubmitState);
+    document.addEventListener("yoolink:recaptcha-ready", updateSubmitState);
+    document.addEventListener("yoolink:recaptcha-reset", updateSubmitState);
+    updateSubmitState();
+
     $('#emailForm').submit(function (event) {
         event.preventDefault(); // Prevent the default form submission
-        console.log("Sende email...")
+        updateSubmitState();
+        if ($('#contactSubmit').prop('disabled')) {
+          sendNotif("Bitte stimmen Sie reCAPTCHA in den Cookie-Einstellungen zu.", "error");
+          return;
+        }
         // Send form data to the server using AJAX
         $.ajax({
           type: 'POST',

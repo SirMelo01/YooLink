@@ -106,42 +106,6 @@ function showSlide(id) {
 }
 
 
-/* NORMAL Site Home.JS without Slider but with map and contact section instead */
-const realmap = document.querySelector("#map");
-const covermap = document.querySelector("#covermap");
-
-var map;
-
-
-
-//Map
-
-// Commented because this website has no map
-/*function mapLoad() {
-  if (cookiemapselect === null || cookiemapselect === "false") {
-    covermap.classList.remove("hidden");
-    realmap.classList.add("hidden");
-  } else {
-    covermap.classList.add("hidden");
-    realmap.classList.remove("hidden");
-
-    // Karte wird geladen
-    map.setView([53.699497, 10.742065], 13);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map);
-    
-    L.marker([53.699497, 10.742065]).addTo(map)
-    .bindPopup('W&K Schweißtechnik GmbH.<br> Bahnhofsallee 38, 23909 Ratzeburg.')
-    .openPopup();
-    map.scrollWheelZoom.disable();
-  }
-}*/
-
-
-
 var csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
 var csrfToken = csrfTokenInput ? csrfTokenInput.value : undefined;
 
@@ -192,18 +156,4 @@ $(document).ready(function() {
     });
 });
 });
-
-// Commented because this website has no map
-/*setTimeout(() => {
-  if (cookiemapselect !== null && cookiemapselect !== "false") {
-    map = L.map("map");
-    map.on("focus", function () {
-      map.scrollWheelZoom.enable();
-    });
-    map.on("blur", function () {
-      map.scrollWheelZoom.disable();
-    });
-  }
-  mapLoad();
-}, 500);*/
 

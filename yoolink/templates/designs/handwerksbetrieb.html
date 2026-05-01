@@ -348,24 +348,6 @@ function showSlide() {
   }
 }
 
-setTimeout(() => {
-  if (cookiemapselect === null || cookiemapselect === "false") {
-    console.log("cookie nicht da");
-  } else {
-    map = L.map("map");
-    map.on("focus", function () {
-      map.scrollWheelZoom.enable();
-    });
-    map.on("blur", function () {
-      map.scrollWheelZoom.disable();
-    });
-  }
-  mapLoad();
-}, 500);
-
-
-
-
     </script>
     
     

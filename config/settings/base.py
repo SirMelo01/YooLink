@@ -196,6 +196,7 @@ AWS_LOCATION = 'https://yoolink.fra1.digitaloceanspaces.com/'
 
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY", default="")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY", default="")
+GOOGLE_MAPS_EMBED_API_KEY = env("GOOGLE_MAPS_EMBED_API_KEY", default="")
 
 # TEMPLATES
 # ------------------------------------------------------------------------------

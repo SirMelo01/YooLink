@@ -31,7 +31,7 @@
                 </address>
             </header>
             {% if blog.active %}
-            {{ blog.body | safe }}
+            {{ consent_safe_body | safe }}
             {% else %}
             <p>Dieser Blog ist nicht aktiv!</p>
             {% endif %}

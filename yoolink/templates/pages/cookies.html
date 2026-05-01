@@ -1,63 +1,116 @@
+{% extends "base.html" %}
+{% load compress static %}
 
-{% extends "base.html" %} {% load compress static %}
-
-{% block title %}{{block.super}} | Cookies{% endblock title %}
+{% block title %}{{ block.super }} | Cookie-Einstellungen{% endblock title %}
 
 {% block content %}
+<main class="mx-auto max-w-5xl px-4 py-12 md:py-20">
+  <header class="mb-10">
+    <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">Datenschutz</p>
+    <h1 class="mt-2 text-3xl font-bold text-gray-900 md:text-4xl">Cookie-Einstellungen</h1>
+    <p class="mt-4 text-base leading-7 text-gray-600">
+      Hier können Sie Ihre Einwilligung für optionale Dienste verwalten. Notwendige Cookies bleiben aktiv,
+      weil sie für Sicherheit, Sprache, Warenkorb, Login und den Betrieb der Website erforderlich sind.
+      Alle optionalen Dienste werden erst nach Ihrer aktiven Zustimmung geladen.
+    </p>
+  </header>
 
-  <div class=" mt-5 mx-5 md:mt-20 xl:mx-40 md:w-8/12">
-    <div>
-      <h1 class="font-bold md:text-3xl">Cookie-Einstellungen</h1>
-      <p class="mt-5 text-sm md:text-base">Wir verwenden Cookies, um Ihnen ein optimales Webseiten-Erlebnis zu bieten.
-        Dazu zählen Cookies, die für den Betrieb der Seite notwendig sind, sowie solche, die zu Statistikzwecken oder
-        für Komforteinstellungen genutzt werden. Sie können selbst entscheiden, ob Sie die technisch nicht notwendigen
-        Cookies akzeptieren. Bitte beachten Sie, dass auf Basis Ihrer Einstellungen womöglich nicht mehr alle
-        Funktionalitäten der Seite zur Verfügung stehen.</p>
-    </div>
-    <form>
-      <div class="mt-5">
-        <ul class="my-5">
-          <li class="flex flex-wrap mb-8">
-            <p class="mr-3 text-sm" aria-hidden="true">off</p>
-            <input
-            class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-blue-900 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-900 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="cookie"/>
-            <p class="mr-5 ml-3 text-sm" aria-hidden="false">on</p>
-            <label for="cookie" class="inline-block pl-[0.15rem] hover:cursor-pointer">
-              Cookies
-            </label>
-          </li>
-        </ul>
-        <h3 class="mb-4 font-semibold text-gray-900">Auswahlmöglichkeiten</h3>
-        <ul class="mx-5">
-          <li class="flex flex-wrap mb-8">
-            <p class="mr-3 text-sm">off</p>
-            <input
-            class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-blue-900 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-900 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="font"/>
-            <p class="mr-5 ml-3 text-sm">on</p>
-            <label for="font" class="inline-block pl-[0.15rem] hover:cursor-pointer">
-              Google Fonts
-            </label>
-          </li>
-          <li class="flex flex-wrap mb-8">
-            <p class="mr-3 text-sm">off</p>
-            <input
-            class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-blue-900 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-900 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-            type="checkbox" role="switch" id="analytics"/>
-            <p class="mr-5 ml-3 text-sm">on</p>
-            <label for="analytics" class="inline-block pl-[0.15rem] hover:cursor-pointer">
-              Google Analytics
-            </label>
-          </li>
-        </ul>
+  <div
+    data-cookie-settings-status
+    class="hidden mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-800"
+    role="status"
+  ></div>
+
+  <form data-cookie-settings-form class="space-y-4">
+    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Notwendig</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Session-, CSRF-, Sprach-, Warenkorb- und Consent-Cookies. Diese Cookies sind technisch erforderlich
+            und können über dieses Formular nicht deaktiviert werden.
+          </p>
+          <p class="mt-2 text-xs text-gray-500">Beispiele: <code>csrftoken</code>, <code>sessionid</code>, <code>django_language</code>, <code>yoolink_cookie_consent</code>.</p>
+        </div>
+        <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-blue-100 px-4 py-1 text-sm font-bold text-blue-800">Immer aktiv</span>
       </div>
-    </form>
-  </div>
-{%endblock content%}
+    </section>
 
+    <label for="settings-preferences" class="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Komfort und Darstellung</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Lädt Google Fonts für die gestaltete Schriftansicht. Dabei kann Ihre IP-Adresse an Google übertragen werden.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input id="settings-preferences" type="checkbox" class="sr-only peer" data-consent-toggle="preferences">
+          <div class="relative h-6 w-11 rounded-full bg-gray-200 transition peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></div>
+        </div>
+      </div>
+    </label>
+
+    <label for="settings-analytics" class="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Statistik</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Aktiviert Google Analytics, um Reichweite und Nutzung der Website zu messen. Ohne Einwilligung wird
+            Google Analytics nicht geladen.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input id="settings-analytics" type="checkbox" class="sr-only peer" data-consent-toggle="analytics">
+          <div class="relative h-6 w-11 rounded-full bg-gray-200 transition peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></div>
+        </div>
+      </div>
+    </label>
+
+    <label for="settings-external" class="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Externe Medien und Sicherheitsdienste</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Erlaubt das Laden externer Karten, Videos und reCAPTCHA. Ohne Einwilligung erscheinen Platzhalter
+            oder Funktionen bleiben deaktiviert.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input id="settings-external" type="checkbox" class="sr-only peer" data-consent-toggle="external">
+          <div class="relative h-6 w-11 rounded-full bg-gray-200 transition peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></div>
+        </div>
+      </div>
+    </label>
+
+    <div class="flex flex-col gap-3 pt-4 sm:flex-row">
+      <button type="submit" class="rounded-lg bg-blue-700 px-5 py-3 font-bold text-white transition hover:bg-blue-800">
+        Auswahl speichern
+      </button>
+      <button type="button" class="rounded-lg border border-gray-300 px-5 py-3 font-bold text-gray-800 transition hover:bg-gray-50" data-cookie-settings-action="reject-all">
+        Alle ablehnen
+      </button>
+      <button type="button" class="rounded-lg border border-gray-300 px-5 py-3 font-bold text-gray-800 transition hover:bg-gray-50" data-cookie-settings-action="accept-all">
+        Alle akzeptieren
+      </button>
+    </div>
+  </form>
+
+  <section class="mt-10 rounded-xl bg-gray-50 p-5 text-sm leading-6 text-gray-600">
+    <h2 class="text-lg font-bold text-gray-900">Hinweis</h2>
+    <p class="mt-2">
+      Ihre Auswahl wird für 180 Tage gespeichert. Sie können Ihre Einwilligung jederzeit über diese Seite
+      oder über den Link zu den Cookie-Einstellungen im Footer widerrufen oder ändern.
+    </p>
+    <p class="mt-2">
+      Weitere Details finden Sie in der <a class="font-semibold text-blue-700 underline" href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.
+    </p>
+  </section>
+</main>
+{% endblock content %}
 
 {% block javascriptend %}
+  {{ block.super }}
   {% compress js inline %}
     <script defer src="{% static 'js/cookies.js' %}"></script>
   {% endcompress js %}

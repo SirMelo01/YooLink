@@ -1,4 +1,3 @@
-const cookie = document.querySelector("#menu-cookie");
 const menu = document.querySelector("#navbar-cta");
 
 function toggleMenu() {
@@ -9,38 +8,13 @@ function toggleMenu() {
   }
 }
 
-function cookieRefresh() {
-  if (cookieselect == null) {
-    cookie.classList.add("block");
-    cookie.classList.remove("hidden");
-  } else {
-    cookie.classList.add("hidden");
-  }
-}
-
 function acceptCookie() {
-  document.cookie =
-    "Cookie-Consent=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  document.cookie =
-    "Cookie-Analytic=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  document.cookie =
-    "Cookie-Font=true; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  location.reload();
-  cookieRefresh();
+  window.YooLinkConsent && window.YooLinkConsent.acceptAll();
 }
 
 function refuseCookie() {
-  document.cookie =
-    "Cookie-Consent=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  document.cookie =
-    "Cookie-Analytic=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  document.cookie =
-    "Cookie-Font=false; expires=" + new Date(9999, 0, 1).toUTCString() + "; path=/";
-  location.reload();
-  cookieRefresh();
+  window.YooLinkConsent && window.YooLinkConsent.rejectAll();
 }
-
-cookieRefresh();
 
 /** Notifications Button */
 

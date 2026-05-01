@@ -40,17 +40,68 @@
                 placeholder="Hinterlasse eine Nachricht..."></textarea>
     </div>
 
-    <div>
-      {{ form.captcha }}
+    <div class="space-y-3">
+      <div
+        class="rounded-xl border border-slate-300 bg-slate-50 p-4 text-slate-700"
+        data-cookie-placeholder
+        data-recaptcha-placeholder
+      >
+        <p class="font-semibold text-gray-800">reCAPTCHA ist deaktiviert.</p>
+        <p class="mt-1 text-sm text-gray-600">
+          Zum Schutz des Formulars vor Spam nutzen wir Google reCAPTCHA. Der Dienst wird erst nach Ihrer Einwilligung f&uuml;r externe Medien und Sicherheitsdienste geladen. Alternativ erreichen Sie uns &uuml;ber die Kontaktwege im Impressum.
+        </p>
+        <button type="button" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white transition hover:bg-blue-800" data-consent-action="open-settings">
+          Cookie-Auswahl öffnen
+        </button>
+      </div>
+      <div
+        data-recaptcha-container
+        data-sitekey="{{ recaptcha_public_key }}"
+      ></div>
     </div>
 
     <div class="flex justify-center">
-      <button type="submit"
+      <button type="submit" id="contactSubmit" disabled
               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-3 px-6 rounded-full shadow-md transition">
         Absenden
       </button>
     </div>
   </form>
+
+  <div class="mt-10 max-w-3xl mx-auto">
+    <div class="relative h-[270px] md:h-[498px]">
+      {% if google_maps_embed_api_key %}
+      <div
+        class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-700"
+        data-cookie-placeholder
+      >
+        <p class="font-semibold text-gray-800">Google Maps ist deaktiviert.</p>
+        <p class="mt-1 text-sm text-gray-600">
+          Die Karte wird erst nach Ihrer Einwilligung f&uuml;r externe Medien und Sicherheitsdienste geladen.
+          Sie k&ouml;nnen die Einstellung jederzeit in den Cookie-Einstellungen &auml;ndern.
+        </p>
+        <button type="button" class="mt-3 rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white transition hover:bg-blue-800" data-consent-action="open-settings">
+          Cookie-Auswahl öffnen
+        </button>
+      </div>
+      <iframe
+        class="hidden h-full w-full rounded-2xl shadow-lg"
+        title="Google Maps Standort"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        data-cookie-src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_embed_api_key }}&zoom=15&maptype=roadmap&q=Schanzenweg%2053%2C%20Deggendorf"
+      ></iframe>
+      {% else %}
+      <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+        <p class="font-semibold">Google Maps API Key fehlt.</p>
+        <p class="mt-1 text-sm">
+          Bitte setze <strong>GOOGLE_MAPS_EMBED_API_KEY</strong> in der .env, damit die Karte geladen werden kann.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
 </section>
 
 

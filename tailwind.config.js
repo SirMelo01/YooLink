@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./yoolink/templates/*.{html,js}",
+            "./yoolink/templates/components/*.{html,js}",
             "./yoolink/templates/pages/*.{html,js}",
             "./yoolink/templates/pages/**/*.{html,js}",
             "./yoolink/templates/pages/cms/*.{html,js}",
@@ -14,7 +15,8 @@ module.exports = {
             "./yoolink/templates/pages/cms/content/sites/*.{html,js}",
             "./yoolink/templates/pages/cms/content/sites/**/*.{html,js}",
             "./yoolink/templates/pages/cms/blog/*.{html,js}",
-            "./yoolink/static/js/cms/**/*.js"
+            "./yoolink/static/js/**/*.js",
+            "./yoolink/blog/**/*.py"
             ],
   theme: {
     screens: {
@@ -65,6 +67,7 @@ module.exports = {
       fontFamily: {
         raleway: ['"Raleway"', 'sans-serif'],
         poppins: ['"Poppins"', 'poppins-light'],
+        roboto: ['"Roboto"', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
       },
     },
   },
