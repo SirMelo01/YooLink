@@ -151,6 +151,10 @@ def cms_files(request):
 @login_required(login_url='login')
 def cms(request):
 
+    # Ensure anonymous users are redirected to the CMS login.
+    if not request.user.is_authenticated:
+        return redirect(reverse(settings.LOGIN_URL) + f"?next={request.path}")
+
     context = {'form': None, 'last': None}
 
     if request.method == 'POST':

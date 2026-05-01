@@ -12,7 +12,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    order_items = OrderItemSerializer(many=True, read_only=True)
+    order_items = OrderItemSerializer(source="items", many=True, read_only=True)
 
     class Meta:
         model = Order

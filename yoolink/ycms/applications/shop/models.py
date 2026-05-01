@@ -243,6 +243,10 @@ class Order(TimeStampedModel):
         TRANSFER = "TRANSFER", "Überweisung / PayPal"
         CASH = "CASH", "Barzahlung"
 
+    STATUS_CHOICES = Status.choices
+    SHIPPING_CHOICES = ShippingMethod.choices
+    PAYMENT_CHOICES = PaymentMethod.choices
+
     buyer_email = models.EmailField(blank=True)
     buyer_address = models.ForeignKey(
         ShippingAddress,

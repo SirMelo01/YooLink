@@ -104,7 +104,7 @@ def build_order_summary(order):
     """Build a reusable order summary for mails."""
     lines = []
 
-    for item in order.orderitem_set.select_related("product").all():
+    for item in order.items.select_related("product").all():
         lines.append(f"{item.quantity}x {item.product.title} - {item.subtotal():.2f} Euro")
 
     lines.append("------------------------------------------")
@@ -215,7 +215,7 @@ def build_cart_items_payload(order):
             "price": float(item.get_price()),
             "subtotal": float(item.subtotal()),
         }
-        for item in order.orderitem_set.select_related("product").all()
+        for item in order.items.select_related("product").all()
     ]
 
 
@@ -656,12 +656,12 @@ def get_public_filtered_products_queryset(request):
     if min_price:
         min_price_value = parse_decimal(min_price)
         if min_price_value is not None:
-            products = products.filter(effective_price__gte=min_price_value)
+            products = products.filter(effective_price_value__gte=min_price_value)
 
     if max_price:
         max_price_value = parse_decimal(max_price)
         if max_price_value is not None:
-            products = products.filter(effective_price__lte=max_price_value)
+            products = products.filter(effective_price_value__lte=max_price_value)
 
     if brand:
         products = products.filter(Q(brand__slug=brand) | Q(brand__name__icontains=brand))
@@ -686,8 +686,8 @@ def get_public_filtered_products_queryset(request):
     ordering_map = {
         "title_asc": "title",
         "title_desc": "-title",
-        "price_asc": "effective_price",
-        "price_desc": "-effective_price",
+        "price_asc": "effective_price_value",
+        "price_desc": "-effective_price_value",
         "updated_desc": "-updated_at",
         "updated_asc": "updated_at",
         "created_desc": "-created_at",
@@ -770,7 +770,7 @@ def detail(request, product_id, slug):
 def order_detail_view(request, order_id):
     """Render the CMS order detail page."""
     order = get_object_or_404(
-        Order.objects.select_related("buyer_address").prefetch_related("orderitem_set__product"),
+        Order.objects.select_related("buyer_address").prefetch_related("items__product"),
         id=order_id,
     )
     return render(request, "pages/cms/orders/detail.html", {"order": order})
@@ -989,15 +989,15 @@ def add_to_cart(request, product_id):
             "is_discounted": product.is_reduced,
             "unit_price": product.price,
             "discounted_price": product.discount_price if product.is_reduced else None,
-            "quantity": 0,
+            "quantity": product_amount,
         },
     )
 
     if created:
         request.session["cart_amount"] = cart_amount + 1
-
-    order_item.quantity += product_amount
-    order_item.save()
+    else:
+        order_item.quantity += product_amount
+        order_item.save()
 
     serializer = OrderItemSerializer(order_item)
 
@@ -1191,7 +1191,7 @@ def verify_cart(request):
         reset_cart_session(request)
         return JsonResponse({"error": "Order ist bereits verifiziert."}, status=400)
 
-    for item in order.orderitem_set.select_related("product").all():
+    for item in order.items.select_related("product").all():
         if (item.product.is_reduced and not item.is_discounted) or (not item.product.is_reduced and item.is_discounted):
             return JsonResponse({"error": f"Falsche Preiskonfiguration {item.product.title}"}, status=400)
 

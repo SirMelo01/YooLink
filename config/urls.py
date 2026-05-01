@@ -51,6 +51,7 @@ urlpatterns += i18n_patterns(
     path("cmsinfo/", view=load_cmsinfo, name="ycmsinfo"),
     path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
+    path("users/", include("yoolink.users.urls", namespace="users")),
     path("kunden/", view=load_kunden, name="kunden"),
     path("skills/", view=skills_view, name="skills"),
     path("products/", include("yoolink.ycms.applications.shop.public_product_urls")),

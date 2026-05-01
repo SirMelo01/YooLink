@@ -72,6 +72,27 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ npm run build
         $ npm run watch
 
+## Tests / Sicherheitsnetz:
+
+### Lokal alle Tests ausfÃ¼hren:
+        $ docker-compose -f local.yml run --rm django pytest
+
+### Lokal nur CMS-/Shop-Sicherheitsnetz ausfÃ¼hren:
+        $ docker-compose -f local.yml run --rm django pytest tests/test_cms_2fa.py tests/test_cms_core_modules.py tests/test_shop_safety_net.py tests/test_public_pages_safety_net.py
+
+### Lokal mit frischer Testdatenbank:
+        $ docker-compose -f local.yml run --rm django pytest --create-db
+
+### Production-Check vor Deployment:
+-   Nicht gegen die echte Produktionsdatenbank testen. Vorher eine separate Test-Env oder Staging-Env nutzen.
+-   Das Production-Image enthÃ¤lt keine lokalen Test-Dependencies wie pytest. Deshalb vor dem Deployment das komplette Test-Sicherheitsnetz lokal/CI ausfÃ¼hren und das Production-Image separat mit Django Checks prÃ¼fen:
+
+        $ docker-compose -f local.yml run --rm django pytest
+        $ docker-compose -f production.yml run --rm django python manage.py check --deploy --settings=config.settings.production
+
+### Prompt fÃ¼r Codex vor Updates:
+        Analysiere die anstehenden Dependency-Updates. FÃ¼hre zuerst das komplette Test-Sicherheitsnetz lokal aus, behebe Regressionen in kleinen Schritten und fasse danach zusammen, welche CMS-, Shop-, Auth-, Medien- und Public-Page-Flows grÃ¼n sind.
+
 
 ## Deployment
 
