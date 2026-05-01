@@ -14,11 +14,19 @@ function sendNotif(content = '', status = 'notice', position = 'bottom-right') {
 
 // A $( document ).ready() block.
 $(document).ready(function () {
-    $('#user-menu-button').click(function () {
-        $('#userDropDown').toggleClass('hidden');
-    });
+    $('#user-menu-button')
+        .off('click.yoolinkUserMenu')
+        .on('click.yoolinkUserMenu', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-    $(document).click(function (event) {
+            var userDropDown = $('#userDropDown');
+            var isOpening = userDropDown.hasClass('hidden');
+            userDropDown.toggleClass('hidden');
+            $(this).attr('aria-expanded', String(isOpening));
+        });
+
+    $(document).off('click.yoolinkUserMenu').on('click.yoolinkUserMenu', function (event) {
         var target = event.target;
         var userDropDown = $('#userDropDown');
         var userMenuButton = $('#user-menu-button');
@@ -30,6 +38,7 @@ $(document).ready(function () {
             userMenuButton.has(target).length === 0
         ) {
             userDropDown.addClass('hidden');
+            userMenuButton.attr('aria-expanded', 'false');
         }
     });
 });

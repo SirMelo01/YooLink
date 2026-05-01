@@ -297,6 +297,7 @@
     const details = modal.querySelector("[data-consent-details]");
     const summary = modal.querySelector("[data-consent-summary]");
     const toggles = modal.querySelectorAll("[data-consent-toggle]");
+    let reloadTimer = null;
 
     function syncToggles() {
       const selected = categories();
@@ -327,6 +328,33 @@
       modal.classList.add("hidden");
     }
 
+    function showConsentFeedback(message) {
+      let feedback = modal.querySelector("[data-consent-feedback]");
+      if (!feedback) {
+        feedback = document.createElement("div");
+        feedback.dataset.consentFeedback = "";
+        feedback.className = "mx-5 mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-800";
+        feedback.setAttribute("role", "status");
+        const description = modal.querySelector("#cookie-consent-description");
+        if (description && description.parentNode) {
+          description.insertAdjacentElement("afterend", feedback);
+        }
+      }
+
+      feedback.textContent = message;
+      feedback.classList.remove("hidden");
+    }
+
+    function saveConsentAndReload(saveCallback, message) {
+      saveCallback();
+      showConsentFeedback(message);
+
+      if (reloadTimer) window.clearTimeout(reloadTimer);
+      reloadTimer = window.setTimeout(() => {
+        window.location.reload();
+      }, 1300);
+    }
+
     window.YooLinkConsent.openSettings = function () {
       open(true);
     };
@@ -337,11 +365,15 @@
 
       const action = actionTarget.dataset.consentAction;
       if (action === "accept-all") {
-        acceptAll();
-        close();
+        saveConsentAndReload(
+          acceptAll,
+          "Ihre Cookie-Auswahl wurde gespeichert. Die Seite wird neu geladen, damit die Einstellungen aktiv werden."
+        );
       } else if (action === "reject-all") {
-        rejectAll();
-        close();
+        saveConsentAndReload(
+          rejectAll,
+          "Ihre Cookie-Auswahl wurde gespeichert. Die Seite wird neu geladen, damit die Einstellungen aktiv werden."
+        );
       } else if (action === "customize") {
         showDetails();
       } else if (action === "save") {
@@ -349,8 +381,10 @@
         toggles.forEach((toggle) => {
           custom[toggle.dataset.consentToggle] = toggle.checked;
         });
-        saveConsent(custom);
-        close();
+        saveConsentAndReload(
+          () => saveConsent(custom),
+          "Ihre Cookie-Auswahl wurde gespeichert. Die Seite wird neu geladen, damit die Einstellungen aktiv werden."
+        );
       } else if (action === "open-settings") {
         open(true);
       } else if (action === "close") {

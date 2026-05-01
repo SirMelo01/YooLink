@@ -15,6 +15,7 @@
 
     const status = document.querySelector("[data-cookie-settings-status]");
     const toggles = form.querySelectorAll("[data-consent-toggle]");
+    let reloadTimer = null;
 
     function sync() {
       const categories = window.YooLinkConsent.categories();
@@ -27,7 +28,16 @@
       if (!status) return;
       status.textContent = message;
       status.classList.remove("hidden");
-      window.setTimeout(() => status.classList.add("hidden"), 3500);
+    }
+
+    function saveAndReload(saveCallback, message) {
+      saveCallback();
+      showStatus(message);
+
+      if (reloadTimer) window.clearTimeout(reloadTimer);
+      reloadTimer = window.setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
 
     form.addEventListener("submit", function (event) {
@@ -36,21 +46,31 @@
       toggles.forEach((toggle) => {
         next[toggle.dataset.consentToggle] = toggle.checked;
       });
-      window.YooLinkConsent.save(next);
-      showStatus("Ihre Cookie-Auswahl wurde gespeichert.");
+      saveAndReload(
+        () => window.YooLinkConsent.save(next),
+        "Ihre Cookie-Auswahl wurde gespeichert. Die Seite wird neu geladen, damit die Einstellungen aktiv werden."
+      );
     });
 
     document.querySelectorAll("[data-cookie-settings-action]").forEach((button) => {
       button.addEventListener("click", function () {
         const action = button.dataset.cookieSettingsAction;
         if (action === "accept-all") {
-          window.YooLinkConsent.acceptAll();
-          sync();
-          showStatus("Alle optionalen Dienste wurden akzeptiert.");
+          saveAndReload(
+            () => {
+              window.YooLinkConsent.acceptAll();
+              sync();
+            },
+            "Alle optionalen Dienste wurden akzeptiert. Die Seite wird neu geladen."
+          );
         } else if (action === "reject-all") {
-          window.YooLinkConsent.rejectAll();
-          sync();
-          showStatus("Alle optionalen Dienste wurden abgelehnt.");
+          saveAndReload(
+            () => {
+              window.YooLinkConsent.rejectAll();
+              sync();
+            },
+            "Alle optionalen Dienste wurden abgelehnt. Die Seite wird neu geladen."
+          );
         }
       });
     });
