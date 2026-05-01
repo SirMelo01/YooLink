@@ -203,7 +203,7 @@
           {% if product.title_image %}
             <img src="{{ product.title_image.url }}" alt="{{ product.title }}" class="h-52 w-full object-cover">
           {% else %}
-            <img src="{% static 'images/placeholder-image.png' %}" alt="{{ product.title }}" class="h-52 w-full object-cover">
+            <img src="{% static 'images/placeholder-image.svg' %}" alt="{{ product.title }}" class="h-52 w-full object-cover">
           {% endif %}
 
           <div class="absolute left-3 top-3 flex flex-wrap gap-2">
@@ -330,7 +330,7 @@
   id="productOverviewConfig"
   data-search-url="{% url 'cms:product_search' %}"
   data-products-url="{% url 'cms:products' %}"
-  data-placeholder-image="{% static 'images/placeholder-image.png' %}"
+  data-placeholder-image="{% static 'images/placeholder-image.svg' %}"
 ></div>
 {% endblock content %}
 

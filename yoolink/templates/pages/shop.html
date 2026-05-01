@@ -249,7 +249,7 @@
                   {% if product.title_image %}
                     <img src="{{ product.title_image.url }}" alt="{{ product.title }}" class="max-h-full max-w-full object-contain">
                   {% else %}
-                    <img src="{% static 'images/placeholder-image.png' %}" alt="{{ product.title }}" class="max-h-full max-w-full object-contain">
+                    <img src="{% static 'images/placeholder-image.svg' %}" alt="{{ product.title }}" class="max-h-full max-w-full object-contain">
                   {% endif %}
                 </div>
 
@@ -373,7 +373,7 @@
 <div
   id="shopOverviewConfig"
   data-search-url="{% url 'product-client-search' %}"
-  data-placeholder-image="{% static 'images/placeholder-image.png' %}"
+  data-placeholder-image="{% static 'images/placeholder-image.svg' %}"
 ></div>
 {% endblock content %}
 
