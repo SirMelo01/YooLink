@@ -40,16 +40,6 @@ def test_static_content_pages_render_without_cms_data(client):
         assert response.status_code == 200
 
 
-def test_design_template_pages_render(client):
-    for url_name in [
-        "designtemplates:designtemplates",
-        "designtemplates:portfolio",
-        "designtemplates:handwerksbtrieb",
-    ]:
-        response = client.get(reverse(url_name))
-        assert response.status_code == 200
-
-
 def test_blog_list_and_detail_use_active_original_and_language_variant(client, settings):
     settings.LANGUAGE_CODE = "de"
     author = UserFactory()

@@ -49,7 +49,6 @@ urlpatterns += i18n_patterns(
     path("datenschutz/", view=datenschutz_view, name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("leistungen/cms/", view=load_cmsinfo, name="leistungen_cms"),
-    path("vorlagen/", include("yoolink.designtemplates.urls", namespace="designtemplates")),
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
     path("users/", include("yoolink.users.urls", namespace="users")),
     path("kunden/", view=load_kunden, name="kunden"),

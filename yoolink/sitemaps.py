@@ -13,7 +13,6 @@ class StaticViewSitemap(Sitemap):
             'home',
             'impressum', 'datenschutz', 'cookies', 
             'kunden', 'kontakt', 'leistungen', 'leistungen_cms',
-            'designtemplates:designtemplates', 'designtemplates:portfolio', 'designtemplates:handwerksbtrieb',
             'blog:blog'
             ]
     

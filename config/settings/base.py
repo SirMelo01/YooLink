@@ -92,7 +92,6 @@ LOCAL_APPS = [
     # Your stuff: custom apps go here
     "yoolink.ycms",
     "yoolink.ycms.applications.shop",
-    "yoolink.designtemplates",
     "yoolink.blog",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
