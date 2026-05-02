@@ -27,7 +27,7 @@ class BlogSitemap(Sitemap):
 
     def items(self):
         lang = get_language() or 'de'
-        return Blog.objects.filter(active=True, language=lang)
+        return Blog.objects.filter(active=True, language=lang).order_by('-last_updated')
 
     def lastmod(self, obj):
         return obj.last_updated
