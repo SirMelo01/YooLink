@@ -1,8 +1,8 @@
 <!-- **************** Galery-Select-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden p-3"
     id="galeryModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
+    <div class="modal-container w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-lg bg-white p-3 shadow-lg sm:p-4">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -21,19 +21,19 @@
             </button>
         </div>
         <!-- Modal body -->
-        <div class="p-6">
-            <div class="w-full max-w-5xl p-2 grid grid-cols-3 gap-3 overflow-auto overflow-x-hidden max-h-[40rem]"
+        <div class="p-3 sm:p-6">
+            <div class="grid max-h-[60vh] w-full max-w-5xl grid-cols-1 gap-3 overflow-auto overflow-x-hidden p-2 sm:grid-cols-2 lg:grid-cols-3"
                 id="possibleGalerien">
                 
             </div>
         </div>
         <!-- Actions -->
-        <div class="border-t border-gray-500 flex justify-center py-4">
+        <div class="flex flex-col justify-center gap-2 border-t border-gray-200 py-4 sm:flex-row">
             <button id="reloadGalerien"
-                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Neu
+                class="rounded-xl bg-blue-500 px-4 py-3 text-base font-bold text-white hover:bg-blue-700 sm:py-2">Neu
                 Laden</button>
             <a href="{% url 'cms:galerien' %}" target="_blank"
-                class="bg-green-500 hover:cursor-pointer hover:bg-green-700 text-base text-white font-bold py-2 px-4 rounded-xl ml-3">Verwalten</a>
+                class="rounded-xl bg-green-500 px-4 py-3 text-center text-base font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:py-2">Verwalten</a>
         </div>
     </div>
 </div>

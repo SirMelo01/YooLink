@@ -9,7 +9,7 @@
     <h1 class="text-2xl ">
         <a href="{% url 'cms:shop' %}" class="text-blue-500">Shop</a> / <span id="titleSpan">Kundenaufträge</span>
       </h1>
-    <div class="mt-8 grid grid-cols-4 gap-4">
+    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:mt-8">
         <!-- Card Item -->
         <div class="w-full rounded-2xl bg-white px-4 py-2 shadow-lg">
             <div class="flex justify-between">
@@ -83,8 +83,8 @@
             </div>
         </div>
     </div>
-    <div class="mt-9 grid grid-cols-5 gap-4">
-        <div class="col-span-3 rounded-2xl bg-white shadow-lg px-4 py-2">
+    <div class="mt-6 grid grid-cols-1 gap-4 lg:mt-9 lg:grid-cols-5">
+        <div class="rounded-2xl bg-white px-4 py-2 shadow-lg lg:col-span-3">
             <h3 class="font-medium text-xl text-slate-700">Meistverkaufte Produkte</h3>
             <table class="my-2 w-full table-auto text-left">
                 <thead class="mb-2">
@@ -110,7 +110,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-span-2 rounded-2xl bg-white shadow-lg px-4 py-2">
+        <div class="rounded-2xl bg-white px-4 py-2 shadow-lg lg:col-span-2">
             <h3 class="font-medium text-xl text-slate-700">Größte Käufer</h3>
             <table class="my-2 w-full table-auto text-left">
                 <thead class="mb-2">
@@ -133,10 +133,10 @@
     </div>
     <!-- All Orders Section -->
     <h2 class="text-2xl text-slate-700 font-semibold mt-8">Alle Aufträge</h2>
-    <div class="mt-4 space-y-2 rounded-2xl bg-white px-4 py-2 shadow-lg max-h-screen overflow-auto">
+    <div class="mt-4 max-h-screen space-y-2 overflow-auto rounded-2xl bg-white px-3 py-2 shadow-lg sm:px-4">
         {% for order in all_orders %}
 
-        <div class="flex w-full justify-between rounded-2xl bg-slate-50 px-4 py-2">
+        <div class="grid w-full grid-cols-2 gap-3 rounded-2xl bg-slate-50 px-4 py-3 sm:grid-cols-3 lg:grid-cols-6 lg:py-2">
             <div class="flex flex-col items-center">
                 <p class="text-sm text-gray-500">Id:</p>
                 <p class="font-medium text-gray-700">{{ order.id }}</p>
@@ -152,7 +152,7 @@
             <div class="flex flex-col items-center">
                 <p class="text-sm text-gray-500">Erstellt</p>
                 <p class="font-medium text-gray-700">{{ order.created_at }}</p>            </div>
-            <div class="flex flex-col items-center w-36">
+            <div class="flex flex-col items-center lg:w-36">
                 <p class="text-sm text-gray-500">Status</p>
                 {% if order.status == 'OPEN' %}
                 <p class="rounded-2xl bg-yellow-400 px-2 text-sm font-medium text-gray-700">{{ order.get_status_display }}</p>

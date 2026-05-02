@@ -14,6 +14,19 @@ function sendNotif(content = '', status = 'notice', position = 'bottom-right') {
 
 // A $( document ).ready() block.
 $(document).ready(function () {
+    $('#mobile-menu-button')
+        .off('click.yoolinkMobileMenu')
+        .on('click.yoolinkMobileMenu', function (event) {
+            event.preventDefault();
+            const $menu = $('#mobile-menu');
+            const isOpening = $menu.hasClass('hidden');
+
+            $menu.toggleClass('hidden', !isOpening);
+            $('#mobile-menu-open-icon').toggleClass('hidden', isOpening);
+            $('#mobile-menu-close-icon').toggleClass('hidden', !isOpening);
+            $(this).attr('aria-expanded', String(isOpening));
+        });
+
     $('#user-menu-button')
         .off('click.yoolinkUserMenu')
         .on('click.yoolinkUserMenu', function (event) {

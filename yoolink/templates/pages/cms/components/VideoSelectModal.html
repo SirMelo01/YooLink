@@ -1,7 +1,7 @@
 <!-- **************** Video-Select-Modal **************** -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden p-3"
      id="videoModal">
-  <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
+  <div class="modal-container w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-lg bg-white p-3 shadow-lg sm:p-4">
 
     <!-- Header -->
     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -22,21 +22,21 @@
     </div>
 
     <!-- Body -->
-    <div class="p-6 overflow-auto max-h-[40rem]">
+    <div class="max-h-[60vh] overflow-auto p-3 sm:p-6">
       <div id="possibleVideos"
-           class="w-full grid grid-cols-3 gap-3">
+           class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Videos kommen per AJAX hier rein -->
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-center py-4">
+    <div class="flex flex-col justify-center gap-2 py-4 sm:flex-row">
       <button id="reloadVideos"
-              class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">
+              class="rounded-xl bg-blue-500 px-4 py-3 text-base font-bold text-white hover:bg-blue-700 sm:py-2">
         <i class="bi bi-arrow-clockwise"></i> Neu laden
       </button>
       <a href="{% url 'cms:list_videos' %}" target="_blank"
-         class="bg-green-500 hover:bg-green-700 text-base text-white font-bold py-2 px-4 rounded-xl ml-3">
+         class="rounded-xl bg-green-500 px-4 py-3 text-center text-base font-bold text-white hover:bg-green-700 sm:py-2">
         Videos verwalten <i class="bi bi-box-arrow-up-right"></i> 
       </a>
     </div>

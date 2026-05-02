@@ -6,9 +6,9 @@
 
 <!-- **************** Edit-Image-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[16rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden"
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-500 bg-opacity-75 p-3 lg:min-w-[16rem]"
     id="editModal" data-prismjs-copy-timeout="500">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl max-h-full modal-container">
+    <div class="modal-container w-full max-w-4xl max-h-[92vh] overflow-auto rounded-lg bg-white p-3 shadow-lg sm:p-4">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -29,8 +29,8 @@
         <div class="p-6 space-y-6 max-h-[45rem] overflow-auto" id="previewBody">
             <!-- Bild-Text -->
 
-            <div class="flex justify-between py-4">
-                <div class="grid grid-cols-2 gap-3 mr-4 w-full">
+            <div class="flex flex-col gap-4 py-4 sm:flex-row sm:items-start sm:justify-between">
+                <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-3 sm:mr-4">
                     <div class="relative h-10 w-full">
                         <select id="imgPlace"
                             class="peer z-40 h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50">
@@ -54,7 +54,7 @@
                         </label>
                     </div>
                 </div>
-                <button id="selectImg" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl">
+                <button id="selectImg" class="w-full rounded-xl bg-green-500 px-4 py-3 font-bold text-white hover:bg-green-700 sm:w-auto sm:py-2">
                     Speichern
                 </button>
             </div>
@@ -64,16 +64,16 @@
     </div>
 </div>
 
-<div class="container mx-auto mt-8">
+<div class="container mx-auto mt-4 sm:mt-8">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <h1 class="text-2xl">
       <a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Bilderübersicht
       <span class="ml-2 text-sm text-gray-500">({{ total_count }} Bilder)</span>
     </h1>
 
-    <div class="flex items-center gap-3">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
       {# Pro-Seite Auswahl (optional) #}
-      <form method="get" class="flex items-center gap-2">
+      <form method="get" class="flex items-center justify-between gap-2 sm:justify-start">
         <label class="text-sm text-gray-600">Pro Seite</label>
         <select name="per_page" class="rounded-md border-gray-300 text-sm"
                 onchange="this.form.submit()">
@@ -91,7 +91,7 @@
       </form>
 
       <a href="{% url 'cms:upload' %}"
-         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2">
+         class="flex w-full items-center justify-center gap-2 rounded bg-blue-500 px-4 py-3 font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
         <i class="bi bi-upload"></i>
         Bilder hochladen
       </a>
@@ -101,7 +101,7 @@
   {% csrf_token %}
 
   {% if files %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:mt-8">
       {% for file in files %}
         <div class="relative">
           <a href="{{ file.file.url }}" target="_blank" rel="noopener">
@@ -123,13 +123,13 @@
     </div>
 
     {% if page_obj.paginator.num_pages > 1 %}
-      <nav class="flex items-center justify-between mt-6" aria-label="Pagination">
+      <nav class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Pagination">
         <div class="text-sm text-gray-600">
           Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
           Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
         </div>
 
-        <div class="inline-flex items-center space-x-1">
+        <div class="flex flex-wrap items-center gap-1">
           {% if page_obj.has_previous %}
             <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
                class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">

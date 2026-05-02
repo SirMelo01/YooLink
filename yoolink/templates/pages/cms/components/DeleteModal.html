@@ -1,7 +1,7 @@
 <!-- Delete Modal -->
 <div id="deleteModal" tabindex="-1" aria-hidden="true"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 lg:min-w-[10rem] hidden">
-    <div class="modal-container max-h-full  rounded-lg bg-white shadow-lg p-6">
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 hidden p-3">
+    <div class="modal-container w-full max-w-md rounded-lg bg-white p-5 shadow-lg sm:p-6">
         <!-- Modal header -->
         <div class="flex items-start justify-between rounded-t">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">Löschen bestätigen</h3>
@@ -18,11 +18,11 @@
             </button>
         </div>
         <!-- Actions -->
-        <div class="flex justify-center mt-10">
+        <div class="mt-10 flex flex-col justify-center gap-2 sm:flex-row">
             <button
-                class="rounded-xl close-delete-modal bg-gray-700 px-4 py-2 text-base font-bold text-white hover:bg-gray-800">Abbrechen</button>
+                class="rounded-xl close-delete-modal bg-gray-700 px-4 py-3 text-base font-bold text-white hover:bg-gray-800 sm:py-2">Abbrechen</button>
             <button id="deleteConfirm"
-                class="ml-3 rounded-xl bg-red-500 px-4 py-2 text-base font-bold text-white hover:cursor-pointer hover:bg-red-700">Löschen
+                class="rounded-xl bg-red-500 px-4 py-3 text-base font-bold text-white hover:cursor-pointer hover:bg-red-700 sm:py-2">Löschen
                 bestätigen</button>
         </div>
     </div>

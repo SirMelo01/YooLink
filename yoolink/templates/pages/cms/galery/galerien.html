@@ -3,16 +3,16 @@
 {% block title %} {{block.super}} | CMS | Galerie Details{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8">
+<div class="container mx-auto mt-4 sm:mt-8">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <h1 class="text-2xl">
       Galerien – Übersicht
       <span class="ml-2 text-sm text-gray-500">({{ total_count }} Galerien)</span>
     </h1>
 
-    <div class="flex items-center gap-3">
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
       <!-- Pro-Seite Auswahl -->
-      <form method="get" class="flex items-center gap-2">
+      <form method="get" class="flex items-center justify-between gap-2 sm:justify-start">
         <label class="text-sm text-gray-600">Pro Seite</label>
         <select name="per_page" class="rounded-md border-gray-300 text-sm" onchange="this.form.submit()">
           <option value="6"  {% if per_page == 6  %}selected{% endif %}>6</option>
@@ -29,14 +29,14 @@
       </form>
 
       <a href="{% url 'cms:galery-create' %}"
-         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+         class="w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:bg-green-700 sm:w-auto sm:py-2">
         Galerie erstellen
       </a>
     </div>
   </div>
 
   {% if galerien %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:mt-6">
       {% for galery in galerien %}
         <div class="bg-white text-black border-gray-200 rounded-2xl shadow-lg border h-80 w-full flex flex-col">
           <div class="p-3">
@@ -54,7 +54,7 @@
             </h2>
           </div>
           <hr class="w-full">
-          <div class="p-3 grid grid-cols-4 gap-3 mt-2 flex-1 overflow-auto">
+          <div class="mt-2 grid flex-1 grid-cols-3 gap-2 overflow-auto p-3 sm:grid-cols-4 sm:gap-3">
             {# Nur erste 8 Thumbnails zeigen, um Karten kompakt zu halten #}
             {% for image in galery.images.all|slice:":8" %}
               <img class="rounded-2xl w-full h-20 object-cover"
@@ -69,7 +69,7 @@
           </div>
           <div class="flex justify-center items-end mt-1 mb-4">
             <a href="/cms/galery/{{ galery.id }}/"
-               class="mt-auto bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+               class="mt-auto w-full rounded-md bg-blue-500 px-4 py-3 text-center text-white hover:bg-blue-700 sm:w-auto sm:py-2">
               Bearbeiten
             </a>
           </div>
@@ -79,13 +79,13 @@
 
     {# Pagination #}
     {% if page_obj.paginator.num_pages > 1 %}
-      <nav class="flex items-center justify-between mt-6" aria-label="Pagination">
+      <nav class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Pagination">
         <div class="text-sm text-gray-600">
           Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
           Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
         </div>
 
-        <div class="inline-flex items-center space-x-1">
+        <div class="flex flex-wrap items-center gap-1">
           {% if page_obj.has_previous %}
             <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
                class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">‹ Zurück</a>

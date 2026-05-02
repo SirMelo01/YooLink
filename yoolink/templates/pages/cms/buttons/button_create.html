@@ -3,8 +3,8 @@
 {% block title %}{{ block.super }} | CMS | Button erstellen{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8 max-w-3xl">
-    <div class="flex justify-between items-center mb-6">
+<div class="container mx-auto mt-4 max-w-3xl sm:mt-8">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-2xl font-semibold">
             <a href="{% url 'cms:button-list' %}" class="text-blue-600 hover:underline">Buttons</a> /
             <span id="live-button-title">Erstellen</span>
@@ -12,7 +12,7 @@
         <button
             type="submit"
             form="create-button-form"
-            class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
+            class="w-full rounded bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-800 sm:w-auto sm:py-2">
             Erstellen
         </button>
     </div>

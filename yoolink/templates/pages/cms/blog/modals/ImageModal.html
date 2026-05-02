@@ -1,8 +1,8 @@
 <!-- **************** Image-Select-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal p-3"
     id="imageModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl max-h-full modal-container">
+    <div class="modal-container w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-lg bg-white p-3 shadow-lg sm:p-4">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
@@ -21,8 +21,8 @@
             </button>
         </div>
         <!-- Modal body -->
-        <div class="p-6">
-            <div class="w-full max-w-5xl p-2 grid grid-cols-4 gap-3 overflow-auto overflow-x-hidden max-h-[40rem]"
+        <div class="p-3 sm:p-6">
+            <div class="grid max-h-[60vh] w-full max-w-5xl grid-cols-2 gap-3 overflow-auto overflow-x-hidden p-2 sm:grid-cols-3 lg:grid-cols-4"
                 id="possibleImages">
                 
             </div>
@@ -30,16 +30,16 @@
         
         
         <!-- Actions -->
-        <div class="flex justify-center py-4">
+        <div class="flex flex-col justify-center gap-2 py-4 sm:flex-row">
             <button id="reloadImages"
-                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Neu
+                class="rounded-xl bg-blue-500 px-4 py-3 text-base font-bold text-white hover:bg-blue-700 sm:py-2">Neu
                 Laden</button>
             <a href="{% url 'cms:upload' %}" target="_blank"
-                class="bg-green-500 hover:cursor-pointer hover:bg-green-700 text-base text-white font-bold py-2 px-4 rounded-xl ml-3">Hinzufügen</a>
+                class="rounded-xl bg-green-500 px-4 py-3 text-center text-base font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:py-2">Hinzufügen</a>
         </div>
         <!-- URL Image -->
-        <div class="border-t border-gray-500 flex justify-center py-4">
-            <div class="relative h-10 w-96 mr-3">
+        <div class="flex flex-col justify-center gap-2 border-t border-gray-200 py-4 sm:flex-row">
+            <div class="relative h-10 w-full">
                 <input
                     class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                     placeholder=" " id="imgURL" />
@@ -49,11 +49,11 @@
                 </label>
             </div>
             <button id="useExternImageURL"
-                class="bg-blue-500 hover:bg-blue-700 text-base text-white font-bold py-2 px-4 rounded-xl">Externes Bild nutzen</button>
+                class="rounded-xl bg-blue-500 px-4 py-3 text-base font-bold text-white hover:bg-blue-700 sm:py-2">Externes Bild nutzen</button>
         </div>
         <!-- Modal footer -->
-        <div class="border-t border-gray-500 flex justify-between py-4">
-            <div class="grid grid-cols-4 gap-3 mr-4">
+        <div class="flex flex-col gap-4 border-t border-gray-200 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="grid w-full grid-cols-1 gap-3 sm:grid-cols-4">
                 <div class="relative h-10 w-full">
                     <input
                         class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -72,7 +72,7 @@
                         Breite
                     </label>
                 </div>
-                <div class="relative h-10 w-full col-span-2">
+                <div class="relative h-10 w-full sm:col-span-2">
                     <input
                         class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                         placeholder=" " id="imgText" />
@@ -82,7 +82,7 @@
                     </label>
                 </div>
             </div>
-            <button id="selectImg" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
+            <button id="selectImg" class="w-full rounded-xl bg-blue-500 px-4 py-3 font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
                 Übernehmen
             </button>
         </div>

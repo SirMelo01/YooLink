@@ -8,91 +8,91 @@
 
 
 
-<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
+<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
 
     <!-- Dateien Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-cloud-arrow-up"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-cloud-arrow-up"></i></h2>
         <p class="mb-4">Hier kannst du alle Dateien verwalten, wie Bilder ({{file_count}}), Videos ({{videofile_count}}) oder andere Dateien ({{anyfile_count}}).</p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:cms-files' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
         </div>
     </div>
 
     <!-- Galerie Creator -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Galerien <i class="bi bi-images"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Galerien <i class="bi bi-images"></i></h2>
         <p class="mb-4">Hier kannst du deine Galerien verwalten</p>
         <p class="mb-4">Galerien: <strong>{{galery_count}}</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:galerien' %}" 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
             <div class="flex-grow"></div>
             <a href="{% url 'cms:galery-create' %}" 
-                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end">Erstellen</a>
+                class="w-full rounded bg-green-600 px-4 py-3 text-center font-bold text-white hover:bg-green-700 sm:w-auto sm:self-end sm:py-2">Erstellen</a>
         </div>
     </div>
 
     <!-- Seiten Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Seiten <i class="bi bi-body-text"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Seiten <i class="bi bi-body-text"></i></h2>
         <p class="mb-4">Hier kannst du deinen Seiteninhalt verwalten (Text, Bilder etc.)</p>
         <p class="mb-4">Seiten: <strong>3</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:sites' %}" 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
         </div>
     </div>
     
     <!-- Blog Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Blogs <i class="bi bi-blockquote-right"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Blogs <i class="bi bi-blockquote-right"></i></h2>
         <p class="mb-4">Hier kannst du deine Blogs managen</p>
         <p class="mb-4">Blogs: <strong>{{blog_count}}</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:blog-view' %}" 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
         </div>
     </div>
 
     <!-- Shop -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Shop <i class="bi bi-shop"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Shop <i class="bi bi-shop"></i></h2>
         <p class="mb-4">Hier kannst du deinen Shop verwalten</p>
         <p class="mb-4">Produkte: <strong>{{product_count}}</strong></p>
         <p class="mb-4">Offene Aufträge: <strong>{{order_not_closed_count}}</strong></p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:shop' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
         </div>
     </div>
     <!-- Öffnungszeiten -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-        <h2 class="text-2xl font-bold mb-4 flex justify-between">Öffnungszeiten <i class="bi bi-clock"></i></h2>
+    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Öffnungszeiten <i class="bi bi-clock"></i></h2>
         <p class="mb-4">Hier kannst du deine Öffnungszeiten und Statusmeldungen verwalten</p>
         <div class="flex-grow"></div>
         <div class="flex justify-center items-center mt-4">
             <a href="{% url 'cms:openinghours-view' %}"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verwalten</a>
+                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
             
         </div>
     </div>
     <!-- Buttons -->
     <div class="flex justify-center">
-        <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-            <h2 class="text-2xl font-bold mb-4 flex justify-between">Buttons <i class="bi bi-arrow-up-right-circle-fill"></i></h2>
+        <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Buttons <i class="bi bi-arrow-up-right-circle-fill"></i></h2>
             <p class="mb-4">Hier kannst du deine Buttons verwalten</p>
             <p class="mb-4">Buttons: <strong>{{button_count}}</strong></p>
             <div class="flex-grow"></div>
             <div class="flex justify-center items-center mt-4">
                 <a href="{% url 'cms:button-list' %}"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded self-end">Verwalten</a>
+                    class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2 self-end">Verwalten</a>
             </div>
         </div>
     </div>

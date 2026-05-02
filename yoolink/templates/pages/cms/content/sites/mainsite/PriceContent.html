@@ -7,7 +7,7 @@
 
 
 <div class="container mx-auto mt-8">
-    <div class="flex justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-2xl ">
             <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> /
             <a href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> /
@@ -19,7 +19,7 @@
                 Zur Preisübersicht
             </a>
             {% csrf_token %}
-            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
+            <a class="block w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
                 id="saveTextData" name="main_price">
                 Speichern
             </a>
@@ -47,7 +47,7 @@
     </div>
     <div class="flex justify-center">
         <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-6 text-black flex flex-col">
-            <h2 class="text-2xl font-bold mb-4 flex justify-between">Preiskarten <i class="bi bi-cash-coin"></i></h2>
+            <h2 class="text-xl font-bold sm:text-2xl mb-4 flex justify-between">Preiskarten <i class="bi bi-cash-coin"></i></h2>
             <p class="mb-4">Hier kannst du deine Preiskarten verwalten</p>
             <p class="mb-4">Preiskarten: <strong>{{pricing_count}}</strong></p>
             <div class="flex-grow"></div>

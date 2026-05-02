@@ -4,16 +4,16 @@
 {% block title %}{{ block.super }} | CMS | Videos{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8">
+<div class="container mx-auto mt-4 sm:mt-8">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
     <h1 class="text-2xl">
       <a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> - Videos
       <span class="ml-2 text-sm text-gray-500">({{ total_count }} Videos)</span>
     </h1>
 
-    <div class="flex items-center gap-3">
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
       <!-- Pro-Seite Auswahl -->
-      <form method="get" class="flex items-center gap-2">
+      <form method="get" class="flex items-center justify-between gap-2 sm:justify-start">
         <label class="text-sm text-gray-600">Pro Seite</label>
         <select name="per_page" class="rounded-md border-gray-300 text-sm" onchange="this.form.submit()">
           <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
@@ -30,7 +30,7 @@
       </form>
 
       <a href="{% url 'cms:create_video' %}"
-         class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">
+         class="w-full rounded bg-green-500 px-4 py-3 text-center text-white hover:bg-green-700 sm:w-auto sm:py-2">
         <i class="bi bi-send mr-1"></i> Neues Video
       </a>
     </div>
@@ -39,13 +39,13 @@
   {% csrf_token %}
 
   {% if videos %}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
       {% for video in videos %}
       <div class="shadow-lg p-4 relative bg-white rounded-2xl">
         <video src="{{ video.file.url }}" controls class="w-full h-48 mb-2"></video>
         <h2 class="font-semibold truncate">{{ video.title|default:"(Kein Titel)" }}</h2>
         <p class="text-sm text-gray-600 truncate">{{ video.description|truncatechars:100 }}</p>
-        <div class="mt-2 flex gap-2">
+        <div class="mt-3 flex flex-col gap-2 sm:flex-row">
           <a href="{% url 'cms:edit_video' video.pk %}"
              class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg shadow transition-transform duration-300 hover:-translate-y-1 hover:bg-blue-700">
             <i class="bi bi-pencil-fill"></i> Bearbeiten
@@ -61,13 +61,13 @@
 
     {# Pagination #}
     {% if page_obj.paginator.num_pages > 1 %}
-      <nav class="flex items-center justify-between mt-6" aria-label="Pagination">
+      <nav class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Pagination">
         <div class="text-sm text-gray-600">
           Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
           Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
         </div>
 
-        <div class="inline-flex items-center space-x-1">
+        <div class="flex flex-wrap items-center gap-1">
           {% if page_obj.has_previous %}
             <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
                class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">‹ Zurück</a>

@@ -4,12 +4,12 @@
 
 {% block content %}
 
-<div class="container mx-auto mt-8">
-    <div class="flex justify-between">
+<div class="container mx-auto mt-4 sm:mt-8">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <span>Kunden (/kunden)</span></h1>
         <div>
             {% csrf_token %}
-            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+            <a class="block w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
                 id="saveTextData" name="main_kunden">
                 Speichern
             </a>

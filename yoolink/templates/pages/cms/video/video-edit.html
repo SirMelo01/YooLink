@@ -5,8 +5,8 @@
 {% block title %}{{ block.super }} | CMS | Video bearbeiten{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8 max-w-4xl">
-  <div class="flex justify-between items-center mb-6">
+<div class="container mx-auto mt-4 max-w-4xl sm:mt-8">
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl">
       <a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> /
       <a href="{% url 'cms:list_videos' %}" class="text-blue-500">Videos</a> /
@@ -14,7 +14,7 @@
     </h1>
     <div>
       {% csrf_token %}
-      <a class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
+      <a class="block w-full rounded bg-green-600 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
         id="editVideo">
         Speichern
       </a>
@@ -166,7 +166,7 @@
     </div>
     <div class="mt-6">
       <label class="block text-sm font-medium text-gray-700 mb-2">Preload</label>
-      <select name="preload" class="border border-gray-300 rounded px-3 py-2 w-96">
+      <select name="preload" class="w-full rounded border border-gray-300 px-3 py-2 sm:w-96">
         <option value="auto" {% if video.preload == 'auto' %}selected{% endif %}>Auto</option>
         <option value="metadata" {% if video.preload == 'metadata' %}selected{% endif %}>Metadata</option>
         <option value="none" {% if video.preload == 'none' %}selected{% endif %}>None</option>
@@ -176,8 +176,8 @@
 </div>
 
 <!-- Modal für Thumbnail -->
-<div id="thumbnailModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center">
-  <div class="relative bg-white p-4 rounded shadow-xl max-w-6xl w-full">
+<div id="thumbnailModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center p-3">
+  <div class="relative max-h-[92vh] w-full max-w-6xl overflow-auto rounded bg-white p-4 shadow-xl">
     <button onclick="closeModal('thumbnailModal')" class="absolute top-2 right-2 text-gray-600 hover:text-red-600">
       <i class="bi bi-x-lg text-xl"></i>
     </button>
@@ -186,8 +186,8 @@
 </div>
 
 <!-- Modal für Video -->
-<div id="videoModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center">
-  <div class="relative bg-white p-4 rounded shadow-xl max-w-3xl w-full">
+<div id="videoModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center p-3">
+  <div class="relative max-h-[92vh] w-full max-w-3xl overflow-auto rounded bg-white p-4 shadow-xl">
     <button onclick="closeModal('videoModal')" class="absolute top-2 right-2 text-gray-600 hover:text-red-600">
       <i class="bi bi-x-lg text-xl"></i>
     </button>

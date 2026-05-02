@@ -4,9 +4,9 @@
 {% block title %}Spam-Benachrichtigungen{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-  <div class="flex items-center justify-between mb-4">
-    <div class="flex items-center gap-3">
+<div class="mx-auto max-w-4xl">
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
       <h1 class="text-2xl font-bold">
         Spam-Benachrichtigungen
       </h1>
@@ -20,7 +20,7 @@
     <form id="spam-delete-all-form" method="post" action="{% url 'cms:notifications-spam-delete-all' %}">
         {% csrf_token %}
         <button type="submit"
-                class="inline-flex items-center px-3 py-2 rounded-md border border-red-500 bg-red-50 text-sm text-red-700 hover:bg-red-100">
+                class="inline-flex w-full items-center justify-center rounded-md border border-red-500 bg-red-50 px-3 py-3 text-sm text-red-700 hover:bg-red-100 sm:w-auto sm:py-2">
             <i class="bi bi-trash3 mr-2"></i> Alle Spam löschen
         </button>
     </form>
@@ -34,8 +34,8 @@
             <i class="bi bi-slash-circle mr-1"></i> Spam
           </span>
 
-          <div class="flex items-start justify-between">
-            <div class="pr-4">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0 pr-0 sm:pr-4">
               <div class="flex items-center space-x-2">
                 <i class="bi bi-bell-slash"></i>
                 <a href="{{ n.get_absolute_url }}" class="font-medium hover:underline">
@@ -61,7 +61,7 @@
               </div>
             </div>
 
-            <div class="flex items-center gap-4 mt-8 sm:flex-col sm:gap-2">
+            <div class="mt-2 flex flex-wrap items-center gap-4 sm:mt-8 sm:flex-col sm:items-end sm:gap-2">
                 <form method="post" action="{% url 'cms:notification-mark-ham' n.pk %}">
                     {% csrf_token %}
                     <button class="text-xs text-green-600 hover:text-green-800 underline">
@@ -81,13 +81,13 @@
     </div>
 
     {% if page_obj.paginator.num_pages > 1 %}
-      <nav class="flex items-center justify-between mt-4" aria-label="Pagination">
+      <nav class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Pagination">
         <div class="text-sm text-gray-600">
           Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }} –
           Einträge {{ page_obj.start_index }}–{{ page_obj.end_index }} von {{ page_obj.paginator.count }}
         </div>
 
-        <div class="inline-flex items-center space-x-1">
+        <div class="flex flex-wrap items-center gap-1">
           {% if page_obj.has_previous %}
             <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
                class="px-3 py-1 rounded-md border text-sm hover:bg-gray-50">

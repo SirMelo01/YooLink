@@ -4,14 +4,14 @@
 {% block title %}{{ block.super }} | CMS | Video erstellen{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8 max-w-4xl">
-  <div class="flex justify-between">
+<div class="container mx-auto mt-4 max-w-4xl sm:mt-8">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl "><a href="{% url 'cms:cms-files' %}" class="text-blue-500">Dateien</a> / <a
         href="{% url 'cms:list_videos' %}" class="text-blue-500">Videos</a> / <span id="videoTitle">Video Titel</span>
     </h1>
     <div>
       {% csrf_token %}
-      <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+      <a class="block w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
         id="createVideo">
         Erstellen
       </a>
@@ -142,7 +142,7 @@
     </div>
     <div class="mt-6">
         <label class="block text-sm font-medium text-gray-700 mb-2">Preload</label>
-        <select name="preload" class="border border-gray-300 rounded px-3 py-2 w-96">
+        <select name="preload" class="w-full rounded border border-gray-300 px-3 py-2 sm:w-96">
           <option value="auto">Auto</option>
           <option value="metadata" selected>Metadata</option>
           <option value="none">None</option>

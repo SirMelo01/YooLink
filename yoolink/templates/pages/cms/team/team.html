@@ -7,24 +7,24 @@
   }
 </style>
 {% endblock css %} {% block content %} {% include "pages/cms/components/ImageSelectModal.html" %}
-<div class="container mx-auto mt-6 max-w-6xl px-2">
-  <div class="flex justify-between w-full items-center mt-4">
-    <h2 class="text-3xl">Mitarbeiterübersicht</h2>
+<div class="container mx-auto mt-4 max-w-6xl px-1 sm:mt-6 sm:px-2">
+  <div class="flex w-full flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-2xl font-semibold sm:text-3xl">Mitarbeiterübersicht</h2>
 
-    <div class="flex gap-3">
-      <button class="bg-blue-500 text-white px-6 py-3 rounded" id="bSaveTeamOrder" disabled>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <button class="w-full rounded bg-blue-500 px-5 py-3 text-white disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6" id="bSaveTeamOrder" disabled>
         Sortierung speichern
       </button>
 
-      <button class="bg-green-500 text-white px-6 py-3 rounded" id="bCreateNewMember">
+      <button class="w-full rounded bg-green-500 px-5 py-3 text-white sm:w-auto sm:px-6" id="bCreateNewMember">
         Neues Teammitglied erstellen
       </button>
     </div>
   </div>
 
-  <div id="teamSortableGrid" class="grid mt-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+  <div id="teamSortableGrid" class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
     {% for member in team_members %}
-    <div class="relative text-center flex flex-col justify-center items-center w-fit team-card"
+    <div class="relative flex w-full flex-col items-center justify-center text-center team-card"
       data-member-id="{{ member.id }}">
 
       <!-- Drag Handle -->
@@ -66,15 +66,15 @@
 </div>
 
 <!-- Modal zum Erstellen/Bearbeiten eines Teammitglieds -->
-<div id="teamMemberModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden"
+<div id="teamMemberModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden p-3"
   onclick="closeModalOnClickOutside(event)">
-  <div class="bg-white rounded-lg w-11/12 md:w-3/4 lg:w-2/3 p-6 relative flex" onclick="event.stopPropagation()">
+  <div class="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-auto rounded-lg bg-white p-4 sm:p-6 lg:flex-row" onclick="event.stopPropagation()">
     <button class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" onclick="closeModal()">
       X
     </button>
 
     <!-- Eingabeformular -->
-    <form id="teamMemberForm" class="space-y-4 w-2/3 mr-6">
+    <form id="teamMemberForm" class="w-full space-y-4 lg:mr-6 lg:w-2/3">
       {% csrf_token %}
       <h2 id="modalTitle" class="text-2xl font-semibold mb-4">
         Teammitglied erstellen
@@ -85,16 +85,16 @@
         <label for="full_name" class="block text-gray-700 font-medium">Voller Name</label>
         <input type="text" id="full_name" name="full_name" class="w-full border rounded p-2" required />
       </div>
-      <div class="flex justify-between space-x-5">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div class="w-full">
           <label for="position" class="block text-gray-700 font-medium">Position</label>
           <input type="text" id="position" name="position" class="w-full border rounded p-2" />
         </div>
-        <div class="w-52">
+        <div class="w-full">
           <label for="years_with_team" class="block text-gray-700 font-medium">Dabei seit (Jahr)</label>
           <input type="number" id="years_with_team" name="years_with_team" class="w-full border rounded p-2" />
         </div>
-        <div class="w-40">
+        <div class="w-full">
           <label for="age" class="block text-gray-700 font-medium">Alter</label>
           <input type="number" id="age" name="age" class="w-full border rounded p-2" />
         </div>
@@ -122,15 +122,15 @@
           Aktiv (Anzeigen in Team-Sektion)
         </div>
       </label>
-      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-fit">
+      <button type="submit" class="w-full rounded bg-green-500 px-4 py-3 text-white hover:bg-green-600 sm:w-auto sm:py-2">
         Speichern
       </button>
     </form>
 
     <!-- Bildvorschau -->
-    <div class="w-1/3 flex flex-col justify-center items-center">
-      <img id="imagePreview" src="" alt="Vorschau" class="rounded-tl-2xl rounded-br-2xl h-80 hidden mb-4" />
-      <button type="button" id="bImageSelect" class="bg-blue-500 text-white px-4 py-2 rounded">
+    <div class="mt-6 flex w-full flex-col items-center justify-center lg:mt-0 lg:w-1/3">
+      <img id="imagePreview" src="" alt="Vorschau" class="mb-4 hidden h-64 rounded-tl-2xl rounded-br-2xl object-cover sm:h-80" />
+      <button type="button" id="bImageSelect" class="w-full rounded bg-blue-500 px-4 py-3 text-white sm:w-auto sm:py-2">
         Bild auswählen
       </button>
     </div>
@@ -138,17 +138,17 @@
 </div>
 
 <!-- Bestätigungs-Modal für das Löschen -->
-<div id="confirmDeleteModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-  <div class="bg-white rounded-lg w-80 p-6 text-center">
+<div id="confirmDeleteModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden p-3">
+  <div class="w-full max-w-sm rounded-lg bg-white p-5 text-center sm:p-6">
     <h3 class="text-xl font-semibold text-gray-800">Löschen bestätigen</h3>
     <p class="text-gray-600 mt-4">
       Möchten Sie dieses Teammitglied wirklich löschen?
     </p>
-    <div class="mt-6 flex justify-center space-x-4">
-      <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" id="bConfirmDelete">
+    <div class="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+      <button class="rounded bg-red-500 px-4 py-3 text-white hover:bg-red-600 sm:py-2" id="bConfirmDelete">
         Ja, löschen
       </button>
-      <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400" id="bDeclineDelete">
+      <button class="rounded bg-gray-300 px-4 py-3 text-gray-800 hover:bg-gray-400 sm:py-2" id="bDeclineDelete">
         Abbrechen
       </button>
     </div>

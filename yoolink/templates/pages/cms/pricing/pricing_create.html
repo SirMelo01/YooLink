@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8 max-w-3xl">
-  <div class="flex justify-between items-center mb-6">
+<div class="container mx-auto mt-4 max-w-3xl sm:mt-8">
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl font-semibold">
       <a href="{% url 'cms:pricingcard-list' %}" class="text-blue-600 hover:underline">Preisübersicht</a> /
       <span id="live-title">Neue Karte</span>
@@ -17,7 +17,7 @@
     <button
       type="submit"
       form="create-pricing-card-form"
-      class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
+      class="w-full rounded bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-800 sm:w-auto sm:py-2">
       Erstellen
     </button>
   </div>
@@ -30,7 +30,7 @@
       <input type="text" id="title" class="w-full border rounded px-4 py-2" required>
     </div>
 
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div>
         <label class="block font-medium">Monatlicher Preis</label>
         <input type="text" id="monthly_price" class="w-full border rounded px-4 py-2">
@@ -39,7 +39,7 @@
         <label class="block font-medium">Einmalzahlung</label>
         <input type="text" id="one_time_price" class="w-full border rounded px-4 py-2">
       </div>
-      <div class="flex justify-center w-full items-center">
+      <div class="flex w-full items-center justify-start rounded border border-gray-200 px-4 py-3 sm:justify-center">
         <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-center w-32" for="active">
             Aktiv
         </label>        
@@ -54,7 +54,7 @@
       <textarea id="description" class="w-full border rounded px-4 py-2"></textarea>
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label class="block font-medium">Animation</label>
         <select id="animation" class="w-full border rounded px-4 py-2">
@@ -102,9 +102,9 @@
 
   $("#add-feature").click(function () {
     $("#feature-list").append(`
-      <li class="flex items-center gap-2 feature-item border p-2 rounded bg-gray-100">
+      <li class="feature-item flex flex-col gap-2 rounded border bg-gray-100 p-2 sm:flex-row sm:items-center">
         <span class="drag-handle cursor-move text-gray-400">&#x2630;</span>
-        <input type="text" class="flex-1 px-2 py-1 rounded border feature-text" placeholder="Neues Feature">
+        <input type="text" class="feature-text min-w-0 flex-1 rounded border px-2 py-2 sm:py-1" placeholder="Neues Feature">
         <button type="button" class="delete-feature text-red-500 hover:text-red-700">&times;</button>
       </li>
     `);

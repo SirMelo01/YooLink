@@ -12,10 +12,10 @@ https://www.dropzone.dev/
 {% endblock %}
 {% block content %}
 
-<div class="container mx-auto mt-8">
-  <div class="flex justify-between">
+<div class="container mx-auto mt-4 sm:mt-8">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl ">CMS - Upload</h1>
-    <a href="{% url 'cms:images-view' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="{% url 'cms:images-view' %}" class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
       Alle Bilder ansehen
     </a>
   </div>

@@ -15,12 +15,12 @@
 {% include "pages/cms/components/GalerySelectModal.html" %}
 
 <div class="container mx-auto mt-8">
-    <div class="flex justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
                 href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> / <span>Responsive</span></h1>
         <div>
             {% csrf_token %}
-            <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-6 hover:cursor-pointer"
+            <a class="block w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
                 id="saveTextData" name="main_responsive">
                 Speichern
             </a>
@@ -76,7 +76,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-4 gap-4 lg:pt-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:pt-4">
             <!-- Responsive Desktop -->
             <div class="col-span-3">
                 <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Desktop-Modus </label>

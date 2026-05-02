@@ -1,7 +1,7 @@
 <!-- **************** Video-Select-Modal **************** -->
-<div class="fixed lg:min-w-[50rem] inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal"
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden modal p-3"
     id="videoModal">
-    <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-4xl max-h-full modal-container">
+    <div class="modal-container w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-lg bg-white p-3 shadow-lg sm:p-4">
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b">
             <h3 class="text-xl font-semibold text-gray-900">Video auswählen</h3>
@@ -19,8 +19,8 @@
         </div>
 
         <!-- Body -->
-        <div class="p-4 space-y-4 overflow-auto max-h-[40rem]">
-            <div id="availableVideos" class="grid grid-cols-4 gap-4">
+        <div class="max-h-[70vh] space-y-4 overflow-auto p-3 sm:p-4">
+            <div id="availableVideos" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Videos werden hier per JS nachgeladen -->
             </div>
 
@@ -51,7 +51,7 @@
                 </div>
 
                 <!-- Checkboxes -->
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" id="videoAutoplay"> <span>Autoplay</span>
                     </label>
@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Breite / Höhe -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
                     <div class="relative h-10 w-full">
                         <input id="videoWidth" type="text" placeholder=" "
                             class="peer h-full w-full rounded border border-blue-gray-200 bg-transparent px-3 pt-4 pb-1 text-sm text-gray-700 focus:border-2 focus:border-blue-500 focus:outline-none" />
@@ -106,10 +106,10 @@
             </div>
         </div>
         <!-- Footer -->
-        <div class="p-4 border-t text-right flex space-x-4 ">
+        <div class="flex flex-col gap-2 border-t p-3 text-right sm:flex-row sm:justify-end sm:p-4">
             <button id="selectVideo"
-                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Übernehmen</button>
-            <button id="reloadCMSVideos" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                class="w-full rounded bg-green-500 px-4 py-3 text-white hover:bg-green-600 sm:w-auto sm:py-2">Übernehmen</button>
+            <button id="reloadCMSVideos" class="w-full rounded bg-blue-500 px-3 py-3 text-sm text-white hover:bg-blue-600 sm:w-auto sm:py-2">
                 <i class="bi bi-arrow-clockwise"></i> Videos laden
             </button>
         </div>

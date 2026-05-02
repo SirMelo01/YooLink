@@ -15,7 +15,7 @@ $(document).ready(function () {
       var selectedText = $(this).attr("data-text");
 
       // UI direkt aktualisieren
-      $(`#${flagId}`).attr("class", `fi fi-${selectedFlag} mr-2`);
+      $(`#${flagId}`).attr("class", `fi fi-${selectedFlag} sm:mr-2`);
       $(`#${textId}`).text(selectedText);
 
       $.ajax({

@@ -12,7 +12,7 @@
   </div>
 
   <div class="bg-white rounded-lg shadow p-5">
-    <div class="flex items-start justify-between">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <h1 class="text-xl font-semibold">{{ notification.title }}</h1>
       <span class="ml-4 inline-flex items-center text-xs px-2 py-0.5 rounded
         {% if notification.priority == 'high' %} bg-red-100 text-red-800
@@ -42,7 +42,7 @@
     {# --- Wenn die Notification eine Message verlinkt, zeige die Kontakt-Details --- #}
     {% if notification.message %}
     <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-      <div class="flex items-center justify-between mb-3">
+      <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div class="inline-flex items-center text-sm font-medium">
           <i class="bi bi-envelope-open mr-2"></i> Kontaktanfrage
         </div>
@@ -110,7 +110,7 @@
     </div>
     {% elif notification.order %}
     <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-      <div class="flex items-center justify-between mb-3">
+      <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div class="inline-flex items-center text-sm font-medium">
           <i class="bi bi-bag mr-2"></i> Bestellung #{{ notification.order.pk }}
         </div>

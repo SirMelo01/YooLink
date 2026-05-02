@@ -8,23 +8,23 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-8">
-  <div class="flex justify-between">
+<div class="container mx-auto mt-4 sm:mt-8">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl ">
       <a href="{% url 'cms:site_hauptseite_price' %}" class="text-blue-500">Preis-Sektion</a> /
       <span>Preise</span>
   </h1>
-    <div class="flex gap-4">
-      <a href="{% url 'cms:pricingcard-create' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
+      <a href="{% url 'cms:pricingcard-create' %}" class="w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:bg-green-700 sm:w-auto sm:py-2">
         Preiskarte erstellen
       </a>
-      <button id="reorder-button" class="bg-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-4 rounded">
+      <button id="reorder-button" class="w-full rounded bg-blue-600 px-4 py-3 font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
         Reihenfolge ändern
       </button>
     </div>
   </div>
 
-  <div id="card-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+  <div id="card-list" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:mt-6">
     {% for card in pricing_cards %}
     <div class="relative bg-white border-gray-200 rounded-2xl shadow-lg border-2 w-full flex flex-col h-full card-item" data-id="{{ card.id }}">
       <div class="absolute top-2 left-2 drag-handle cursor-move text-gray-300 text-lg select-none">&#x2630;</div>
