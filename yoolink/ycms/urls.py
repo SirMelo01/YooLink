@@ -67,6 +67,7 @@ urlpatterns = [
     path("seiten/hauptseite/Kunden/", views.site_view_main_kunden, name="site_hauptseite_kunden"),
     path("seiten/hauptseite/FAQ/", views.site_view_main_faq, name="site_hauptseite_faq"),
     path("seiten/Kunden/", views.site_view_kunden, name="site_kunden"),
+    path("seiten/leistungen/", views.site_view_leistungen, name="site_leistungen"),
     path("seiten/skills/", views.site_view_skills, name="site_skills"),
     path("seiten/cmsinfo/", views.site_view_cmsinfo, name="site_cmsinfo"),
     path("seiten/datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),

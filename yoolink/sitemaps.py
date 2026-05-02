@@ -12,7 +12,7 @@ class StaticViewSitemap(Sitemap):
         return [
             'home',
             'impressum', 'datenschutz', 'cookies', 
-            'kunden', 'kontakt', 'skills', 'ycmsinfo',
+            'kunden', 'kontakt', 'leistungen', 'skills', 'ycmsinfo',
             'designtemplates:designtemplates', 'designtemplates:portfolio', 'designtemplates:handwerksbtrieb',
             'blog:blog'
             ]

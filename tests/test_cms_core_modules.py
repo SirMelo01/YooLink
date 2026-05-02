@@ -1,10 +1,12 @@
 import json
+from io import BytesIO
 from datetime import time
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
+from PIL import Image
 
 from yoolink.users.tests.factories import UserFactory
 from yoolink.ycms.models import (
@@ -139,6 +141,35 @@ def test_text_content_save_assigns_media_and_gallery_slots(logged_in_client):
     assert image.place == "main_hero_image"
     assert gallery.place == "main_hero"
     assert video.place == "main_hero_video"
+
+
+def test_image_upload_returns_uploaded_image_metadata(logged_in_client):
+    buffer = BytesIO()
+    Image.new("RGB", (12, 12), color="blue").save(buffer, format="PNG")
+    buffer.seek(0)
+
+    response = logged_in_client.post(
+        reverse("ycms:post-upload"),
+        {"file": SimpleUploadedFile("cms-upload.png", buffer.read(), content_type="image/png")},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    image = fileentry.objects.get(id=payload["image"]["id"])
+    assert payload["image"]["url"] == image.file.url
+    assert payload["image"]["title"] == "cms-upload.png"
+
+
+def test_image_delete_endpoint_removes_image_after_confirmation(logged_in_client):
+    image = fileentry.objects.create(
+        file=SimpleUploadedFile("delete-me.jpg", b"image", content_type="image/jpeg"),
+        title="delete-me.jpg",
+    )
+
+    response = logged_in_client.post(reverse("ycms:image-delete", args=[image.id]))
+
+    assert response.status_code == 200
+    assert not fileentry.objects.filter(id=image.id).exists()
 
 
 def test_profile_update_resets_2fa_when_email_changes(logged_in_client, cms_user):

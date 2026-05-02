@@ -1,3 +1,4 @@
+let teamImageLibraryItems = [];
 
 $(document).ready(function () {
     let memberIdToDelete = null;
@@ -5,25 +6,65 @@ $(document).ready(function () {
     const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
     $('#closeImageModal').click(function () {
-        $imageModal.addClass("hidden");
+        closeTeamImageModal();
     });
 
     $('#reloadImages').click(function () {
-        loadImages(true)
+        loadImages(true);
     });
 
     $('#bImageSelect').click(function () {
-        $imageModal.removeClass("hidden");
+        refreshTeamSelectedImagePreview();
+        setTeamImageModalTab('imageLibraryPanel');
+        $imageModal.removeClass("hidden").addClass("flex");
+    });
+
+    $('#imageSearchInput').on('input', function () {
+        renderTeamImageLibrary(teamImageLibraryItems);
+    });
+
+    $('.image-modal-tab').click(function () {
+        setTeamImageModalTab($(this).attr('data-target'));
+    });
+
+    $('#imageUploadDropzone').click(function (event) {
+        if (event.target.id === 'imageUploadInput') return;
+        $('#imageUploadInput')[0].click();
+    });
+
+    $('#imageUploadInput').click(function (event) {
+        event.stopPropagation();
+    });
+
+    $('#imageUploadInput').on('change', function () {
+        uploadTeamImageFiles(this.files, csrfToken);
+        this.value = '';
+    });
+
+    $('#imageUploadDropzone').on('dragover', function (event) {
+        event.preventDefault();
+        $(this).addClass('border-blue-500 bg-blue-100');
+    });
+
+    $('#imageUploadDropzone').on('dragleave drop', function () {
+        $(this).removeClass('border-blue-500 bg-blue-100');
+    });
+
+    $('#imageUploadDropzone').on('drop', function (event) {
+        event.preventDefault();
+        uploadTeamImageFiles(event.originalEvent.dataTransfer.files, csrfToken);
     });
 
     const $imageModalContainer = $imageModal.find('.modal-container');
 
     $(document).mouseup(function (e) {
+        if ($(e.target).closest('.swal2-container').length > 0) return;
+
         if (
             !$imageModalContainer.is(e.target) &&
             $imageModalContainer.has(e.target).length === 0
         ) {
-            $imageModal.addClass('hidden');
+            closeTeamImageModal();
         }
     });
 
@@ -302,6 +343,222 @@ function loadImages(sendLoadMsg) {
         },
         error: function (xhr, status, error) {
             // Fehler bei der Anfrage
+            if (sendLoadMsg) sendNotif("Es kam zu einem unerwarteten Fehler, versuche es später nochmal", "error");
+        }
+    });
+}
+
+function closeTeamImageModal() {
+    $('#imageModal').addClass("hidden").removeClass("flex");
+}
+
+function setTeamImageModalTab(panelId) {
+    $('.image-modal-panel').addClass('hidden').removeClass('flex');
+    $('#' + panelId).removeClass('hidden').addClass('flex');
+
+    $('.image-modal-tab')
+        .removeClass('bg-blue-900 text-white shadow-sm')
+        .addClass('text-slate-700 hover:bg-white hover:text-slate-950');
+
+    $('.image-modal-tab[data-target="' + panelId + '"]')
+        .addClass('bg-blue-900 text-white shadow-sm')
+        .removeClass('text-slate-700 hover:bg-white hover:text-slate-950');
+}
+
+function refreshTeamSelectedImagePreview() {
+    const src = $('#imagePreview').attr('src');
+    if (src) {
+        $('#selectedImagePreview').attr('src', src).removeClass('hidden');
+        $('#selectedImagePlaceholder').addClass('hidden');
+    } else {
+        $('#selectedImagePreview').attr('src', '').addClass('hidden');
+        $('#selectedImagePlaceholder').removeClass('hidden');
+    }
+}
+
+function selectTeamImage($image) {
+    const $imagePreview = $('#imagePreview');
+    $imagePreview.attr('src', $image.attr('src'));
+    $imagePreview.attr('imgId', $image.attr('imgId'));
+    $imagePreview.removeClass("hidden");
+    closeTeamImageModal();
+    sendNotif('Neues Bild ausgewählt', 'success');
+}
+
+function renderTeamImageLibrary(images) {
+    const search = ($('#imageSearchInput').val() || '').toLowerCase().trim();
+    const filteredImages = images.filter(function (image) {
+        return !search || (image.title || '').toLowerCase().includes(search);
+    });
+
+    const $container = $('#possibleImages');
+    $container.empty();
+
+    filteredImages.forEach(function (image) {
+        const title = escapeTeamImageHtml(image.title || 'Bild');
+        const $button = $(`
+            <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
+                <img src="${image.url}" imgId="${image.id}" alt="${title}" class="h-36 w-full object-cover">
+                <span class="absolute right-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100 image-delete-button" data-image-id="${image.id}">
+                    <i class="bi bi-trash"></i>
+                </span>
+                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent px-3 pb-3 pt-8 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">${title}</span>
+            </button>
+        `);
+        $button.click(function () {
+            selectTeamImage($(this).find('img'));
+        });
+        $button.find('.image-delete-button').click(function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            confirmDeleteTeamImage(image.id, title);
+        });
+        $container.append($button);
+    });
+
+    $('#imageEmptyState').toggleClass('hidden', filteredImages.length > 0);
+}
+
+function confirmDeleteTeamImage(imageId, title) {
+    const confirmText = 'Dieses Bild wird dauerhaft gelöscht.';
+    const confirmAction = function () {
+        deleteTeamImage(imageId);
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Bild löschen?',
+            text: confirmText,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ja, löschen',
+            cancelButtonText: 'Abbrechen',
+            reverseButtons: true,
+        }).then(function (result) {
+            if (result.isConfirmed) confirmAction();
+        });
+        return;
+    }
+
+    if (window.confirm(title + ' löschen?\n\n' + confirmText)) {
+        confirmAction();
+    }
+}
+
+function deleteTeamImage(imageId) {
+    $.ajax({
+        url: '/cms/images/delete/' + imageId + '/',
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        success: function (response) {
+            teamImageLibraryItems = teamImageLibraryItems.filter(function (image) {
+                return String(image.id) !== String(imageId);
+            });
+            renderTeamImageLibrary(teamImageLibraryItems);
+
+            if (String($('#imagePreview').attr('imgId')) === String(imageId)) {
+                $('#imagePreview').attr('imgId', '-1');
+                refreshTeamSelectedImagePreview();
+            }
+
+            sendNotif(response.success || 'Bild wurde gelöscht', 'success');
+        },
+        error: function () {
+            sendNotif('Bild konnte nicht gelöscht werden', 'error');
+        }
+    });
+}
+
+function uploadTeamImageFiles(fileList, csrfToken) {
+    const files = Array.from(fileList || []).filter(function (file) {
+        return file.type && file.type.startsWith('image/');
+    });
+
+    if (!files.length) {
+        sendNotif('Bitte wähle eine Bilddatei aus', 'error');
+        return;
+    }
+
+    $('#imageUploadQueue').removeClass('hidden');
+
+    files.forEach(function (file) {
+        const itemId = 'upload-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+        addTeamUploadItem(itemId, file.name);
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/cms/upload/post',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRFToken', csrfToken);
+            },
+            success: function (response) {
+                setTeamUploadItemStatus(itemId, 'Fertig', 'text-green-700');
+                if (response.image) {
+                    teamImageLibraryItems.unshift(response.image);
+                    renderTeamImageLibrary(teamImageLibraryItems);
+                    setTeamImageModalTab('imageLibraryPanel');
+                } else {
+                    loadImages(false);
+                }
+                sendNotif('Bild wurde hochgeladen', 'success');
+            },
+            error: function () {
+                setTeamUploadItemStatus(itemId, 'Fehlgeschlagen', 'text-red-700');
+                sendNotif('Bild konnte nicht hochgeladen werden', 'error');
+            }
+        });
+    });
+}
+
+function addTeamUploadItem(id, name) {
+    $('#imageUploadItems').prepend(`
+        <div id="${id}" class="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-sm">
+            <span class="truncate pr-3 text-slate-700">${escapeTeamImageHtml(name)}</span>
+            <span class="upload-status text-slate-500">Lädt...</span>
+        </div>
+    `);
+}
+
+function setTeamUploadItemStatus(id, text, className) {
+    $('#' + id).find('.upload-status')
+        .removeClass('text-slate-500 text-green-700 text-red-700')
+        .addClass(className)
+        .text(text);
+}
+
+function escapeTeamImageHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function loadImages(sendLoadMsg) {
+    $.ajax({
+        url: '/cms/images/all/',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            teamImageLibraryItems = response.image_urls || [];
+            renderTeamImageLibrary(teamImageLibraryItems);
+            if (sendLoadMsg) {
+                const message = teamImageLibraryItems.length ? "Alle Bilder wurden geladen" : "Keine Bilder wurden gefunden";
+                sendNotif(message, teamImageLibraryItems.length ? "success" : "error");
+            }
+        },
+        error: function () {
             if (sendLoadMsg) sendNotif("Es kam zu einem unerwarteten Fehler, versuche es später nochmal", "error");
         }
     });

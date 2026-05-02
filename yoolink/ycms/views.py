@@ -536,19 +536,31 @@ def upload_view(request):
 def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
+        if not my_file:
+            return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
 
         resized_image = resize_image(my_file)
         scaled_image = scale_image(resized_image)
         compressed_image = compress_image(scaled_image)
 
-        fileentry.objects.create(file=compressed_image)
-        return HttpResponse('')
+        image = fileentry.objects.create(file=compressed_image, title=getattr(my_file, 'name', 'Bild'))
+        return JsonResponse({
+            'success': 'Bild erfolgreich hochgeladen',
+            'image': {
+                'id': image.id,
+                'url': image.file.url,
+                'title': image.title,
+            },
+        })
     return JsonResponse({'post': 'false'})
 
 # Delete File
 @login_required(login_url='login')
 def delete_file(request, id):
-    file = fileentry.objects.get(id=id)
+    if request.method != 'POST':
+        return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
+
+    file = get_object_or_404(fileentry, id=id)
     file.delete()
     return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
 
@@ -1198,7 +1210,7 @@ def delete_galery(request, id):
 @login_required(login_url='login')
 def all_images(request):
     if request.method == 'GET':
-        images = fileentry.objects.all()
+        images = fileentry.objects.all().order_by('-uploaddate')
         # Liste zur Speicherung der Bild-URLs erstellen
         image_urls = [] 
 
@@ -1208,7 +1220,8 @@ def all_images(request):
             image_url = entry.file.url
             data = {
                 "url": image_url,
-                "id": entry.id
+                "id": entry.id,
+                "title": entry.title,
             }
             # URL zur Liste hinzufügen
             image_urls.append(data)
@@ -1362,6 +1375,26 @@ def site_view_kunden(request):
     if TextContent.objects.filter(name="main_kunden2").exists():
         data["textContent2"] = TextContent.objects.get(name='main_kunden2')
     return render(request, "pages/cms/content/sites/KundenSite.html", data)
+
+@login_required(login_url='login')
+def site_view_leistungen(request):
+    def get_text(name):
+        return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
+
+    def get_image(place):
+        return fileentry.objects.filter(place=place).first()
+
+    return render(request, "pages/cms/content/sites/LeistungenSite.html", {
+        "textContent_intro": get_text("main_leistungen_intro"),
+        "textContent_cms": get_text("main_leistungen_cms"),
+        "textContent_webdesign": get_text("main_leistungen_webdesign"),
+        "textContent_logos": get_text("main_leistungen_logos"),
+        "textContent_custom": get_text("main_leistungen_custom"),
+        "image_cms": get_image("main_leistungen_cms_image"),
+        "image_webdesign": get_image("main_leistungen_webdesign_image"),
+        "image_logos": get_image("main_leistungen_logos_image"),
+        "image_custom": get_image("main_leistungen_custom_image"),
+    })
 
 @login_required(login_url='login')
 def site_view_skills(request):

@@ -1,0 +1,169 @@
+{% extends "base.html" %} {% load compress static %} {% block title %}{{ block.super }} | Leistungen{% endblock title %} {% block content %}
+
+{% block css %}
+{% compress css inline %}
+<link href="{% static 'css/wellenundboot.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+{% endcompress css %}
+{% endblock css %}
+
+{% block javascript %}
+{% compress js inline %}
+<script defer src="{% static 'js/aos.js' %}"></script>
+{% endcompress %}
+{% endblock javascript %}
+
+{% load i18n %}
+
+<section class="bg-white px-4 py-20">
+  <div class="mx-auto mb-24 max-w-5xl text-center">
+    <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-6xl" data-aos="fade-down">
+      {{ textContent_intro.header|default:"Unsere Leistungen" }}
+    </h1>
+    <p class="mx-auto mb-12 max-w-2xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl" data-aos="fade-up" data-aos-delay="100">
+      {{ textContent_intro.description|default:"Wir entwickeln moderne Webloesungen mit einem klaren Leistungsspektrum - von CMS und Webdesign bis zu Logos und individuellen Webapps." }}
+    </p>
+  </div>
+</section>
+
+{% block Wellen %}
+<section class="wave-wrapper bg-white">
+  <div class="wave-container overflow-x-hidden">
+    <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+      <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(239,246,255,0.7)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(239,246,255,0.5)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(239,246,255,0.3)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#eff6ff" />
+      </g>
+    </svg>
+    <div class="boat">
+      <div class="boat-flip">
+        <div class="boat-inner">
+          <ul class="no-bullet">
+            <ul class="no-bullet fume">
+              <li class="fume4"></li>
+              <li class="fume3"></li>
+              <li class="fume2"></li>
+              <li class="fume1"></li>
+            </ul>
+            <li class="smokestack"></li>
+            <li class="white-body">
+              <ul class="windows inline-list">
+                <li class="circle"></li>
+                <li class="circle"></li>
+                <li class="circle"></li>
+              </ul>
+            </li>
+            <li class="boat-body"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock Wellen %}
+
+<section class="bg-blue-50 px-4 py-20">
+  <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
+    <div data-aos="fade-right">
+      <h2 class="mb-6 inline-block text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        {{ textContent_cms.title|default:"Eigenes CMS" }}
+      </h2>
+      <p class="mb-4 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        {{ textContent_cms.description|default:"Unser eigens entwickeltes Content-Management-System ermoeglicht dir intuitive Inhaltspflege - ganz ohne technische Huerden." }}
+      </p>
+      <ul class="list-inside list-disc text-base text-gray-500 md:text-lg">
+        <li>{% trans "skills_easy_changes" %}</li>
+        <li>{% trans "skills_seo_friendly" %}</li>
+        <li>{% trans "skills_modular_extendable" %}</li>
+      </ul>
+      <a href="{% url 'ycmsinfo' %}" class="mt-6 inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+        {{ textContent_cms.buttonText|default:"Mehr erfahren" }}
+      </a>
+    </div>
+    <div data-aos="fade-left">
+      {% if image_cms %}
+      <img src="{{ image_cms.file.url }}" loading="lazy" alt="{{ image_cms.title|default:'CMS Vorschau' }}" class="rounded-xl shadow-xl" />
+      {% else %}
+      <img src="{% static 'images/CMS-2.0.png' %}" loading="lazy" alt="CMS Vorschau" class="rounded-xl shadow-xl" />
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mx-auto mt-40 grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
+    <div class="order-2 md:order-1" data-aos="fade-right">
+      {% if image_webdesign %}
+      <img src="{{ image_webdesign.file.url }}" loading="lazy" alt="{{ image_webdesign.title|default:'Website Vorschau' }}" class="rounded-xl shadow-xl" />
+      {% else %}
+      <img src="{% static 'images/references/THP_Full-min.png' %}" loading="lazy" alt="Website Vorschau Tierheilpraxis Meissner" class="rounded-xl shadow-xl" />
+      {% endif %}
+    </div>
+    <div class="order-1 md:order-2" data-aos="fade-left">
+      <h2 class="mb-6 inline-block text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        {{ textContent_webdesign.title|default:"Webdesign" }}
+      </h2>
+      <p class="mb-4 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        {{ textContent_webdesign.description|default:"Ob Onepager oder komplexe Unternehmensseite - wir gestalten Websites, die zu dir und deinen Zielen passen. Immer responsive. Immer modern." }}
+      </p>
+      <a href="{% url 'kunden' %}" class="mt-6 inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+        {{ textContent_webdesign.buttonText|default:"Referenzen" }}
+      </a>
+    </div>
+  </div>
+
+  <div class="mx-auto mt-40 max-w-6xl px-4 text-center" data-aos="fade-up">
+    <h2 class="mb-6 inline-block text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+      {{ textContent_logos.title|default:"Logo Design" }}
+    </h2>
+    <p class="mx-auto mb-8 max-w-3xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+      {{ textContent_logos.description|default:"Wir entwickeln einzigartige Logos - von schlicht bis verspielt - genau auf dein Unternehmen abgestimmt." }}
+    </p>
+    {% if image_logos %}
+    <img src="{{ image_logos.file.url }}" loading="lazy" alt="{{ image_logos.title|default:'Logo Design Vorschau' }}" class="mx-auto max-h-72 rounded-xl object-contain shadow-xl" />
+    {% else %}
+    <div class="grid grid-cols-2 justify-items-center gap-6 md:grid-cols-4">
+      <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" loading="lazy" alt="Tierheilpraxis Meissner Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="Yoolink Logo" class="h-20 object-contain" />
+      <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RSAutoglas Logo" class="h-20 object-contain" />
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="mx-auto mt-40 grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
+    <div data-aos="fade-right">
+      <h2 class="mb-6 inline-block text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        {{ textContent_custom.title|default:"Custom Webentwicklung" }}
+      </h2>
+      <p class="mb-4 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        {{ textContent_custom.description|default:"Individuelle Anforderungen? Kein Problem. Von Webapps ueber API-Backends bis hin zu Real-Time-Projekten: Wir entwickeln massgeschneiderte Loesungen." }}
+      </p>
+      <a href="{% url 'kontakt' %}" class="mt-6 inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+        {{ textContent_custom.buttonText|default:"Projekt anfragen" }}
+      </a>
+    </div>
+    <div data-aos="fade-left">
+      {% if image_custom %}
+      <img src="{{ image_custom.file.url }}" loading="lazy" alt="{{ image_custom.title|default:'Individuelle Webentwicklung' }}" class="rounded-xl shadow-xl" />
+      {% else %}
+      <img src="{% static 'images/references/MovieBattle_BG.png' %}" loading="lazy" alt="MovieBattle Preview" class="rounded-xl shadow-xl" />
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascriptend %}
+  <script src="{% static 'js/aos.js' %}"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true,
+      disable: "phone"
+    });
+  </script>
+{% endblock %}

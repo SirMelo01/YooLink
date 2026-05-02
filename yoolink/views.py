@@ -128,6 +128,30 @@ def load_cmsinfo(request):
     return render(request, 'pages/cmsinfo.html', context=context)
 
 
+def leistungen_view(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    def get_image(place: str):
+        return fileentry.objects.filter(place=place).first()
+
+    context["textContent_intro"] = get_text("main_leistungen_intro")
+    context["textContent_cms"] = get_text("main_leistungen_cms")
+    context["textContent_webdesign"] = get_text("main_leistungen_webdesign")
+    context["textContent_logos"] = get_text("main_leistungen_logos")
+    context["textContent_custom"] = get_text("main_leistungen_custom")
+
+    context["image_cms"] = get_image("main_leistungen_cms_image")
+    context["image_webdesign"] = get_image("main_leistungen_webdesign_image")
+    context["image_logos"] = get_image("main_leistungen_logos_image")
+    context["image_custom"] = get_image("main_leistungen_custom_image")
+
+    return render(request, 'pages/leistungen.html', context=context)
+
+
 def datenschutz_view(request):
     owner_data = UserSettings.get_site_owner()
     policy = PrivacyPolicy.objects.first()

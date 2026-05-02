@@ -1,21 +1,23 @@
 // Save Text Content
 $(document).ready(function () {
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-    $('#saveTextData').click(function () {
-        var requestData = {
+    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $('#saveTextData').click(function (event) {
+        event.preventDefault();
+
+        const requestData = {
             name: $(this).attr('name'),
         };
-        var customText = []
+        const customText = [];
 
         $('.text-content').each(function () {
-            // Retrieve and print the textContent of the current element
-            var $inputs = $(this).find('input, textarea'); // Find input and textarea elements within the current .text-content
-            var key = $(this).attr("key");
+            const $inputs = $(this).find('input, textarea');
+            const key = $(this).attr("key");
+            const inputList = {};
 
-            var inputList = {}
             $inputs.each(function () {
-                var inputValue = $(this).val(); // Get the value of the input element
-                var inputType = $(this).attr('inputType');
+                const inputValue = $(this).val();
+                const inputType = $(this).attr('inputType');
                 /**
                  * Input Types:
                  * header -> Header
@@ -24,14 +26,17 @@ $(document).ready(function () {
                  * buttonText -> Button Text
                  */
 
-                if (inputValue.trim() !== '' && inputType.trim() !== '') {
-                    inputList[inputType] = inputValue
+                if (inputType && inputType.trim() !== '' && inputValue.trim() !== '') {
+                    inputList[inputType] = inputValue;
                 }
             });
-            customText.push({
-                "key": key,
-                "inputs": inputList
-            });
+
+            if (key) {
+                customText.push({
+                    "key": key,
+                    "inputs": inputList
+                });
+            }
         });
 
         requestData.customText = JSON.stringify(customText);
@@ -57,37 +62,34 @@ $(document).ready(function () {
         }
 
         // Check images
-        images = []
+        const images = [];
         $('.content-image').each(function () {
-            // Check id
-            imgId = $(this).attr('imgId');
-            key = $(this).attr('key');
-            if (imgId && key) {
+            const imgId = $(this).attr('imgId');
+            const key = $(this).attr('key');
+            if (imgId && key && imgId !== '-1') {
                 images.push({
                     "id": imgId,
                     "key": key
-                })
+                });
             }
         });
         requestData.images = JSON.stringify(images);
 
-        galerien = []
+        const galerien = [];
         $('.galery-container').each(function () {
-            galeryId = $(this).attr('galery-id');
-            key = $(this).attr('key');
-            if (galeryId && key) {
-                if (galeryId != "-1") {
-                    galerien.push({
-                        "id": galeryId,
-                        "key": key
-                    })
-                }
+            const galeryId = $(this).attr('galery-id');
+            const key = $(this).attr('key');
+            if (galeryId && key && galeryId !== "-1") {
+                galerien.push({
+                    "id": galeryId,
+                    "key": key
+                });
             }
         });
         requestData.galerien = JSON.stringify(galerien);
 
         /* ---------- Add all videos ---------- */
-        videos = [];
+        const videos = [];
         $('.content-video').each(function () {
             const videoId = $(this).attr('videoId');
             const key = $(this).attr('key');
@@ -97,27 +99,24 @@ $(document).ready(function () {
         });
         requestData.videos = JSON.stringify(videos);
 
-        // Make the AJAX call
         $.ajax({
-            type: "POST", // or "GET" depending on your server-side script
-            url: "/cms/seiten/save/", // Replace this with your server-side script URL
+            type: "POST",
+            url: "/cms/seiten/save/",
             data: requestData,
             beforeSend: function (xhr) {
-                // Add the CSRF token to the request headers
                 xhr.setRequestHeader("X-CSRFToken", csrfToken);
             },
             success: function (response) {
-                // Handle the response from the server
                 if (response.success) {
-                    sendNotif(response.success, "success")
+                    sendNotif(response.success, "success");
                 } else {
-                    sendNotif(response.error, "error")
+                    sendNotif(response.error, "error");
                 }
             },
             error: function (error) {
-                // Handle errors, if any
                 console.error("Error occurred: " + error.statusText);
+                sendNotif("Beim Speichern ist ein Fehler aufgetreten", "error");
             }
         });
-    })
-})
+    });
+});
