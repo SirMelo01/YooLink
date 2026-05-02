@@ -122,16 +122,28 @@
     <p class="mx-auto mb-8 max-w-3xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
       {{ textContent_logos.description|default:"Wir entwickeln einzigartige Logos - von schlicht bis verspielt - genau auf dein Unternehmen abgestimmt." }}
     </p>
-    {% if image_logos %}
-    <img src="{{ image_logos.file.url }}" loading="lazy" alt="{{ image_logos.title|default:'Logo Design Vorschau' }}" class="mx-auto max-h-72 rounded-xl object-contain shadow-xl" />
-    {% else %}
     <div class="grid grid-cols-2 justify-items-center gap-6 md:grid-cols-4">
+      {% if image_logo_1 %}
+      <img src="{{ image_logo_1.file.url }}" loading="lazy" alt="{{ image_logo_1.title|default:'Logo 1' }}" class="h-20 object-contain" />
+      {% else %}
       <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" loading="lazy" alt="Tierheilpraxis Meissner Logo" class="h-20 object-contain" />
+      {% endif %}
+      {% if image_logo_2 %}
+      <img src="{{ image_logo_2.file.url }}" loading="lazy" alt="{{ image_logo_2.title|default:'Logo 2' }}" class="h-20 object-contain" />
+      {% else %}
       <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo" class="h-20 object-contain" />
+      {% endif %}
+      {% if image_logo_3 %}
+      <img src="{{ image_logo_3.file.url }}" loading="lazy" alt="{{ image_logo_3.title|default:'Logo 3' }}" class="h-20 object-contain" />
+      {% else %}
       <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="Yoolink Logo" class="h-20 object-contain" />
+      {% endif %}
+      {% if image_logo_4 %}
+      <img src="{{ image_logo_4.file.url }}" loading="lazy" alt="{{ image_logo_4.title|default:'Logo 4' }}" class="h-20 object-contain" />
+      {% else %}
       <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RSAutoglas Logo" class="h-20 object-contain" />
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 
   <div class="mx-auto mt-40 grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">

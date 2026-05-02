@@ -131,12 +131,20 @@ def load_cmsinfo(request):
 def leistungen_view(request):
     context = {}
     context.update(get_opening_hours())
+    logo_slot_keys = [
+        "main_leistungen_logo_1",
+        "main_leistungen_logo_2",
+        "main_leistungen_logo_3",
+        "main_leistungen_logo_4",
+    ]
 
     def get_text(name: str):
         return TextContent.objects.filter(name=name).first()
 
     def get_image(place: str):
         return fileentry.objects.filter(place=place).first()
+
+    legacy_logo_image = get_image("main_leistungen_logos_image")
 
     context["textContent_intro"] = get_text("main_leistungen_intro")
     context["textContent_cms"] = get_text("main_leistungen_cms")
@@ -146,7 +154,10 @@ def leistungen_view(request):
 
     context["image_cms"] = get_image("main_leistungen_cms_image")
     context["image_webdesign"] = get_image("main_leistungen_webdesign_image")
-    context["image_logos"] = get_image("main_leistungen_logos_image")
+    context["image_logo_1"] = get_image(logo_slot_keys[0]) or legacy_logo_image
+    context["image_logo_2"] = get_image(logo_slot_keys[1])
+    context["image_logo_3"] = get_image(logo_slot_keys[2])
+    context["image_logo_4"] = get_image(logo_slot_keys[3])
     context["image_custom"] = get_image("main_leistungen_custom_image")
 
     return render(request, 'pages/leistungen.html', context=context)

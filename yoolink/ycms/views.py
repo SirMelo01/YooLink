@@ -1378,11 +1378,20 @@ def site_view_kunden(request):
 
 @login_required(login_url='login')
 def site_view_leistungen(request):
+    logo_slot_keys = [
+        "main_leistungen_logo_1",
+        "main_leistungen_logo_2",
+        "main_leistungen_logo_3",
+        "main_leistungen_logo_4",
+    ]
+
     def get_text(name):
         return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
 
     def get_image(place):
         return fileentry.objects.filter(place=place).first()
+
+    legacy_logo_image = get_image("main_leistungen_logos_image")
 
     return render(request, "pages/cms/content/sites/LeistungenSite.html", {
         "textContent_intro": get_text("main_leistungen_intro"),
@@ -1392,7 +1401,10 @@ def site_view_leistungen(request):
         "textContent_custom": get_text("main_leistungen_custom"),
         "image_cms": get_image("main_leistungen_cms_image"),
         "image_webdesign": get_image("main_leistungen_webdesign_image"),
-        "image_logos": get_image("main_leistungen_logos_image"),
+        "image_logo_1": get_image("main_leistungen_logo_1") or legacy_logo_image,
+        "image_logo_2": get_image("main_leistungen_logo_2"),
+        "image_logo_3": get_image("main_leistungen_logo_3"),
+        "image_logo_4": get_image("main_leistungen_logo_4"),
         "image_custom": get_image("main_leistungen_custom_image"),
     })
 

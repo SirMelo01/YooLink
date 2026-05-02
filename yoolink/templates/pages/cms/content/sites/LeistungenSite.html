@@ -83,13 +83,39 @@
                value="{{ textContent_logos.buttonText|default:'Ansehen' }}"
                class="rounded-md bg-blue-400 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" />
       </div>
-      <div class="relative mx-auto mt-6 max-w-3xl">
-        <span class="edit-img absolute left-0 top-0 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-        {% if image_logos %}
-        <img src="{{ image_logos.file.url }}" imgId="{{ image_logos.id }}" key="main_leistungen_logos_image" alt="{{ image_logos.title|default:'Logo Design Vorschau' }}" class="content-image h-72 w-full rounded-xl object-contain shadow-xl" />
-        {% else %}
-        <img src="{% static 'images/references/yoolinklogo.png' %}" imgId="-1" key="main_leistungen_logos_image" alt="Logo Design Vorschau" class="content-image h-72 w-full rounded-xl object-contain shadow-xl" />
-        {% endif %}
+      <div class="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="relative rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_logo_1 %}
+          <img src="{{ image_logo_1.file.url }}" imgId="{{ image_logo_1.id }}" key="main_leistungen_logo_1" alt="{{ image_logo_1.title|default:'Logo 1' }}" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% else %}
+          <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" imgId="-1" key="main_leistungen_logo_1" alt="Tierheilpraxis Meissner Logo" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% endif %}
+        </div>
+        <div class="relative rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_logo_2 %}
+          <img src="{{ image_logo_2.file.url }}" imgId="{{ image_logo_2.id }}" key="main_leistungen_logo_2" alt="{{ image_logo_2.title|default:'Logo 2' }}" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% else %}
+          <img src="{% static 'images/references/knn-truck.svg' %}" imgId="-1" key="main_leistungen_logo_2" alt="KNN Truck Claim Logo" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% endif %}
+        </div>
+        <div class="relative rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_logo_3 %}
+          <img src="{{ image_logo_3.file.url }}" imgId="{{ image_logo_3.id }}" key="main_leistungen_logo_3" alt="{{ image_logo_3.title|default:'Logo 3' }}" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% else %}
+          <img src="{% static 'images/references/yoolinklogo.png' %}" imgId="-1" key="main_leistungen_logo_3" alt="Yoolink Logo" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% endif %}
+        </div>
+        <div class="relative rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_logo_4 %}
+          <img src="{{ image_logo_4.file.url }}" imgId="{{ image_logo_4.id }}" key="main_leistungen_logo_4" alt="{{ image_logo_4.title|default:'Logo 4' }}" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% else %}
+          <img src="{% static 'images/references/rsautoglaslogo.png' %}" imgId="-1" key="main_leistungen_logo_4" alt="RSAutoglas Logo" class="content-image h-24 w-full rounded-xl object-contain" />
+          {% endif %}
+        </div>
       </div>
     </section>
 
