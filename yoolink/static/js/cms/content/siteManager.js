@@ -3,6 +3,7 @@ $editImg = null;
 $editSlider = null;
 $editVideo = null;
 let imageLibraryItems = [];
+let galeryLibraryItems = [];
 
 $(document).ready(function () {
     const $imageModal = $('#imageModal');
@@ -63,6 +64,10 @@ $(document).ready(function () {
         loadGalerien(true);
     });
 
+    $('#galerySearchInput').on('input', function () {
+        renderGaleryLibrary(galeryLibraryItems);
+    });
+
     $('#closeGaleryModal').click(function () {
         $galeryModal.addClass("hidden");
     });
@@ -70,6 +75,7 @@ $(document).ready(function () {
     $('.edit-galery').click(function () {
         $editSlider = $(this).siblings('.carousel');
         $galeryModal.removeClass("hidden");
+        if (galeryLibraryItems.length === 0) loadGalerien(false);
     });
 
     const $modals = [$imageModal, $galeryModal, $videoModal];
@@ -335,25 +341,38 @@ function loadGalerien(sendLoadMsg) {
         type: 'GET',
         dataType: 'json',
         success: function (response) {
-            if (response.galerien && response.galerien.length !== 0) {
-                $('#possibleGalerien').empty();
-                response.galerien.forEach(function (gallery) {
-                    const $galleryItem = addTitleAndDescription(gallery.title, gallery.description, gallery.id);
-                    $galleryItem.click(function () {
-                        const galeryId = $(this).attr("galeryId");
-                        sendNotif("Diese Galerie wird geladen...", "notice");
-                        selectGalery(galeryId);
-                    });
-                    $('#possibleGalerien').append($galleryItem);
-                });
-                if (sendLoadMsg) sendNotif("Alle Galerien wurden geladen", "success");
-            } else {
-                if (sendLoadMsg) sendNotif("Es wurden keine Galerien gefunden", "error");
+            galeryLibraryItems = (response.galerien && response.galerien.length) ? response.galerien : [];
+            renderGaleryLibrary(galeryLibraryItems);
+            if (sendLoadMsg) {
+                if (galeryLibraryItems.length) sendNotif("Alle Galerien wurden geladen", "success");
+                else sendNotif("Es wurden keine Galerien gefunden", "error");
             }
         },
         error: function () {
             if (sendLoadMsg) sendNotif("Es kam zu einem unerwarteten Fehler, versuche es später nochmal", "error");
         }
+    });
+}
+
+function renderGaleryLibrary(items) {
+    const query = ($('#galerySearchInput').val() || '').toLowerCase();
+    const filtered = query ? items.filter(g => (g.title || '').toLowerCase().includes(query) || (g.description || '').toLowerCase().includes(query)) : items;
+    const $container = $('#possibleGalerien');
+    $container.empty();
+    if (filtered.length === 0) {
+        $('#galeryEmptyState').removeClass('hidden');
+        return;
+    }
+    $('#galeryEmptyState').addClass('hidden');
+    filtered.forEach(function (gallery) {
+        const $item = addTitleAndDescription(gallery.title, gallery.description, gallery.id);
+        $item.click(function () {
+            const galeryId = $(this).attr("galeryId");
+            $('#selectedGaleryName').text(gallery.title || 'Galerie #' + galeryId).removeClass('text-slate-400').addClass('text-slate-900 font-semibold');
+            sendNotif("Diese Galerie wird geladen...", "notice");
+            selectGalery(galeryId);
+        });
+        $container.append($item);
     });
 }
 
@@ -400,11 +419,13 @@ function loadVideos(sendLoadMsg) {
 }
 
 function addTitleAndDescription(title, description, id) {
-    const $div = $('<div>').addClass('border border-gray-200 shadow-xl rounded-2xl h-full w-full p-4 hover:cursor-pointer hover:shadow-blue-300');
+    const $div = $('<div>').addClass('flex flex-col rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-400 hover:shadow-md hover:cursor-pointer');
     $div.attr('galeryId', id);
-    const $title = $('<h1>').addClass('text-xl font-semibold mb-2').text(title);
-    const $description = $('<p>').addClass('max-h-[8rem] overflow-auto').text(description);
+    const $icon = $('<div>').addClass('mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-700').html('<i class="bi bi-images text-xl"></i>');
+    const $title = $('<p>').addClass('text-sm font-semibold text-slate-900 truncate').text(title || 'Galerie #' + id);
+    const $description = $('<p>').addClass('mt-1 text-xs text-slate-500 line-clamp-2').text(description || '');
 
+    $div.append($icon);
     $div.append($title);
     $div.append($description);
 

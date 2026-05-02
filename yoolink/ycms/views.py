@@ -1422,6 +1422,9 @@ def site_view_cmsinfo(request):
     def get_text(name):
         return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
 
+    def get_image(place):
+        return fileentry.objects.filter(place=place).first()
+
     return render(request, "pages/cms/content/sites/CmsInfoSite.html", {
         "textContent_hero": get_text("main_cmsinfo_hero"),
         "textContent_sec1": get_text("main_cmsinfo_sec1"),
@@ -1436,13 +1439,28 @@ def site_view_cmsinfo(request):
         "textContent_company_bullet3": get_text("main_cmsinfo_company_bullet3"),
         "textContent_company_bullet4": get_text("main_cmsinfo_company_bullet4"),
         "textContent_trust": get_text("main_cmsinfo_trust"),
-
         "textContent_stat1": get_text("main_cmsinfo_stat1"),
         "textContent_stat2": get_text("main_cmsinfo_stat2"),
         "textContent_stat3": get_text("main_cmsinfo_stat3"),
         "textContent_stat4": get_text("main_cmsinfo_stat4"),
-
         "textContent_bottomcta": get_text("main_cmsinfo_bottomcta"),
+
+        "image_sec1_card_1": get_image("main_cmsinfo_sec1_card_1"),
+        "image_sec1_card_2": get_image("main_cmsinfo_sec1_card_2"),
+        "image_sec1_card_3": get_image("main_cmsinfo_sec1_card_3"),
+        "image_sec1_card_4": get_image("main_cmsinfo_sec1_card_4"),
+        "image_sec1_preview_1": get_image("main_cmsinfo_sec1_preview_1"),
+        "image_sec1_preview_2": get_image("main_cmsinfo_sec1_preview_2"),
+        "image_sec1_preview_3": get_image("main_cmsinfo_sec1_preview_3"),
+        "image_sec1_preview_4": get_image("main_cmsinfo_sec1_preview_4"),
+        "image_sec2_card_1": get_image("main_cmsinfo_sec2_card_1"),
+        "image_sec2_card_2": get_image("main_cmsinfo_sec2_card_2"),
+        "image_sec2_card_3": get_image("main_cmsinfo_sec2_card_3"),
+        "image_sec2_preview_1": get_image("main_cmsinfo_sec2_preview_1"),
+        "image_sec2_preview_2": get_image("main_cmsinfo_sec2_preview_2"),
+        "image_sec2_preview_3": get_image("main_cmsinfo_sec2_preview_3"),
+        "image_blog": get_image("main_cmsinfo_blog_image"),
+        "image_company": get_image("main_cmsinfo_company_image"),
     })
 
 

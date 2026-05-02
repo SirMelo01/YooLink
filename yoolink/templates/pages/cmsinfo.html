@@ -134,30 +134,22 @@
 
                     <!-- Bilder-Klick-Bereich -->
                     <div class="flex space-x-4 pt-4 pr-10" id="cardContainer">
-                        <img
-                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmsteamcard.png' %}" loading="lazy"
-                            alt="CMS Team-Bereich Vorschau"
-                            data-image="{% static 'images/cmsinfo/cmsteam.png' %}"
-                        >
-                        <img
-                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmsfaqcard.png' %}" loading="lazy"
-                            alt="CMS FAQ-Bereich Vorschau"
-                            data-image="{% static 'images/cmsinfo/cmsfaq.png' %}"
-                        >
-                        <img
-                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmspreiscard.png' %}" loading="lazy"
-                            alt="CMS Preis-Bereich Vorschau"
-                            data-image="{% static 'images/cmsinfo/cmspreis.png' %}"
-                        >
-                        <img
-                            class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmswissencard.png' %}" loading="lazy"
-                            alt="CMS Wissen-Bereich Vorschau"
-                            data-image="{% static 'images/cmsinfo/cmswissen.png' %}"
-                        >
+                        <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec1_card_1 %}{{ image_sec1_card_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsteamcard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Team-Bereich Vorschau"
+                            data-image="{% if image_sec1_preview_1 %}{{ image_sec1_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsteam.png' %}{% endif %}">
+                        <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec1_card_2 %}{{ image_sec1_card_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsfaqcard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS FAQ-Bereich Vorschau"
+                            data-image="{% if image_sec1_preview_2 %}{{ image_sec1_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsfaq.png' %}{% endif %}">
+                        <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec1_card_3 %}{{ image_sec1_card_3.file.url }}{% else %}{% static 'images/cmsinfo/cmspreiscard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Preis-Bereich Vorschau"
+                            data-image="{% if image_sec1_preview_3 %}{{ image_sec1_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmspreis.png' %}{% endif %}">
+                        <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec1_card_4 %}{{ image_sec1_card_4.file.url }}{% else %}{% static 'images/cmsinfo/cmswissencard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Wissen-Bereich Vorschau"
+                            data-image="{% if image_sec1_preview_4 %}{{ image_sec1_preview_4.file.url }}{% else %}{% static 'images/cmsinfo/cmswissen.png' %}{% endif %}">
                     </div>
                 </div>
 
@@ -180,24 +172,18 @@
                     </p>
 
                     <div class="flex space-x-4 pt-4 pr-10" id="cardContainer2">
-                        <img
-                            class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmsbildercard.png' %}" loading="lazy"
-                            alt="CMS Bilder Karte"
-                            data-image="{% static 'images/cmsinfo/cmsbilder.png' %}"
-                        >
-                        <img
-                            class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmsgaleriecard.png' %}" loading="lazy"
-                            alt="CMS Galerie Karte"
-                            data-image="{% static 'images/cmsinfo/cmsgalerie.png' %}"
-                        >
-                        <img
-                            class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
-                            src="{% static 'images/cmsinfo/cmsvideocard.png' %}" loading="lazy"
-                            alt="CMS Video Karte"
-                            data-image="{% static 'images/cmsinfo/cmsvideo.png' %}"
-                        >
+                        <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec2_card_1 %}{{ image_sec2_card_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsbildercard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Bilder Karte"
+                            data-image="{% if image_sec2_preview_1 %}{{ image_sec2_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsbilder.png' %}{% endif %}">
+                        <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec2_card_2 %}{{ image_sec2_card_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsgaleriecard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Galerie Karte"
+                            data-image="{% if image_sec2_preview_2 %}{{ image_sec2_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsgalerie.png' %}{% endif %}">
+                        <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
+                            src="{% if image_sec2_card_3 %}{{ image_sec2_card_3.file.url }}{% else %}{% static 'images/cmsinfo/cmsvideocard.png' %}{% endif %}"
+                            loading="lazy" alt="CMS Video Karte"
+                            data-image="{% if image_sec2_preview_3 %}{{ image_sec2_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmsvideo.png' %}{% endif %}">
                     </div>
                 </div>
             </div>
@@ -244,11 +230,11 @@
                         </li>
                     </ul>
                 </div>
-                <img data-aos="fade-left" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl" src="{% static 'images/cmsinfo/cmsblog.png' %}" loading="lazy" alt="Dashboard Blog Builder">
+                <img data-aos="fade-left" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl" src="{% if image_blog %}{{ image_blog.file.url }}{% else %}{% static 'images/cmsinfo/cmsblog.png' %}{% endif %}" loading="lazy" alt="Dashboard Blog Builder">
             </div>
             <!-- Row -->
             <div class="items-center gap-8 grid grid-cols-1 lg:grid-cols-2 xl:gap-16">
-                <img data-aos="fade-right" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl order-2 md:order-none" src="{% static 'images/cmsinfo/cmscompanydata.png' %}" loading="lazy" alt="Dashboard Unternehmensdaten">
+                <img data-aos="fade-right" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl order-2 md:order-none" src="{% if image_company %}{{ image_company.file.url }}{% else %}{% static 'images/cmsinfo/cmscompanydata.png' %}{% endif %}" loading="lazy" alt="Dashboard Unternehmensdaten">
                 <div data-aos="fade-left" class="md:text-lg order-1 md:order-none">
                     <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
                     {{ textContent_company.title|default:"Alle Unternehmensdaten auf einem Blick verwalten" }}
