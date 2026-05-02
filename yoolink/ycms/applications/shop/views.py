@@ -4,12 +4,14 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Case, DecimalField, ExpressionWrapper, F, Sum, When
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import get_language, get_language_from_request
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -57,6 +59,93 @@ def parse_json_list(value):
         return data if isinstance(data, list) else []
     except json.JSONDecodeError:
         return []
+
+
+def validation_error_to_message(error):
+    """Return the first readable message from a Django ValidationError."""
+    if hasattr(error, "message_dict"):
+        for messages in error.message_dict.values():
+            if isinstance(messages, (list, tuple)) and messages:
+                return str(messages[0])
+            if messages:
+                return str(messages)
+
+    if getattr(error, "messages", None):
+        return str(error.messages[0])
+
+    return str(error)
+
+
+def get_active_product_language(request):
+    lang = get_language_from_request(request) or getattr(request, "LANGUAGE_CODE", None) or get_language() or settings.LANGUAGE_CODE
+    available_languages = dict(settings.LANGUAGES)
+    return lang if lang in available_languages else settings.LANGUAGE_CODE
+
+
+def get_product_root(product):
+    return product.original if product.original_id else product
+
+
+def clone_product_translation(original_product, language):
+    product = Product.objects.create(
+        title=original_product.title,
+        description=original_product.description,
+        price=original_product.price,
+        discount_price=original_product.discount_price,
+        title_image=original_product.title_image,
+        gallery=original_product.gallery,
+        is_reduced=original_product.is_reduced,
+        is_active=False,
+        is_in_stock=original_product.is_in_stock,
+        online_sell=original_product.online_sell,
+        showcase_only=original_product.showcase_only,
+        show_price_when_showcase=original_product.show_price_when_showcase,
+        brand=original_product.brand,
+        weight=original_product.weight,
+        language=language,
+        original=original_product,
+    )
+    product.categories.set(original_product.categories.all())
+    product.files.set(original_product.files.all())
+    ProductSpecification.objects.bulk_create(
+        [
+            ProductSpecification(
+                product=product,
+                key=spec.key,
+                value=spec.value,
+                sort_order=spec.sort_order,
+            )
+            for spec in original_product.specifications.all()
+        ]
+    )
+    return product
+
+
+def get_or_create_product_translation(product, language):
+    original_product = get_product_root(product)
+
+    if original_product.language == language:
+        return original_product
+
+    translation = original_product.translations.filter(language=language).first()
+    if translation:
+        return translation
+
+    return clone_product_translation(original_product, language)
+
+
+def get_localized_product(product, language, require_active=False):
+    root = get_product_root(product)
+
+    if root.language == language and (root.is_active or not require_active):
+        return root
+
+    variants = root.translations.all()
+    for variant in variants:
+        if variant.language == language and (variant.is_active or not require_active):
+            return variant
+
+    return root
 
 
 def get_public_user_settings():
@@ -156,6 +245,18 @@ from django.urls import reverse
 
 
 def serialize_product_for_search(product):
+    translations = [
+        {
+            "language": translation.language,
+            "is_active": translation.is_active,
+            "detail_url": reverse(
+                "cms:product-detail",
+                kwargs={"product_id": translation.id, "slug": translation.slug},
+            ),
+        }
+        for translation in product.translations.all()
+    ]
+
     return {
         "id": product.id,
         "slug": product.slug,
@@ -176,6 +277,8 @@ def serialize_product_for_search(product):
         "show_price_when_showcase": getattr(product, "show_price_when_showcase", True),
         "brand": product.brand.name if product.brand else "",
         "categories": [category.name for category in product.categories.all()],
+        "language": product.language,
+        "translations": translations,
         "updated_at": product.updated_at.strftime("%d.%m.%Y") if product.updated_at else "",
     }
 
@@ -335,12 +438,13 @@ def apply_product_form_data(request, product):
 
     price = parse_decimal(request.POST.get("price"), default="0.00")
     weight = parse_decimal(request.POST.get("weight"), default="0.00")
-    reduced_price = parse_decimal(request.POST.get("reducedPrice"), default=str(price))
+    reduced_price_raw = (request.POST.get("reducedPrice") or "").strip()
+    reduced_price = parse_decimal(reduced_price_raw, default="0.00") if reduced_price_raw else None
 
     is_active = parse_bool(request.POST.get("isActive"))
     is_in_stock = parse_bool(request.POST.get("isInStock"))
     online_sell = parse_bool(request.POST.get("isOnlineAvailable"))
-    is_reduced = parse_bool(request.POST.get("isReduced"))
+    is_reduced = parse_bool(request.POST.get("isReduced")) or reduced_price is not None
     showcase_only = parse_bool(request.POST.get("isShowcaseOnly"))
     show_price_when_showcase = parse_bool(request.POST.get("showPriceWhenShowcase"))
 
@@ -350,13 +454,16 @@ def apply_product_form_data(request, product):
     if price <= 0:
         return None, JsonResponse({"error": "Der Preis muss größer 0 sein."}, status=400)
 
+    if is_reduced and reduced_price is None:
+        return None, JsonResponse({"error": "Ein reduzierter Artikel braucht einen Rabattpreis."}, status=400)
+
     if is_reduced and reduced_price <= 0:
         return None, JsonResponse({"error": "Der reduzierte Preis muss größer 0 sein."}, status=400)
 
-    if is_reduced and reduced_price > price:
-        return None, JsonResponse({"error": "Der reduzierte Preis darf nicht größer als der Normalpreis sein."}, status=400)
+    if is_reduced and reduced_price >= price:
+        return None, JsonResponse({"error": "Der reduzierte Preis muss kleiner als der Normalpreis sein."}, status=400)
 
-    duplicate_qs = Product.objects.filter(title=title)
+    duplicate_qs = Product.objects.filter(title=title, language=product.language)
     if product.pk:
         duplicate_qs = duplicate_qs.exclude(pk=product.pk)
 
@@ -373,48 +480,51 @@ def apply_product_form_data(request, product):
     if specifications_error:
         return None, JsonResponse({"error": specifications_error}, status=400)
 
-    with transaction.atomic():
-        product.title = title
-        product.description = description
-        product.price = price
-        product.weight = weight
-        product.discount_price = reduced_price if is_reduced else None
-        product.is_active = is_active
-        product.is_in_stock = is_in_stock
-        product.online_sell = False if showcase_only else online_sell
-        product.is_reduced = is_reduced
-        product.showcase_only = showcase_only
-        product.show_price_when_showcase = show_price_when_showcase
-        product.brand = get_or_create_brand(brand_name)
+    try:
+        with transaction.atomic():
+            product.title = title
+            product.description = description
+            product.price = price
+            product.weight = weight
+            product.discount_price = reduced_price if is_reduced else None
+            product.is_active = is_active
+            product.is_in_stock = is_in_stock
+            product.online_sell = False if showcase_only else online_sell
+            product.is_reduced = is_reduced
+            product.showcase_only = showcase_only
+            product.show_price_when_showcase = show_price_when_showcase
+            product.brand = get_or_create_brand(brand_name)
 
-        if gallery_instance:
-            product.gallery = gallery_instance
+            if gallery_instance:
+                product.gallery = gallery_instance
 
-        product.save()
-
-        product.categories.clear()
-        for category in get_or_create_categories(selected_categories):
-            product.categories.add(category)
-
-        product.files.set(selected_files)
-
-        product.specifications.all().delete()
-        ProductSpecification.objects.bulk_create(
-            [
-                ProductSpecification(
-                    product=product,
-                    key=spec["key"],
-                    value=spec["value"],
-                    sort_order=spec["sort_order"],
-                )
-                for spec in parsed_specifications
-            ]
-        )
-
-        processed_image = process_product_image(uploaded_image)
-        if processed_image:
-            product.title_image = processed_image
             product.save()
+
+            product.categories.clear()
+            for category in get_or_create_categories(selected_categories):
+                product.categories.add(category)
+
+            product.files.set(selected_files)
+
+            product.specifications.all().delete()
+            ProductSpecification.objects.bulk_create(
+                [
+                    ProductSpecification(
+                        product=product,
+                        key=spec["key"],
+                        value=spec["value"],
+                        sort_order=spec["sort_order"],
+                    )
+                    for spec in parsed_specifications
+                ]
+            )
+
+            processed_image = process_product_image(uploaded_image)
+            if processed_image:
+                product.title_image = processed_image
+                product.save()
+    except ValidationError as error:
+        return None, JsonResponse({"error": validation_error_to_message(error)}, status=400)
 
     return product, None
 
@@ -453,10 +563,12 @@ def product_create_view(request):
 def product_detail(request, product_id, slug):
     """Render the CMS product edit page."""
     product = get_object_or_404(
-        Product.objects.select_related("brand", "gallery").prefetch_related("categories"),
+        Product.objects.select_related("brand", "gallery", "original")
+        .prefetch_related("categories", "files", "specifications", "translations"),
         id=product_id,
         slug=slug,
     )
+    product = get_or_create_product_translation(product, get_active_product_language(request))
     return render(request, "pages/cms/products/edit-product.html", {"product": product})
 
 def get_filtered_products_queryset(request):
@@ -468,8 +580,8 @@ def get_filtered_products_queryset(request):
 
     products = (
         Product.objects.select_related("brand", "gallery")
-        .prefetch_related("categories")
-        .all()
+        .prefetch_related("categories", "translations")
+        .filter(original__isnull=True)
     )
 
     if query:
@@ -554,6 +666,7 @@ def product_create(request):
         return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
 
     product = Product()
+    product.language = get_active_product_language(request)
     product, error_response = apply_product_form_data(request, product)
 
     if error_response:
@@ -576,6 +689,7 @@ def product_update(request, product_id, slug):
         return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
 
     product = get_object_or_404(Product, id=product_id, slug=slug)
+    product = get_or_create_product_translation(product, get_active_product_language(request))
     product, error_response = apply_product_form_data(request, product)
 
     if error_response:
@@ -634,9 +748,9 @@ def get_public_filtered_products_queryset(request):
     is_reduced_param = request.GET.get("is_reduced")
 
     products = (
-        Product.objects.filter(is_active=True)
+        Product.objects.filter(is_active=True, original__isnull=True)
         .select_related("brand")
-        .prefetch_related("categories")
+        .prefetch_related("categories", "translations", "translations__categories")
         .annotate(
             effective_price_value=Case(
                 When(is_reduced=True, discount_price__isnull=False, then=F("discount_price")),
@@ -705,8 +819,12 @@ def search_products(request):
     queryset = get_public_filtered_products_queryset(request)
     paginator = Paginator(queryset, 12)
     page_obj = paginator.get_page(request.GET.get("page", 1))
+    language = get_active_product_language(request)
 
-    data = [serialize_public_product(product) for product in page_obj.object_list]
+    data = [
+        serialize_public_product(get_localized_product(product, language, require_active=True))
+        for product in page_obj.object_list
+    ]
 
     return Response(
         {
@@ -728,6 +846,11 @@ def public_shop(request):
     queryset = get_public_filtered_products_queryset(request)
     paginator = Paginator(queryset, 12)
     page_obj = paginator.get_page(request.GET.get("page", 1))
+    language = get_active_product_language(request)
+    page_obj.object_list = [
+        get_localized_product(product, language, require_active=True)
+        for product in page_obj.object_list
+    ]
 
     brands = Brand.objects.filter(products__is_active=True).distinct().order_by("name")
     categories = Category.objects.filter(products__is_active=True).distinct().order_by("name")
@@ -753,13 +876,22 @@ def public_shop(request):
     return render(request, "pages/shop.html", context)
 
 def detail(request, product_id, slug):
-    product = get_object_or_404(Product, id=product_id, slug=slug)
+    product = get_object_or_404(
+        Product.objects.select_related("brand", "gallery", "original")
+        .prefetch_related("categories", "translations", "specifications", "gallery__images"),
+        id=product_id,
+        slug=slug,
+    )
     last_url = request.META.get('HTTP_REFERER')
     if not product.is_active:
         return render(request, "pages/errors/error.html", {
             "error": "Dieses Produkt ist nicht mehr verfügbar",
             "saveLink": last_url if last_url else '/'
         })
+    localized_product = get_localized_product(product, get_active_product_language(request), require_active=True)
+    if localized_product.pk != product.pk:
+        return redirect(localized_product.get_absolute_url())
+    product = localized_product
     context={"product": product}
     context.update(get_opening_hours())
     return render(request, 'pages/detail.html', context)

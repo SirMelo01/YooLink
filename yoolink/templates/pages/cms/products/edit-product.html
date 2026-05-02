@@ -89,6 +89,14 @@
           <span class="mx-2 text-gray-400">/</span>
           <span id="titleSpan">{{ product.title }}</span>
         </h1>
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+          <span class="rounded-full bg-blue-100 px-2.5 py-1 font-medium text-blue-800">Sprache: {{ product.language|upper }}</span>
+          {% if product.original %}
+            <span class="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-700">Übersetzung von {{ product.original.language|upper }}</span>
+          {% else %}
+            <span class="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-700">Originalprodukt</span>
+          {% endif %}
+        </div>
         <p class="mt-1 text-sm text-gray-500">Bearbeite Produktdaten, Medien, Galerie, Spezifikationen und Dateianhänge</p>
       </div>
 

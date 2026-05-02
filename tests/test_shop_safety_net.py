@@ -180,6 +180,70 @@ def test_cms_product_create_search_update_and_delete(logged_in_client):
     assert Product.objects.count() == 0
 
 
+def test_cms_product_create_saves_discount_price(logged_in_client):
+    response = logged_in_client.post(
+        reverse("ycms:product-create-upload"),
+        _product_payload(reducedPrice="39.90"),
+    )
+
+    assert response.status_code == 201
+    product = Product.objects.get()
+    assert product.is_reduced is True
+    assert product.discount_price == Decimal("39.90")
+
+
+def test_cms_product_create_returns_discount_validation_message(logged_in_client):
+    response = logged_in_client.post(
+        reverse("ycms:product-create-upload"),
+        _product_payload(reducedPrice="59.90"),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "Der reduzierte Preis muss kleiner als der Normalpreis sein."
+    assert Product.objects.count() == 0
+
+
+def test_cms_product_detail_creates_language_variant(logged_in_client):
+    product = _create_product(title="Deutsches Produkt")
+
+    response = logged_in_client.get(
+        reverse("ycms:product-detail", args=[product.id, product.slug]),
+        HTTP_ACCEPT_LANGUAGE="en",
+    )
+
+    assert response.status_code == 200
+    translation = Product.objects.get(original=product, language="en")
+    assert translation.title == product.title
+    assert translation.is_active is False
+    assert translation.slug.endswith("-en")
+
+
+def test_public_product_search_uses_active_language_variant(client):
+    product = _create_product(title="Deutsches Produkt", description="Deutsche Beschreibung")
+    translation = Product.objects.create(
+        title="English Product",
+        description="English description",
+        price=product.price,
+        weight=product.weight,
+        brand=product.brand,
+        is_active=True,
+        is_in_stock=True,
+        online_sell=True,
+        language="en",
+        original=product,
+    )
+    translation.categories.set(product.categories.all())
+
+    response = client.get("/shop/products/search/", HTTP_ACCEPT_LANGUAGE="en")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["products"][0]["title"] == "English Product"
+    assert payload["products"][0]["detail_url"].endswith(
+        reverse("product-detail", args=[translation.id, translation.slug])
+    )
+
+
 def test_public_product_search_filters_by_effective_price():
     _create_product(title="Teuer", price=Decimal("100.00"))
     _create_product(

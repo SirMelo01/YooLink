@@ -25,6 +25,41 @@ function getCsrfToken() {
   return $('input[name="csrfmiddlewaretoken"]').val();
 }
 
+function getAjaxErrorMessage(xhr, fallbackMessage) {
+  const response = xhr.responseJSON;
+
+  if (response) {
+    if (response.error) {
+      return response.error;
+    }
+
+    if (response.detail) {
+      return response.detail;
+    }
+  }
+
+  if (xhr.responseText) {
+    try {
+      const parsedResponse = JSON.parse(xhr.responseText);
+      if (parsedResponse.error) {
+        return parsedResponse.error;
+      }
+    } catch (error) {
+      // Ignore non-JSON responses and use the fallback below.
+    }
+  }
+
+  return fallbackMessage || "Etwas ist schief gelaufen. Versuche es erneut.";
+}
+
+function setFormDataValue(formData, key, value) {
+  if (typeof formData.set === "function") {
+    formData.set(key, value);
+  } else {
+    formData.append(key, value);
+  }
+}
+
 function isFormValid(requiredFields) {
   let isValid = true;
 
@@ -364,19 +399,19 @@ $(document).ready(function () {
     }
 
     const formData = new FormData(this);
-    formData.append("title", $("#title").val());
-    formData.append("description", $("#description").val());
-    formData.append("isActive", $("#activeSwitch").is(":checked"));
-    formData.append("isInStock", $("#stockSwitch").is(":checked"));
-    formData.append("isReduced", $("#reducedSwitch").is(":checked"));
-    formData.append("hersteller", $("#autocomplete-hersteller-input").val());
-    formData.append("price", $("#price").val());
-    formData.append("weight", $("#weight").val());
-    formData.append("isOnlineAvailable", $("#onlineSwitch").is(":checked"));
-    formData.append("reducedPrice", $("#reducedPrice").val());
-    formData.append("selected_categories", JSON.stringify(addedCategories));
-    formData.append("isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
-    formData.append("showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
+    setFormDataValue(formData, "title", $("#title").val());
+    setFormDataValue(formData, "description", $("#description").val());
+    setFormDataValue(formData, "isActive", $("#activeSwitch").is(":checked"));
+    setFormDataValue(formData, "isInStock", $("#stockSwitch").is(":checked"));
+    setFormDataValue(formData, "isReduced", $("#reducedSwitch").is(":checked"));
+    setFormDataValue(formData, "hersteller", $("#autocomplete-hersteller-input").val());
+    setFormDataValue(formData, "price", $("#price").val());
+    setFormDataValue(formData, "weight", $("#weight").val());
+    setFormDataValue(formData, "isOnlineAvailable", $("#onlineSwitch").is(":checked"));
+    setFormDataValue(formData, "reducedPrice", $("#reducedPrice").val());
+    setFormDataValue(formData, "selected_categories", JSON.stringify(addedCategories));
+    setFormDataValue(formData, "isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
+    setFormDataValue(formData, "showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
 
     if (!appendSpecificationsToFormData(formData)) {
       disableSpinner($("#updateProduct"));
@@ -420,7 +455,7 @@ $(document).ready(function () {
       error: function (xhr) {
         console.error(xhr);
         disableSpinner($("#updateProduct"));
-        sendNotif("Etwas ist schief gelaufen. Versuche es erneut.", "error");
+        sendNotif(getAjaxErrorMessage(xhr), "error");
       }
     });
   });
@@ -515,19 +550,19 @@ $(document).ready(function () {
     const formData = new FormData(this);
     const titleImage = files[0];
 
-    formData.append("title", $("#title").val());
-    formData.append("description", $("#description").val());
-    formData.append("isActive", $("#activeSwitch").is(":checked"));
-    formData.append("isInStock", $("#stockSwitch").is(":checked"));
-    formData.append("isReduced", $("#reducedSwitch").is(":checked"));
-    formData.append("hersteller", $("#autocomplete-hersteller-input").val());
-    formData.append("price", $("#price").val());
-    formData.append("weight", $("#weight").val());
-    formData.append("isOnlineAvailable", $("#onlineSwitch").is(":checked"));
-    formData.append("reducedPrice", $("#reducedPrice").val());
-    formData.append("selected_categories", JSON.stringify(addedCategories));
-    formData.append("isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
-    formData.append("showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
+    setFormDataValue(formData, "title", $("#title").val());
+    setFormDataValue(formData, "description", $("#description").val());
+    setFormDataValue(formData, "isActive", $("#activeSwitch").is(":checked"));
+    setFormDataValue(formData, "isInStock", $("#stockSwitch").is(":checked"));
+    setFormDataValue(formData, "isReduced", $("#reducedSwitch").is(":checked"));
+    setFormDataValue(formData, "hersteller", $("#autocomplete-hersteller-input").val());
+    setFormDataValue(formData, "price", $("#price").val());
+    setFormDataValue(formData, "weight", $("#weight").val());
+    setFormDataValue(formData, "isOnlineAvailable", $("#onlineSwitch").is(":checked"));
+    setFormDataValue(formData, "reducedPrice", $("#reducedPrice").val());
+    setFormDataValue(formData, "selected_categories", JSON.stringify(addedCategories));
+    setFormDataValue(formData, "isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
+    setFormDataValue(formData, "showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
     formData.append("title_image", titleImage, "productTitleImage");
 
     if (!appendSpecificationsToFormData(formData)) {
@@ -571,7 +606,7 @@ $(document).ready(function () {
       error: function (xhr) {
         console.error(xhr);
         disableSpinner($("#createProduct"));
-        sendNotif("Etwas ist schief gelaufen. Versuche es erneut.", "error");
+        sendNotif(getAjaxErrorMessage(xhr), "error");
       }
     });
   });

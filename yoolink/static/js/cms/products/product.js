@@ -134,11 +134,41 @@ function buildPriceBadge(product) {
     return '<span class="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">Showcase</span>'
   }
 
-  if (product.discount_price) {
+  if (product.is_reduced && product.discount_price) {
+    return `
+      <span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.discount_price)} €</span>
+      <span class="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-gray-500 line-through shadow-sm">${escapeHtml(product.price)} €</span>
+    `
     return `<span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.discount_price)} €</span>`
   }
 
   return `<span class="rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.price)} €</span>`
+}
+
+function buildTranslationBadges(product) {
+  const badges = [
+    `<span class="rounded-full bg-blue-100 px-2.5 py-1 font-medium text-blue-800">Original: ${escapeHtml(String(product.language || "").toUpperCase())}</span>`
+  ]
+
+  if (!Array.isArray(product.translations) || product.translations.length === 0) {
+    badges.push('<span class="text-gray-400">Keine Varianten</span>')
+    return badges.join("")
+  }
+
+  product.translations.forEach((translation) => {
+    const icon = translation.is_active
+      ? '<i class="bi bi-check-circle-fill text-green-600"></i>'
+      : '<i class="bi bi-x-circle-fill text-red-600"></i>'
+    const url = translation.detail_url || "#"
+    badges.push(`
+      <a href="${url}" class="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-700 transition hover:bg-blue-100 hover:text-blue-800">
+        ${escapeHtml(String(translation.language || "").toUpperCase())}
+        ${icon}
+      </a>
+    `)
+  })
+
+  return badges.join("")
 }
 
 function buildCategoryBadges(categories) {
@@ -227,6 +257,10 @@ function updateProductGrid(products) {
 
           <div class="mt-3 flex flex-wrap gap-2">
             ${buildStatusBadges(product)}
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            ${buildTranslationBadges(product)}
           </div>
 
           <p class="mt-4 min-h-[4.5rem] text-sm leading-6 text-gray-600">${description}</p>

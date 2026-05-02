@@ -87,9 +87,24 @@ class Brand(TimeStampedModel):
 class Product(TimeStampedModel):
     media_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
-    title = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField(blank=True)
+    language = models.CharField(
+        max_length=10,
+        default="de",
+        choices=[
+            ("de", "Deutsch"),
+            ("en", "Englisch"),
+        ],
+    )
+    original = models.ForeignKey(
+        "self",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="translations",
+    )
 
     price = models.DecimalField(
         max_digits=10,
@@ -151,6 +166,9 @@ class Product(TimeStampedModel):
         ordering = ["title"]
 
     def clean(self):
+        if self.original_id and self.original_id == self.pk:
+            raise ValidationError({"original": "Ein Produkt kann nicht seine eigene Übersetzung sein."})
+
         if self.showcase_only:
             self.online_sell = False
         if self.is_reduced and self.discount_price is None:
@@ -164,7 +182,11 @@ class Product(TimeStampedModel):
             )
 
     def save(self, *args, **kwargs):
-        self.slug = generate_unique_slug(Product, self.title, self.pk)
+        slug_source = self.title
+        if self.original_id:
+            slug_source = f"{self.title}-{self.language.lower()}"
+
+        self.slug = generate_unique_slug(Product, slug_source, self.pk)
 
         if not self.is_reduced:
             self.discount_price = None
