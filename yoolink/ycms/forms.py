@@ -13,15 +13,25 @@ from django.utils.http import urlsafe_base64_encode
 from .models import fileentry, Blog, UserSettings
 
 
+class MultipleClearableFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [single_file_clean(file, initial) for file in data]
+        return [single_file_clean(data, initial)]
+
+
 class fileform(forms.ModelForm):
     label = ""
+    file = MultipleFileField(widget=MultipleClearableFileInput)
 
     class Meta:
         model = fileentry
         fields = ("file",)
-        widgets = {
-            "file": forms.ClearableFileInput(attrs={"multiple": True})
-        }
 
 
 class Blogform(forms.ModelForm):

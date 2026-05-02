@@ -573,7 +573,7 @@ class UserSettings(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(two_factor_email_enabled=False) | ~Q(email=''),
+                condition=Q(two_factor_email_enabled=False) | ~Q(email=''),
                 name='two_factor_requires_email',
             ),
         ]

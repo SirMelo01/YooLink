@@ -25,6 +25,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAdminUser
+from drf_spectacular.utils import extend_schema
 from django.core.mail import send_mail
 from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
@@ -1546,6 +1547,7 @@ def save_privacy_policy(request):
 
     return JsonResponse({'success': 'Datenschutzerklaerung wurde gespeichert'}, status=200)
 
+@extend_schema(exclude=True)
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -1605,6 +1607,10 @@ def _get_user_settings(user):
         user_settings.save(update_fields=["email"])
 
     return user_settings
+
+
+def _get_site_owner_user(fallback_user):
+    return User.objects.filter(is_staff=False).order_by("id").first() or fallback_user
 
 
 @login_required(login_url='login')
@@ -1834,9 +1840,9 @@ Opening Hours
 def opening_hours_view(request):
     # Retrieve the UserSettings for the currently logged-in user or any specific user
 
-    user = User.objects.filter(is_staff=False).first()
+    user = _get_site_owner_user(request.user)
     
-    user_settings = UserSettings.objects.get(user=user) 
+    user_settings = _get_user_settings(user) 
 
     for day_abbr, _ in OpeningHours.DAY_CHOICES:
         # Überprüfen, ob bereits Öffnungszeiten für diesen Tag existieren
@@ -1858,12 +1864,13 @@ def opening_hours_view(request):
 
 from django.utils import timezone as dj_timezone
 
+@extend_schema(exclude=True)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def opening_hours_update(request):
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
-    user = User.objects.filter(is_staff=False).first()
+    user = _get_site_owner_user(request.user)
     errors = []
     for item in opening_hours:
         day = item['day']
@@ -1895,7 +1902,7 @@ def opening_hours_update(request):
         opening_hour.lunch_break_end = lunch_break_end if has_lunch_break else None
         opening_hour.save()
 
-    user_settings = UserSettings.objects.get(user=user)
+    user_settings = _get_user_settings(user)
 
     # Toggle + Text
     vacation = request.POST.get('vacation', False)
@@ -1960,6 +1967,7 @@ def team_member_list(request):
 from django.db.models import Max
 
 # View to handle the creation of a TeamMember
+@extend_schema(exclude=True)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_team_member(request):
@@ -2012,6 +2020,7 @@ def create_team_member(request):
 
     return JsonResponse({'error': 'Fehler beim Erstellen vom Teammitglied'}, status=400)
 
+@extend_schema(exclude=True)
 @api_view(['GET'])
 def get_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
@@ -2026,6 +2035,7 @@ def get_team_member(request, id):
         'note': team_member.note
     })
 
+@extend_schema(exclude=True)
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_team_member(request, id):
@@ -2067,6 +2077,7 @@ def update_team_member(request, id):
     team_member.save()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich aktualisiert'})
 
+@extend_schema(exclude=True)
 @api_view(['DELETE'])
 def delete_team_member(request, id):
     team_member = get_object_or_404(TeamMember, id=id)
@@ -2075,6 +2086,7 @@ def delete_team_member(request, id):
 
 from django.views.decorators.http import require_POST
 
+@extend_schema(exclude=True)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def reorder_team_members(request):

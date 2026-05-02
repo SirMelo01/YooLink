@@ -209,6 +209,17 @@ def test_opening_hours_update_and_vacation_window(logged_in_client, cms_user):
     assert cms_user.usersettings.vacation is True
 
 
+def test_opening_hours_view_creates_missing_user_settings(client):
+    user = UserFactory(email="missing-settings@example.com")
+    client.force_login(user)
+
+    response = client.get(reverse("ycms:openinghours-view"))
+
+    assert response.status_code == 200
+    assert UserSettings.objects.filter(user=user, email=user.email).exists()
+    assert OpeningHours.objects.filter(user=user).count() == len(OpeningHours.DAY_CHOICES)
+
+
 def test_team_button_and_pricing_management(logged_in_client):
     member_response = logged_in_client.post(
         reverse("ycms:create-team-member"),

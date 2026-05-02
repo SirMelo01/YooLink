@@ -2,9 +2,9 @@
 
 -r base.txt
 
-gunicorn==20.1.0  # https://github.com/benoitc/gunicorn
-psycopg2==2.9.5  # https://github.com/psycopg/psycopg2
+gunicorn==25.3.0  # https://github.com/benoitc/gunicorn
+psycopg2==2.9.12  # https://github.com/psycopg/psycopg2
 
 # Django
 # ------------------------------------------------------------------------------
-django-anymail==9.0  # https://github.com/anymail/django-anymail
+django-anymail==15.0  # https://github.com/anymail/django-anymail

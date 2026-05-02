@@ -73,6 +73,6 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STORAGES["default"] = {"BACKEND": "django.core.files.storage.FileSystemStorage"}  # noqa F405
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

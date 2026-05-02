@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='usersettings',
-            constraint=models.CheckConstraint(check=models.Q(('two_factor_email_enabled', False), models.Q(('email', ''), _negated=True), _connector='OR'), name='two_factor_requires_email'),
+            constraint=models.CheckConstraint(condition=models.Q(('two_factor_email_enabled', False), models.Q(('email', ''), _negated=True), _connector='OR'), name='two_factor_requires_email'),
         ),
     ]

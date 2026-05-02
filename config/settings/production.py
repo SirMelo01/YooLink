@@ -54,7 +54,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 
 # STATIC
 # ------------------------
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES["staticfiles"] = {  # noqa F405
+    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+}
 # MEDIA
 # ------------------------------------------------------------------------------
 

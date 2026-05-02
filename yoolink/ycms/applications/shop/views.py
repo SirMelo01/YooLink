@@ -14,6 +14,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 from django.core.paginator import Paginator
 from django.db.models import Q
 
@@ -696,6 +697,7 @@ def get_public_filtered_products_queryset(request):
 
     return products.order_by(ordering_map.get(ordering, "title")).distinct()
 
+@extend_schema(exclude=True)
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([])
@@ -836,6 +838,7 @@ def order_view(request):
 # Admin order API
 # =========================================================
 
+@extend_schema(exclude=True)
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def update_order_status_admin(request, order_id):
@@ -883,6 +886,7 @@ def update_order_status_admin(request, order_id):
     return Response({"success": "Auftragsstatus wurde erfolgreich angepasst."}, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_review(request, review_id):
@@ -892,6 +896,7 @@ def delete_review(request, review_id):
     return Response({"success": "Review wurde erfolgreich gelöscht"}, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_order(request, order_id):
@@ -901,6 +906,7 @@ def delete_order(request, order_id):
     return Response({"success": "Auftrag wurde erfolgreich gelöscht"}, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_order_by_id(request, order_id):
@@ -910,6 +916,7 @@ def get_order_by_id(request, order_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_orders(request):
@@ -948,6 +955,7 @@ def get_orders(request):
 # Public cart and checkout views
 # =========================================================
 
+@extend_schema(exclude=True)
 @api_view(["POST"])
 @authentication_classes([])
 @permission_classes([])
@@ -1012,6 +1020,7 @@ def add_to_cart(request, product_id):
     )
 
 
+@extend_schema(exclude=True)
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([])
@@ -1074,6 +1083,7 @@ def cart_verify_success_view(request):
     return render(request, "pages/cms/orders/success/cart-verify-success.html", context)
 
 
+@extend_schema(exclude=True)
 @api_view(["DELETE"])
 @authentication_classes([])
 @permission_classes([])
@@ -1093,6 +1103,7 @@ def remove_from_cart(request, order_item_id):
     return JsonResponse({"success": "Produkt wurde erfolgreich vom Warenkorb entfernt."})
 
 
+@extend_schema(exclude=True)
 @api_view(["POST"])
 @authentication_classes([])
 @permission_classes([])
@@ -1123,6 +1134,7 @@ def update_quantity(request, order_item_id):
     return JsonResponse({"success": "Quantity updated successfully."})
 
 
+@extend_schema(exclude=True)
 @api_view(["POST"])
 @authentication_classes([])
 @permission_classes([])
@@ -1172,6 +1184,7 @@ def update_cart_items(request):
     return JsonResponse(data, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 @api_view(["POST"])
 @authentication_classes([])
 @permission_classes([])
@@ -1270,6 +1283,7 @@ def order_verify_success_view(request):
     return render(request, "pages/cms/orders/success/order-verify-success.html", context)
 
 
+@extend_schema(exclude=True)
 @api_view(["POST"])
 @authentication_classes([])
 @permission_classes([])
