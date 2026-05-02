@@ -232,6 +232,7 @@ def kontaktform(request):
     else:
         form = ContactForm()
 
+    owner_data = UserSettings.get_site_owner()
     return render(
         request,
         'pages/kontakt.html',
@@ -240,6 +241,7 @@ def kontaktform(request):
             'success': success,
             'recaptcha_public_key': settings.RECAPTCHA_PUBLIC_KEY,
             'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
+            'owner_data': owner_data,
         },
     )
 
