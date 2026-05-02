@@ -148,21 +148,17 @@ msgstr "month"
 msgid "pricing_one_off_payment"
 msgstr "One-off payment"
 
-#: yoolink/templates/pages/skills.html:49
+#: yoolink/templates/pages/leistungen.html:80
 msgid "skills_easy_changes"
 msgstr "Simple adjustments"
 
-#: yoolink/templates/pages/skills.html:50
+#: yoolink/templates/pages/leistungen.html:81
 msgid "skills_seo_friendly"
 msgstr "SEO-friendly"
 
-#: yoolink/templates/pages/skills.html:51
+#: yoolink/templates/pages/leistungen.html:82
 msgid "skills_modular_extendable"
 msgstr "Modularly expandable"
-
-#: yoolink/templates/pages/skills.html:134
-msgid "skills_example"
-msgstr "Example"
 
 #: yoolink/users/admin.py:17
 msgid "Personal info"

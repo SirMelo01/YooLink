@@ -26,39 +26,6 @@
         class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
     </div>
   </div>
-  <!-- Skills Section -->
-  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-      <h2 class="text-lg font-bold mb-4">Fähigkeiten (/skills)</h2>
-      <p class="mb-4">Hier kannst du den Inhalt der Skills-Seite bearbeiten</p>
-      <div class="flex-grow"></div>
-      <div class="flex justify-center mt-6 sm:mt-12">
-          <a href="{% url 'cms:site_skills' %}" class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
-      </div>
-  </div>
-  <!-- Leistungen Section -->
-  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-    <h2 class="text-lg font-bold mb-4">Leistungen (/leistungen)</h2>
-    <p class="mb-4">Hier kannst du Texte und Bilder der Leistungen-Seite bearbeiten</p>
-    <div class="flex-grow"></div>
-    <div class="flex justify-center mt-6 sm:mt-12">
-      <a href="{% url 'cms:site_leistungen' %}"
-        class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
-        Verwalten
-      </a>
-    </div>
-  </div>
-  <!-- CMS Info Section -->
-  <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-    <h2 class="text-lg font-bold mb-4">CMS Info (/cmsinfo)</h2>
-    <p class="mb-4">Hier kannst du den Inhalt der CMS Info Seite anpassen</p>
-    <div class="flex-grow"></div>
-    <div class="flex justify-center mt-6 sm:mt-12">
-      <a href="{% url 'cms:site_cmsinfo' %}"
-        class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
-        Verwalten
-      </a>
-    </div>
-  </div>
   <!-- Datenschutz Section -->
   <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
     <h2 class="text-lg font-bold mb-4">Datenschutz (/datenschutz)</h2>
@@ -69,6 +36,42 @@
         class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">
         Verwalten
       </a>
+    </div>
+  </div>
+  <!-- Leistungen Gruppe -->
+  <div class="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4">
+    <h2 class="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">Leistungen</h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6">
+      <!-- Leistungen allgemein -->
+      <div class="flex flex-col rounded-2xl border-2 border-blue-300 bg-blue-100 p-5 shadow-xl sm:p-6 text-black">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white"><i class="bi bi-list-check"></i></span>
+          <h3 class="text-lg font-bold">Leistungen</h3>
+        </div>
+        <p class="mb-4 text-sm text-gray-600">/leistungen — Texte, Bilder, Visitenkarten &amp; Medien</p>
+        <div class="flex-grow"></div>
+        <div class="mt-6 sm:mt-12">
+          <a href="{% url 'cms:site_leistungen' %}"
+            class="block w-full rounded bg-blue-500 px-4 py-2 text-center font-bold text-white hover:bg-blue-700">
+            Verwalten
+          </a>
+        </div>
+      </div>
+      <!-- Unterseite: CMS Info -->
+      <div class="flex flex-col rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-md sm:p-6 text-black">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-400 text-white"><i class="bi bi-layout-text-sidebar"></i></span>
+          <h3 class="text-base font-semibold">CMS Info</h3>
+        </div>
+        <p class="mb-4 text-sm text-gray-600">/leistungen/cms — Inhalt der CMS-Unterseite</p>
+        <div class="flex-grow"></div>
+        <div class="mt-6 sm:mt-12">
+          <a href="{% url 'cms:site_leistungen_cms' %}"
+            class="block w-full rounded bg-blue-400 px-4 py-2 text-center font-bold text-white hover:bg-blue-600">
+            Verwalten
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

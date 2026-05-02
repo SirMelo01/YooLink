@@ -372,7 +372,7 @@
             <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-900 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">
               {{ cmsText.buttonText }}
             </a>
-            <a href="/cmsinfo" class="text-sm font-semibold leading-6">
+            <a href="{% url 'leistungen_cms' %}" class="text-sm font-semibold leading-6">
               {% trans "learn_more" %} <span aria-hidden="true">→</span>
             </a>
           </div>

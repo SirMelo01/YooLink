@@ -397,9 +397,10 @@
     </section>
 
 
-{% endblock content %} {% block javascriptend %} {% compress js inline %}
+{% endblock content %} {% block javascriptend %}
+<script src="{% static 'js/aos.js' %}"></script>
+{% compress js inline %}
 <script defer src="{% static 'js/home.js' %}"></script>
-
 {% endcompress js %}
 <script>
     document.addEventListener("DOMContentLoaded", () => {

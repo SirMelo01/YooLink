@@ -160,6 +160,15 @@ def leistungen_view(request):
     context["image_logo_4"] = get_image(logo_slot_keys[3])
     context["image_custom"] = get_image("main_leistungen_custom_image")
 
+    context["textContent_visitenkarten"] = get_text("main_leistungen_visitenkarten")
+    context["image_vk_1"] = get_image("main_leistungen_vk_1")
+    context["image_vk_2"] = get_image("main_leistungen_vk_2")
+    context["image_vk_3"] = get_image("main_leistungen_vk_3")
+    context["image_vk_4"] = get_image("main_leistungen_vk_4")
+
+    context["textContent_medien"] = get_text("main_leistungen_medien")
+    context["image_medien"] = get_image("main_leistungen_medien_image")
+
     return render(request, 'pages/leistungen.html', context=context)
 
 
@@ -214,19 +223,6 @@ def kontaktform(request):
             'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
         },
     )
-
-def skills_view(request):
-    context = {}
-    context.update(get_opening_hours())  # falls Öffnungszeiten unten benötigt werden
-
-    # Texte holen
-    context["textContent_intro"] = TextContent.objects.filter(name="main_skills_intro").first()
-    context["textContent_cms"] = TextContent.objects.filter(name="main_skills_cms").first()
-    context["textContent_webdesign"] = TextContent.objects.filter(name="main_skills_webdesign").first()
-    context["textContent_logos"] = TextContent.objects.filter(name="main_skills_logos").first()
-    context["textContent_custom"] = TextContent.objects.filter(name="main_skills_custom").first()
-
-    return render(request, 'pages/skills.html', context)
 
 # Authentication
 

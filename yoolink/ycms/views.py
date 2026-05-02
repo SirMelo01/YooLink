@@ -1406,20 +1406,15 @@ def site_view_leistungen(request):
         "image_logo_3": get_image("main_leistungen_logo_3"),
         "image_logo_4": get_image("main_leistungen_logo_4"),
         "image_custom": get_image("main_leistungen_custom_image"),
+        "textContent_visitenkarten": get_text("main_leistungen_visitenkarten"),
+        "image_vk_1": get_image("main_leistungen_vk_1"),
+        "image_vk_2": get_image("main_leistungen_vk_2"),
+        "image_vk_3": get_image("main_leistungen_vk_3"),
+        "image_vk_4": get_image("main_leistungen_vk_4"),
+        "textContent_medien": get_text("main_leistungen_medien"),
+        "image_medien": get_image("main_leistungen_medien_image"),
     })
 
-@login_required(login_url='login')
-def site_view_skills(request):
-    def get_text(name):
-        return TextContent.objects.get(name=name) if TextContent.objects.filter(name=name).exists() else None
-
-    return render(request, "pages/cms/content/sites/SkillsSite.html", {
-        "textContent_intro": get_text("main_skills_intro"),
-        "textContent_cms": get_text("main_skills_cms"),
-        "textContent_webdesign": get_text("main_skills_webdesign"),
-        "textContent_logos": get_text("main_skills_logos"),
-        "textContent_custom": get_text("main_skills_custom"),
-    })
 
 # views.py (CMS Content Page)
 @login_required(login_url='login')

@@ -7,7 +7,8 @@
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl">
       <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a>
-      / <span>CMS Info (/cmsinfo)</span>
+      / <a href="{% url 'cms:site_leistungen' %}" class="text-blue-500">Leistungen (/leistungen)</a>
+      / <span>CMS Info (/leistungen/cms)</span>
     </h1>
     <div>
       {% csrf_token %}
