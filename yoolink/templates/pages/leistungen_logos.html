@@ -132,6 +132,13 @@
     .logo-orbit-card { padding: 0.6rem; border-radius: 0.85rem; }
   }
 
+  /* === Hero Akzent-Blob hinter dem Orbit === */
+  .hero-orbit-blob {
+    background: radial-gradient(ellipse at 50% 55%, rgba(59, 130, 246, 0.32) 0%, rgba(147, 197, 253, 0.12) 35%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(48px);
+    border-radius: 9999px;
+  }
+
   /* === Goldener Schnitt Konstruktion (Premium-Showcase) === */
   .logo-construction-stage {
     position: relative;
@@ -258,8 +265,9 @@
         </a>
       </div>
     </div>
-    <div data-aos="fade-left" class="flex justify-center">
-      <div class="logo-orbit-stage" aria-hidden="true">
+    <div data-aos="fade-left" class="relative flex justify-center">
+      <div class="hero-orbit-blob pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <div class="logo-orbit-stage relative z-10" aria-hidden="true">
         <div class="logo-orbit-glow"></div>
         <div class="logo-orbit-floor"></div>
         <div class="logo-orbit-tilt">
