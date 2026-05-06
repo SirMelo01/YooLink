@@ -1,0 +1,777 @@
+{% extends "base.html" %} {% load compress static i18n %}
+
+{% block title %}{{ block.super }} | Logo Design Agentur - Firmenlogo professionell erstellen lassen{% endblock title %}
+
+{% block meta_description %}Logo Design vom Profi: Wir gestalten einzigartige Firmenlogos, ueberarbeiten bestehende Logos und entwickeln strategische Markenlogos auf Basis von Goldenem Schnitt, Geometrie und Farbpsychologie. Jetzt Logo erstellen lassen.{% endblock %}
+
+{% block og_title %}Logo Design Agentur YooLink - Firmenlogo erstellen lassen{% endblock %}
+{% block og_description %}Professionelles Logo Design vom strategischen Konzept bis zur skalierbaren Markenidentitaet. Individuell, langlebig und in allen Formaten geliefert.{% endblock %}
+{% block twitter_title %}Logo Design Agentur YooLink - Firmenlogo erstellen lassen{% endblock %}
+{% block twitter_description %}Professionelles Logo Design vom strategischen Konzept bis zur skalierbaren Markenidentitaet. Individuell, langlebig und in allen Formaten geliefert.{% endblock %}
+
+{% block css %}
+{% compress css inline %}
+<link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+<style>
+  .logo-orbit-stage {
+    position: relative;
+    width: 100%;
+    max-width: 28rem;
+    aspect-ratio: 1 / 1;
+    perspective: 1400px;
+    perspective-origin: 50% 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-orbit-glow {
+    position: absolute;
+    inset: 8% 8% 8% 8%;
+    border-radius: 9999px;
+    background: #eff6ff;
+    filter: blur(2px);
+    z-index: 0;
+  }
+
+  .logo-orbit-floor {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    width: 70%;
+    height: 14%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(30, 58, 138, 0.18) 0%, rgba(30, 58, 138, 0) 70%);
+    border-radius: 9999px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .logo-orbit-tilt {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    transform-style: preserve-3d;
+    transform: rotateX(-22deg);
+    animation: logoOrbitFloat 6s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  .logo-orbit-track {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    animation: logoOrbitSpin 22s linear infinite;
+  }
+
+  .logo-orbit-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 7.5rem;
+    height: 7.5rem;
+    margin: -3.75rem 0 0 -3.75rem;
+    transform-style: preserve-3d;
+    transform: rotateY(var(--angle)) translateZ(11rem);
+  }
+
+  .logo-orbit-billboard {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(calc(var(--angle) * -1));
+    animation: logoOrbitCounter 22s linear infinite;
+  }
+
+  .logo-orbit-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-shadow: 0 18px 35px -18px rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(229, 231, 235, 1);
+  }
+
+  .logo-orbit-card--light { background-color: #ffffff; }
+  .logo-orbit-card--dark  { background-color: #1e3a8a; border-color: #1e3a8a; }
+  .logo-orbit-card--gray  { background-color: #374151; border-color: #374151; }
+
+  .logo-orbit-card img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  @keyframes logoOrbitSpin {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
+  }
+
+  @keyframes logoOrbitCounter {
+    from { transform: rotateY(calc(var(--angle) * -1)); }
+    to   { transform: rotateY(calc(var(--angle) * -1 - 360deg)); }
+  }
+
+  @keyframes logoOrbitFloat {
+    0%, 100% { transform: rotateX(-22deg) translateY(0); }
+    50%      { transform: rotateX(-22deg) translateY(-14px); }
+  }
+
+  @media (max-width: 640px) {
+    .logo-orbit-stage { max-width: 22rem; }
+    .logo-orbit-item {
+      width: 5.5rem;
+      height: 5.5rem;
+      margin: -2.75rem 0 0 -2.75rem;
+      transform: rotateY(var(--angle)) translateZ(8rem);
+    }
+    .logo-orbit-card { padding: 0.6rem; border-radius: 0.85rem; }
+  }
+
+  /* === Goldener Schnitt Konstruktion (Premium-Showcase) === */
+  .logo-construction-stage {
+    position: relative;
+    width: 100%;
+    max-width: 30rem;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-construction-glow {
+    position: absolute;
+    inset: 6%;
+    border-radius: 9999px;
+    background: radial-gradient(circle at 50% 50%, rgba(191, 219, 254, 0.55) 0%, rgba(191, 219, 254, 0) 70%);
+    filter: blur(20px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .logo-construction-svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: visible;
+  }
+
+  .lc-line {
+    fill: none;
+    stroke: #1e3a8a;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  .lc-outer  { stroke-width: 1.5; stroke-opacity: 0.55; }
+  .lc-div    { stroke-width: 1;   stroke-opacity: 0.3;  }
+  .lc-spiral { stroke-width: 2;   stroke-opacity: 0.95; stroke-linecap: round; }
+
+  /* Animationen erst triggern, wenn AOS den Wrapper sichtbar geschaltet hat */
+  .aos-animate .lc-outer  { animation: lc-draw 0.9s ease-out 0.2s forwards; }
+  .aos-animate .lc-div-1  { animation: lc-draw 0.5s ease-out 1.1s forwards; }
+  .aos-animate .lc-div-2  { animation: lc-draw 0.4s ease-out 1.6s forwards; }
+  .aos-animate .lc-div-3  { animation: lc-draw 0.3s ease-out 2.0s forwards; }
+  .aos-animate .lc-div-4  { animation: lc-draw 0.25s ease-out 2.3s forwards; }
+  .aos-animate .lc-div-5  { animation: lc-draw 0.2s ease-out 2.55s forwards; }
+  .aos-animate .lc-spiral { animation: lc-draw 1.6s ease-in-out 2.8s forwards; }
+
+  @keyframes lc-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @media (max-width: 640px) {
+    .logo-construction-stage { max-width: 22rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-orbit-track,
+    .logo-orbit-billboard,
+    .logo-orbit-tilt {
+      animation: none !important;
+    }
+    .lc-line { stroke-dashoffset: 0; }
+    .aos-animate .lc-line { animation: none !important; }
+  }
+</style>
+{% endcompress css %}
+{% endblock css %}
+
+{% block javascript %}
+{% compress js inline %}
+<script defer src="{% static 'js/aos.js' %}"></script>
+{% endcompress %}
+{% endblock javascript %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Logo Design",
+  "provider": {
+    "@type": "Organization",
+    "name": "YooLink",
+    "url": "https://yoolink.de",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Am Altbach 6",
+      "postalCode": "94491",
+      "addressLocality": "Hengersberg",
+      "addressCountry": "DE"
+    }
+  },
+  "areaServed": "DE",
+  "name": "Logo Design Agentur YooLink",
+  "description": "Professionelles Logo Design, Redesign bestehender Logos und strategisches Markenlogo-Design auf Basis von Goldenem Schnitt, Geometrie, Farbpsychologie und Typografie.",
+  "url": "https://yoolink.de/leistungen/logos"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="bg-white px-4 pt-20 pb-10 lg:pt-28 lg:pb-20">
+  <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
+    <div data-aos="fade-right">
+      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Logo Design Agentur</p>
+      <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
+        Firmenlogo erstellen lassen - mit Strategie, Design und Wirkung
+      </h1>
+      <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        Ein starkes Logo ist mehr als ein Bild - es ist das visuelle Versprechen deiner Marke. Wir entwickeln professionelles Logo Design, das deine Werte transportiert, Vertrauen aufbaut und ueber Jahre hinweg funktioniert.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="{% url 'kontakt' %}"
+          class="inline-block rounded-md border-t border-gray-200 bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+          Logo jetzt anfragen
+        </a>
+        <a href="#prozess"
+          class="inline-block rounded-md border border-blue-900 bg-white px-8 py-4 text-base font-bold text-blue-900 shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-50">
+          Designprozess ansehen
+        </a>
+      </div>
+    </div>
+    <div data-aos="fade-left" class="flex justify-center">
+      <div class="logo-orbit-stage" aria-hidden="true">
+        <div class="logo-orbit-glow"></div>
+        <div class="logo-orbit-floor"></div>
+        <div class="logo-orbit-tilt">
+          <div class="logo-orbit-track">
+            <div class="logo-orbit-item" style="--angle: 0deg;">
+              <div class="logo-orbit-billboard" style="--angle: 0deg;">
+                <div class="logo-orbit-card logo-orbit-card--light">
+                  <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="YooLink Markenlogo Beispiel" />
+                </div>
+              </div>
+            </div>
+            <div class="logo-orbit-item" style="--angle: 60deg;">
+              <div class="logo-orbit-billboard" style="--angle: 60deg;">
+                <div class="logo-orbit-card logo-orbit-card--light">
+                  <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo Beispiel" class="brightness-0" />
+                </div>
+              </div>
+            </div>
+            <div class="logo-orbit-item" style="--angle: 120deg;">
+              <div class="logo-orbit-billboard" style="--angle: 120deg;">
+                <div class="logo-orbit-card logo-orbit-card--light">
+                  <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RS Autoglas Logo Beispiel" />
+                </div>
+              </div>
+            </div>
+            <div class="logo-orbit-item" style="--angle: 180deg;">
+              <div class="logo-orbit-billboard" style="--angle: 180deg;">
+                <div class="logo-orbit-card logo-orbit-card--light">
+                  <img src="{% static 'images/references/HolzHirsch.svg' %}" loading="lazy" alt="HolzHirsch Logo Beispiel" />
+                </div>
+              </div>
+            </div>
+            <div class="logo-orbit-item" style="--angle: 240deg;">
+              <div class="logo-orbit-billboard" style="--angle: 240deg;">
+                <div class="logo-orbit-card logo-orbit-card--light logo-orbit-card--placeholder">
+                  <div class="flex flex-col items-center justify-center text-blue-900">
+                    <i class="bi bi-image text-3xl"></i>
+                    <span class="mt-1 text-xs font-semibold uppercase tracking-widest text-gray-500">Dein Logo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="logo-orbit-item" style="--angle: 300deg;">
+              <div class="logo-orbit-billboard" style="--angle: 300deg;">
+                <div class="logo-orbit-card logo-orbit-card--light">
+                  <img src="{% static 'images/references/HDGlas-Logo.png' %}" loading="lazy" alt="HDGlas Logo Beispiel" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WELLEN -->
+{% block Wellen %}
+<section class="bg-white">
+  <div>
+    <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+      <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(239,246,255,0.7)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(239,246,255,0.5)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(239,246,255,0.3)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#eff6ff" />
+      </g>
+    </svg>
+  </div>
+</section>
+{% endblock Wellen %}
+
+<!-- WARUM EIN PROFESSIONELLES LOGO -->
+<section class="bg-blue-50 px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
+      <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        Warum ein professionelles Logo so wichtig ist
+      </h2>
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        Dein Logo ist der erste Beruehrungspunkt zwischen deinem Unternehmen und deinen Kunden. Es entscheidet in Sekunden darueber, ob deine Marke als professionell, vertrauenswuerdig und relevant wahrgenommen wird. Ein durchdachtes Firmenlogo Design ist die Grundlage fuer jede erfolgreiche Markenidentitaet.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="0">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-bullseye text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Markenaufbau</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Ein gutes Logo bildet das visuelle Fundament deiner Marke und vereint Werte, Persoenlichkeit und Positionierung in einem einzigen Symbol.
+        </p>
+      </div>
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-eye text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Wiedererkennung</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Ein einzigartiges Logo Design hebt dich vom Wettbewerb ab und bleibt im Gedaechtnis - ueber alle Kanaele, Formate und Beruehrungspunkte hinweg.
+        </p>
+      </div>
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-shield-check text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Vertrauen</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Hochwertiges Design signalisiert Professionalitaet. Wer in ein gutes Logo investiert, vermittelt Sorgfalt - und damit Vertrauen.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEISTUNGSBEREICHE -->
+<section class="bg-blue-50 px-4 pb-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
+      <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        Unsere Leistungen rund um Logo Design
+      </h2>
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        Ob du dein erstes Firmenlogo erstellen lassen moechtest, ein bestehendes Logo modernisieren willst oder eine vollstaendige Markenidentitaet brauchst - wir bieten dir das passende Leistungspaket.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <article class="flex h-full flex-col rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-vector-pen text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">Logo nach Kundenwunsch</h3>
+        <p class="mb-4 text-base leading-7 text-gray-600">
+          Du hast bereits eine klare Vorstellung? Wir setzen deine Idee in ein sauberes, professionelles Logo um - schnell, unkompliziert und zu einem fairen Preis.
+        </p>
+        <ul class="list-inside list-disc text-base text-gray-500">
+          <li>Konkrete Vorgaben werden praezise umgesetzt</li>
+          <li>Sauberes, vektorbasiertes Endergebnis</li>
+          <li>Mehrere Korrekturschleifen inklusive</li>
+        </ul>
+      </article>
+
+      <article class="flex h-full flex-col rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-arrow-repeat text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">Logo Redesign</h3>
+        <p class="mb-4 text-base leading-7 text-gray-600">
+          Dein bestehendes Logo wirkt veraltet, technisch unsauber oder passt nicht mehr zu deiner Marke? Wir ueberarbeiten dein Logo behutsam und holen das Beste aus deiner Markenhistorie heraus.
+        </p>
+        <ul class="list-inside list-disc text-base text-gray-500">
+          <li>Modernisierung ohne Verlust der Wiedererkennung</li>
+          <li>Technische Bereinigung und Vektorisierung</li>
+          <li>Optimiert fuer digitale und gedruckte Medien</li>
+        </ul>
+      </article>
+
+      <article class="flex h-full flex-col rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-diagram-3 text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">Strategisches Logo Design</h3>
+        <p class="mb-4 text-base leading-7 text-gray-600">
+          Wir entwickeln dein Firmenlogo Design auf Basis fundierter Zielgruppen- und Markenanalysen. So entsteht ein Logo, das nicht nur gut aussieht, sondern messbar funktioniert.
+        </p>
+        <ul class="list-inside list-disc text-base text-gray-500">
+          <li>Wettbewerbs- und Marktanalyse</li>
+          <li>Zielgruppen- und Markenpositionierung</li>
+          <li>Designentscheidungen mit klarer Begruendung</li>
+        </ul>
+      </article>
+
+      <article class="flex h-full flex-col rounded-xl bg-blue-900 p-8 text-white shadow-md ring-1 ring-blue-900 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white">
+          <i class="bi bi-stars text-2xl"></i>
+        </div>
+        <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-blue-100">Premium</p>
+        <h3 class="mb-3 text-2xl font-bold">Logo Design auf Basis von Goldenem Schnitt &amp; Geometrie</h3>
+        <p class="mb-4 text-base leading-7 text-blue-50">
+          Im Premium-Bereich entwickeln wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, geometrische Konstruktionen, Farbpsychologie und gezielte Typografie sorgen fuer Logos, die mathematisch ausbalanciert und visuell ueberzeugend sind.
+        </p>
+        <ul class="list-inside list-disc text-base text-blue-100">
+          <li>Konstruktion nach Goldenem Schnitt und Fibonacci</li>
+          <li>Geometrische Reinheit und harmonische Proportionen</li>
+          <li>Farbpsychologie passend zur Markenwirkung</li>
+          <li>Individuell abgestimmte Typografie</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PREMIUM SHOWCASE: GOLDENER SCHNITT -->
+<section class="bg-white px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="grid items-center gap-12 md:grid-cols-2">
+      <div data-aos="fade-right">
+        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Premium &middot; Goldener Schnitt</p>
+        <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+          Wenn Mathematik auf Markendesign trifft
+        </h2>
+        <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+          Im Premium-Bereich konstruieren wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, Fibonacci-Spirale und geometrische Reinheit sorgen fuer Proportionen, die das menschliche Auge intuitiv als harmonisch wahrnimmt - und Logos, die sich nicht "designed", sondern "richtig" anfuehlen.
+        </p>
+        <ul class="mb-8 space-y-3 text-base text-gray-700">
+          <li class="flex items-start gap-3">
+            <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
+            <span>Konstruktion nach Goldenem Schnitt (&phi; = 1 : 1.618)</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
+            <span>Fibonacci-Spirale als visuelles Ordnungsprinzip</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
+            <span>Harmonische Proportionen, die Vertrauen erzeugen</span>
+          </li>
+        </ul>
+        <a href="{% url 'kontakt' %}"
+          class="inline-block rounded-md bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+          Premium-Logo anfragen
+        </a>
+      </div>
+      <div data-aos="fade-up" class="flex justify-center">
+        <div class="logo-construction-stage" aria-hidden="true">
+          <div class="logo-construction-glow"></div>
+          <svg class="logo-construction-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <rect class="lc-line lc-outer" x="40" y="100" width="322" height="199" pathLength="100"/>
+            <line class="lc-line lc-div lc-div-1" x1="239" y1="100" x2="239" y2="299" pathLength="100"/>
+            <line class="lc-line lc-div lc-div-2" x1="239" y1="223" x2="362" y2="223" pathLength="100"/>
+            <line class="lc-line lc-div lc-div-3" x1="286" y1="223" x2="286" y2="299" pathLength="100"/>
+            <line class="lc-line lc-div lc-div-4" x1="239" y1="252" x2="286" y2="252" pathLength="100"/>
+            <line class="lc-line lc-div lc-div-5" x1="268" y1="223" x2="268" y2="252" pathLength="100"/>
+            <path class="lc-line lc-spiral" pathLength="100"
+                  d="M 40 299 A 199 199 0 0 1 239 100 A 123 123 0 0 1 362 223 A 76 76 0 0 1 286 299 A 47 47 0 0 1 239 252 A 29 29 0 0 1 268 223"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGNPROZESS -->
+<section id="prozess" class="bg-white px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
+      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">In 5 Schritten zum Logo</p>
+      <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        Unser Designprozess
+      </h2>
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        Ein gutes Logo entsteht nicht zufaellig. Wir arbeiten nach einem klar strukturierten Prozess, der Strategie, Kreativitaet und Handwerk verbindet.
+      </p>
+    </div>
+
+    <ol class="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
+      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="0">
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">1</div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Briefing &amp; Zieldefinition</h3>
+        <p class="text-sm leading-6 text-gray-600">
+          Wir lernen dein Unternehmen, deine Werte und deine Ziele kennen und definieren gemeinsam den Rahmen fuer dein Logo.
+        </p>
+      </li>
+      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">2</div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Recherche &amp; Analyse</h3>
+        <p class="text-sm leading-6 text-gray-600">
+          Wir analysieren Markt, Wettbewerb und Zielgruppe, um eine fundierte Designgrundlage zu schaffen.
+        </p>
+      </li>
+      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="200">
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">3</div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Erste Entwuerfe</h3>
+        <p class="text-sm leading-6 text-gray-600">
+          Auf Basis der Analyse entwickeln wir mehrere Logo-Entwuerfe mit unterschiedlichen Stilrichtungen.
+        </p>
+      </li>
+      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="300">
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">4</div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Feedback &amp; Iteration</h3>
+        <p class="text-sm leading-6 text-gray-600">
+          In strukturierten Feedbackschleifen verfeinern wir den gewaehlten Entwurf bis ins Detail.
+        </p>
+      </li>
+      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="400">
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">5</div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Finale Ausarbeitung</h3>
+        <p class="text-sm leading-6 text-gray-600">
+          Wir optimieren technisch, erstellen alle Varianten und liefern dir das fertige Logo-Paket aus.
+        </p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- LIEFERUMFANG -->
+<section class="bg-blue-50 px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="grid items-start gap-10 md:grid-cols-2">
+      <div data-aos="fade-right">
+        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Lieferumfang</p>
+        <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+          Alle Formate, alle Varianten - bereit fuer jeden Einsatz
+        </h2>
+        <p class="mb-6 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+          Damit dein Logo ueberall funktioniert, liefern wir es in allen relevanten Datei-Formaten und in mehreren Varianten - optimiert fuer Web, Social Media und Print.
+        </p>
+        <ul role="list" class="space-y-4 border-t border-gray-200 pt-6">
+          <li class="flex space-x-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="text-base font-medium leading-tight text-gray-900">Vektordateien fuer unbegrenzte Skalierbarkeit (SVG, AI, EPS auf Wunsch)</span>
+          </li>
+          <li class="flex space-x-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="text-base font-medium leading-tight text-gray-900">Pixelbasierte Formate fuer Web und Social Media (PNG, JPG)</span>
+          </li>
+          <li class="flex space-x-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="text-base font-medium leading-tight text-gray-900">Druckfertige Dateien fuer Printprodukte (PDF, EPS)</span>
+          </li>
+          <li class="flex space-x-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="text-base font-medium leading-tight text-gray-900">Farbversion, Schwarz-Weiss-Version sowie Varianten fuer helle und dunkle Hintergruende</span>
+          </li>
+          <li class="flex space-x-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="text-base font-medium leading-tight text-gray-900">Optimierte Versionen fuer Websites, Social Media und Druck</span>
+          </li>
+        </ul>
+      </div>
+
+      <div data-aos="fade-left" class="grid grid-cols-2 gap-4">
+        <div class="rounded-xl bg-white p-6 text-center shadow-md ring-1 ring-gray-200">
+          <span class="block text-2xl font-bold text-blue-900">SVG</span>
+          <span class="mt-2 block text-sm text-gray-500">Skalierbarer Vektor</span>
+        </div>
+        <div class="rounded-xl bg-white p-6 text-center shadow-md ring-1 ring-gray-200">
+          <span class="block text-2xl font-bold text-blue-900">PNG</span>
+          <span class="mt-2 block text-sm text-gray-500">Web &amp; Transparenz</span>
+        </div>
+        <div class="rounded-xl bg-white p-6 text-center shadow-md ring-1 ring-gray-200">
+          <span class="block text-2xl font-bold text-blue-900">JPG</span>
+          <span class="mt-2 block text-sm text-gray-500">Universell einsetzbar</span>
+        </div>
+        <div class="rounded-xl bg-white p-6 text-center shadow-md ring-1 ring-gray-200">
+          <span class="block text-2xl font-bold text-blue-900">PDF</span>
+          <span class="mt-2 block text-sm text-gray-500">Druckfertig</span>
+        </div>
+        <div class="rounded-xl bg-blue-900 p-6 text-center shadow-md">
+          <span class="block text-2xl font-bold text-white">AI</span>
+          <span class="mt-2 block text-sm text-blue-100">Optional</span>
+        </div>
+        <div class="rounded-xl bg-blue-900 p-6 text-center shadow-md">
+          <span class="block text-2xl font-bold text-white">EPS</span>
+          <span class="mt-2 block text-sm text-blue-100">Optional</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="0">
+        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-globe text-xl"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Websites</h3>
+        <p class="text-base leading-7 text-gray-600">Schlanke, performante Dateigroessen fuer schnelle Ladezeiten und gestochen scharfe Darstellung auf jedem Bildschirm.</p>
+      </div>
+      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-instagram text-xl"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Social Media</h3>
+        <p class="text-base leading-7 text-gray-600">Quadratische, runde und horizontale Varianten fuer Profilbilder, Header und Postings auf allen Plattformen.</p>
+      </div>
+      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
+        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-printer text-xl"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Print</h3>
+        <p class="text-base leading-7 text-gray-600">CMYK-Versionen und vektorbasierte Druckdaten fuer Visitenkarten, Flyer, Schilder und Werbemittel jeder Groesse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USP / WAS UNS UNTERSCHEIDET -->
+<section class="bg-white px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="grid items-center gap-10 md:grid-cols-2">
+      <div data-aos="fade-right">
+        <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+          Was uns als Logo Design Agentur unterscheidet
+        </h2>
+        <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+          Wir verstehen Logo Design nicht als rein visuelle Aufgabe, sondern als strategische Markenarbeit. Jedes Logo, das unser Studio verlaesst, ist individuell, durchdacht und auf Wirkung optimiert.
+        </p>
+        <a href="{% url 'kontakt' %}"
+          class="inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+          Unverbindlich anfragen
+        </a>
+      </div>
+      <div class="space-y-6" data-aos="fade-left">
+        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
+          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
+            <i class="bi bi-fingerprint text-lg"></i>
+          </div>
+          <div>
+            <h3 class="mb-1 text-lg font-bold text-gray-900">Individuelles Design ohne Templates</h3>
+            <p class="text-base leading-7 text-gray-600">Jedes Logo entsteht handwerklich neu - keine vorgefertigten Vorlagen, keine generischen Symbole.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
+          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
+            <i class="bi bi-compass text-lg"></i>
+          </div>
+          <div>
+            <h3 class="mb-1 text-lg font-bold text-gray-900">Strategischer Ansatz statt reiner Optik</h3>
+            <p class="text-base leading-7 text-gray-600">Wir entwickeln Logos auf Basis klarer Marken-, Markt- und Zielgruppenanalysen.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
+          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
+            <i class="bi bi-arrows-fullscreen text-lg"></i>
+          </div>
+          <div>
+            <h3 class="mb-1 text-lg font-bold text-gray-900">Langlebig, skalierbar und wirkungsvoll</h3>
+            <p class="text-base leading-7 text-gray-600">Unsere Logos funktionieren ueber Jahre, in jeder Groesse und auf jedem Medium.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEISPIELHAFTE SZENARIEN -->
+<section class="bg-blue-50 px-4 py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
+      <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+        Fuer wen wir Logo Design entwickeln
+      </h2>
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+        Egal ob frisch gegruendet, etabliert oder als persoenliche Marke - wir entwickeln Logos, die zu deiner Situation passen.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="0">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-rocket-takeoff text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Startups</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Du startest gerade durch und brauchst ein erstes, professionelles Firmenlogo? Wir entwickeln eine starke visuelle Basis, mit der du sofort am Markt sichtbar wirst.
+        </p>
+      </div>
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-arrow-clockwise text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Rebranding</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Dein Unternehmen entwickelt sich weiter und das alte Logo passt nicht mehr? Wir begleiten dich durch den Rebranding-Prozess - mit Respekt vor deiner Marken-DNA.
+        </p>
+      </div>
+      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
+        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+          <i class="bi bi-person-badge text-2xl"></i>
+        </div>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">Personal Brands</h3>
+        <p class="text-base leading-7 text-gray-600">
+          Du baust eine persoenliche Marke auf? Wir entwickeln ein Logo, das dich als Person, deine Werte und deine Positionierung praezise widerspiegelt.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<div class="h-6 bg-[#6b7280]"></div>
+<section class="bg-gray-700">
+  <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
+    <div class="mx-auto max-w-screen-sm text-center">
+      <h2 class="mb-4 text-3xl font-bold tracking-tight text-white">
+        Bereit, dein Logo erstellen zu lassen?
+      </h2>
+      <p class="mb-6 text-white md:text-lg">
+        Erzaehl uns von deinem Projekt - wir melden uns zeitnah mit einer ehrlichen Einschaetzung und einem unverbindlichen Angebot.
+      </p>
+      <a href="{% url 'kontakt' %}"
+        class="mt-0 inline-block rounded-md bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 sm:mt-1">
+        Jetzt Logo anfragen
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
+
+{% block javascriptend %}
+<script src="{% static 'js/aos.js' %}"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+    easing: 'ease-out',
+    disable: "phone"
+  });
+</script>
+{% endblock javascriptend %}

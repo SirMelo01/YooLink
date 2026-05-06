@@ -144,6 +144,9 @@
       <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RSAutoglas Logo" class="h-20 object-contain" />
       {% endif %}
     </div>
+    <a href="{% url 'leistungen_logos' %}" class="mt-10 inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+      {{ textContent_logos.buttonText|default:"Mehr erfahren" }}
+    </a>
   </div>
 
   <div class="mx-auto mt-40 grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
