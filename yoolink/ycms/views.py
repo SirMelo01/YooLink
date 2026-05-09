@@ -11,7 +11,7 @@ from yoolink.ycms.applications.blog.services import (
     render_markdown_to_html,
 )
 from django.shortcuts import get_object_or_404, render, redirect
-from yoolink.ycms.applications.shop.models import Product
+from yoolink.ycms.applications.shop.models import Order, Product
 from yoolink.ycms.models import (
     FAQ,
     AnyFile,
@@ -22,9 +22,7 @@ from yoolink.ycms.models import (
     GaleryImage,
     Galerie,
     Message,
-    Notification,
     OpeningHours,
-    Order,
     PricingCard,
     PricingFeature,
     PrivacyPolicy,
@@ -39,7 +37,7 @@ from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.urls import reverse
-from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from .forms import fileform, Blogform
 from django.conf import settings
@@ -3100,158 +3098,3 @@ def get_video_details(request, pk):
         "preload": video.preload,
     }, status=200)
 
-
-# NOTIFICATIONS
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import Notification
-
-@login_required
-def notifications_list(request):
-    qs = Notification.objects.latest_first().not_spam()
-
-    # --- Filter ---
-    status = request.GET.get('status', 'all')       # all | open | closed
-    priority = request.GET.get('priority', 'all')   # all | low | normal | high
-    per_page = request.GET.get('per_page', '10')
-
-    try:
-        per_page = max(1, min(100, int(per_page)))
-    except ValueError:
-        per_page = 10
-
-    if status == 'open':
-        qs = qs.filter(seen=False)
-    elif status == 'closed':
-        qs = qs.filter(seen=True)
-
-    if priority in {'low', 'normal', 'high'}:
-        qs = qs.filter(priority=priority)
-
-    # --- Pagination ---
-    paginator = Paginator(qs, per_page)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
-
-    # Querystring ohne page für Pagination-Links
-    preserved = request.GET.copy()
-    preserved.pop('page', None)
-    querystring = preserved.urlencode()
-
-    return render(request, 'pages/cms/notifications/notifications_list.html', {
-        'notifications': page_obj.object_list,
-        'page_obj': page_obj,
-        'paginator': paginator,
-        'querystring': querystring,
-        'filter_status': status,
-        'filter_priority': priority,
-        'per_page': per_page,
-        'unread_count': Notification.objects.unread().count(),
-    })
-
-
-@login_required
-def notifications_mark_all_read(request):
-    if request.method != 'POST':
-        return HttpResponseForbidden()
-    # Nur NICHT-Spam ungelesene
-    Notification.objects.unread().update(seen=True)
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
-    return redirect('cms:notifications-list')
-
-@login_required
-def notification_mark_read(request, pk):
-    if request.method != 'POST':
-        return HttpResponseForbidden()
-    notification = get_object_or_404(Notification, pk=pk)
-    notification.seen = True
-    notification.save(update_fields=['seen'])
-    return JsonResponse({'ok': True})
-
-@login_required
-def notification_detail(request, pk):
-    notification = get_object_or_404(Notification, pk=pk)
-
-    # Beim Öffnen als gelesen markieren
-    if not notification.seen:
-        notification.seen = True
-        notification.save(update_fields=['seen'])
-
-    return render(request, 'pages/cms/notifications/notification_detail.html', {'notification': notification})
-
-from django.views.decorators.http import require_POST
-
-@login_required
-@require_POST
-def notification_delete(request, pk):
-    n = get_object_or_404(Notification, pk=pk)
-    n.delete()
-    # Für AJAX:
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
-    # Fallback (nicht-AJAX)
-    return redirect('cms:notifications-list')
-
-@login_required
-@require_POST
-def notification_mark_spam(request, pk):
-    n = get_object_or_404(Notification, pk=pk)
-    n.is_spam = True
-    n.seen = True  # Spam direkt als "gelesen" markieren (optional)
-    n.save(update_fields=['is_spam', 'seen'])
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
-    return redirect('cms:notifications-list')
-
-@login_required
-def notifications_spam_list(request):
-    qs = Notification.objects.spam().latest_first()
-
-    per_page = request.GET.get('per_page', '20')
-    try:
-        per_page = max(1, min(100, int(per_page)))
-    except ValueError:
-        per_page = 20
-
-    paginator = Paginator(qs, per_page)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
-
-    preserved = request.GET.copy()
-    preserved.pop('page', None)
-    querystring = preserved.urlencode()
-
-    return render(request, 'pages/cms/notifications/notifications_spam_list.html', {
-        'notifications': page_obj.object_list,
-        'page_obj': page_obj,
-        'paginator': paginator,
-        'querystring': querystring,
-        'per_page': per_page,
-    })
-
-@login_required
-@require_POST
-def notifications_spam_delete_all(request):
-    Notification.objects.spam().delete()
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
-    return redirect('cms:notifications-spam-list')
-
-@login_required
-@require_POST
-def notification_mark_ham(request, pk):
-    """
-    Spam-Flag für eine Notification entfernen (zurück in die Inbox).
-    """
-    n = get_object_or_404(Notification, pk=pk)
-    n.is_spam = False
-    n.save(update_fields=['is_spam'])
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
-
-    # Fallback: zurück zur Spam-Liste
-    return redirect('cms:notifications-spam-list')

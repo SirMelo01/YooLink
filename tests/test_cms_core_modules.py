@@ -15,7 +15,6 @@ from yoolink.ycms.models import (
     Button,
     Galerie,
     Message,
-    Notification,
     OpeningHours,
     PricingCard,
     PricingFeature,
@@ -25,6 +24,7 @@ from yoolink.ycms.models import (
     VideoFile,
     fileentry,
 )
+from yoolink.ycms.applications.notifications.models import Notification
 from yoolink.ycms.spam_detection import is_spam_message, score_text_for_spam
 
 pytestmark = pytest.mark.django_db

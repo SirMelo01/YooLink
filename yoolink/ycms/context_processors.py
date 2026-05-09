@@ -1,5 +1,6 @@
 from yoolink.ycms.views import get_active_language
-from .models import Notification, UserSettings
+from yoolink.ycms.applications.notifications.models import Notification
+from .models import UserSettings
 
 def user_settings_context(request):
     context = {}

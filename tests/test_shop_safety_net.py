@@ -17,7 +17,8 @@ from yoolink.ycms.applications.shop.models import (
     ProductSpecification,
     ShippingAddress,
 )
-from yoolink.ycms.models import Notification, UserSettings
+from yoolink.ycms.applications.notifications.models import Notification
+from yoolink.ycms.models import UserSettings
 
 pytestmark = pytest.mark.django_db
 

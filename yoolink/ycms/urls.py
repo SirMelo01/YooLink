@@ -141,15 +141,7 @@ urlpatterns = [
     path("files/", views.cms_files, name="cms-files"),
 
     # Notifications
-    path("notifications/", views.notifications_list, name="notifications-list"),
-    path("notifications/mark-all-read/", views.notifications_mark_all_read, name="notifications-mark-all-read"),
-    path("notifications/spam/", views.notifications_spam_list, name="notifications-spam-list"),
-    path("notifications/spam/delete-all/", views.notifications_spam_delete_all, name="notifications-spam-delete-all"),
-    path("notifications/<int:pk>/mark-spam/", views.notification_mark_spam, name="notification-mark-spam"),
-    path("notifications/<int:pk>/mark-ham/", views.notification_mark_ham, name="notification-mark-ham"),
-    path("notifications/<int:pk>/mark-read/", views.notification_mark_read, name="notification-mark-read"),
-    path("notifications/<int:pk>/", views.notification_detail, name="notification-detail"),
-    path("notifications/<int:pk>/delete/", views.notification_delete, name="notification-delete"),
+    path("notifications/", include("yoolink.ycms.applications.notifications.cms_urls")),
 
     # Shop CMS
     path("shop/", include("yoolink.ycms.applications.shop.cms_urls")),
