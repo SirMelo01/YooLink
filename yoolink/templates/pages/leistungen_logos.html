@@ -445,21 +445,28 @@
         </ul>
       </article>
 
-      <article class="flex h-full flex-col rounded-xl bg-blue-900 p-8 text-white shadow-md ring-1 ring-blue-900 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="100">
-        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white">
-          <i class="bi bi-stars text-2xl"></i>
+      <article class="relative flex h-full flex-col overflow-hidden rounded-xl bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 p-8 text-white shadow-xl ring-1 ring-blue-800 transition duration-300 hover:-translate-y-1 hover:shadow-2xl" data-aos="fade-up" data-aos-delay="100">
+        <svg class="pointer-events-none absolute -right-10 -bottom-10 h-56 w-56 text-blue-300 opacity-[0.15]" viewBox="0 0 400 400" fill="none" stroke="currentColor" aria-hidden="true">
+          <rect x="40" y="100" width="322" height="199" stroke-width="1.5"/>
+          <path stroke-width="2.5" stroke-linecap="round" d="M 40 299 A 199 199 0 0 1 239 100 A 123 123 0 0 1 362 223 A 76 76 0 0 1 286 299 A 47 47 0 0 1 239 252 A 29 29 0 0 1 268 223"/>
+        </svg>
+
+        <div class="relative">
+          <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-blue-100 ring-1 ring-white/20">
+            <i class="bi bi-stars"></i>
+            Premium
+          </span>
+          <h3 class="mb-3 text-2xl font-bold">Logo Design auf Basis von Goldenem Schnitt &amp; Geometrie</h3>
+          <p class="mb-4 text-base leading-7 text-blue-50">
+            Im Premium-Bereich entwickeln wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, geometrische Konstruktionen, Farbpsychologie und gezielte Typografie sorgen fuer Logos, die mathematisch ausbalanciert und visuell ueberzeugend sind.
+          </p>
+          <ul class="space-y-2 text-base text-blue-50">
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Konstruktion nach Goldenem Schnitt und Fibonacci</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Geometrische Reinheit und harmonische Proportionen</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Farbpsychologie passend zur Markenwirkung</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Individuell abgestimmte Typografie</span></li>
+          </ul>
         </div>
-        <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-blue-100">Premium</p>
-        <h3 class="mb-3 text-2xl font-bold">Logo Design auf Basis von Goldenem Schnitt &amp; Geometrie</h3>
-        <p class="mb-4 text-base leading-7 text-blue-50">
-          Im Premium-Bereich entwickeln wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, geometrische Konstruktionen, Farbpsychologie und gezielte Typografie sorgen fuer Logos, die mathematisch ausbalanciert und visuell ueberzeugend sind.
-        </p>
-        <ul class="list-inside list-disc text-base text-blue-100">
-          <li>Konstruktion nach Goldenem Schnitt und Fibonacci</li>
-          <li>Geometrische Reinheit und harmonische Proportionen</li>
-          <li>Farbpsychologie passend zur Markenwirkung</li>
-          <li>Individuell abgestimmte Typografie</li>
-        </ul>
       </article>
     </div>
   </div>
@@ -528,43 +535,56 @@
       </p>
     </div>
 
-    <ol class="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
-      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="0">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">1</div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Briefing &amp; Zieldefinition</h3>
-        <p class="text-sm leading-6 text-gray-600">
-          Wir lernen dein Unternehmen, deine Werte und deine Ziele kennen und definieren gemeinsam den Rahmen fuer dein Logo.
-        </p>
-      </li>
-      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="100">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">2</div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Recherche &amp; Analyse</h3>
-        <p class="text-sm leading-6 text-gray-600">
-          Wir analysieren Markt, Wettbewerb und Zielgruppe, um eine fundierte Designgrundlage zu schaffen.
-        </p>
-      </li>
-      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="200">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">3</div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Erste Entwuerfe</h3>
-        <p class="text-sm leading-6 text-gray-600">
-          Auf Basis der Analyse entwickeln wir mehrere Logo-Entwuerfe mit unterschiedlichen Stilrichtungen.
-        </p>
-      </li>
-      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="300">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">4</div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Feedback &amp; Iteration</h3>
-        <p class="text-sm leading-6 text-gray-600">
-          In strukturierten Feedbackschleifen verfeinern wir den gewaehlten Entwurf bis ins Detail.
-        </p>
-      </li>
-      <li class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100" data-aos="fade-up" data-aos-delay="400">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-base font-bold text-white">5</div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Finale Ausarbeitung</h3>
-        <p class="text-sm leading-6 text-gray-600">
-          Wir optimieren technisch, erstellen alle Varianten und liefern dir das fertige Logo-Paket aus.
-        </p>
-      </li>
-    </ol>
+    <div class="relative">
+      <div class="absolute hidden lg:block top-8 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-blue-200 via-blue-500 to-blue-200" aria-hidden="true"></div>
+      <ol class="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5 lg:gap-4">
+        <li class="relative" data-aos="fade-up" data-aos-delay="0">
+          <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">1</div>
+          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">Briefing &amp; Zieldefinition</h3>
+            <p class="text-sm leading-6 text-gray-600">
+              Wir lernen dein Unternehmen, deine Werte und deine Ziele kennen und definieren gemeinsam den Rahmen fuer dein Logo.
+            </p>
+          </div>
+        </li>
+        <li class="relative" data-aos="fade-up" data-aos-delay="100">
+          <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">2</div>
+          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">Recherche &amp; Analyse</h3>
+            <p class="text-sm leading-6 text-gray-600">
+              Wir analysieren Markt, Wettbewerb und Zielgruppe, um eine fundierte Designgrundlage zu schaffen.
+            </p>
+          </div>
+        </li>
+        <li class="relative" data-aos="fade-up" data-aos-delay="200">
+          <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">3</div>
+          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">Erste Entwuerfe</h3>
+            <p class="text-sm leading-6 text-gray-600">
+              Auf Basis der Analyse entwickeln wir mehrere Logo-Entwuerfe mit unterschiedlichen Stilrichtungen.
+            </p>
+          </div>
+        </li>
+        <li class="relative" data-aos="fade-up" data-aos-delay="300">
+          <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">4</div>
+          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">Feedback &amp; Iteration</h3>
+            <p class="text-sm leading-6 text-gray-600">
+              In strukturierten Feedbackschleifen verfeinern wir den gewaehlten Entwurf bis ins Detail.
+            </p>
+          </div>
+        </li>
+        <li class="relative" data-aos="fade-up" data-aos-delay="400">
+          <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">5</div>
+          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">Finale Ausarbeitung</h3>
+            <p class="text-sm leading-6 text-gray-600">
+              Wir optimieren technisch, erstellen alle Varianten und liefern dir das fertige Logo-Paket aus.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
   </div>
 </section>
 
@@ -674,32 +694,35 @@
           Unverbindlich anfragen
         </a>
       </div>
-      <div class="space-y-6" data-aos="fade-left">
-        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
-          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
-            <i class="bi bi-fingerprint text-lg"></i>
+      <div class="relative" data-aos="fade-left">
+        <div class="absolute top-6 bottom-6 left-5 w-0.5 bg-gradient-to-b from-blue-200 via-blue-500 to-blue-200" aria-hidden="true"></div>
+        <div class="space-y-6">
+          <div class="relative pl-16">
+            <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
+              <i class="bi bi-fingerprint text-lg"></i>
+            </div>
+            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">Individuelles Design ohne Templates</h3>
+              <p class="text-base leading-7 text-gray-600">Jedes Logo entsteht handwerklich neu - keine vorgefertigten Vorlagen, keine generischen Symbole.</p>
+            </div>
           </div>
-          <div>
-            <h3 class="mb-1 text-lg font-bold text-gray-900">Individuelles Design ohne Templates</h3>
-            <p class="text-base leading-7 text-gray-600">Jedes Logo entsteht handwerklich neu - keine vorgefertigten Vorlagen, keine generischen Symbole.</p>
+          <div class="relative pl-16">
+            <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
+              <i class="bi bi-compass text-lg"></i>
+            </div>
+            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">Strategischer Ansatz statt reiner Optik</h3>
+              <p class="text-base leading-7 text-gray-600">Wir entwickeln Logos auf Basis klarer Marken-, Markt- und Zielgruppenanalysen.</p>
+            </div>
           </div>
-        </div>
-        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
-          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
-            <i class="bi bi-compass text-lg"></i>
-          </div>
-          <div>
-            <h3 class="mb-1 text-lg font-bold text-gray-900">Strategischer Ansatz statt reiner Optik</h3>
-            <p class="text-base leading-7 text-gray-600">Wir entwickeln Logos auf Basis klarer Marken-, Markt- und Zielgruppenanalysen.</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-4 rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100">
-          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white">
-            <i class="bi bi-arrows-fullscreen text-lg"></i>
-          </div>
-          <div>
-            <h3 class="mb-1 text-lg font-bold text-gray-900">Langlebig, skalierbar und wirkungsvoll</h3>
-            <p class="text-base leading-7 text-gray-600">Unsere Logos funktionieren ueber Jahre, in jeder Groesse und auf jedem Medium.</p>
+          <div class="relative pl-16">
+            <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
+              <i class="bi bi-arrows-fullscreen text-lg"></i>
+            </div>
+            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">Langlebig, skalierbar und wirkungsvoll</h3>
+              <p class="text-base leading-7 text-gray-600">Unsere Logos funktionieren ueber Jahre, in jeder Groesse und auf jedem Medium.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -720,32 +743,41 @@
     </div>
 
     <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="0">
-        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-rocket-takeoff text-2xl"></i>
+      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="0">
+        <i class="bi bi-rocket-takeoff pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
+        <div class="relative">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+            <i class="bi bi-rocket-takeoff text-2xl"></i>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-gray-900">Startups</h3>
+          <p class="text-base leading-7 text-gray-600">
+            Du startest gerade durch und brauchst ein erstes, professionelles Firmenlogo? Wir entwickeln eine starke visuelle Basis, mit der du sofort am Markt sichtbar wirst.
+          </p>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Startups</h3>
-        <p class="text-base leading-7 text-gray-600">
-          Du startest gerade durch und brauchst ein erstes, professionelles Firmenlogo? Wir entwickeln eine starke visuelle Basis, mit der du sofort am Markt sichtbar wirst.
-        </p>
       </div>
-      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
-        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-arrow-clockwise text-2xl"></i>
+      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="100">
+        <i class="bi bi-arrow-clockwise pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
+        <div class="relative">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+            <i class="bi bi-arrow-clockwise text-2xl"></i>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-gray-900">Rebranding</h3>
+          <p class="text-base leading-7 text-gray-600">
+            Dein Unternehmen entwickelt sich weiter und das alte Logo passt nicht mehr? Wir begleiten dich durch den Rebranding-Prozess - mit Respekt vor deiner Marken-DNA.
+          </p>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Rebranding</h3>
-        <p class="text-base leading-7 text-gray-600">
-          Dein Unternehmen entwickelt sich weiter und das alte Logo passt nicht mehr? Wir begleiten dich durch den Rebranding-Prozess - mit Respekt vor deiner Marken-DNA.
-        </p>
       </div>
-      <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
-        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-person-badge text-2xl"></i>
+      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="200">
+        <i class="bi bi-person-badge pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
+        <div class="relative">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
+            <i class="bi bi-person-badge text-2xl"></i>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-gray-900">Personal Brands</h3>
+          <p class="text-base leading-7 text-gray-600">
+            Du baust eine persoenliche Marke auf? Wir entwickeln ein Logo, das dich als Person, deine Werte und deine Positionierung praezise widerspiegelt.
+          </p>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Personal Brands</h3>
-        <p class="text-base leading-7 text-gray-600">
-          Du baust eine persoenliche Marke auf? Wir entwickeln ein Logo, das dich als Person, deine Werte und deine Positionierung praezise widerspiegelt.
-        </p>
       </div>
     </div>
   </div>
