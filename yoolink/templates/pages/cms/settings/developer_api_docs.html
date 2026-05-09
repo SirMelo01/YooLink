@@ -91,14 +91,27 @@
                         </div>
                         <div>
                             <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/</p>
-                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key.</p>
+                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key. Als JSON fuer reine Textblogs oder als Multipart-Formdaten, wenn direkt ein `title_image` mitgesendet wird.</p>
                             <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
   "title": "Event Rückblick",
   "description": "Kurzer SEO-Teaser für Blogkarten und Meta Description.",
-  "body": "&lt;p&gt;HTML-Inhalt des automatisch generierten Blogartikels.&lt;/p&gt;",
+  "markdown": "## Rueckblick\n\nHTML-freier Markdown-Inhalt des automatisch generierten Blogartikels.",
   "active": true,
   "language": "de"
 }</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 px-6 py-5 lg:grid-cols-[160px,minmax(0,1fr)]">
+                        <div>
+                            <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">POST</span>
+                        </div>
+                        <div>
+                            <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/media/</p>
+                            <p class="mt-2 text-sm text-slate-600">Laedt ein Content-Bild hoch und gibt URL, Markdown-Snippet und HTML-Snippet zurueck. Erfordert einen Write-Key. In Postman als `form-data` senden.</p>
+                            <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>file: event.png
+title: Event Bild
+alt_text: Volles Haus beim Event</code></pre>
                         </div>
                     </div>
 
@@ -146,7 +159,8 @@
                         <tbody class="divide-y divide-slate-100 text-slate-700">
                             <tr><td class="px-6 py-4 font-mono">title</td><td class="px-6 py-4">string</td><td class="px-6 py-4">ja</td><td class="px-6 py-4">Blogtitel. Der Slug wird automatisch erzeugt.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">description</td><td class="px-6 py-4">string</td><td class="px-6 py-4">ja</td><td class="px-6 py-4">Kurzbeschreibung für Blogkarten und SEO.</td></tr>
-                            <tr><td class="px-6 py-4 font-mono">body</td><td class="px-6 py-4">HTML string</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Gerenderter Bloginhalt. Wenn kein `code` gesendet wird, wird daraus ein einfacher CMS-Textblock erzeugt.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">markdown</td><td class="px-6 py-4">string</td><td class="px-6 py-4">empfohlen</td><td class="px-6 py-4">Primaere Textquelle fuer KI-Workflows. Wird zu HTML gerendert und fuer den Builder in editierbare Bloecke umgewandelt.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">body</td><td class="px-6 py-4">HTML string</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Kompatibilitaetsfeld fuer gerenderten Bloginhalt. Wenn kein `markdown` gesendet wird, erzeugt die API Markdown daraus.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">code</td><td class="px-6 py-4">array/object</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Internes Blog-Builder-JSON. Wenn kein `body` gesendet wird, rendert die API daraus HTML.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">active</td><td class="px-6 py-4">boolean</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Steuert, ob der Blog oeffentlich sichtbar ist.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">language</td><td class="px-6 py-4">string</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Zum Beispiel `de` oder `en`.</td></tr>
@@ -163,6 +177,16 @@
                     <p class="mt-1 text-sm text-slate-500">Listen liefern eine kompakte Übersicht. Detail- und Create-Antworten liefern ein vollständiges Blog-Objekt.</p>
                 </div>
                 <div class="p-6">
+                    <p class="mb-3 text-sm font-semibold text-slate-900">Media Upload</p>
+                    <pre class="mb-6 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
+  "id": 44,
+  "title": "Event Bild",
+  "alt_text": "Volles Haus beim Event",
+  "url": "http://localhost:8000/media/yoolink/images/event_20260509143000.png",
+  "markdown": "![Volles Haus beim Event](http://localhost:8000/media/yoolink/images/event_20260509143000.png)",
+  "html": "&lt;img src=\"http://localhost:8000/media/yoolink/images/event_20260509143000.png\" alt=\"Volles Haus beim Event\" class=\"rounded-2xl my-4\"&gt;"
+}</code></pre>
+
                     <p class="mb-3 text-sm font-semibold text-slate-900">Listenobjekt</p>
                     <pre class="mb-6 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
   "id": 12,
@@ -185,6 +209,7 @@
   "title": "Event Rückblick",
   "slug": "event-rueckblick",
   "description": "Kurzer SEO-Teaser.",
+  "markdown": "## Rueckblick\n\nHTML-freier Markdown-Inhalt.",
   "body": "&lt;p&gt;HTML-Inhalt&lt;/p&gt;",
   "code": [
     {

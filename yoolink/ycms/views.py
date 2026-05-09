@@ -4,6 +4,11 @@ import os
 import re
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
+from yoolink.ycms.applications.blog.services import (
+    blog_code_to_markdown,
+    build_default_code_from_markdown,
+    render_markdown_to_html,
+)
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.applications.shop.models import Product
 from yoolink.ycms.models import (
@@ -154,6 +159,7 @@ def get_or_create_translated_blog(request, id):
         author=original_blog.author,
         body=original_blog.body,
         code=original_blog.code,
+        markdown=original_blog.markdown,
         active=False,
         description=original_blog.description,
         language=lang,
@@ -942,9 +948,11 @@ def create_blog(request):
                 return JsonResponse({'error': 'Die Beschreibung darf nicht leer sein!'}, status=400)
 
             body = _strip_generated_blog_intro(body, title, description)
+            markdown = blog_code_to_markdown(code, body)
+            rendered_body = render_markdown_to_html(markdown) or body
 
             # Create
-            blog = Blog(title=title, body=body, code=code, author=request.user)
+            blog = Blog(title=title, body=rendered_body, markdown=markdown, code=code, author=request.user)
             if active == "true":
                 blog.active = True
             else:
@@ -1002,7 +1010,8 @@ def update_blog(request, id):
                 blog.slug = f"{base_slug}-{blog.language.lower()}"
             else:
                 blog.slug = base_slug
-            blog.body = body 
+            blog.markdown = blog_code_to_markdown(code, body)
+            blog.body = render_markdown_to_html(blog.markdown) or body
             blog.code = code 
             if active == "true":
                 blog.active = True
@@ -1054,6 +1063,7 @@ def blog_details(request, id):
                 author=original_blog.author,
                 body=original_blog.body,
                 code=original_blog.code,
+                markdown=original_blog.markdown,
                 active=False,
                 description=original_blog.description,
                 language=lang,
@@ -1068,7 +1078,8 @@ def blog_details(request, id):
 @login_required(login_url='login')
 def blog_code(request, id):
     blog = get_or_create_translated_blog(request, id)
-    return JsonResponse({"code": blog.code, "success": "true"})
+    code = blog.code or build_default_code_from_markdown(blog.markdown)
+    return JsonResponse({"code": code, "markdown": blog.markdown, "success": "true"})
 
 # --------------- [GALERY] ---------------
 # Render Galery Detail View

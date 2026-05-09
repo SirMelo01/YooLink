@@ -252,6 +252,7 @@ class Blog(models.Model):
     last_updated = models.DateField(auto_now=True)  # Automatically updated on save
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField(default="This Blog is empty")
+    markdown = models.TextField(default="", blank=True)
     code = models.JSONField(default=default_code)
     active = models.BooleanField(default=False)
     description = models.TextField(default="")

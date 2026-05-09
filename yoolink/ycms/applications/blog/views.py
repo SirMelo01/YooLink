@@ -1,11 +1,18 @@
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 
 from yoolink.ycms.models import Blog, DeveloperApiKey
 
 from .authentication import DeveloperApiKeyAuthentication
 from .permissions import HasDeveloperApiKeyScope
-from .serializers import ExternalBlogListSerializer, ExternalBlogSerializer
+from .serializers import (
+    ExternalBlogImageUploadSerializer,
+    ExternalBlogListSerializer,
+    ExternalBlogSerializer,
+)
 
 
 class ExternalBlogViewSet(ModelViewSet):
@@ -16,10 +23,19 @@ class ExternalBlogViewSet(ModelViewSet):
     api_app_code = DeveloperApiKey.APP_BLOG
 
     def get_serializer_class(self):
+        if self.action == "upload_media":
+            return ExternalBlogImageUploadSerializer
+
         if self.action == "list":
             return ExternalBlogListSerializer
 
         return ExternalBlogSerializer
+
+    @action(detail=False, methods=["post"], url_path="media")
+    def upload_media(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.save(), status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
         queryset = (

@@ -5,6 +5,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from yoolink.ycms.models import Blog
+from yoolink.ycms.applications.blog.services import render_markdown_to_html
 from django.conf import settings
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
@@ -184,11 +185,12 @@ class BlogDetailView(DetailView):
         return queryset.filter(active=True)
 
     def _reading_time(self, blog):
-        word_count = len(strip_tags(blog.body or "").split())
+        source = blog.markdown or blog.body or ""
+        word_count = len(strip_tags(source).split())
         return max(1, round(word_count / 220))
 
     def _excerpt(self, blog):
-        source = blog.description or strip_tags(blog.body or "")
+        source = blog.description or strip_tags(blog.markdown or blog.body or "")
         return Truncator(" ".join(source.split())).chars(155)
 
     def _absolute_image_url(self, blog):
@@ -223,7 +225,8 @@ class BlogDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         blog = context["blog"]
         lang = get_active_language(self.request)
-        context["consent_safe_body"] = consent_gate_iframes(blog.body)
+        rendered_body = render_markdown_to_html(blog.markdown) if blog.markdown else blog.body
+        context["consent_safe_body"] = consent_gate_iframes(rendered_body)
         context["blog_excerpt"] = self._excerpt(blog)
         context["blog_reading_time"] = self._reading_time(blog)
         context["blog_image_url"] = self._absolute_image_url(blog)

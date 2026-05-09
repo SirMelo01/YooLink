@@ -1,14 +1,22 @@
+from html import escape
+
 from django.utils.text import slugify
 from rest_framework import serializers
 
-from yoolink.ycms.models import Blog
+from yoolink.ycms.models import Blog, fileentry
 
 from .services import (
+    blog_code_to_markdown,
     build_default_code_from_html,
+    build_default_code_from_markdown,
     normalize_blog_code,
     render_blog_code_to_html,
+    render_markdown_to_html,
     strip_generated_blog_intro,
 )
+
+
+ALLOWED_BLOG_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 
 class ExternalBlogListSerializer(serializers.ModelSerializer):
@@ -79,6 +87,7 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             "slug",
             "description",
             "body",
+            "markdown",
             "code",
             "active",
             "language",
@@ -140,12 +149,25 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         instance = self.instance
 
         body_provided = "body" in initial_data
+        markdown_provided = "markdown" in initial_data
         code_provided = "code" in initial_data
+
+        markdown = attrs.get("markdown")
+        if markdown is None and instance:
+            markdown = instance.markdown
+        markdown = (markdown or "").strip()
 
         body = attrs.get("body")
         if body is None and instance:
             body = instance.body
         body = (body or "").strip()
+
+        if markdown_provided:
+            attrs["markdown"] = markdown
+            attrs["body"] = render_markdown_to_html(markdown)
+            if not code_provided:
+                attrs["code"] = build_default_code_from_markdown(markdown)
+            body = attrs["body"]
 
         if code_provided:
             try:
@@ -157,11 +179,15 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             if not body_provided:
                 body = render_blog_code_to_html(normalized_code)
                 attrs["body"] = body
-        elif body_provided or instance is None:
+            if not markdown_provided:
+                attrs["markdown"] = blog_code_to_markdown(normalized_code, attrs.get("body", body))
+        elif body_provided or (instance is None and not markdown_provided):
             attrs["code"] = build_default_code_from_html(body)
+            if not markdown_provided:
+                attrs["markdown"] = blog_code_to_markdown(attrs["code"], body)
 
-        if instance is None and not (body or attrs.get("code")):
-            raise serializers.ValidationError({"body": "body oder code muss gesetzt sein."})
+        if instance is None and not (markdown or body or attrs.get("code")):
+            raise serializers.ValidationError({"markdown": "markdown, body oder code muss gesetzt sein."})
 
         description = attrs.get("description")
         if description is None and instance:
@@ -226,3 +252,41 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class ExternalBlogImageUploadSerializer(serializers.Serializer):
+    file = serializers.ImageField(write_only=True)
+    title = serializers.CharField(required=False, allow_blank=True, max_length=200)
+    alt_text = serializers.CharField(required=False, allow_blank=True, max_length=200)
+
+    def validate_file(self, value):
+        filename = (value.name or "").lower()
+        if not any(filename.endswith(extension) for extension in ALLOWED_BLOG_IMAGE_EXTENSIONS):
+            raise serializers.ValidationError("Erlaubte Bildformate: jpg, jpeg, png, gif, webp.")
+
+        return value
+
+    def create(self, validated_data):
+        upload = validated_data["file"]
+        alt_text = (validated_data.get("alt_text") or "").strip()
+        title = (validated_data.get("title") or alt_text or upload.name).strip()
+        image = fileentry.objects.create(file=upload, title=title)
+        url = self._absolute_url(image.file.url)
+        markdown_alt = alt_text.replace("[", "").replace("]", "").replace("\n", " ")
+        html_alt = escape(alt_text, quote=True)
+        html_url = escape(url, quote=True)
+
+        return {
+            "id": image.id,
+            "title": image.title,
+            "alt_text": alt_text,
+            "url": url,
+            "markdown": f"![{markdown_alt}]({url})",
+            "html": f'<img src="{html_url}" alt="{html_alt}" class="rounded-2xl my-4">',
+        }
+
+    def _absolute_url(self, url):
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(url)
+        return url

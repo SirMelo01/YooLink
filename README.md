@@ -109,19 +109,31 @@ Authentifizierung:
 
 Read-only Keys duerfen `GET` verwenden. Write Keys duerfen zusaetzlich `POST`, `PATCH`, `PUT` und `DELETE` verwenden.
 
-`GET /api/cms/blog/` liefert eine kompakte Liste ohne `body`, `code` und Sprachvarianten. Vollstaendige Blogdaten inklusive Sprachvarianten gibt es ueber `GET /api/cms/blog/<id>/`.
+`GET /api/cms/blog/` liefert eine kompakte Liste ohne `markdown`, `body`, `code` und Sprachvarianten. Vollstaendige Blogdaten inklusive Markdown, HTML-Body und Sprachvarianten gibt es ueber `GET /api/cms/blog/<id>/`.
 
 Minimaler JSON-Body zum Erstellen eines Blogs:
 
         {
           "title": "Event Rueckblick",
           "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
-          "body": "<p>HTML-Inhalt des automatisch generierten Blogartikels.</p>",
+          "markdown": "## Rueckblick\n\nMarkdown-Inhalt des automatisch generierten Blogartikels.",
           "active": true,
           "language": "de"
         }
 
-Alternativ kann `code` als Blog-Builder-JSON gesendet werden. Wenn nur `body` gesendet wird, legt die API automatisch einen einfachen Text-Block fuer die interne CMS-Bearbeitung an.
+Alternativ kann weiterhin `body` als HTML oder `code` als Blog-Builder-JSON gesendet werden. Die API erzeugt daraus automatisch Markdown, damit KI-Workflows eine klare Textquelle haben.
+
+Content-Bilder fuer Markdown-Blogs koennen per Multipart direkt hochgeladen werden:
+
+        POST /api/cms/blog/media/
+        Authorization: Bearer <write-api-key>
+        Content-Type: multipart/form-data
+
+        file: event.png
+        title: Event Bild
+        alt_text: Volles Haus beim Event
+
+Die Antwort enthaelt `url`, `markdown` und `html`. Fuer KI-Workflows reicht es meist, das `markdown`-Snippet direkt in den Blog-Markdown einzusetzen. Ein Titelbild kann beim Erstellen oder Aktualisieren eines Blogs weiterhin als Multipart-Feld `title_image` an `/api/cms/blog/` bzw. `/api/cms/blog/<id>/` gesendet werden.
 
 ## Deployment
 
