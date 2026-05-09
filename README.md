@@ -93,13 +93,22 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 ### Prompt fÃ¼r Codex vor Updates:
         Analysiere die anstehenden Dependency-Updates. FÃ¼hre zuerst das komplette Test-Sicherheitsnetz lokal aus, behebe Regressionen in kleinen Schritten und fasse danach zusammen, welche CMS-, Shop-, Auth-, Medien- und Public-Page-Flows grÃ¼n sind.
 
-
 ## Deployment
 
 https://www.youtube.com/watch?v=DLxcyndCvO4 hier ab minute 28
 
-
-
-
 ssh root@195.201.112.17
+
+
+## Fehlerbehebung Space full
+df -h
+docker system df
+
+docker buildx prune -af
+docker builder prune -af
+docker image prune -af
+docker container prune -f
+
+docker compose -f production.yml build --no-cache django
+docker compose -f production.yml up
 
