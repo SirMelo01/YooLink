@@ -1,13 +1,9 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import FAQ, AnyFile, TextContent, UserSettings, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
+from .models import FAQ, AnyFile, UserSettings, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
 
 @register(FAQ)
 class FAQTranslationOptions(TranslationOptions):
     fields = ('question', 'answer')
-
-@register(TextContent)
-class TextContentTranslationOptions(TranslationOptions):
-    fields = ('header', 'title', 'description', 'buttonText')
 
 @register(fileentry)
 class FileEntryTranslationOptions(TranslationOptions):

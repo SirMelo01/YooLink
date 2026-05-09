@@ -2,7 +2,8 @@ import pytest
 from django.urls import reverse
 
 from yoolink.users.tests.factories import UserFactory
-from yoolink.ycms.models import Blog, FAQ, PricingCard, TeamMember, TextContent
+from yoolink.ycms.applications.content.models import TextContent
+from yoolink.ycms.models import Blog, FAQ, PricingCard, TeamMember
 
 pytestmark = pytest.mark.django_db
 

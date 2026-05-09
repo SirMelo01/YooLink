@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, TextContent, fileentry, Galerie, OpeningHours, UserSettings, PrivacyPolicy
+from yoolink.ycms.applications.content.models import PrivacyPolicy, TextContent
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, UserSettings
 import datetime
 from django.http import HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate

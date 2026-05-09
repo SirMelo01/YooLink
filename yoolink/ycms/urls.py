@@ -55,23 +55,7 @@ urlpatterns = [
     path("galerien/all/", views.all_galerien, name="all-galerien"),
 
     # Seiten
-    path("seiten/", views.content_view, name="sites"),
-    path("seiten/save/", views.saveTextContent, name="save_text_content"),
-    path("seiten/hauptseite/", views.site_view_main, name="site_hauptseite"),
-    path("seiten/hauptseite/Hero/", views.site_view_main_hero, name="site_hauptseite_hero"),
-    path("seiten/hauptseite/Reponsive/", views.site_view_main_responsive, name="site_hauptseite_responsive"),
-    path("seiten/hauptseite/CMS/", views.site_view_main_cms, name="site_hauptseite_cms"),
-    path("seiten/hauptseite/Preis/", views.site_view_main_price, name="site_hauptseite_price"),
-    path("seiten/hauptseite/Team/", views.site_view_main_team, name="site_hauptseite_team"),
-    path("seiten/hauptseite/Know-How/", views.site_view_main_know_how, name="site_hauptseite_know_how"),
-    path("seiten/hauptseite/Kunden/", views.site_view_main_kunden, name="site_hauptseite_kunden"),
-    path("seiten/hauptseite/FAQ/", views.site_view_main_faq, name="site_hauptseite_faq"),
-    path("seiten/Kunden/", views.site_view_kunden, name="site_kunden"),
-    path("seiten/leistungen/", views.site_view_leistungen, name="site_leistungen"),
-    path("seiten/leistungen/cms/", views.site_view_cmsinfo, name="site_leistungen_cms"),
-    path("seiten/leistungen/logos/", views.site_view_logos, name="site_leistungen_logos"),
-    path("seiten/datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),
-    path("seiten/datenschutz/save/", views.save_privacy_policy, name="save_privacy_policy"),
+    path("seiten/", include("yoolink.ycms.applications.content.cms_urls")),
 
     # Email
     path("email/request/", views.email_send, name="send-email"),

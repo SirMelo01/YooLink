@@ -11,9 +11,7 @@ from .models import (
     OpeningHours,
     PricingCard,
     PricingFeature,
-    PrivacyPolicy,
     TeamMember,
-    TextContent,
     UserSettings,
     VideoFile,
     fileentry,
@@ -25,8 +23,6 @@ admin.site.register(GaleryImage)
 admin.site.register(FAQ)
 admin.site.register(fileentry)
 admin.site.register(Blog)
-admin.site.register(TextContent)
-admin.site.register(PrivacyPolicy)
 admin.site.register(UserSettings)
 admin.site.register(OpeningHours)
 admin.site.register(TeamMember)

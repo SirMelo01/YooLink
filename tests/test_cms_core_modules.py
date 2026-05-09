@@ -19,11 +19,11 @@ from yoolink.ycms.models import (
     PricingCard,
     PricingFeature,
     TeamMember,
-    TextContent,
     UserSettings,
     VideoFile,
     fileentry,
 )
+from yoolink.ycms.applications.content.models import TextContent
 from yoolink.ycms.applications.notifications.models import Notification
 from yoolink.ycms.spam_detection import is_spam_message, score_text_for_spam
 

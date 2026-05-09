@@ -91,6 +91,7 @@ LOCAL_APPS = [
     "yoolink.users",
     # Your stuff: custom apps go here
     "yoolink.ycms",
+    "yoolink.ycms.applications.content.apps.CmsContentConfig",
     "yoolink.ycms.applications.shop",
     "yoolink.ycms.applications.notifications.apps.NotificationsConfig",
     "yoolink.ycms.applications.blog.apps.CmsBlogApplicationConfig",
