@@ -1,5 +1,16 @@
 var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
+function getShortBackendError(response) {
+    if (!response) return null;
+
+    const message = response.error || (Array.isArray(response.errors) ? response.errors[0] : null);
+    if (typeof message === 'string' && message.length <= 150) {
+        return message;
+    }
+
+    return null;
+}
+
 
 $(document).ready(function () {
     // Ajax call to save opening hours
@@ -77,12 +88,12 @@ $(document).ready(function () {
                 if(response.success) {
                     sendNotif(response.success, "success")
                 } else {
-                    sendNotif(response.error ? response.error : "Etwas ist schief gelaufen. Versuche es erneut.", "error")
+                    sendNotif(getShortBackendError(response) || "Etwas ist schief gelaufen. Versuche es erneut.", "error")
                 }
                 // Handle success response
             },
             error: function (xhr, errmsg, err) {
-                sendNotif("Etwas ist schief gelaufen. Versuche es erneut.", "error")
+                sendNotif(getShortBackendError(xhr.responseJSON) || "Etwas ist schief gelaufen. Versuche es erneut.", "error")
                 // Handle error response
             }
         });

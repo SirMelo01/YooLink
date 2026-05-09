@@ -558,7 +558,7 @@ class UserSettings(models.Model):
     website = models.URLField(blank=True, default='')
     address = models.CharField(max_length=255, default='')
     vacation = models.BooleanField(default=False)
-    vacationText = models.CharField(max_length=200, default='Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!')
+    vacationText = models.TextField(default='Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!')
     vacation_start = models.DateTimeField(null=True, blank=True)
     vacation_end   = models.DateTimeField(null=True, blank=True)
     global_font = models.CharField(max_length=60, default='font-sans')
