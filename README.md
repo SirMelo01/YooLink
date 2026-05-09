@@ -93,6 +93,36 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 ### Prompt fÃ¼r Codex vor Updates:
         Analysiere die anstehenden Dependency-Updates. FÃ¼hre zuerst das komplette Test-Sicherheitsnetz lokal aus, behebe Regressionen in kleinen Schritten und fasse danach zusammen, welche CMS-, Shop-, Auth-, Medien- und Public-Page-Flows grÃ¼n sind.
 
+## Externe YooLink API
+
+Developer API Keys werden im CMS unter `Einstellungen -> Developer Settings` erstellt. Der vollstaendige Schluessel wird nur direkt nach dem Erstellen angezeigt und danach nur gehasht gespeichert.
+
+### Blog API
+
+Basis-Endpoint:
+
+        /api/cms/blog/
+
+Authentifizierung:
+
+        Authorization: Bearer <api-key>
+
+Read-only Keys duerfen `GET` verwenden. Write Keys duerfen zusaetzlich `POST`, `PATCH`, `PUT` und `DELETE` verwenden.
+
+`GET /api/cms/blog/` liefert eine kompakte Liste ohne `body`, `code` und Sprachvarianten. Vollstaendige Blogdaten inklusive Sprachvarianten gibt es ueber `GET /api/cms/blog/<id>/`.
+
+Minimaler JSON-Body zum Erstellen eines Blogs:
+
+        {
+          "title": "Event Rueckblick",
+          "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
+          "body": "<p>HTML-Inhalt des automatisch generierten Blogartikels.</p>",
+          "active": true,
+          "language": "de"
+        }
+
+Alternativ kann `code` als Blog-Builder-JSON gesendet werden. Wenn nur `body` gesendet wird, legt die API automatisch einen einfachen Text-Block fuer die interne CMS-Bearbeitung an.
+
 ## Deployment
 
 https://www.youtube.com/watch?v=DLxcyndCvO4 hier ab minute 28

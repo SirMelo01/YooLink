@@ -237,6 +237,11 @@
                                         role="menuitem" tabindex="-1">
                                         Passwort ändern
                                     </a>
+                                    <a href="{% url 'cms:developer-settings' %}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white"
+                                        role="menuitem" tabindex="-1">
+                                        Developer Settings
+                                    </a>
                                     <a href="{% url 'cms:logout' %}"
                                         class="block px-4 py-2 text-sm  hover:bg-red-500 hover:text-white text-red-500"
                                         role="menuitem" tabindex="-1" id="user-menu-item-2">Abmelden</a>
@@ -303,6 +308,8 @@
                             class="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:bg-blue-500 hover:text-white">Profil & Einstellungen</a>
                         <a href="{% url 'cms:logo-settings' %}"
                             class="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:bg-blue-500 hover:text-white">Logo verwalten</a>
+                        <a href="{% url 'cms:developer-settings' %}"
+                            class="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:bg-blue-500 hover:text-white">Developer Settings</a>
                         <a href="{% url 'cms:logout' %}"
                             class="block rounded-md px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-500 hover:text-white">Abmelden</a>
                     </div>

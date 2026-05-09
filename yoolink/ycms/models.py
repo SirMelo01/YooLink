@@ -1,5 +1,7 @@
 from django.db import models
+import hashlib
 import re
+import secrets
 
 # Create your models here.
 from django.db.models import Q
@@ -615,6 +617,118 @@ class UserSettings(models.Model):
         if not self.vacation_start and self.vacation_end:
             return now <= self.vacation_end
         return True  # kein Fenster gesetzt -> sichtbar solange Toggle an
+
+
+class DeveloperApiKey(models.Model):
+    READ = "read"
+    WRITE = "write"
+    APP_BLOG = "blog"
+    APP_BLOGS = APP_BLOG
+    LEGACY_APP_BLOGS = "blogs"
+    TOKEN_PREFIX = "yl_live"
+
+    ACCESS_LEVEL_CHOICES = [
+        (READ, "Nur lesen"),
+        (WRITE, "Lesen und schreiben"),
+    ]
+    APP_CHOICES = [
+        (APP_BLOG, "Blog"),
+    ]
+
+    name = models.CharField(max_length=120)
+    prefix = models.CharField(max_length=32, unique=True, editable=False)
+    key_hash = models.CharField(max_length=64, unique=True, editable=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="developer_api_keys",
+    )
+    access_level = models.CharField(
+        max_length=10,
+        choices=ACCESS_LEVEL_CHOICES,
+        default=READ,
+    )
+    allowed_apps = models.JSONField(default=list)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Developer API Key"
+        verbose_name_plural = "Developer API Keys"
+
+    def __str__(self):
+        return f"{self.name} ({self.prefix})"
+
+    @classmethod
+    def make_key_hash(cls, raw_key):
+        return hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
+
+    @classmethod
+    def extract_prefix(cls, raw_key):
+        if not raw_key:
+            return ""
+
+        parts = raw_key.split("_", 3)
+        if len(parts) != 4 or f"{parts[0]}_{parts[1]}" != cls.TOKEN_PREFIX:
+            return ""
+
+        return parts[2]
+
+    @classmethod
+    def issue_key(cls, *, created_by, name, access_level, allowed_apps, expires_at=None):
+        allowed_values = {choice[0] for choice in cls.APP_CHOICES}
+        normalized_apps = sorted(set(allowed_apps or []) & allowed_values)
+
+        if not normalized_apps:
+            normalized_apps = [cls.APP_BLOG]
+
+        while True:
+            prefix = secrets.token_hex(6)
+            if not cls.objects.filter(prefix=prefix).exists():
+                break
+
+        raw_key = f"{cls.TOKEN_PREFIX}_{prefix}_{secrets.token_urlsafe(32)}"
+        api_key = cls.objects.create(
+            created_by=created_by,
+            name=name,
+            prefix=prefix,
+            key_hash=cls.make_key_hash(raw_key),
+            access_level=access_level,
+            allowed_apps=normalized_apps,
+            expires_at=expires_at,
+        )
+        return api_key, raw_key
+
+    @property
+    def token_hint(self):
+        return f"{self.TOKEN_PREFIX}_{self.prefix}_..."
+
+    def is_expired(self):
+        return bool(self.expires_at and self.expires_at <= timezone.now())
+
+    def is_revoked(self):
+        return self.revoked_at is not None
+
+    def is_usable(self):
+        return not self.is_revoked() and not self.is_expired()
+
+    def allows_app(self, app_code):
+        allowed_apps = self.allowed_apps or []
+        if app_code == self.APP_BLOG and self.LEGACY_APP_BLOGS in allowed_apps:
+            return True
+        return app_code in allowed_apps
+
+    def allows_write(self):
+        return self.access_level == self.WRITE
+
+    def revoke(self):
+        if not self.revoked_at:
+            self.revoked_at = timezone.now()
+            self.save(update_fields=["revoked_at", "updated_at"])
 
 class OpeningHours(models.Model):
     DAY_CHOICES = [

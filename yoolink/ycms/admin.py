@@ -1,5 +1,24 @@
 from django.contrib import admin
-from .models import Button, Galerie, Notification, OpeningHours, PricingCard, PricingFeature, TeamMember, UserSettings, GaleryImage, FAQ, VideoFile, fileentry, Blog, Message, TextContent, PrivacyPolicy
+
+from .models import (
+    FAQ,
+    Blog,
+    Button,
+    DeveloperApiKey,
+    GaleryImage,
+    Galerie,
+    Message,
+    Notification,
+    OpeningHours,
+    PricingCard,
+    PricingFeature,
+    PrivacyPolicy,
+    TeamMember,
+    TextContent,
+    UserSettings,
+    VideoFile,
+    fileentry,
+)
 
 # Register your models here.
 
@@ -18,6 +37,14 @@ admin.site.register(PricingFeature)
 admin.site.register(Button)
 admin.site.register(PricingCard)
 admin.site.register(VideoFile)
+
+
+@admin.register(DeveloperApiKey)
+class DeveloperApiKeyAdmin(admin.ModelAdmin):
+    list_display = ("name", "prefix", "created_by", "access_level", "allowed_apps", "expires_at", "revoked_at", "last_used_at")
+    list_filter = ("access_level", "revoked_at", "expires_at")
+    search_fields = ("name", "prefix", "created_by__username", "created_by__email")
+    readonly_fields = ("prefix", "key_hash", "created_at", "updated_at", "last_used_at")
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

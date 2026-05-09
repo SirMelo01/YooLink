@@ -6,7 +6,27 @@ from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from django.shortcuts import get_object_or_404, render, redirect
 from yoolink.ycms.applications.shop.models import Product
-from yoolink.ycms.models import AnyFile, Button, Notification, PricingCard, PricingFeature, TeamMember, VideoFile, fileentry, OpeningHours, FAQ, UserSettings, Order, Message, Galerie, Blog, GaleryImage, TextContent, PrivacyPolicy
+from yoolink.ycms.models import (
+    FAQ,
+    AnyFile,
+    Blog,
+    Button,
+    DeveloperApiKey,
+    GaleryImage,
+    Galerie,
+    Message,
+    Notification,
+    OpeningHours,
+    Order,
+    PricingCard,
+    PricingFeature,
+    PrivacyPolicy,
+    TeamMember,
+    TextContent,
+    UserSettings,
+    VideoFile,
+    fileentry,
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib import messages
@@ -1760,6 +1780,106 @@ def logo_settings_view(request):
 def security_settings_view(request):
     user_settings = _get_user_settings(request.user)
     return render(request, 'pages/cms/settings/security.html', {'settings': user_settings})
+
+
+def _parse_developer_key_expiry(request):
+    expires_in = request.POST.get("expires_in", "never")
+
+    if expires_in == "never":
+        return None, ""
+
+    if expires_in == "custom":
+        raw_value = (request.POST.get("custom_expires_at") or "").strip()
+        if not raw_value:
+            return None, "Bitte gib ein Ablaufdatum an."
+
+        for date_format in ("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"):
+            try:
+                naive = datetime.strptime(raw_value, date_format)
+                expires_at = timezone.make_aware(naive, timezone.get_default_timezone())
+                break
+            except ValueError:
+                expires_at = None
+
+        if not expires_at:
+            return None, "Das Ablaufdatum ist ungueltig."
+
+        if expires_at <= timezone.now():
+            return None, "Das Ablaufdatum muss in der Zukunft liegen."
+
+        return expires_at, ""
+
+    allowed_days = {"30": 30, "90": 90, "365": 365}
+    days = allowed_days.get(expires_in)
+    if not days:
+        return None, "Die ausgewaehlte Laufzeit ist ungueltig."
+
+    return timezone.now() + timedelta(days=days), ""
+
+
+@login_required(login_url='login')
+def developer_settings_view(request):
+    generated_api_key = ""
+
+    if request.method == "POST":
+        action = request.POST.get("action", "create")
+
+        if action == "revoke":
+            api_key = get_object_or_404(
+                DeveloperApiKey,
+                id=request.POST.get("key_id"),
+                created_by=request.user,
+            )
+            api_key.revoke()
+            messages.success(request, "Der API-Key wurde widerrufen.")
+            return redirect("ycms:developer-settings")
+
+        name = (request.POST.get("name") or "").strip()
+        access_level = request.POST.get("access_level", DeveloperApiKey.READ)
+        allowed_apps = request.POST.getlist("allowed_apps")
+        valid_access_levels = {choice[0] for choice in DeveloperApiKey.ACCESS_LEVEL_CHOICES}
+        valid_apps = {choice[0] for choice in DeveloperApiKey.APP_CHOICES}
+        allowed_apps = [app for app in allowed_apps if app in valid_apps]
+
+        expires_at, expiry_error = _parse_developer_key_expiry(request)
+
+        if not name:
+            messages.error(request, "Bitte gib dem API-Key einen Namen.")
+        elif access_level not in valid_access_levels:
+            messages.error(request, "Die Berechtigungsstufe ist ungueltig.")
+        elif not allowed_apps:
+            messages.error(request, "Bitte waehle mindestens eine App aus.")
+        elif expiry_error:
+            messages.error(request, expiry_error)
+        else:
+            _, generated_api_key = DeveloperApiKey.issue_key(
+                created_by=request.user,
+                name=name,
+                access_level=access_level,
+                allowed_apps=allowed_apps,
+                expires_at=expires_at,
+            )
+            messages.success(request, "Der API-Key wurde erstellt. Kopiere ihn jetzt, er wird spaeter nicht erneut angezeigt.")
+
+    api_keys = DeveloperApiKey.objects.filter(created_by=request.user)
+    active_keys_count = sum(1 for api_key in api_keys if api_key.is_usable())
+
+    return render(
+        request,
+        "pages/cms/settings/developer.html",
+        {
+            "api_keys": api_keys,
+            "active_keys_count": active_keys_count,
+            "app_choices": DeveloperApiKey.APP_CHOICES,
+            "access_level_choices": DeveloperApiKey.ACCESS_LEVEL_CHOICES,
+            "generated_api_key": generated_api_key,
+        },
+    )
+
+
+@login_required(login_url='login')
+def developer_api_docs_view(request):
+    return render(request, "pages/cms/settings/developer_api_docs.html")
 
 
 @login_required(login_url='login')

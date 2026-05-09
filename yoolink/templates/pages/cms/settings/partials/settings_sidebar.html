@@ -23,6 +23,12 @@
                 <i class="bi bi-shield-lock text-base"></i>
                 <span>Autorisierung</span>
             </a>
+
+            <a href="{% url 'cms:developer-settings' %}"
+               class="{% if active_page == 'developer' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
+                <i class="bi bi-code-square text-base"></i>
+                <span>Developer Settings</span>
+            </a>
         </nav>
     </div>
 </aside>
