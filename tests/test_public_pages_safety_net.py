@@ -35,9 +35,33 @@ def test_home_page_renders_cms_managed_content(client):
 
 
 def test_static_content_pages_render_without_cms_data(client):
-    for url_name in ["kontakt", "leistungen_cms", "kunden", "leistungen"]:
+    for url_name in ["kontakt", "leistungen_cms", "leistungen_logos", "kunden", "leistungen"]:
         response = client.get(reverse(url_name))
         assert response.status_code == 200
+
+
+def test_logo_page_renders_cms_managed_content(client):
+    TextContent.objects.create(
+        name="main_logos_hero",
+        header="Logo Studio",
+        title="Dynamisches Logo Design",
+        description="Diese Logo-Seite kommt aus dem CMS.",
+        buttonText="Logo starten",
+    )
+    TextContent.objects.create(
+        name="main_logos_bottomcta",
+        title="Bereit fuer dein neues Logo?",
+        description="Der CTA ist im CMS editierbar.",
+        buttonText="Anfrage senden",
+    )
+
+    response = client.get(reverse("leistungen_logos"))
+
+    assert response.status_code == 200
+    assert response.context["textContent_hero"].title == "Dynamisches Logo Design"
+    assert response.context["textContent_bottomcta"].buttonText == "Anfrage senden"
+    assert b"Dynamisches Logo Design" in response.content
+    assert b"Anfrage senden" in response.content
 
 
 def test_blog_list_and_detail_use_active_original_and_language_variant(client, settings):

@@ -25,8 +25,11 @@ def build_default_code_from_html(body):
 
 
 def build_default_code_from_markdown(markdown):
-    html = render_markdown_to_html(markdown)
-    return build_default_code_from_html(html)
+    markdown = (markdown or "").strip()
+    if not markdown:
+        return []
+
+    return MarkdownToBlogCodeParser(markdown).parse()
 
 
 def normalize_blog_code(value, body=""):
@@ -67,6 +70,12 @@ def blog_code_to_markdown(code, body=""):
             markdown_blocks.append(f"#### {strip_tags(value).strip()}")
         elif name == "textArea":
             markdown_blocks.append(html_to_markdown(value))
+        elif name == "image":
+            attributes = block.get("attributes") or {}
+            src = attributes.get("src") or ""
+            alt = attributes.get("alt") or attributes.get("title") or ""
+            if src:
+                markdown_blocks.append(f"![{alt}]({src})")
         elif name == "code":
             language = _code_language(block)
             markdown_blocks.append(f"```{language}\n{value}\n```")
@@ -77,6 +86,177 @@ def blog_code_to_markdown(code, body=""):
 
     markdown = "\n\n".join(block.strip() for block in markdown_blocks if block and block.strip())
     return markdown or html_to_markdown(body)
+
+
+class MarkdownToBlogCodeParser:
+    def __init__(self, markdown):
+        self.lines = markdown.splitlines()
+        self.blocks = []
+        self.paragraph = []
+        self.list_items = []
+        self.in_code = False
+        self.code_language = ""
+        self.code_lines = []
+
+    def parse(self):
+        for line in self.lines:
+            stripped = line.strip()
+
+            if stripped.startswith("```"):
+                self._handle_code_fence(stripped)
+                continue
+
+            if self.in_code:
+                self.code_lines.append(line)
+                continue
+
+            if not stripped:
+                self._flush_paragraph()
+                self._flush_list()
+                continue
+
+            image = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", stripped)
+            if image:
+                self._flush_paragraph()
+                self._flush_list()
+                self._append_image_block(image.group(1), image.group(2))
+                continue
+
+            heading = re.match(r"^(#{1,6})\s+(.+)$", stripped)
+            if heading:
+                self._flush_paragraph()
+                self._flush_list()
+                self._append_heading_block(len(heading.group(1)), heading.group(2))
+                continue
+
+            list_match = re.match(r"^(?:[-*]|\d+\.)\s+(.+)$", stripped)
+            if list_match:
+                self._flush_paragraph()
+                self.list_items.append(list_match.group(1))
+                continue
+
+            if _is_raw_html_block(stripped):
+                self._flush_paragraph()
+                self._flush_list()
+                self._append_text_block(line)
+                continue
+
+            self.paragraph.append(line)
+
+        self._flush_paragraph()
+        self._flush_list()
+
+        if self.in_code:
+            self._append_code_block()
+
+        return self.blocks or build_default_code_from_html(render_markdown_to_html("\n".join(self.lines)))
+
+    def _handle_code_fence(self, stripped):
+        if self.in_code:
+            self._append_code_block()
+            self.in_code = False
+            self.code_language = ""
+            self.code_lines = []
+            return
+
+        self._flush_paragraph()
+        self._flush_list()
+        self.in_code = True
+        self.code_language = stripped[3:].strip()
+        self.code_lines = []
+
+    def _flush_paragraph(self):
+        if not self.paragraph:
+            return
+
+        text = " ".join(line.strip() for line in self.paragraph if line.strip())
+        if text:
+            self._append_text_block(f"<p>{_render_inline_markdown(text)}</p>")
+        self.paragraph.clear()
+
+    def _flush_list(self):
+        if not self.list_items:
+            return
+
+        items = "".join(f"<li>{_render_inline_markdown(item)}</li>" for item in self.list_items)
+        self._append_text_block(f'<ul class="my-4 list-disc pl-6">{items}</ul>')
+        self.list_items.clear()
+
+    def _append_heading_block(self, level, text):
+        clean_text = strip_tags(_render_inline_markdown(text)).strip()
+        if not clean_text:
+            return
+
+        if level <= 2:
+            self.blocks.append({
+                "name": "title-1",
+                "type": "h2",
+                "attributes": {"class": "text-2xl mb-6 font-bold text-gray-900 lg:text-3xl"},
+                "value": clean_text,
+            })
+        elif level == 3:
+            self.blocks.append({
+                "name": "title-2",
+                "type": "h3",
+                "attributes": {"class": "text-xl font-semibold my-4 lg:text-2xl"},
+                "value": clean_text,
+            })
+        else:
+            self.blocks.append({
+                "name": "title-3",
+                "type": "h4",
+                "attributes": {"class": "text-lg font-medium my-4 lg:text-xl"},
+                "value": clean_text,
+            })
+
+    def _append_text_block(self, value):
+        value = (value or "").strip()
+        if not value:
+            return
+
+        self.blocks.append({
+            "name": "textArea",
+            "type": "p",
+            "attributes": {"class": "text-base my-4"},
+            "value": value,
+        })
+
+    def _append_image_block(self, alt_text, src):
+        src = (src or "").strip()
+        if not src:
+            return
+
+        alt_text = (alt_text or "").strip()
+        self.blocks.append({
+            "name": "image",
+            "type": "img",
+            "attributes": {
+                "src": src,
+                "title": alt_text,
+                "alt": alt_text,
+                "class": "rounded-2xl my-4",
+            },
+            "css": {
+                "height": "auto",
+                "width": "100%",
+            },
+        })
+
+    def _append_code_block(self):
+        language_class = f" language-{self.code_language}" if self.code_language else ""
+        self.blocks.append({
+            "name": "code",
+            "type": "code",
+            "attributes": {
+                "class": f"rounded-2xl my-4{language_class}",
+                "data-prismjs-copy": "Copy",
+            },
+            "value": "\n".join(self.code_lines),
+            "css": {
+                "height": "auto",
+                "width": "100%",
+            },
+        })
 
 
 def _code_language(block):

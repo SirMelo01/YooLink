@@ -143,6 +143,51 @@ def test_text_content_save_assigns_media_and_gallery_slots(logged_in_client):
     assert video.place == "main_hero_video"
 
 
+def test_logo_site_editor_renders_and_saves_public_content(logged_in_client):
+    editor_response = logged_in_client.get(reverse("ycms:site_leistungen_logos"))
+
+    assert editor_response.status_code == 200
+    assert b"main_logos_hero" in editor_response.content
+    assert b"main_logos_bottomcta" in editor_response.content
+
+    save_response = logged_in_client.post(
+        reverse("ycms:save_text_content"),
+        {
+            "name": "main_logos",
+            "customText": json.dumps(
+                [
+                    {
+                        "key": "main_logos_hero",
+                        "inputs": {
+                            "header": "Logo Studio",
+                            "title": "CMS Logo Seite",
+                            "description": "Diese Seite ist dynamisch.",
+                            "buttonText": "Logo anfragen",
+                        },
+                    },
+                    {
+                        "key": "main_logos_bottomcta",
+                        "inputs": {
+                            "title": "Fertiger CTA",
+                            "description": "Auch unten aus dem CMS.",
+                            "buttonText": "Kontakt aufnehmen",
+                        },
+                    },
+                ]
+            ),
+            "images": "[]",
+            "galerien": "[]",
+            "videos": "[]",
+        },
+    )
+
+    assert save_response.status_code == 200
+    public_response = logged_in_client.get(reverse("leistungen_logos"))
+    assert public_response.status_code == 200
+    assert b"CMS Logo Seite" in public_response.content
+    assert b"Kontakt aufnehmen" in public_response.content
+
+
 def test_image_upload_returns_uploaded_image_metadata(logged_in_client):
     buffer = BytesIO()
     Image.new("RGB", (12, 12), color="blue").save(buffer, format="PNG")

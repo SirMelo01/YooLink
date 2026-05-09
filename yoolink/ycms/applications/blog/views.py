@@ -2,7 +2,9 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from drf_spectacular.utils import extend_schema
 
 from yoolink.ycms.models import Blog, DeveloperApiKey
 
@@ -10,6 +12,7 @@ from .authentication import DeveloperApiKeyAuthentication
 from .permissions import HasDeveloperApiKeyScope
 from .serializers import (
     ExternalBlogImageUploadSerializer,
+    ExternalApiPingSerializer,
     ExternalBlogListSerializer,
     ExternalBlogSerializer,
 )
@@ -64,3 +67,27 @@ class ExternalBlogViewSet(ModelViewSet):
             queryset = queryset.filter(original__isnull=True)
 
         return queryset
+
+
+class ExternalApiPingView(APIView):
+    authentication_classes = [DeveloperApiKeyAuthentication]
+    permission_classes = [HasDeveloperApiKeyScope]
+
+    @extend_schema(
+        operation_id="developer_api_ping",
+        summary="Developer API Ping",
+        description="Prueft, ob der API-Key gueltig ist und die YooLink Developer API erreichbar ist.",
+        responses=ExternalApiPingSerializer,
+    )
+    def get(self, request):
+        api_key = request.auth
+        return Response(
+            {
+                "ok": True,
+                "message": "YooLink Developer API ist erreichbar und authentifiziert.",
+                "authenticated": True,
+                "user": request.user.get_username(),
+                "access_level": api_key.access_level,
+                "allowed_apps": api_key.allowed_apps,
+            }
+        )

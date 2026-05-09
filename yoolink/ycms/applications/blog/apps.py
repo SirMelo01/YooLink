@@ -6,3 +6,6 @@ class CmsBlogApplicationConfig(AppConfig):
     name = "yoolink.ycms.applications.blog"
     label = "ycms_blog_application"
     verbose_name = "YooLink CMS Blog Application"
+
+    def ready(self):
+        from . import schema  # noqa: F401

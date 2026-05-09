@@ -95,6 +95,85 @@ def load_index(request):
     return render(request, 'pages/index.html', context=context)
 
 
+def load_logos(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    def get_image(place: str):
+        return fileentry.objects.filter(place=place).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_logos_hero")
+    context["textContent_hero_secondary"] = get_text("main_logos_hero_secondary")
+    context["image_hero_logo_1"] = get_image("main_logos_hero_logo_1")
+    context["image_hero_logo_2"] = get_image("main_logos_hero_logo_2")
+    context["image_hero_logo_3"] = get_image("main_logos_hero_logo_3")
+    context["image_hero_logo_4"] = get_image("main_logos_hero_logo_4")
+    context["image_hero_logo_5"] = get_image("main_logos_hero_logo_5")
+
+    # Warum
+    context["textContent_warum"] = get_text("main_logos_warum")
+    context["textContent_warum_card1"] = get_text("main_logos_warum_card1")
+    context["textContent_warum_card2"] = get_text("main_logos_warum_card2")
+    context["textContent_warum_card3"] = get_text("main_logos_warum_card3")
+
+    # Leistungsbereiche
+    context["textContent_leistungen"] = get_text("main_logos_leistungen")
+    context["textContent_leistungen_card1"] = get_text("main_logos_leistungen_card1")
+    context["textContent_leistungen_card1_bullet1"] = get_text("main_logos_leistungen_card1_bullet1")
+    context["textContent_leistungen_card1_bullet2"] = get_text("main_logos_leistungen_card1_bullet2")
+    context["textContent_leistungen_card1_bullet3"] = get_text("main_logos_leistungen_card1_bullet3")
+    context["textContent_leistungen_card2"] = get_text("main_logos_leistungen_card2")
+    context["textContent_leistungen_card2_bullet1"] = get_text("main_logos_leistungen_card2_bullet1")
+    context["textContent_leistungen_card2_bullet2"] = get_text("main_logos_leistungen_card2_bullet2")
+    context["textContent_leistungen_card2_bullet3"] = get_text("main_logos_leistungen_card2_bullet3")
+    context["textContent_leistungen_card3"] = get_text("main_logos_leistungen_card3")
+    context["textContent_leistungen_card3_bullet1"] = get_text("main_logos_leistungen_card3_bullet1")
+    context["textContent_leistungen_card3_bullet2"] = get_text("main_logos_leistungen_card3_bullet2")
+    context["textContent_leistungen_card3_bullet3"] = get_text("main_logos_leistungen_card3_bullet3")
+    context["textContent_leistungen_premium"] = get_text("main_logos_leistungen_premium")
+    context["textContent_leistungen_premium_bullet1"] = get_text("main_logos_leistungen_premium_bullet1")
+    context["textContent_leistungen_premium_bullet2"] = get_text("main_logos_leistungen_premium_bullet2")
+    context["textContent_leistungen_premium_bullet3"] = get_text("main_logos_leistungen_premium_bullet3")
+    context["textContent_leistungen_premium_bullet4"] = get_text("main_logos_leistungen_premium_bullet4")
+
+    # Premium Showcase (Goldener Schnitt)
+    context["textContent_premium"] = get_text("main_logos_premium")
+    context["textContent_premium_bullet1"] = get_text("main_logos_premium_bullet1")
+    context["textContent_premium_bullet2"] = get_text("main_logos_premium_bullet2")
+    context["textContent_premium_bullet3"] = get_text("main_logos_premium_bullet3")
+
+    # Designprozess
+    context["textContent_prozess"] = get_text("main_logos_prozess")
+    context["textContent_prozess_step1"] = get_text("main_logos_prozess_step1")
+    context["textContent_prozess_step2"] = get_text("main_logos_prozess_step2")
+    context["textContent_prozess_step3"] = get_text("main_logos_prozess_step3")
+    context["textContent_prozess_step4"] = get_text("main_logos_prozess_step4")
+    context["textContent_prozess_step5"] = get_text("main_logos_prozess_step5")
+
+    # Lieferumfang
+    context["textContent_lieferumfang"] = get_text("main_logos_lieferumfang")
+    context["textContent_lieferumfang_bullet1"] = get_text("main_logos_lieferumfang_bullet1")
+    context["textContent_lieferumfang_bullet2"] = get_text("main_logos_lieferumfang_bullet2")
+    context["textContent_lieferumfang_bullet3"] = get_text("main_logos_lieferumfang_bullet3")
+    context["textContent_lieferumfang_bullet4"] = get_text("main_logos_lieferumfang_bullet4")
+    context["textContent_lieferumfang_bullet5"] = get_text("main_logos_lieferumfang_bullet5")
+
+    # USP
+    context["textContent_usp"] = get_text("main_logos_usp")
+    context["textContent_usp_card1"] = get_text("main_logos_usp_card1")
+    context["textContent_usp_card2"] = get_text("main_logos_usp_card2")
+    context["textContent_usp_card3"] = get_text("main_logos_usp_card3")
+
+    # Bottom CTA
+    context["textContent_bottomcta"] = get_text("main_logos_bottomcta")
+
+    return render(request, 'pages/leistungen_logos.html', context=context)
+
+
 def load_cmsinfo(request):
     context = {}
 

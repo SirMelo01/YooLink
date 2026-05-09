@@ -1496,6 +1496,83 @@ def site_view_cmsinfo(request):
 
 
 @login_required(login_url='login')
+def site_view_logos(request):
+    def get_text(name):
+        return TextContent.objects.filter(name=name).first()
+
+    def get_image(place):
+        return fileentry.objects.filter(place=place).first()
+
+    return render(request, "pages/cms/content/sites/LogosSite.html", {
+        # Hero
+        "textContent_hero": get_text("main_logos_hero"),
+        "textContent_hero_secondary": get_text("main_logos_hero_secondary"),
+        "image_hero_logo_1": get_image("main_logos_hero_logo_1"),
+        "image_hero_logo_2": get_image("main_logos_hero_logo_2"),
+        "image_hero_logo_3": get_image("main_logos_hero_logo_3"),
+        "image_hero_logo_4": get_image("main_logos_hero_logo_4"),
+        "image_hero_logo_5": get_image("main_logos_hero_logo_5"),
+
+        # Warum
+        "textContent_warum": get_text("main_logos_warum"),
+        "textContent_warum_card1": get_text("main_logos_warum_card1"),
+        "textContent_warum_card2": get_text("main_logos_warum_card2"),
+        "textContent_warum_card3": get_text("main_logos_warum_card3"),
+
+        # Leistungsbereiche
+        "textContent_leistungen": get_text("main_logos_leistungen"),
+        "textContent_leistungen_card1": get_text("main_logos_leistungen_card1"),
+        "textContent_leistungen_card1_bullet1": get_text("main_logos_leistungen_card1_bullet1"),
+        "textContent_leistungen_card1_bullet2": get_text("main_logos_leistungen_card1_bullet2"),
+        "textContent_leistungen_card1_bullet3": get_text("main_logos_leistungen_card1_bullet3"),
+        "textContent_leistungen_card2": get_text("main_logos_leistungen_card2"),
+        "textContent_leistungen_card2_bullet1": get_text("main_logos_leistungen_card2_bullet1"),
+        "textContent_leistungen_card2_bullet2": get_text("main_logos_leistungen_card2_bullet2"),
+        "textContent_leistungen_card2_bullet3": get_text("main_logos_leistungen_card2_bullet3"),
+        "textContent_leistungen_card3": get_text("main_logos_leistungen_card3"),
+        "textContent_leistungen_card3_bullet1": get_text("main_logos_leistungen_card3_bullet1"),
+        "textContent_leistungen_card3_bullet2": get_text("main_logos_leistungen_card3_bullet2"),
+        "textContent_leistungen_card3_bullet3": get_text("main_logos_leistungen_card3_bullet3"),
+        "textContent_leistungen_premium": get_text("main_logos_leistungen_premium"),
+        "textContent_leistungen_premium_bullet1": get_text("main_logos_leistungen_premium_bullet1"),
+        "textContent_leistungen_premium_bullet2": get_text("main_logos_leistungen_premium_bullet2"),
+        "textContent_leistungen_premium_bullet3": get_text("main_logos_leistungen_premium_bullet3"),
+        "textContent_leistungen_premium_bullet4": get_text("main_logos_leistungen_premium_bullet4"),
+
+        # Premium Showcase (Goldener Schnitt)
+        "textContent_premium": get_text("main_logos_premium"),
+        "textContent_premium_bullet1": get_text("main_logos_premium_bullet1"),
+        "textContent_premium_bullet2": get_text("main_logos_premium_bullet2"),
+        "textContent_premium_bullet3": get_text("main_logos_premium_bullet3"),
+
+        # Designprozess
+        "textContent_prozess": get_text("main_logos_prozess"),
+        "textContent_prozess_step1": get_text("main_logos_prozess_step1"),
+        "textContent_prozess_step2": get_text("main_logos_prozess_step2"),
+        "textContent_prozess_step3": get_text("main_logos_prozess_step3"),
+        "textContent_prozess_step4": get_text("main_logos_prozess_step4"),
+        "textContent_prozess_step5": get_text("main_logos_prozess_step5"),
+
+        # Lieferumfang
+        "textContent_lieferumfang": get_text("main_logos_lieferumfang"),
+        "textContent_lieferumfang_bullet1": get_text("main_logos_lieferumfang_bullet1"),
+        "textContent_lieferumfang_bullet2": get_text("main_logos_lieferumfang_bullet2"),
+        "textContent_lieferumfang_bullet3": get_text("main_logos_lieferumfang_bullet3"),
+        "textContent_lieferumfang_bullet4": get_text("main_logos_lieferumfang_bullet4"),
+        "textContent_lieferumfang_bullet5": get_text("main_logos_lieferumfang_bullet5"),
+
+        # USP
+        "textContent_usp": get_text("main_logos_usp"),
+        "textContent_usp_card1": get_text("main_logos_usp_card1"),
+        "textContent_usp_card2": get_text("main_logos_usp_card2"),
+        "textContent_usp_card3": get_text("main_logos_usp_card3"),
+
+        # Bottom CTA
+        "textContent_bottomcta": get_text("main_logos_bottomcta"),
+    })
+
+
+@login_required(login_url='login')
 def site_view_datenschutz(request):
     policy = PrivacyPolicy.objects.first()
     owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
@@ -1874,6 +1951,11 @@ def developer_settings_view(request):
 
     api_keys = DeveloperApiKey.objects.filter(created_by=request.user)
     active_keys_count = sum(1 for api_key in api_keys if api_key.is_usable())
+    api_base_url = request.build_absolute_uri("/api/cms/")
+    blog_api_url = request.build_absolute_uri("/api/cms/blog/")
+    api_ping_url = request.build_absolute_uri("/api/ping/")
+    api_docs_url = request.build_absolute_uri(reverse("api-docs"))
+    api_schema_url = request.build_absolute_uri(reverse("api-schema"))
 
     return render(
         request,
@@ -1884,13 +1966,28 @@ def developer_settings_view(request):
             "app_choices": DeveloperApiKey.APP_CHOICES,
             "access_level_choices": DeveloperApiKey.ACCESS_LEVEL_CHOICES,
             "generated_api_key": generated_api_key,
+            "api_base_url": api_base_url,
+            "blog_api_url": blog_api_url,
+            "api_ping_url": api_ping_url,
+            "api_docs_url": api_docs_url,
+            "api_schema_url": api_schema_url,
         },
     )
 
 
 @login_required(login_url='login')
 def developer_api_docs_view(request):
-    return render(request, "pages/cms/settings/developer_api_docs.html")
+    return render(
+        request,
+        "pages/cms/settings/developer_api_docs.html",
+        {
+            "api_base_url": request.build_absolute_uri("/api/cms/"),
+            "blog_api_url": request.build_absolute_uri("/api/cms/blog/"),
+            "api_ping_url": request.build_absolute_uri("/api/ping/"),
+            "api_docs_url": request.build_absolute_uri(reverse("api-docs")),
+            "api_schema_url": request.build_absolute_uri(reverse("api-schema")),
+        },
+    )
 
 
 @login_required(login_url='login')

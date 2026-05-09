@@ -247,21 +247,21 @@
 <section class="bg-white px-4 pt-20 pb-10 lg:pt-28 lg:pb-20">
   <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
     <div data-aos="fade-right">
-      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Logo Design Agentur</p>
+      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_hero.header|default:"Logo Design Agentur" }}</p>
       <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
-        Firmenlogo erstellen lassen - mit Strategie, Design und Wirkung
+        {{ textContent_hero.title|default:"Firmenlogo erstellen lassen - mit Strategie, Design und Wirkung" }}
       </h1>
       <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Ein starkes Logo ist mehr als ein Bild - es ist das visuelle Versprechen deiner Marke. Wir entwickeln professionelles Logo Design, das deine Werte transportiert, Vertrauen aufbaut und ueber Jahre hinweg funktioniert.
+        {{ textContent_hero.description|default:"Ein starkes Logo ist mehr als ein Bild - es ist das visuelle Versprechen deiner Marke. Wir entwickeln professionelles Logo Design, das deine Werte transportiert, Vertrauen aufbaut und über Jahre hinweg funktioniert." }}
       </p>
       <div class="flex flex-wrap gap-4">
         <a href="{% url 'kontakt' %}"
           class="inline-block rounded-md border-t border-gray-200 bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
-          Logo jetzt anfragen
+          {{ textContent_hero.buttonText|default:"Logo jetzt anfragen" }}
         </a>
         <a href="#prozess"
           class="inline-block rounded-md border border-blue-900 bg-white px-8 py-4 text-base font-bold text-blue-900 shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-50">
-          Designprozess ansehen
+          {{ textContent_hero_secondary.title|default:"Designprozess ansehen" }}
         </a>
       </div>
     </div>
@@ -275,28 +275,44 @@
             <div class="logo-orbit-item" style="--angle: 0deg;">
               <div class="logo-orbit-billboard" style="--angle: 0deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
-                  <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="YooLink Markenlogo Beispiel" />
+                  {% if image_hero_logo_1 %}
+                    <img src="{{ image_hero_logo_1.file.url }}" loading="lazy" alt="{{ image_hero_logo_1.title|default:'Logo Beispiel 1' }}" />
+                  {% else %}
+                    <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="YooLink Markenlogo Beispiel" />
+                  {% endif %}
                 </div>
               </div>
             </div>
             <div class="logo-orbit-item" style="--angle: 60deg;">
               <div class="logo-orbit-billboard" style="--angle: 60deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
-                  <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo Beispiel" class="brightness-0" />
+                  {% if image_hero_logo_2 %}
+                    <img src="{{ image_hero_logo_2.file.url }}" loading="lazy" alt="{{ image_hero_logo_2.title|default:'Logo Beispiel 2' }}" />
+                  {% else %}
+                    <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo Beispiel" class="brightness-0" />
+                  {% endif %}
                 </div>
               </div>
             </div>
             <div class="logo-orbit-item" style="--angle: 120deg;">
               <div class="logo-orbit-billboard" style="--angle: 120deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
-                  <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RS Autoglas Logo Beispiel" />
+                  {% if image_hero_logo_3 %}
+                    <img src="{{ image_hero_logo_3.file.url }}" loading="lazy" alt="{{ image_hero_logo_3.title|default:'Logo Beispiel 3' }}" />
+                  {% else %}
+                    <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RS Autoglas Logo Beispiel" />
+                  {% endif %}
                 </div>
               </div>
             </div>
             <div class="logo-orbit-item" style="--angle: 180deg;">
               <div class="logo-orbit-billboard" style="--angle: 180deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
-                  <img src="{% static 'images/references/HolzHirsch.svg' %}" loading="lazy" alt="HolzHirsch Logo Beispiel" />
+                  {% if image_hero_logo_4 %}
+                    <img src="{{ image_hero_logo_4.file.url }}" loading="lazy" alt="{{ image_hero_logo_4.title|default:'Logo Beispiel 4' }}" />
+                  {% else %}
+                    <img src="{% static 'images/references/HolzHirsch.svg' %}" loading="lazy" alt="HolzHirsch Logo Beispiel" />
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -313,7 +329,11 @@
             <div class="logo-orbit-item" style="--angle: 300deg;">
               <div class="logo-orbit-billboard" style="--angle: 300deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
-                  <img src="{% static 'images/references/HDGlas-Logo.png' %}" loading="lazy" alt="HDGlas Logo Beispiel" />
+                  {% if image_hero_logo_5 %}
+                    <img src="{{ image_hero_logo_5.file.url }}" loading="lazy" alt="{{ image_hero_logo_5.title|default:'Logo Beispiel 5' }}" />
+                  {% else %}
+                    <img src="{% static 'images/references/HDGlas-Logo.png' %}" loading="lazy" alt="HDGlas Logo Beispiel" />
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -348,10 +368,10 @@
   <div class="mx-auto max-w-6xl px-4">
     <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
       <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Warum ein professionelles Logo so wichtig ist
+        {{ textContent_warum.title|default:"Warum ein professionelles Logo so wichtig ist" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Dein Logo ist der erste Beruehrungspunkt zwischen deinem Unternehmen und deinen Kunden. Es entscheidet in Sekunden darueber, ob deine Marke als professionell, vertrauenswuerdig und relevant wahrgenommen wird. Ein durchdachtes Firmenlogo Design ist die Grundlage fuer jede erfolgreiche Markenidentitaet.
+        {{ textContent_warum.description|default:"Dein Logo ist der erste Berührungspunkt zwischen deinem Unternehmen und deinen Kunden. Es entscheidet in Sekunden darüber, ob deine Marke als professionell, vertrauenswürdig und relevant wahrgenommen wird. Ein durchdachtes Firmenlogo Design ist die Grundlage für jede erfolgreiche Markenidentität." }}
       </p>
     </div>
 
@@ -360,27 +380,27 @@
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-bullseye text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Markenaufbau</h3>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">{{ textContent_warum_card1.title|default:"Markenaufbau" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Ein gutes Logo bildet das visuelle Fundament deiner Marke und vereint Werte, Persoenlichkeit und Positionierung in einem einzigen Symbol.
+          {{ textContent_warum_card1.description|default:"Ein gutes Logo bildet das visuelle Fundament deiner Marke und vereint Werte, Persönlichkeit und Positionierung in einem einzigen Symbol." }}
         </p>
       </div>
       <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-eye text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Wiedererkennung</h3>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">{{ textContent_warum_card2.title|default:"Wiedererkennung" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Ein einzigartiges Logo Design hebt dich vom Wettbewerb ab und bleibt im Gedaechtnis - ueber alle Kanaele, Formate und Beruehrungspunkte hinweg.
+          {{ textContent_warum_card2.description|default:"Ein einzigartiges Logo Design hebt dich vom Wettbewerb ab und bleibt im Gedächtnis - über alle Kanäle, Formate und Berührungspunkte hinweg." }}
         </p>
       </div>
       <div class="rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-shield-check text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-xl font-bold text-gray-900">Vertrauen</h3>
+        <h3 class="mb-3 text-xl font-bold text-gray-900">{{ textContent_warum_card3.title|default:"Vertrauen" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Hochwertiges Design signalisiert Professionalitaet. Wer in ein gutes Logo investiert, vermittelt Sorgfalt - und damit Vertrauen.
+          {{ textContent_warum_card3.description|default:"Hochwertiges Design signalisiert Professionalität. Wer in ein gutes Logo investiert, vermittelt Sorgfalt - und damit Vertrauen." }}
         </p>
       </div>
     </div>
@@ -392,10 +412,10 @@
   <div class="mx-auto max-w-6xl px-4">
     <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
       <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Unsere Leistungen rund um Logo Design
+        {{ textContent_leistungen.title|default:"Unsere Leistungen rund um Logo Design" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Ob du dein erstes Firmenlogo erstellen lassen moechtest, ein bestehendes Logo modernisieren willst oder eine vollstaendige Markenidentitaet brauchst - wir bieten dir das passende Leistungspaket.
+        {{ textContent_leistungen.description|default:"Ob du dein erstes Firmenlogo erstellen lassen möchtest, ein bestehendes Logo modernisieren willst oder eine vollständige Markenidentität brauchst - wir bieten dir das passende Leistungspaket." }}
       </p>
     </div>
 
@@ -404,14 +424,14 @@
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-vector-pen text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-2xl font-bold text-gray-900">Logo nach Kundenwunsch</h3>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">{{ textContent_leistungen_card1.title|default:"Logo nach Kundenwunsch" }}</h3>
         <p class="mb-4 text-base leading-7 text-gray-600">
-          Du hast bereits eine klare Vorstellung? Wir setzen deine Idee in ein sauberes, professionelles Logo um - schnell, unkompliziert und zu einem fairen Preis.
+          {{ textContent_leistungen_card1.description|default:"Du hast bereits eine klare Vorstellung? Wir setzen deine Idee in ein sauberes, professionelles Logo um - schnell, unkompliziert und zu einem fairen Preis." }}
         </p>
         <ul class="list-inside list-disc text-base text-gray-500">
-          <li>Konkrete Vorgaben werden praezise umgesetzt</li>
-          <li>Sauberes, vektorbasiertes Endergebnis</li>
-          <li>Mehrere Korrekturschleifen inklusive</li>
+          <li>{{ textContent_leistungen_card1_bullet1.title|default:"Konkrete Vorgaben werden präzise umgesetzt" }}</li>
+          <li>{{ textContent_leistungen_card1_bullet2.title|default:"Sauberes, vektorbasiertes Endergebnis" }}</li>
+          <li>{{ textContent_leistungen_card1_bullet3.title|default:"Mehrere Korrekturschleifen inklusive" }}</li>
         </ul>
       </article>
 
@@ -419,14 +439,14 @@
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-arrow-repeat text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-2xl font-bold text-gray-900">Logo Redesign</h3>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">{{ textContent_leistungen_card2.title|default:"Logo Redesign" }}</h3>
         <p class="mb-4 text-base leading-7 text-gray-600">
-          Dein bestehendes Logo wirkt veraltet, technisch unsauber oder passt nicht mehr zu deiner Marke? Wir ueberarbeiten dein Logo behutsam und holen das Beste aus deiner Markenhistorie heraus.
+          {{ textContent_leistungen_card2.description|default:"Dein bestehendes Logo wirkt veraltet, technisch unsauber oder passt nicht mehr zu deiner Marke? Wir überarbeiten dein Logo behutsam und holen das Beste aus deiner Markenhistorie heraus." }}
         </p>
         <ul class="list-inside list-disc text-base text-gray-500">
-          <li>Modernisierung ohne Verlust der Wiedererkennung</li>
-          <li>Technische Bereinigung und Vektorisierung</li>
-          <li>Optimiert fuer digitale und gedruckte Medien</li>
+          <li>{{ textContent_leistungen_card2_bullet1.title|default:"Modernisierung ohne Verlust der Wiedererkennung" }}</li>
+          <li>{{ textContent_leistungen_card2_bullet2.title|default:"Technische Bereinigung und Vektorisierung" }}</li>
+          <li>{{ textContent_leistungen_card2_bullet3.title|default:"Optimiert für digitale und gedruckte Medien" }}</li>
         </ul>
       </article>
 
@@ -434,14 +454,14 @@
         <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
           <i class="bi bi-diagram-3 text-2xl"></i>
         </div>
-        <h3 class="mb-3 text-2xl font-bold text-gray-900">Strategisches Logo Design</h3>
+        <h3 class="mb-3 text-2xl font-bold text-gray-900">{{ textContent_leistungen_card3.title|default:"Strategisches Logo Design" }}</h3>
         <p class="mb-4 text-base leading-7 text-gray-600">
-          Wir entwickeln dein Firmenlogo Design auf Basis fundierter Zielgruppen- und Markenanalysen. So entsteht ein Logo, das nicht nur gut aussieht, sondern messbar funktioniert.
+          {{ textContent_leistungen_card3.description|default:"Wir entwickeln dein Firmenlogo Design auf Basis fundierter Zielgruppen- und Markenanalysen. So entsteht ein Logo, das nicht nur gut aussieht, sondern messbar funktioniert." }}
         </p>
         <ul class="list-inside list-disc text-base text-gray-500">
-          <li>Wettbewerbs- und Marktanalyse</li>
-          <li>Zielgruppen- und Markenpositionierung</li>
-          <li>Designentscheidungen mit klarer Begruendung</li>
+          <li>{{ textContent_leistungen_card3_bullet1.title|default:"Wettbewerbs- und Marktanalyse" }}</li>
+          <li>{{ textContent_leistungen_card3_bullet2.title|default:"Zielgruppen- und Markenpositionierung" }}</li>
+          <li>{{ textContent_leistungen_card3_bullet3.title|default:"Designentscheidungen mit klarer Begründung" }}</li>
         </ul>
       </article>
 
@@ -454,17 +474,17 @@
         <div class="relative">
           <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-blue-100 ring-1 ring-white/20">
             <i class="bi bi-stars"></i>
-            Premium
+            {{ textContent_leistungen_premium.header|default:"Premium" }}
           </span>
-          <h3 class="mb-3 text-2xl font-bold">Logo Design auf Basis von Goldenem Schnitt &amp; Geometrie</h3>
+          <h3 class="mb-3 text-2xl font-bold">{{ textContent_leistungen_premium.title|default:"Logo Design auf Basis von Goldenem Schnitt & Geometrie" }}</h3>
           <p class="mb-4 text-base leading-7 text-blue-50">
-            Im Premium-Bereich entwickeln wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, geometrische Konstruktionen, Farbpsychologie und gezielte Typografie sorgen fuer Logos, die mathematisch ausbalanciert und visuell ueberzeugend sind.
+            {{ textContent_leistungen_premium.description|default:"Im Premium-Bereich entwickeln wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, geometrische Konstruktionen, Farbpsychologie und gezielte Typografie sorgen für Logos, die mathematisch ausbalanciert und visuell überzeugend sind." }}
           </p>
           <ul class="space-y-2 text-base text-blue-50">
-            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Konstruktion nach Goldenem Schnitt und Fibonacci</span></li>
-            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Geometrische Reinheit und harmonische Proportionen</span></li>
-            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Farbpsychologie passend zur Markenwirkung</span></li>
-            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>Individuell abgestimmte Typografie</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>{{ textContent_leistungen_premium_bullet1.title|default:"Konstruktion nach Goldenem Schnitt und Fibonacci" }}</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>{{ textContent_leistungen_premium_bullet2.title|default:"Geometrische Reinheit und harmonische Proportionen" }}</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>{{ textContent_leistungen_premium_bullet3.title|default:"Farbpsychologie passend zur Markenwirkung" }}</span></li>
+            <li class="flex items-start gap-2"><i class="bi bi-check-circle-fill mt-1 text-blue-300"></i><span>{{ textContent_leistungen_premium_bullet4.title|default:"Individuell abgestimmte Typografie" }}</span></li>
           </ul>
         </div>
       </article>
@@ -473,34 +493,34 @@
 </section>
 
 <!-- PREMIUM SHOWCASE: GOLDENER SCHNITT -->
-<section class="bg-white px-4 py-20">
+<section class="bg-blue-50 px-4 py-20">
   <div class="mx-auto max-w-6xl px-4">
     <div class="grid items-center gap-12 md:grid-cols-2">
       <div data-aos="fade-right">
-        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Premium &middot; Goldener Schnitt</p>
+        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_premium.header|default:"Premium · Goldener Schnitt" }}</p>
         <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-          Wenn Mathematik auf Markendesign trifft
+          {{ textContent_premium.title|default:"Wenn Mathematik auf Markendesign trifft" }}
         </h2>
         <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          Im Premium-Bereich konstruieren wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, Fibonacci-Spirale und geometrische Reinheit sorgen fuer Proportionen, die das menschliche Auge intuitiv als harmonisch wahrnimmt - und Logos, die sich nicht "designed", sondern "richtig" anfuehlen.
+          {{ textContent_premium.description|default:"Im Premium-Bereich konstruieren wir Logos auf Basis fortgeschrittener Designprinzipien. Goldener Schnitt, Fibonacci-Spirale und geometrische Reinheit sorgen für Proportionen, die das menschliche Auge intuitiv als harmonisch wahrnimmt - und Logos, die sich nicht 'designed', sondern 'richtig' anfühlen." }}
         </p>
         <ul class="mb-8 space-y-3 text-base text-gray-700">
           <li class="flex items-start gap-3">
             <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
-            <span>Konstruktion nach Goldenem Schnitt (&phi; = 1 : 1.618)</span>
+            <span>{{ textContent_premium_bullet1.title|default:"Konstruktion nach Goldenem Schnitt (φ = 1 : 1.618)" }}</span>
           </li>
           <li class="flex items-start gap-3">
             <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
-            <span>Fibonacci-Spirale als visuelles Ordnungsprinzip</span>
+            <span>{{ textContent_premium_bullet2.title|default:"Fibonacci-Spirale als visuelles Ordnungsprinzip" }}</span>
           </li>
           <li class="flex items-start gap-3">
             <i class="bi bi-check-circle-fill mt-1 text-blue-900"></i>
-            <span>Harmonische Proportionen, die Vertrauen erzeugen</span>
+            <span>{{ textContent_premium_bullet3.title|default:"Harmonische Proportionen, die Vertrauen erzeugen" }}</span>
           </li>
         </ul>
         <a href="{% url 'kontakt' %}"
           class="inline-block rounded-md bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
-          Premium-Logo anfragen
+          {{ textContent_premium.buttonText|default:"Premium-Logo anfragen" }}
         </a>
       </div>
       <div data-aos="fade-up" class="flex justify-center">
@@ -523,63 +543,63 @@
 </section>
 
 <!-- DESIGNPROZESS -->
-<section id="prozess" class="bg-white px-4 py-20">
+<section id="prozess" class="bg-blue-50 px-4 py-20">
   <div class="mx-auto max-w-6xl px-4">
     <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
-      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">In 5 Schritten zum Logo</p>
+      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_prozess.header|default:"In 5 Schritten zum Logo" }}</p>
       <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Unser Designprozess
+        {{ textContent_prozess.title|default:"Unser Designprozess" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Ein gutes Logo entsteht nicht zufaellig. Wir arbeiten nach einem klar strukturierten Prozess, der Strategie, Kreativitaet und Handwerk verbindet.
+        {{ textContent_prozess.description|default:"Ein gutes Logo entsteht nicht zufällig. Wir arbeiten nach einem klar strukturierten Prozess, der Strategie, Kreativität und Handwerk verbindet." }}
       </p>
     </div>
 
     <div class="relative">
       <div class="absolute hidden lg:block top-8 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-blue-200 via-blue-500 to-blue-200" aria-hidden="true"></div>
       <ol class="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5 lg:gap-4">
-        <li class="relative" data-aos="fade-up" data-aos-delay="0">
+        <li class="relative flex flex-col" data-aos="fade-up" data-aos-delay="0">
           <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">1</div>
-          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
-            <h3 class="mb-2 text-lg font-bold text-gray-900">Briefing &amp; Zieldefinition</h3>
+          <div class="flex-1 rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">{{ textContent_prozess_step1.title|default:"Briefing & Zieldefinition" }}</h3>
             <p class="text-sm leading-6 text-gray-600">
-              Wir lernen dein Unternehmen, deine Werte und deine Ziele kennen und definieren gemeinsam den Rahmen fuer dein Logo.
+              {{ textContent_prozess_step1.description|default:"Wir lernen dein Unternehmen, deine Werte und deine Ziele kennen und definieren gemeinsam den Rahmen für dein Logo." }}
             </p>
           </div>
         </li>
-        <li class="relative" data-aos="fade-up" data-aos-delay="100">
+        <li class="relative flex flex-col" data-aos="fade-up" data-aos-delay="100">
           <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">2</div>
-          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
-            <h3 class="mb-2 text-lg font-bold text-gray-900">Recherche &amp; Analyse</h3>
+          <div class="flex-1 rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">{{ textContent_prozess_step2.title|default:"Recherche & Analyse" }}</h3>
             <p class="text-sm leading-6 text-gray-600">
-              Wir analysieren Markt, Wettbewerb und Zielgruppe, um eine fundierte Designgrundlage zu schaffen.
+              {{ textContent_prozess_step2.description|default:"Wir analysieren Markt, Wettbewerb und Zielgruppe, um eine fundierte Designgrundlage zu schaffen." }}
             </p>
           </div>
         </li>
-        <li class="relative" data-aos="fade-up" data-aos-delay="200">
+        <li class="relative flex flex-col" data-aos="fade-up" data-aos-delay="200">
           <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">3</div>
-          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
-            <h3 class="mb-2 text-lg font-bold text-gray-900">Erste Entwuerfe</h3>
+          <div class="flex-1 rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">{{ textContent_prozess_step3.title|default:"Erste Entwürfe" }}</h3>
             <p class="text-sm leading-6 text-gray-600">
-              Auf Basis der Analyse entwickeln wir mehrere Logo-Entwuerfe mit unterschiedlichen Stilrichtungen.
+              {{ textContent_prozess_step3.description|default:"Auf Basis der Analyse entwickeln wir mehrere Logo-Entwürfe mit unterschiedlichen Stilrichtungen." }}
             </p>
           </div>
         </li>
-        <li class="relative" data-aos="fade-up" data-aos-delay="300">
+        <li class="relative flex flex-col" data-aos="fade-up" data-aos-delay="300">
           <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">4</div>
-          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
-            <h3 class="mb-2 text-lg font-bold text-gray-900">Feedback &amp; Iteration</h3>
+          <div class="flex-1 rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">{{ textContent_prozess_step4.title|default:"Feedback & Iteration" }}</h3>
             <p class="text-sm leading-6 text-gray-600">
-              In strukturierten Feedbackschleifen verfeinern wir den gewaehlten Entwurf bis ins Detail.
+              {{ textContent_prozess_step4.description|default:"In strukturierten Feedbackschleifen verfeinern wir den gewählten Entwurf bis ins Detail." }}
             </p>
           </div>
         </li>
-        <li class="relative" data-aos="fade-up" data-aos-delay="400">
+        <li class="relative flex flex-col" data-aos="fade-up" data-aos-delay="400">
           <div class="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-900 text-xl font-bold text-white shadow-lg ring-4 ring-white">5</div>
-          <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-md">
-            <h3 class="mb-2 text-lg font-bold text-gray-900">Finale Ausarbeitung</h3>
+          <div class="flex-1 rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+            <h3 class="mb-2 text-lg font-bold text-gray-900">{{ textContent_prozess_step5.title|default:"Finale Ausarbeitung" }}</h3>
             <p class="text-sm leading-6 text-gray-600">
-              Wir optimieren technisch, erstellen alle Varianten und liefern dir das fertige Logo-Paket aus.
+              {{ textContent_prozess_step5.description|default:"Wir optimieren technisch, erstellen alle Varianten und liefern dir das fertige Logo-Paket aus." }}
             </p>
           </div>
         </li>
@@ -591,35 +611,35 @@
 <!-- LIEFERUMFANG -->
 <section class="bg-blue-50 px-4 py-20">
   <div class="mx-auto max-w-6xl px-4">
-    <div class="grid items-start gap-10 md:grid-cols-2">
+    <div class="grid items-center gap-10 md:grid-cols-2">
       <div data-aos="fade-right">
-        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Lieferumfang</p>
+        <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_lieferumfang.header|default:"Lieferumfang" }}</p>
         <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-          Alle Formate, alle Varianten - bereit fuer jeden Einsatz
+          {{ textContent_lieferumfang.title|default:"Alle Formate, alle Varianten - bereit fuer jeden Einsatz" }}
         </h2>
         <p class="mb-6 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          Damit dein Logo ueberall funktioniert, liefern wir es in allen relevanten Datei-Formaten und in mehreren Varianten - optimiert fuer Web, Social Media und Print.
+          {{ textContent_lieferumfang.description|default:"Damit dein Logo ueberall funktioniert, liefern wir es in allen relevanten Datei-Formaten und in mehreren Varianten - optimiert fuer Web, Social Media und Print." }}
         </p>
         <ul role="list" class="space-y-4 border-t border-gray-200 pt-6">
           <li class="flex space-x-3">
             <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            <span class="text-base font-medium leading-tight text-gray-900">Vektordateien fuer unbegrenzte Skalierbarkeit (SVG, AI, EPS auf Wunsch)</span>
+            <span class="text-base font-medium leading-tight text-gray-900">{{ textContent_lieferumfang_bullet1.title|default:"Vektordateien fuer unbegrenzte Skalierbarkeit (SVG, AI, EPS auf Wunsch)" }}</span>
           </li>
           <li class="flex space-x-3">
             <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            <span class="text-base font-medium leading-tight text-gray-900">Pixelbasierte Formate fuer Web und Social Media (PNG, JPG)</span>
+            <span class="text-base font-medium leading-tight text-gray-900">{{ textContent_lieferumfang_bullet2.title|default:"Pixelbasierte Formate fuer Web und Social Media (PNG, JPG)" }}</span>
           </li>
           <li class="flex space-x-3">
             <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            <span class="text-base font-medium leading-tight text-gray-900">Druckfertige Dateien fuer Printprodukte (PDF, EPS)</span>
+            <span class="text-base font-medium leading-tight text-gray-900">{{ textContent_lieferumfang_bullet3.title|default:"Druckfertige Dateien fuer Printprodukte (PDF, EPS)" }}</span>
           </li>
           <li class="flex space-x-3">
             <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            <span class="text-base font-medium leading-tight text-gray-900">Farbversion, Schwarz-Weiss-Version sowie Varianten fuer helle und dunkle Hintergruende</span>
+            <span class="text-base font-medium leading-tight text-gray-900">{{ textContent_lieferumfang_bullet4.title|default:"Farbversion, Schwarz-Weiss-Version sowie Varianten fuer helle und dunkle Hintergruende" }}</span>
           </li>
           <li class="flex space-x-3">
             <svg class="h-5 w-5 flex-shrink-0 text-blue-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            <span class="text-base font-medium leading-tight text-gray-900">Optimierte Versionen fuer Websites, Social Media und Druck</span>
+            <span class="text-base font-medium leading-tight text-gray-900">{{ textContent_lieferumfang_bullet5.title|default:"Optimierte Versionen fuer Websites, Social Media und Druck" }}</span>
           </li>
         </ul>
       </div>
@@ -651,47 +671,23 @@
         </div>
       </div>
     </div>
-
-    <div class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
-      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="0">
-        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-globe text-xl"></i>
-        </div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Websites</h3>
-        <p class="text-base leading-7 text-gray-600">Schlanke, performante Dateigroessen fuer schnelle Ladezeiten und gestochen scharfe Darstellung auf jedem Bildschirm.</p>
-      </div>
-      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="100">
-        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-instagram text-xl"></i>
-        </div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Social Media</h3>
-        <p class="text-base leading-7 text-gray-600">Quadratische, runde und horizontale Varianten fuer Profilbilder, Header und Postings auf allen Plattformen.</p>
-      </div>
-      <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200" data-aos="fade-up" data-aos-delay="200">
-        <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-          <i class="bi bi-printer text-xl"></i>
-        </div>
-        <h3 class="mb-2 text-lg font-bold text-gray-900">Optimiert fuer Print</h3>
-        <p class="text-base leading-7 text-gray-600">CMYK-Versionen und vektorbasierte Druckdaten fuer Visitenkarten, Flyer, Schilder und Werbemittel jeder Groesse.</p>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- USP / WAS UNS UNTERSCHEIDET -->
-<section class="bg-white px-4 py-20">
+<section class="bg-blue-50 px-4 py-20">
   <div class="mx-auto max-w-6xl px-4">
     <div class="grid items-center gap-10 md:grid-cols-2">
       <div data-aos="fade-right">
         <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-          Was uns als Logo Design Agentur unterscheidet
+          {{ textContent_usp.title|default:"Was uns als Logo Design Agentur unterscheidet" }}
         </h2>
         <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          Wir verstehen Logo Design nicht als rein visuelle Aufgabe, sondern als strategische Markenarbeit. Jedes Logo, das unser Studio verlaesst, ist individuell, durchdacht und auf Wirkung optimiert.
+          {{ textContent_usp.description|default:"Wir verstehen Logo Design nicht als rein visuelle Aufgabe, sondern als strategische Markenarbeit. Jedes Logo, das unser Studio verlaesst, ist individuell, durchdacht und auf Wirkung optimiert." }}
         </p>
         <a href="{% url 'kontakt' %}"
           class="inline-block rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
-          Unverbindlich anfragen
+          {{ textContent_usp.buttonText|default:"Unverbindlich anfragen" }}
         </a>
       </div>
       <div class="relative" data-aos="fade-left">
@@ -701,27 +697,27 @@
             <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
               <i class="bi bi-fingerprint text-lg"></i>
             </div>
-            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
-              <h3 class="mb-1 text-lg font-bold text-gray-900">Individuelles Design ohne Templates</h3>
-              <p class="text-base leading-7 text-gray-600">Jedes Logo entsteht handwerklich neu - keine vorgefertigten Vorlagen, keine generischen Symbole.</p>
+            <div class="rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">{{ textContent_usp_card1.title|default:"Individuelles Design ohne Templates" }}</h3>
+              <p class="text-base leading-7 text-gray-600">{{ textContent_usp_card1.description|default:"Jedes Logo entsteht handwerklich neu - keine vorgefertigten Vorlagen, keine generischen Symbole." }}</p>
             </div>
           </div>
           <div class="relative pl-16">
             <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
               <i class="bi bi-compass text-lg"></i>
             </div>
-            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
-              <h3 class="mb-1 text-lg font-bold text-gray-900">Strategischer Ansatz statt reiner Optik</h3>
-              <p class="text-base leading-7 text-gray-600">Wir entwickeln Logos auf Basis klarer Marken-, Markt- und Zielgruppenanalysen.</p>
+            <div class="rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">{{ textContent_usp_card2.title|default:"Strategischer Ansatz statt reiner Optik" }}</h3>
+              <p class="text-base leading-7 text-gray-600">{{ textContent_usp_card2.description|default:"Wir entwickeln Logos auf Basis klarer Marken-, Markt- und Zielgruppenanalysen." }}</p>
             </div>
           </div>
           <div class="relative pl-16">
             <div class="absolute left-0 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow ring-4 ring-white">
               <i class="bi bi-arrows-fullscreen text-lg"></i>
             </div>
-            <div class="rounded-xl bg-blue-50 p-6 ring-1 ring-blue-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
-              <h3 class="mb-1 text-lg font-bold text-gray-900">Langlebig, skalierbar und wirkungsvoll</h3>
-              <p class="text-base leading-7 text-gray-600">Unsere Logos funktionieren ueber Jahre, in jeder Groesse und auf jedem Medium.</p>
+            <div class="rounded-xl bg-white p-6 ring-1 ring-gray-200 transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+              <h3 class="mb-1 text-lg font-bold text-gray-900">{{ textContent_usp_card3.title|default:"Langlebig, skalierbar und wirkungsvoll" }}</h3>
+              <p class="text-base leading-7 text-gray-600">{{ textContent_usp_card3.description|default:"Unsere Logos funktionieren ueber Jahre, in jeder Groesse und auf jedem Medium." }}</p>
             </div>
           </div>
         </div>
@@ -730,73 +726,22 @@
   </div>
 </section>
 
-<!-- BEISPIELHAFTE SZENARIEN -->
-<section class="bg-blue-50 px-4 py-20">
-  <div class="mx-auto max-w-6xl px-4">
-    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
-      <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Fuer wen wir Logo Design entwickeln
-      </h2>
-      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Egal ob frisch gegruendet, etabliert oder als persoenliche Marke - wir entwickeln Logos, die zu deiner Situation passen.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="0">
-        <i class="bi bi-rocket-takeoff pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
-        <div class="relative">
-          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-            <i class="bi bi-rocket-takeoff text-2xl"></i>
-          </div>
-          <h3 class="mb-3 text-xl font-bold text-gray-900">Startups</h3>
-          <p class="text-base leading-7 text-gray-600">
-            Du startest gerade durch und brauchst ein erstes, professionelles Firmenlogo? Wir entwickeln eine starke visuelle Basis, mit der du sofort am Markt sichtbar wirst.
-          </p>
-        </div>
-      </div>
-      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="100">
-        <i class="bi bi-arrow-clockwise pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
-        <div class="relative">
-          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-            <i class="bi bi-arrow-clockwise text-2xl"></i>
-          </div>
-          <h3 class="mb-3 text-xl font-bold text-gray-900">Rebranding</h3>
-          <p class="text-base leading-7 text-gray-600">
-            Dein Unternehmen entwickelt sich weiter und das alte Logo passt nicht mehr? Wir begleiten dich durch den Rebranding-Prozess - mit Respekt vor deiner Marken-DNA.
-          </p>
-        </div>
-      </div>
-      <div class="group relative overflow-hidden rounded-xl bg-white p-8 shadow-md ring-1 ring-gray-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-aos="fade-up" data-aos-delay="200">
-        <i class="bi bi-person-badge pointer-events-none absolute -right-6 -bottom-6 select-none text-[9rem] leading-none text-blue-100 transition duration-300 group-hover:text-blue-200" aria-hidden="true"></i>
-        <div class="relative">
-          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-900">
-            <i class="bi bi-person-badge text-2xl"></i>
-          </div>
-          <h3 class="mb-3 text-xl font-bold text-gray-900">Personal Brands</h3>
-          <p class="text-base leading-7 text-gray-600">
-            Du baust eine persoenliche Marke auf? Wir entwickeln ein Logo, das dich als Person, deine Werte und deine Positionierung praezise widerspiegelt.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- SECTION DIVIDER: white -> gray-700 -->
+<div class="h-20 bg-gradient-to-b from-blue-50 to-gray-700" aria-hidden="true"></div>
 
 <!-- BOTTOM CTA -->
-<div class="h-6 bg-[#6b7280]"></div>
 <section class="bg-gray-700">
   <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
     <div class="mx-auto max-w-screen-sm text-center">
       <h2 class="mb-4 text-3xl font-bold tracking-tight text-white">
-        Bereit, dein Logo erstellen zu lassen?
+        {{ textContent_bottomcta.title|default:"Bereit, dein Logo erstellen zu lassen?" }}
       </h2>
       <p class="mb-6 text-white md:text-lg">
-        Erzaehl uns von deinem Projekt - wir melden uns zeitnah mit einer ehrlichen Einschaetzung und einem unverbindlichen Angebot.
+        {{ textContent_bottomcta.description|default:"Erzaehl uns von deinem Projekt - wir melden uns zeitnah mit einer ehrlichen Einschaetzung und einem unverbindlichen Angebot." }}
       </p>
       <a href="{% url 'kontakt' %}"
         class="mt-0 inline-block rounded-md bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 sm:mt-1">
-        Jetzt Logo anfragen
+        {{ textContent_bottomcta.buttonText|default:"Jetzt Logo anfragen" }}
       </a>
     </div>
   </div>

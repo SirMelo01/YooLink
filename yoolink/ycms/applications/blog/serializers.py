@@ -3,8 +3,9 @@ from html import escape
 
 from django.utils.text import slugify
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 
-from yoolink.ycms.models import Blog, fileentry
+from yoolink.ycms.models import Blog, DeveloperApiKey, fileentry
 
 from .services import (
     blog_code_to_markdown,
@@ -18,6 +19,29 @@ from .services import (
 
 
 ALLOWED_BLOG_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+
+
+class ExternalBlogTranslationSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    title = serializers.CharField(read_only=True)
+    language = serializers.CharField(read_only=True)
+    active = serializers.BooleanField(read_only=True)
+    is_current = serializers.BooleanField(read_only=True)
+    is_original = serializers.BooleanField(read_only=True)
+    api_url = serializers.URLField(read_only=True)
+    absolute_url = serializers.URLField(read_only=True)
+
+
+class ExternalApiPingSerializer(serializers.Serializer):
+    ok = serializers.BooleanField(read_only=True)
+    message = serializers.CharField(read_only=True)
+    authenticated = serializers.BooleanField(read_only=True)
+    user = serializers.CharField(read_only=True)
+    access_level = serializers.ChoiceField(
+        choices=DeveloperApiKey.ACCESS_LEVEL_CHOICES,
+        read_only=True,
+    )
+    allowed_apps = serializers.ListField(child=serializers.CharField(), read_only=True)
 
 
 class ExternalBlogListSerializer(serializers.ModelSerializer):
@@ -43,20 +67,20 @@ class ExternalBlogListSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_absolute_url(self, obj):
+    def get_absolute_url(self, obj) -> str:
         request = self.context.get("request")
         if not request:
             return obj.get_absolute_url()
         return request.build_absolute_uri(obj.get_absolute_url())
 
-    def get_api_url(self, obj):
+    def get_api_url(self, obj) -> str:
         request = self.context.get("request")
         path = f"/api/cms/blog/{obj.pk}/"
         if not request:
             return path
         return request.build_absolute_uri(path)
 
-    def get_title_image_url(self, obj):
+    def get_title_image_url(self, obj) -> str:
         if not obj.title_image:
             return ""
 
@@ -110,13 +134,13 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "slug", "author", "absolute_url", "title_image_url", "translations", "date", "last_updated"]
 
-    def get_absolute_url(self, obj):
+    def get_absolute_url(self, obj) -> str:
         request = self.context.get("request")
         if not request:
             return obj.get_absolute_url()
         return request.build_absolute_uri(obj.get_absolute_url())
 
-    def get_title_image_url(self, obj):
+    def get_title_image_url(self, obj) -> str:
         if not obj.title_image:
             return ""
 
@@ -126,7 +150,8 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
 
         return obj.title_image.url
 
-    def get_translations(self, obj):
+    @extend_schema_field(ExternalBlogTranslationSerializer(many=True))
+    def get_translations(self, obj) -> list[dict]:
         root = obj.original if obj.original_id else obj
         variants = [root, *list(root.translations.all())]
 
@@ -144,7 +169,7 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             for variant in variants
         ]
 
-    def _absolute_api_url(self, obj):
+    def _absolute_api_url(self, obj) -> str:
         request = self.context.get("request")
         path = f"/api/cms/blog/{obj.pk}/"
         if not request:

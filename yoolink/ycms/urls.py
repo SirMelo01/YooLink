@@ -69,6 +69,7 @@ urlpatterns = [
     path("seiten/Kunden/", views.site_view_kunden, name="site_kunden"),
     path("seiten/leistungen/", views.site_view_leistungen, name="site_leistungen"),
     path("seiten/leistungen/cms/", views.site_view_cmsinfo, name="site_leistungen_cms"),
+    path("seiten/leistungen/logos/", views.site_view_logos, name="site_leistungen_logos"),
     path("seiten/datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),
     path("seiten/datenschutz/save/", views.save_privacy_policy, name="save_privacy_policy"),
 

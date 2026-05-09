@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, datenschutz_view, leistungen_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, load_logos, datenschutz_view, leistungen_view
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
@@ -49,7 +49,7 @@ urlpatterns += i18n_patterns(
     path("datenschutz/", view=datenschutz_view, name="datenschutz"),
     path("cookies/", TemplateView.as_view(template_name="pages/cookies.html"), name="cookies"),
     path("leistungen/cms/", view=load_cmsinfo, name="leistungen_cms"),
-    path("leistungen/logos/", TemplateView.as_view(template_name="pages/leistungen_logos.html"), name="leistungen_logos"),
+    path("leistungen/logos/", view=load_logos, name="leistungen_logos"),
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
     path("users/", include("yoolink.users.urls", namespace="users")),
     path("kunden/", view=load_kunden, name="kunden"),

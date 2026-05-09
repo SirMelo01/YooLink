@@ -69,6 +69,9 @@ def test_developer_settings_creates_one_time_api_key(client, cms_user):
     assert DeveloperApiKey.objects.filter(created_by=cms_user).count() == 1
     assert b"yl_live_" in response.content
     assert reverse("ycms:developer-api-docs").encode() in response.content
+    assert b"http://testserver/api/cms/blog/" in response.content
+    assert b"http://testserver/api/ping/" in response.content
+    assert b"http://testserver/api/schema/" in response.content
 
 
 def test_developer_api_docs_requires_login_and_documents_blog_api(client, cms_user):
@@ -80,8 +83,29 @@ def test_developer_api_docs_requires_login_and_documents_blog_api(client, cms_us
 
     assert response.status_code == 200
     assert b"/api/cms/blog/" in response.content
+    assert b"http://testserver/api/cms/" in response.content
+    assert b"http://testserver/api/ping/" in response.content
+    assert b"http://testserver/api/schema/" in response.content
     assert b"Authorization: Bearer" in response.content
     assert b"POST" in response.content
+
+
+def test_developer_api_ping_requires_and_confirms_auth(cms_user):
+    unauthenticated_client = APIClient()
+    unauthenticated_response = unauthenticated_client.get("/api/ping/")
+
+    _, raw_key = issue_key(cms_user, access_level=DeveloperApiKey.READ)
+    authenticated_client = api_client_for(raw_key)
+    authenticated_response = authenticated_client.get("/api/ping/")
+
+    assert unauthenticated_response.status_code == 401
+    assert authenticated_response.status_code == 200
+    assert authenticated_response.data["ok"] is True
+    assert authenticated_response.data["authenticated"] is True
+    assert authenticated_response.data["user"] == cms_user.username
+    assert "api_key" not in authenticated_response.data
+    assert authenticated_response.data["access_level"] == DeveloperApiKey.READ
+    assert authenticated_response.data["allowed_apps"] == [DeveloperApiKey.APP_BLOG]
 
 
 def test_read_only_key_can_read_blogs_but_cannot_create(cms_user):
@@ -173,8 +197,43 @@ def test_write_key_can_create_blog_from_markdown(cms_user):
     assert blog.markdown.startswith("## Einleitung")
     assert "<h2" in blog.body
     assert "<strong>fett</strong>" in blog.body
-    assert blog.code[0]["name"] == "textArea"
+    assert [block["name"] for block in blog.code] == ["title-1", "textArea"]
+    assert blog.code[0]["type"] == "h2"
+    assert blog.code[0]["value"] == "Einleitung"
     assert response.data["markdown"] == blog.markdown
+
+
+def test_markdown_is_split_into_builder_blocks(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/",
+        {
+            "title": "Strukturierter Markdown Blog",
+            "description": "Markdown mit mehreren Builder Elementen.",
+            "markdown": (
+                "## Abschnitt\n\n"
+                "Ein kurzer Absatz mit **Fettschrift**.\n\n"
+                "![Buehne](https://example.com/event.png)\n\n"
+                "### Details\n\n"
+                "- Punkt eins\n"
+                "- Punkt zwei\n\n"
+                "```python\nprint('hi')\n```"
+            ),
+            "active": True,
+            "language": "de",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="Strukturierter Markdown Blog")
+    assert [block["name"] for block in blog.code] == ["title-1", "textArea", "image", "title-2", "textArea", "code"]
+    assert blog.code[2]["attributes"]["src"] == "https://example.com/event.png"
+    assert blog.code[2]["attributes"]["alt"] == "Buehne"
+    assert blog.code[5]["attributes"]["class"].endswith("language-python")
+    assert "![Buehne](https://example.com/event.png)" in blog.markdown
 
 
 def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
@@ -214,6 +273,7 @@ def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
     assert blog.title_image
     assert create_response.data["title_image_url"].endswith(".png")
     assert upload_response.data["markdown"] in blog.markdown
+    assert [block["name"] for block in blog.code] == ["title-1", "image"]
     assert 'class="rounded-2xl my-4"' in blog.body
 
 
