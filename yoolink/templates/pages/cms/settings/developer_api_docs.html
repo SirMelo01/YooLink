@@ -119,6 +119,29 @@
                         </div>
                     </div>
                 </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-3">
+                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">YooLink Connect</p>
+                    <div class="mt-3 grid gap-3 md:grid-cols-2">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Authorize URL</p>
+                            <div class="mt-2 flex items-start justify-between gap-3">
+                                <p class="break-all font-mono text-sm text-slate-900">{{ api_connect_authorize_url }}</p>
+                                <button type="button" data-copy-value="{{ api_connect_authorize_url }}" class="copy-value-btn inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" title="Kopieren">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Token Exchange URL</p>
+                            <div class="mt-2 flex items-start justify-between gap-3">
+                                <p class="break-all font-mono text-sm text-slate-900">{{ api_connect_token_url }}</p>
+                                <button type="button" data-copy-value="{{ api_connect_token_url }}" class="copy-value-btn inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" title="Kopieren">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
@@ -160,6 +183,39 @@ Authorization: Bearer &lt;api-key&gt;</code></pre>
   "access_level": "read",
   "allowed_apps": ["blog"]
 }</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-200 px-6 py-5">
+                    <h2 class="text-xl font-semibold text-slate-900">YooLink Connect</h2>
+                    <p class="mt-1 text-sm text-slate-500">Browserbasierter Verbindungsflow fuer externe Plattformen. Der Nutzer loggt sich im jeweiligen YooLink CMS ein und die Plattform tauscht danach einen kurzlebigen Code gegen einen API-Key.</p>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    <div class="grid gap-4 px-6 py-5 lg:grid-cols-[160px,minmax(0,1fr)]">
+                        <div>
+                            <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">GET</span>
+                        </div>
+                        <div>
+                            <p class="break-all font-mono text-sm font-semibold text-slate-900">{{ api_connect_authorize_url }}</p>
+                            <p class="mt-2 text-sm text-slate-600">Startet den Login- und Consent-Flow im Browser. Parameter: `client_name`, `redirect_uri`, `scope`, `access_level`, `state`, `code_challenge`, `code_challenge_method=S256`.</p>
+                        </div>
+                    </div>
+                    <div class="grid gap-4 px-6 py-5 lg:grid-cols-[160px,minmax(0,1fr)]">
+                        <div>
+                            <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">POST</span>
+                        </div>
+                        <div>
+                            <p class="break-all font-mono text-sm font-semibold text-slate-900">{{ api_connect_token_url }}</p>
+                            <p class="mt-2 text-sm text-slate-600">Tauscht `code`, `code_verifier` und `redirect_uri` gegen einen Developer API Key. Der Key wird nur einmal in dieser Antwort ausgegeben.</p>
+                            <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
+  "grant_type": "authorization_code",
+  "code": "yl_connect_...",
+  "code_verifier": "pkce-verifier-from-your-platform",
+  "redirect_uri": "https://ki-plattform.example.com/api/yoolink/callback"
+}</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>

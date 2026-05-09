@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import os
 import re
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from yoolink.forms import ContactForm
 from yoolink.views import get_opening_hours
 from yoolink.ycms.applications.blog.services import (
@@ -16,6 +17,7 @@ from yoolink.ycms.models import (
     AnyFile,
     Blog,
     Button,
+    DeveloperApiConnectAuthorization,
     DeveloperApiKey,
     GaleryImage,
     Galerie,
@@ -1949,11 +1951,15 @@ def developer_settings_view(request):
             )
             messages.success(request, "Der API-Key wurde erstellt. Kopiere ihn jetzt, er wird später nicht erneut angezeigt.")
 
-    api_keys = DeveloperApiKey.objects.filter(created_by=request.user)
+    all_api_keys = DeveloperApiKey.objects.filter(created_by=request.user)
+    api_keys = [api_key for api_key in all_api_keys if not api_key.is_revoked()]
+    revoked_api_keys = [api_key for api_key in all_api_keys if api_key.is_revoked()]
     active_keys_count = sum(1 for api_key in api_keys if api_key.is_usable())
     api_base_url = request.build_absolute_uri("/api/cms/")
     blog_api_url = request.build_absolute_uri("/api/cms/blog/")
     api_ping_url = request.build_absolute_uri("/api/ping/")
+    api_connect_authorize_url = request.build_absolute_uri(reverse("ycms:developer-connect"))
+    api_connect_token_url = request.build_absolute_uri(reverse("api:developer-connect-token"))
     api_docs_url = request.build_absolute_uri(reverse("api-docs"))
     api_schema_url = request.build_absolute_uri(reverse("api-schema"))
 
@@ -1962,6 +1968,7 @@ def developer_settings_view(request):
         "pages/cms/settings/developer.html",
         {
             "api_keys": api_keys,
+            "revoked_api_keys": revoked_api_keys,
             "active_keys_count": active_keys_count,
             "app_choices": DeveloperApiKey.APP_CHOICES,
             "access_level_choices": DeveloperApiKey.ACCESS_LEVEL_CHOICES,
@@ -1969,6 +1976,8 @@ def developer_settings_view(request):
             "api_base_url": api_base_url,
             "blog_api_url": blog_api_url,
             "api_ping_url": api_ping_url,
+            "api_connect_authorize_url": api_connect_authorize_url,
+            "api_connect_token_url": api_connect_token_url,
             "api_docs_url": api_docs_url,
             "api_schema_url": api_schema_url,
         },
@@ -1984,10 +1993,137 @@ def developer_api_docs_view(request):
             "api_base_url": request.build_absolute_uri("/api/cms/"),
             "blog_api_url": request.build_absolute_uri("/api/cms/blog/"),
             "api_ping_url": request.build_absolute_uri("/api/ping/"),
+            "api_connect_authorize_url": request.build_absolute_uri(reverse("ycms:developer-connect")),
+            "api_connect_token_url": request.build_absolute_uri(reverse("api:developer-connect-token")),
             "api_docs_url": request.build_absolute_uri(reverse("api-docs")),
             "api_schema_url": request.build_absolute_uri(reverse("api-schema")),
         },
     )
+
+
+def _connect_error_redirect(redirect_uri, *, error, error_description="", state=""):
+    params = {"error": error}
+    if error_description:
+        params["error_description"] = error_description
+    if state:
+        params["state"] = state
+    return _connect_redirect(redirect_uri, params)
+
+
+def _connect_redirect(redirect_uri, params):
+    parsed = urlparse(redirect_uri)
+    query = parse_qsl(parsed.query, keep_blank_values=True)
+    query.extend((key, value) for key, value in params.items() if value)
+    return urlunparse(parsed._replace(query=urlencode(query)))
+
+
+def _validate_connect_redirect_uri(redirect_uri):
+    if not redirect_uri:
+        return "redirect_uri fehlt."
+
+    parsed = urlparse(redirect_uri)
+    if parsed.fragment:
+        return "redirect_uri darf keinen Fragment-Teil enthalten."
+
+    if parsed.scheme == "https" and parsed.netloc:
+        return ""
+
+    local_hosts = {"localhost", "127.0.0.1", "::1"}
+    if settings.DEBUG and parsed.scheme == "http" and parsed.hostname in local_hosts:
+        return ""
+
+    return "redirect_uri muss eine HTTPS-URL sein. Im DEBUG-Modus ist localhost per HTTP erlaubt."
+
+
+def _parse_connect_apps(raw_apps):
+    raw_apps = raw_apps or DeveloperApiKey.APP_BLOG
+    values = [value.strip().lower() for value in re.split(r"[\s,]+", raw_apps) if value.strip()]
+    normalized = []
+    valid_apps = {choice[0] for choice in DeveloperApiKey.APP_CHOICES}
+
+    for value in values:
+        if value == DeveloperApiKey.LEGACY_APP_BLOGS:
+            value = DeveloperApiKey.APP_BLOG
+        if value not in valid_apps:
+            return [], f"Unbekannter App Scope: {value}"
+        normalized.append(value)
+
+    return sorted(set(normalized or [DeveloperApiKey.APP_BLOG])), ""
+
+
+def _get_connect_context(request):
+    source = request.POST if request.method == "POST" else request.GET
+    raw_apps = source.get("scope") or source.get("apps") or DeveloperApiKey.APP_BLOG
+    allowed_apps, apps_error = _parse_connect_apps(raw_apps)
+    access_level = source.get("access_level") or DeveloperApiKey.READ
+    redirect_uri = (source.get("redirect_uri") or "").strip()
+    code_challenge_method = (source.get("code_challenge_method") or DeveloperApiConnectAuthorization.METHOD_S256).strip()
+    client_name = (source.get("client_name") or source.get("client_id") or "Externe Anwendung").strip()[:160]
+
+    errors = []
+    redirect_error = _validate_connect_redirect_uri(redirect_uri)
+    if redirect_error:
+        errors.append(redirect_error)
+    if apps_error:
+        errors.append(apps_error)
+    if access_level not in {choice[0] for choice in DeveloperApiKey.ACCESS_LEVEL_CHOICES}:
+        errors.append("access_level muss read oder write sein.")
+    if not source.get("code_challenge"):
+        errors.append("code_challenge fehlt.")
+    if code_challenge_method != DeveloperApiConnectAuthorization.METHOD_S256:
+        errors.append("code_challenge_method muss S256 sein.")
+
+    params = {
+        "client_name": client_name,
+        "redirect_uri": redirect_uri,
+        "state": (source.get("state") or "").strip(),
+        "code_challenge": (source.get("code_challenge") or "").strip(),
+        "code_challenge_method": code_challenge_method,
+        "access_level": access_level,
+        "scope": " ".join(allowed_apps or [DeveloperApiKey.APP_BLOG]),
+    }
+
+    return {
+        "errors": errors,
+        "connect_params": params,
+        "allowed_apps": allowed_apps,
+        "access_level_label": dict(DeveloperApiKey.ACCESS_LEVEL_CHOICES).get(access_level, access_level),
+        "app_labels": [dict(DeveloperApiKey.APP_CHOICES).get(app, app) for app in allowed_apps],
+    }
+
+
+@login_required(login_url='login')
+def developer_connect_view(request):
+    context = _get_connect_context(request)
+    params = context["connect_params"]
+
+    if request.method == "POST" and request.POST.get("action") == "deny" and params["redirect_uri"]:
+        return redirect(
+            _connect_error_redirect(
+                params["redirect_uri"],
+                error="access_denied",
+                error_description="Der YooLink Benutzer hat die Verbindung abgelehnt.",
+                state=params["state"],
+            )
+        )
+
+    if context["errors"]:
+        return render(request, "pages/cms/settings/developer_connect.html", context, status=400)
+
+    if request.method == "POST":
+        _, raw_code = DeveloperApiConnectAuthorization.issue_code(
+            created_by=request.user,
+            client_name=params["client_name"],
+            redirect_uri=params["redirect_uri"],
+            state=params["state"],
+            code_challenge=params["code_challenge"],
+            code_challenge_method=params["code_challenge_method"],
+            access_level=params["access_level"],
+            allowed_apps=context["allowed_apps"],
+        )
+        return redirect(_connect_redirect(params["redirect_uri"], {"code": raw_code, "state": params["state"]}))
+
+    return render(request, "pages/cms/settings/developer_connect.html", context)
 
 
 @login_required(login_url='login')

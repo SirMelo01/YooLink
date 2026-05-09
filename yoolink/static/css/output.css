@@ -2496,6 +2496,11 @@ video {
   border-color: transparent;
 }
 
+.border-rose-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 228 230 / var(--tw-border-opacity));
+}
+
 .border-t-transparent {
   border-top-color: transparent;
 }
@@ -5245,6 +5250,11 @@ video {
 
 .disabled\:border-0:disabled {
   border-width: 0px;
+}
+
+.disabled\:bg-slate-300:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / var(--tw-bg-opacity));
 }
 
 .disabled\:opacity-40:disabled {

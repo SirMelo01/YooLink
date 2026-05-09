@@ -89,6 +89,7 @@ urlpatterns = [
     path("settings/security/verify-code/", views.verify_email_2fa_code, name="security-verify-code"),
     path("settings/security/disable-2fa/", views.disable_email_2fa, name="security-disable-2fa"),
     path("settings/developer/", views.developer_settings_view, name="developer-settings"),
+    path("settings/developer/connect/", views.developer_connect_view, name="developer-connect"),
     path("settings/developer/docs/", views.developer_api_docs_view, name="developer-api-docs"),
 
     # Opening Hours

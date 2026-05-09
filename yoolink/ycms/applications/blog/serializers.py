@@ -44,6 +44,31 @@ class ExternalApiPingSerializer(serializers.Serializer):
     allowed_apps = serializers.ListField(child=serializers.CharField(), read_only=True)
 
 
+class ExternalConnectTokenRequestSerializer(serializers.Serializer):
+    grant_type = serializers.ChoiceField(
+        choices=[("authorization_code", "authorization_code")],
+        default="authorization_code",
+        required=False,
+    )
+    code = serializers.CharField()
+    code_verifier = serializers.CharField(min_length=43, max_length=128)
+    redirect_uri = serializers.URLField(max_length=2048)
+
+
+class ExternalConnectTokenResponseSerializer(serializers.Serializer):
+    token_type = serializers.CharField(read_only=True)
+    api_key = serializers.CharField(read_only=True)
+    base_url = serializers.URLField(read_only=True)
+    ping_url = serializers.URLField(read_only=True)
+    docs_url = serializers.URLField(read_only=True)
+    schema_url = serializers.URLField(read_only=True)
+    access_level = serializers.ChoiceField(
+        choices=DeveloperApiKey.ACCESS_LEVEL_CHOICES,
+        read_only=True,
+    )
+    allowed_apps = serializers.ListField(child=serializers.CharField(), read_only=True)
+
+
 class ExternalBlogListSerializer(serializers.ModelSerializer):
     absolute_url = serializers.SerializerMethodField()
     api_url = serializers.SerializerMethodField()

@@ -2,6 +2,8 @@ from django.db import models
 import hashlib
 import re
 import secrets
+import base64
+from datetime import timedelta
 
 # Create your models here.
 from django.db.models import Q
@@ -730,6 +732,108 @@ class DeveloperApiKey(models.Model):
         if not self.revoked_at:
             self.revoked_at = timezone.now()
             self.save(update_fields=["revoked_at", "updated_at"])
+
+
+class DeveloperApiConnectAuthorization(models.Model):
+    CODE_TTL_MINUTES = 10
+    CODE_PREFIX = "yl_connect"
+    METHOD_S256 = "S256"
+
+    CODE_CHALLENGE_METHOD_CHOICES = [
+        (METHOD_S256, "S256"),
+    ]
+
+    client_name = models.CharField(max_length=160)
+    redirect_uri = models.URLField(max_length=2048)
+    state = models.CharField(max_length=500, blank=True)
+    code_challenge = models.CharField(max_length=128)
+    code_challenge_method = models.CharField(
+        max_length=12,
+        choices=CODE_CHALLENGE_METHOD_CHOICES,
+        default=METHOD_S256,
+    )
+    code_hash = models.CharField(max_length=64, unique=True, editable=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="developer_api_connect_authorizations",
+    )
+    access_level = models.CharField(
+        max_length=10,
+        choices=DeveloperApiKey.ACCESS_LEVEL_CHOICES,
+        default=DeveloperApiKey.READ,
+    )
+    allowed_apps = models.JSONField(default=list)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Developer API Connect Authorization"
+        verbose_name_plural = "Developer API Connect Authorizations"
+
+    def __str__(self):
+        return f"{self.client_name} fuer {self.created_by}"
+
+    @classmethod
+    def make_code_hash(cls, raw_code):
+        return hashlib.sha256(raw_code.encode("utf-8")).hexdigest()
+
+    @classmethod
+    def issue_code(
+        cls,
+        *,
+        created_by,
+        client_name,
+        redirect_uri,
+        code_challenge,
+        code_challenge_method=METHOD_S256,
+        access_level=DeveloperApiKey.READ,
+        allowed_apps=None,
+        state="",
+    ):
+        allowed_values = {choice[0] for choice in DeveloperApiKey.APP_CHOICES}
+        normalized_apps = sorted(set(allowed_apps or []) & allowed_values)
+        if not normalized_apps:
+            normalized_apps = [DeveloperApiKey.APP_BLOG]
+
+        while True:
+            raw_code = f"{cls.CODE_PREFIX}_{secrets.token_urlsafe(32)}"
+            code_hash = cls.make_code_hash(raw_code)
+            if not cls.objects.filter(code_hash=code_hash).exists():
+                break
+
+        authorization = cls.objects.create(
+            created_by=created_by,
+            client_name=client_name,
+            redirect_uri=redirect_uri,
+            state=state or "",
+            code_challenge=code_challenge,
+            code_challenge_method=code_challenge_method,
+            code_hash=code_hash,
+            access_level=access_level,
+            allowed_apps=normalized_apps,
+            expires_at=timezone.now() + timedelta(minutes=cls.CODE_TTL_MINUTES),
+        )
+        return authorization, raw_code
+
+    @classmethod
+    def pkce_s256(cls, code_verifier):
+        digest = hashlib.sha256(code_verifier.encode("ascii")).digest()
+        return base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+
+    def is_usable(self):
+        return self.used_at is None and self.expires_at > timezone.now()
+
+    def verify_code_verifier(self, code_verifier):
+        if self.code_challenge_method != self.METHOD_S256:
+            return False
+        return secrets.compare_digest(self.pkce_s256(code_verifier), self.code_challenge)
+
+    def mark_used(self):
+        self.used_at = timezone.now()
+        self.save(update_fields=["used_at"])
 
 class OpeningHours(models.Model):
     DAY_CHOICES = [

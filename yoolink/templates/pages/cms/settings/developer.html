@@ -3,6 +3,11 @@
 {% block title %}{{ block.super }} | CMS | Developer Settings{% endblock %}
 
 {% block content %}
+<style>
+    .developer-panel-toggle-icon {
+        transition: transform 0.2s ease;
+    }
+</style>
 <div class="mx-auto mt-6 max-w-7xl px-2 pb-8">
     <div class="mb-6">
         <h1 class="text-3xl font-semibold tracking-tight text-slate-900">Developer Settings</h1>
@@ -85,6 +90,28 @@
                                     <p class="mt-2 break-all font-mono text-sm text-slate-900">{{ api_schema_url }}</p>
                                 </div>
                                 <button type="button" data-copy-value="{{ api_schema_url }}" class="copy-value-btn inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" title="Kopieren">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Connect Authorize</p>
+                                    <p class="mt-2 break-all font-mono text-sm text-slate-900">{{ api_connect_authorize_url }}</p>
+                                </div>
+                                <button type="button" data-copy-value="{{ api_connect_authorize_url }}" class="copy-value-btn inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" title="Kopieren">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Connect Token</p>
+                                    <p class="mt-2 break-all font-mono text-sm text-slate-900">{{ api_connect_token_url }}</p>
+                                </div>
+                                <button type="button" data-copy-value="{{ api_connect_token_url }}" class="copy-value-btn inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" title="Kopieren">
                                     <i class="bi bi-clipboard"></i>
                                 </button>
                             </div>
@@ -222,6 +249,15 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-200 px-6 py-5">
+                    <h2 class="text-xl font-semibold text-slate-900">Widerrufene API-Keys</h2>
+                    <p class="mt-1 text-sm text-slate-500">Diese Keys sind deaktiviert und erscheinen nicht mehr bei den vorhandenen Keys.</p>
+                </div>
+
+                {% include 'pages/cms/settings/partials/developer_key_list.html' with api_keys=revoked_api_keys show_revoke=False empty_message='Noch keine widerrufenen API-Keys vorhanden.' %}
+            </div>
         </section>
     </div>
 </div>
@@ -262,6 +298,63 @@ document.addEventListener("DOMContentLoaded", function () {
                     icon.className = "bi bi-clipboard";
                 }, 1400);
             });
+        });
+    });
+
+    var canCollapse = false;
+    document.querySelectorAll("section.space-y-6 > .overflow-hidden.rounded-3xl").forEach(function (panel) {
+        var heading = panel.querySelector("h2");
+        if (!heading) {
+            return;
+        }
+
+        if (heading.textContent.trim() === "API-Key erstellen") {
+            canCollapse = true;
+        }
+
+        if (!canCollapse) {
+            return;
+        }
+
+        var header = heading.parentElement;
+        if (!header) {
+            return;
+        }
+
+        var headerContent = document.createElement("div");
+        while (header.firstChild) {
+            headerContent.appendChild(header.firstChild);
+        }
+
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100";
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("title", "Panel zuklappen");
+        toggle.innerHTML = '<i class="bi bi-chevron-down developer-panel-toggle-icon"></i><span class="sr-only">Panel zuklappen</span>';
+
+        header.classList.add("flex", "items-start", "justify-between", "gap-4");
+        header.appendChild(headerContent);
+        header.appendChild(toggle);
+
+        var bodyElements = Array.prototype.filter.call(panel.children, function (child) {
+            return child !== header;
+        });
+
+        toggle.addEventListener("click", function () {
+            var isExpanded = toggle.getAttribute("aria-expanded") === "true";
+            var nextExpanded = !isExpanded;
+            var icon = toggle.querySelector("i");
+
+            toggle.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
+            toggle.setAttribute("title", nextExpanded ? "Panel zuklappen" : "Panel aufklappen");
+            bodyElements.forEach(function (element) {
+                element.classList.toggle("hidden", !nextExpanded);
+            });
+
+            if (icon) {
+                icon.style.transform = nextExpanded ? "" : "rotate(-90deg)";
+            }
         });
     });
 });

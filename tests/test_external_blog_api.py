@@ -1,5 +1,6 @@
 from datetime import timedelta
 from io import BytesIO
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,7 +10,7 @@ from PIL import Image
 from rest_framework.test import APIClient
 
 from yoolink.users.tests.factories import UserFactory
-from yoolink.ycms.models import Blog, DeveloperApiKey, UserSettings, fileentry
+from yoolink.ycms.models import Blog, DeveloperApiConnectAuthorization, DeveloperApiKey, UserSettings, fileentry
 
 pytestmark = pytest.mark.django_db
 
@@ -106,6 +107,108 @@ def test_developer_api_ping_requires_and_confirms_auth(cms_user):
     assert "api_key" not in authenticated_response.data
     assert authenticated_response.data["access_level"] == DeveloperApiKey.READ
     assert authenticated_response.data["allowed_apps"] == [DeveloperApiKey.APP_BLOG]
+
+
+def test_developer_connect_flow_issues_api_key_with_pkce(client, cms_user):
+    client.force_login(cms_user)
+    redirect_uri = "https://ai.example.com/api/yoolink/callback"
+    code_verifier = "a" * 64
+    code_challenge = DeveloperApiConnectAuthorization.pkce_s256(code_verifier)
+    connect_params = {
+        "client_name": "YooLink AI",
+        "redirect_uri": redirect_uri,
+        "state": "opaque-state",
+        "scope": DeveloperApiKey.APP_BLOG,
+        "access_level": DeveloperApiKey.WRITE,
+        "code_challenge": code_challenge,
+        "code_challenge_method": DeveloperApiConnectAuthorization.METHOD_S256,
+    }
+
+    authorize_page = client.get(reverse("ycms:developer-connect"), connect_params)
+    assert authorize_page.status_code == 200
+    assert b"YooLink AI" in authorize_page.content
+
+    authorize_response = client.post(
+        reverse("ycms:developer-connect"),
+        {**connect_params, "action": "authorize"},
+    )
+    assert authorize_response.status_code == 302
+    redirect = urlparse(authorize_response["Location"])
+    query = parse_qs(redirect.query)
+    code = query["code"][0]
+
+    assert f"{redirect.scheme}://{redirect.netloc}{redirect.path}" == redirect_uri
+    assert query["state"][0] == "opaque-state"
+    assert code.startswith("yl_connect_")
+
+    api_client = APIClient()
+    token_response = api_client.post(
+        "/api/connect/token/",
+        {
+            "grant_type": "authorization_code",
+            "code": code,
+            "code_verifier": code_verifier,
+            "redirect_uri": redirect_uri,
+        },
+        format="json",
+    )
+
+    assert token_response.status_code == 200
+    assert token_response.data["token_type"] == "Bearer"
+    assert token_response.data["api_key"].startswith("yl_live_")
+    assert token_response.data["access_level"] == DeveloperApiKey.WRITE
+    assert token_response.data["allowed_apps"] == [DeveloperApiKey.APP_BLOG]
+    assert DeveloperApiKey.objects.filter(created_by=cms_user, name="YooLink AI Connect").count() == 1
+
+    ping_client = api_client_for(token_response.data["api_key"])
+    ping_response = ping_client.get("/api/ping/")
+    assert ping_response.status_code == 200
+
+    reused_response = api_client.post(
+        "/api/connect/token/",
+        {
+            "grant_type": "authorization_code",
+            "code": code,
+            "code_verifier": code_verifier,
+            "redirect_uri": redirect_uri,
+        },
+        format="json",
+    )
+    assert reused_response.status_code == 400
+    assert reused_response.data["error"] == "invalid_grant"
+
+
+def test_developer_connect_rejects_wrong_pkce_verifier(client, cms_user):
+    client.force_login(cms_user)
+    redirect_uri = "https://ai.example.com/api/yoolink/callback"
+    connect_params = {
+        "client_name": "YooLink AI",
+        "redirect_uri": redirect_uri,
+        "scope": DeveloperApiKey.APP_BLOG,
+        "access_level": DeveloperApiKey.READ,
+        "code_challenge": DeveloperApiConnectAuthorization.pkce_s256("b" * 64),
+        "code_challenge_method": DeveloperApiConnectAuthorization.METHOD_S256,
+    }
+    authorize_response = client.post(
+        reverse("ycms:developer-connect"),
+        {**connect_params, "action": "authorize"},
+    )
+    code = parse_qs(urlparse(authorize_response["Location"]).query)["code"][0]
+
+    token_response = APIClient().post(
+        "/api/connect/token/",
+        {
+            "grant_type": "authorization_code",
+            "code": code,
+            "code_verifier": "c" * 64,
+            "redirect_uri": redirect_uri,
+        },
+        format="json",
+    )
+
+    assert token_response.status_code == 400
+    assert token_response.data["error"] == "invalid_grant"
+    assert not DeveloperApiKey.objects.filter(created_by=cms_user, name="YooLink AI Connect").exists()
 
 
 def test_read_only_key_can_read_blogs_but_cannot_create(cms_user):
