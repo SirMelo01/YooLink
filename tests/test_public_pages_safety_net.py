@@ -50,7 +50,7 @@ def test_logo_page_renders_cms_managed_content(client):
     )
     TextContent.objects.create(
         name="main_logos_bottomcta",
-        title="Bereit fuer dein neues Logo?",
+        title="Bereit für dein neues Logo?",
         description="Der CTA ist im CMS editierbar.",
         buttonText="Anfrage senden",
     )

@@ -49,7 +49,7 @@ def logged_in_client(cms_user):
 def _product_payload(**overrides):
     payload = {
         "title": "Test Produkt",
-        "description": "Ein Produkt fuer Tests",
+        "description": "Ein Produkt für Tests",
         "hersteller": "YooLink",
         "selected_categories": json.dumps(["CMS", "Hosting"]),
         "selected_file_ids": "[]",
@@ -166,11 +166,11 @@ def test_cms_product_create_search_update_and_delete(logged_in_client):
 
     update_response = logged_in_client.post(
         reverse("ycms:product-detail-update", args=[product.id, product.slug]),
-        _product_payload(title="Geaendertes Produkt", isReduced="true", reducedPrice="39.90"),
+        _product_payload(title="Geändertes Produkt", isReduced="true", reducedPrice="39.90"),
     )
     assert update_response.status_code == 200
     product.refresh_from_db()
-    assert product.title == "Geaendertes Produkt"
+    assert product.title == "Geändertes Produkt"
     assert product.discount_price == Decimal("39.90")
 
     delete_response = logged_in_client.post(

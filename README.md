@@ -56,7 +56,7 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f production.yml run --rm django python manage.py compilemessages
 
 ### .django Manuell kopieren:
--   da wichtige schlüssel in der datei liegen, müssen diese per hand kopiert werden
+-   da wichtige Schlüssel in der Datei liegen, müssen diese per Hand kopiert werden
 
         $ cd .envs/
         $ cd .production/
@@ -74,10 +74,10 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 
 ## Tests / Sicherheitsnetz:
 
-### Lokal alle Tests ausfÃ¼hren:
+### Lokal alle Tests ausführen:
         $ docker-compose -f local.yml run --rm django pytest
 
-### Lokal nur CMS-/Shop-Sicherheitsnetz ausfÃ¼hren:
+### Lokal nur CMS-/Shop-Sicherheitsnetz ausführen:
         $ docker-compose -f local.yml run --rm django pytest tests/test_cms_2fa.py tests/test_cms_core_modules.py tests/test_shop_safety_net.py tests/test_public_pages_safety_net.py
 
 ### Lokal mit frischer Testdatenbank:
@@ -85,17 +85,17 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
 
 ### Production-Check vor Deployment:
 -   Nicht gegen die echte Produktionsdatenbank testen. Vorher eine separate Test-Env oder Staging-Env nutzen.
--   Das Production-Image enthÃ¤lt keine lokalen Test-Dependencies wie pytest. Deshalb vor dem Deployment das komplette Test-Sicherheitsnetz lokal/CI ausfÃ¼hren und das Production-Image separat mit Django Checks prÃ¼fen:
+-   Das Production-Image enthält keine lokalen Test-Dependencies wie pytest. Deshalb vor dem Deployment das komplette Test-Sicherheitsnetz lokal/CI ausführen und das Production-Image separat mit Django Checks prüfen:
 
         $ docker-compose -f local.yml run --rm django pytest
         $ docker-compose -f production.yml run --rm django python manage.py check --deploy --settings=config.settings.production
 
-### Prompt fÃ¼r Codex vor Updates:
-        Analysiere die anstehenden Dependency-Updates. FÃ¼hre zuerst das komplette Test-Sicherheitsnetz lokal aus, behebe Regressionen in kleinen Schritten und fasse danach zusammen, welche CMS-, Shop-, Auth-, Medien- und Public-Page-Flows grÃ¼n sind.
+### Prompt für Codex vor Updates:
+        Analysiere die anstehenden Dependency-Updates. Führe zuerst das komplette Test-Sicherheitsnetz lokal aus, behebe Regressionen in kleinen Schritten und fasse danach zusammen, welche CMS-, Shop-, Auth-, Medien- und Public-Page-Flows grün sind.
 
 ## Externe YooLink API
 
-Developer API Keys werden im CMS unter `Einstellungen -> Developer Settings` erstellt. Der vollstaendige Schluessel wird nur direkt nach dem Erstellen angezeigt und danach nur gehasht gespeichert.
+Developer API Keys werden im CMS unter `Einstellungen -> Developer Settings` erstellt. Der vollständige Schlüssel wird nur direkt nach dem Erstellen angezeigt und danach nur gehasht gespeichert.
 
 ### Blog API
 
@@ -107,23 +107,23 @@ Authentifizierung:
 
         Authorization: Bearer <api-key>
 
-Read-only Keys duerfen `GET` verwenden. Write Keys duerfen zusaetzlich `POST`, `PATCH`, `PUT` und `DELETE` verwenden.
+Read-only Keys dürfen `GET` verwenden. Write Keys dürfen zusätzlich `POST`, `PATCH`, `PUT` und `DELETE` verwenden.
 
-`GET /api/cms/blog/` liefert eine kompakte Liste ohne `markdown`, `body`, `code` und Sprachvarianten. Vollstaendige Blogdaten inklusive Markdown, HTML-Body und Sprachvarianten gibt es ueber `GET /api/cms/blog/<id>/`.
+`GET /api/cms/blog/` liefert eine kompakte Liste ohne `markdown`, `body`, `code` und Sprachvarianten. Vollständige Blogdaten inklusive Markdown, HTML-Body und Sprachvarianten gibt es über `GET /api/cms/blog/<id>/`.
 
 Minimaler JSON-Body zum Erstellen eines Blogs:
 
         {
-          "title": "Event Rueckblick",
-          "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
-          "markdown": "## Rueckblick\n\nMarkdown-Inhalt des automatisch generierten Blogartikels.",
+          "title": "Event Rückblick",
+          "description": "Kurzer SEO-Teaser für Blogkarten und Meta Description.",
+          "markdown": "## Rückblick\n\nMarkdown-Inhalt des automatisch generierten Blogartikels.",
           "active": true,
           "language": "de"
         }
 
 Alternativ kann weiterhin `body` als HTML oder `code` als Blog-Builder-JSON gesendet werden. Die API erzeugt daraus automatisch Markdown, damit KI-Workflows eine klare Textquelle haben.
 
-Content-Bilder fuer Markdown-Blogs koennen per Multipart direkt hochgeladen werden:
+Content-Bilder für Markdown-Blogs können per Multipart direkt hochgeladen werden:
 
         POST /api/cms/blog/media/
         Authorization: Bearer <write-api-key>
@@ -133,14 +133,14 @@ Content-Bilder fuer Markdown-Blogs koennen per Multipart direkt hochgeladen werd
         title: Event Bild
         alt_text: Volles Haus beim Event
 
-Die Antwort enthaelt `url`, `markdown` und `html`. Fuer KI-Workflows reicht es meist, das `markdown`-Snippet direkt in den Blog-Markdown einzusetzen. Ein Titelbild kann beim Erstellen oder Aktualisieren eines Blogs weiterhin als Multipart-Feld `title_image` an `/api/cms/blog/` bzw. `/api/cms/blog/<id>/` gesendet werden.
+Die Antwort enthält `url`, `markdown` und `html`. Für KI-Workflows reicht es meist, das `markdown`-Snippet direkt in den Blog-Markdown einzusetzen. Ein Titelbild kann beim Erstellen oder Aktualisieren eines Blogs weiterhin als Multipart-Feld `title_image` an `/api/cms/blog/` bzw. `/api/cms/blog/<id>/` gesendet werden.
 
-Wenn du den Blog als JSON erstellst, kann `title_image` keine URL sein. Lade das Bild vorher ueber `/api/cms/blog/media/` hoch und sende danach die erhaltene `id` als `title_image_media_id`:
+Wenn du den Blog als JSON erstellst, kann `title_image` keine URL sein. Lade das Bild vorher über `/api/cms/blog/media/` hoch und sende danach die erhaltene `id` als `title_image_media_id`:
 
         {
-          "title": "Event Rueckblick",
-          "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
-          "markdown": "## Rueckblick\n\nMarkdown-Inhalt.",
+          "title": "Event Rückblick",
+          "description": "Kurzer SEO-Teaser für Blogkarten und Meta Description.",
+          "markdown": "## Rückblick\n\nMarkdown-Inhalt.",
           "title_image_media_id": 44,
           "active": true,
           "language": "de"

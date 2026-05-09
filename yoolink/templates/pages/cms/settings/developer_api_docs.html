@@ -46,7 +46,7 @@
         <div>
             <p class="text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">Developer API</p>
             <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-900">API Dokumentation</h1>
-            <p class="mt-2 max-w-3xl text-slate-600">Endpunkte, Authentifizierung, Request-Daten und Antwortformate fuer externe Automationen.</p>
+            <p class="mt-2 max-w-3xl text-slate-600">Endpunkte, Authentifizierung, Request-Daten und Antwortformate für externe Automationen.</p>
         </div>
         <a href="{% url 'cms:developer-settings' %}"
            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
@@ -133,7 +133,7 @@
                     </div>
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <p class="font-semibold text-slate-900">Lesen und schreiben</p>
-                        <p class="mt-2 text-sm text-slate-600">Darf zusaetzlich `POST`, `PATCH`, `PUT` und `DELETE` ausführen.</p>
+                        <p class="mt-2 text-sm text-slate-600">Darf zusätzlich `POST`, `PATCH`, `PUT` und `DELETE` ausführen.</p>
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-200 px-6 py-5">
                     <h2 class="text-xl font-semibold text-slate-900">Ping</h2>
-                    <p class="mt-1 text-sm text-slate-500">Prueft, ob der API-Key gueltig ist und die Developer API erreichbar ist.</p>
+                    <p class="mt-1 text-sm text-slate-500">Prüft, ob der API-Key gültig ist und die Developer API erreichbar ist.</p>
                 </div>
                 <div class="grid gap-4 px-6 py-5 lg:grid-cols-[160px,minmax(0,1fr)]">
                     <div>
@@ -149,7 +149,7 @@
                     </div>
                     <div>
                         <p class="break-all font-mono text-sm font-semibold text-slate-900">{{ api_ping_url }}</p>
-                        <p class="mt-2 text-sm text-slate-600">Antwortet nur mit gueltiger Authentifizierung. Ein Read-only Key reicht aus.</p>
+                        <p class="mt-2 text-sm text-slate-600">Antwortet nur mit gültiger Authentifizierung. Ein Read-only Key reicht aus.</p>
                         <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>GET {{ api_ping_url }}
 Authorization: Bearer &lt;api-key&gt;</code></pre>
                         <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
@@ -169,7 +169,7 @@ Authorization: Bearer &lt;api-key&gt;</code></pre>
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
                             <h2 class="text-xl font-semibold text-slate-900">Blogs</h2>
-                            <p class="mt-1 text-sm text-slate-500">Externe Systeme koennen Blogartikel lesen, erstellen, aktualisieren und loeschen.</p>
+                            <p class="mt-1 text-sm text-slate-500">Externe Systeme können Blogartikel lesen, erstellen, aktualisieren und löschen.</p>
                         </div>
                         <span class="w-fit rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">App Scope: blog</span>
                     </div>
@@ -203,11 +203,11 @@ Authorization: Bearer &lt;api-key&gt;</code></pre>
                         </div>
                         <div>
                             <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/</p>
-                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key. Als JSON fuer reine Textblogs oder mit `title_image_media_id`, wenn vorher ein Bild ueber `/api/cms/blog/media/` hochgeladen wurde. Alternativ als Multipart-Formdaten, wenn direkt ein `title_image` mitgesendet wird.</p>
+                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key. Als JSON für reine Textblogs oder mit `title_image_media_id`, wenn vorher ein Bild über `/api/cms/blog/media/` hochgeladen wurde. Alternativ als Multipart-Formdaten, wenn direkt ein `title_image` mitgesendet wird.</p>
                             <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
   "title": "Event Rückblick",
   "description": "Kurzer SEO-Teaser für Blogkarten und Meta Description.",
-  "markdown": "## Rueckblick\n\nHTML-freier Markdown-Inhalt des automatisch generierten Blogartikels.",
+    "markdown": "## Rückblick\n\nHTML-freier Markdown-Inhalt des automatisch generierten Blogartikels.",
   "title_image_media_id": 44,
   "active": true,
   "language": "de"
@@ -221,7 +221,7 @@ Authorization: Bearer &lt;api-key&gt;</code></pre>
                         </div>
                         <div>
                             <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/media/</p>
-                            <p class="mt-2 text-sm text-slate-600">Laedt ein Content-Bild hoch und gibt URL, Markdown-Snippet und HTML-Snippet zurueck. Erfordert einen Write-Key. In Postman als `form-data` senden.</p>
+                            <p class="mt-2 text-sm text-slate-600">Lädt ein Content-Bild hoch und gibt URL, Markdown-Snippet und HTML-Snippet zurück. Erfordert einen Write-Key. In Postman als `form-data` senden.</p>
                             <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>file: event.png
 title: Event Bild
 alt_text: Volles Haus beim Event</code></pre>
@@ -248,7 +248,7 @@ alt_text: Volles Haus beim Event</code></pre>
                         </div>
                         <div>
                             <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/{id}/</p>
-                            <p class="mt-2 text-sm text-slate-600">Loescht einen Blog. Erfordert einen Write-Key.</p>
+                            <p class="mt-2 text-sm text-slate-600">Löscht einen Blog. Erfordert einen Write-Key.</p>
                         </div>
                     </div>
                 </div>
@@ -257,7 +257,7 @@ alt_text: Volles Haus beim Event</code></pre>
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-200 px-6 py-5">
                     <h2 class="text-xl font-semibold text-slate-900">Blog Felder</h2>
-                    <p class="mt-1 text-sm text-slate-500">Die API nimmt JSON oder Multipart-Formdaten an. Fuer JSON-Workflows erst Medien hochladen und dann per ID referenzieren.</p>
+                    <p class="mt-1 text-sm text-slate-500">Die API nimmt JSON oder Multipart-Formdaten an. Für JSON-Workflows erst Medien hochladen und dann per ID referenzieren.</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-100 text-sm">
@@ -272,14 +272,14 @@ alt_text: Volles Haus beim Event</code></pre>
                         <tbody class="divide-y divide-slate-100 text-slate-700">
                             <tr><td class="px-6 py-4 font-mono">title</td><td class="px-6 py-4">string</td><td class="px-6 py-4">ja</td><td class="px-6 py-4">Blogtitel. Der Slug wird automatisch erzeugt.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">description</td><td class="px-6 py-4">string</td><td class="px-6 py-4">ja</td><td class="px-6 py-4">Kurzbeschreibung für Blogkarten und SEO.</td></tr>
-                            <tr><td class="px-6 py-4 font-mono">markdown</td><td class="px-6 py-4">string</td><td class="px-6 py-4">empfohlen</td><td class="px-6 py-4">Primaere Textquelle fuer KI-Workflows. Wird zu HTML gerendert und fuer den Builder in editierbare Bloecke umgewandelt.</td></tr>
-                            <tr><td class="px-6 py-4 font-mono">body</td><td class="px-6 py-4">HTML string</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Kompatibilitaetsfeld fuer gerenderten Bloginhalt. Wenn kein `markdown` gesendet wird, erzeugt die API Markdown daraus.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">markdown</td><td class="px-6 py-4">string</td><td class="px-6 py-4">empfohlen</td><td class="px-6 py-4">Primäre Textquelle für KI-Workflows. Wird zu HTML gerendert und für den Builder in editierbare Blöcke umgewandelt.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">body</td><td class="px-6 py-4">HTML string</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Kompatibilitätsfeld für gerenderten Bloginhalt. Wenn kein `markdown` gesendet wird, erzeugt die API Markdown daraus.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">code</td><td class="px-6 py-4">array/object</td><td class="px-6 py-4">bedingt</td><td class="px-6 py-4">Internes Blog-Builder-JSON. Wenn kein `body` gesendet wird, rendert die API daraus HTML.</td></tr>
-                            <tr><td class="px-6 py-4 font-mono">active</td><td class="px-6 py-4">boolean</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Steuert, ob der Blog oeffentlich sichtbar ist.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">active</td><td class="px-6 py-4">boolean</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Steuert, ob der Blog öffentlich sichtbar ist.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">language</td><td class="px-6 py-4">string</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Zum Beispiel `de` oder `en`.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">original</td><td class="px-6 py-4">integer/null</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">ID des Original-Blogs, wenn eine Sprachvariante erstellt wird. Pro Original kann jede Sprache nur einmal vorkommen.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">title_image</td><td class="px-6 py-4">file</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Titelbild per Multipart-Upload.</td></tr>
-                            <tr><td class="px-6 py-4 font-mono">title_image_media_id</td><td class="px-6 py-4">integer</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">ID aus `POST /api/cms/blog/media/`, um ein zuvor hochgeladenes Bild als Titelbild zu verwenden. Fuer JSON-Requests statt `title_image` nutzen.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">title_image_media_id</td><td class="px-6 py-4">integer</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">ID aus `POST /api/cms/blog/media/`, um ein zuvor hochgeladenes Bild als Titelbild zu verwenden. Für JSON-Requests statt `title_image` nutzen.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -323,7 +323,7 @@ alt_text: Volles Haus beim Event</code></pre>
   "title": "Event Rückblick",
   "slug": "event-rueckblick",
   "description": "Kurzer SEO-Teaser.",
-  "markdown": "## Rueckblick\n\nHTML-freier Markdown-Inhalt.",
+    "markdown": "## Rückblick\n\nHTML-freier Markdown-Inhalt.",
   "body": "&lt;p&gt;HTML-Inhalt&lt;/p&gt;",
   "code": [
     {

@@ -76,7 +76,7 @@ class ExternalApiPingView(APIView):
     @extend_schema(
         operation_id="developer_api_ping",
         summary="Developer API Ping",
-        description="Prueft, ob der API-Key gueltig ist und die YooLink Developer API erreichbar ist.",
+        description="Prüft, ob der API-Key gültig ist und die YooLink Developer API erreichbar ist.",
         responses=ExternalApiPingSerializer,
     )
     def get(self, request):

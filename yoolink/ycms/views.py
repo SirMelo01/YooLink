@@ -1711,7 +1711,7 @@ def save_privacy_policy(request):
     policy.content_html = PrivacyPolicy.prepare_content(content_html, owner_data, as_html=True)
     policy.save(update_fields=["use_html", "content_html", "updated_at"])
 
-    return JsonResponse({'success': 'Datenschutzerklaerung wurde gespeichert'}, status=200)
+    return JsonResponse({'success': 'Datenschutzerklärung wurde gespeichert'}, status=200)
 
 @extend_schema(exclude=True)
 @api_view(['POST'])
@@ -1890,7 +1890,7 @@ def _parse_developer_key_expiry(request):
                 expires_at = None
 
         if not expires_at:
-            return None, "Das Ablaufdatum ist ungueltig."
+            return None, "Das Ablaufdatum ist ungültig."
 
         if expires_at <= timezone.now():
             return None, "Das Ablaufdatum muss in der Zukunft liegen."
@@ -1900,7 +1900,7 @@ def _parse_developer_key_expiry(request):
     allowed_days = {"30": 30, "90": 90, "365": 365}
     days = allowed_days.get(expires_in)
     if not days:
-        return None, "Die ausgewaehlte Laufzeit ist ungueltig."
+        return None, "Die ausgewählte Laufzeit ist ungültig."
 
     return timezone.now() + timedelta(days=days), ""
 
@@ -1934,9 +1934,9 @@ def developer_settings_view(request):
         if not name:
             messages.error(request, "Bitte gib dem API-Key einen Namen.")
         elif access_level not in valid_access_levels:
-            messages.error(request, "Die Berechtigungsstufe ist ungueltig.")
+            messages.error(request, "Die Berechtigungsstufe ist ungültig.")
         elif not allowed_apps:
-            messages.error(request, "Bitte waehle mindestens eine App aus.")
+            messages.error(request, "Bitte wähle mindestens eine App aus.")
         elif expiry_error:
             messages.error(request, expiry_error)
         else:
@@ -1947,7 +1947,7 @@ def developer_settings_view(request):
                 allowed_apps=allowed_apps,
                 expires_at=expires_at,
             )
-            messages.success(request, "Der API-Key wurde erstellt. Kopiere ihn jetzt, er wird spaeter nicht erneut angezeigt.")
+            messages.success(request, "Der API-Key wurde erstellt. Kopiere ihn jetzt, er wird später nicht erneut angezeigt.")
 
     api_keys = DeveloperApiKey.objects.filter(created_by=request.user)
     active_keys_count = sum(1 for api_key in api_keys if api_key.is_usable())

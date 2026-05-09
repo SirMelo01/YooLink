@@ -11,7 +11,7 @@ class DeveloperApiKeyAuthenticationScheme(OpenApiAuthenticationExtension):
             "scheme": "bearer",
             "bearerFormat": "YooLink Developer API Key",
             "description": (
-                "Developer API Key aus dem YooLink CMS. Primaer als "
+                "Developer API Key aus dem YooLink CMS. Primär als "
                 "`Authorization: Bearer <api-key>` senden. Alternativ wird "
                 "`X-YooLink-API-Key: <api-key>` akzeptiert."
             ),

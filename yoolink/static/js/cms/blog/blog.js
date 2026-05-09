@@ -632,7 +632,7 @@ $(document).ready(function () {
         }
 
         if (description === "") {
-            sendNotif("Bitte gebe eine Beschreibung fuer den Blog ein.", "error")
+            sendNotif("Bitte gebe eine Beschreibung für den Blog ein.", "error")
             disableSpinner($(this))
             return;
         }
