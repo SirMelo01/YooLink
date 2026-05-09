@@ -1,3 +1,4 @@
+import os
 from html import escape
 
 from django.utils.text import slugify
@@ -73,6 +74,12 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
     translations = serializers.SerializerMethodField()
     code = serializers.JSONField(required=False)
     title_image = serializers.ImageField(required=False, allow_null=True)
+    title_image_media_id = serializers.PrimaryKeyRelatedField(
+        queryset=fileentry.objects.all(),
+        required=False,
+        write_only=True,
+        source="title_image_media",
+    )
     original = serializers.PrimaryKeyRelatedField(
         queryset=Blog.objects.filter(original__isnull=True),
         required=False,
@@ -94,6 +101,7 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             "original",
             "author",
             "title_image",
+            "title_image_media_id",
             "title_image_url",
             "absolute_url",
             "translations",
@@ -151,6 +159,10 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         body_provided = "body" in initial_data
         markdown_provided = "markdown" in initial_data
         code_provided = "code" in initial_data
+        if "title_image" in initial_data and "title_image_media_id" in initial_data:
+            raise serializers.ValidationError(
+                {"title_image": "Bitte entweder title_image als Datei oder title_image_media_id senden, nicht beides."}
+            )
 
         markdown = attrs.get("markdown")
         if markdown is None and instance:
@@ -226,6 +238,7 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         title_image = validated_data.pop("title_image", None)
+        title_image_media = validated_data.pop("title_image_media", None)
         request = self.context["request"]
         if validated_data.get("original"):
             base_slug = slugify(validated_data.get("title") or "blog")
@@ -237,12 +250,15 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         if title_image:
             blog.title_image = title_image
             blog.save(update_fields=["title_image", "last_updated"])
+        elif title_image_media:
+            self._copy_title_image_from_media(blog, title_image_media)
 
         return blog
 
     def update(self, instance, validated_data):
         title_image_supplied = "title_image" in validated_data
         title_image = validated_data.pop("title_image", None)
+        title_image_media = validated_data.pop("title_image_media", None)
 
         for field, value in validated_data.items():
             setattr(instance, field, value)
@@ -251,7 +267,17 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             instance.title_image = title_image or ""
 
         instance.save()
+        if title_image_media:
+            self._copy_title_image_from_media(instance, title_image_media)
         return instance
+
+    def _copy_title_image_from_media(self, blog, media):
+        media.file.open("rb")
+        try:
+            filename = os.path.basename(media.file.name)
+            blog.title_image.save(filename, media.file, save=True)
+        finally:
+            media.file.close()
 
 
 class ExternalBlogImageUploadSerializer(serializers.Serializer):

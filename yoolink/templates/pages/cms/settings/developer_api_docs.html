@@ -91,11 +91,12 @@
                         </div>
                         <div>
                             <p class="font-mono text-sm font-semibold text-slate-900">/api/cms/blog/</p>
-                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key. Als JSON fuer reine Textblogs oder als Multipart-Formdaten, wenn direkt ein `title_image` mitgesendet wird.</p>
+                            <p class="mt-2 text-sm text-slate-600">Erstellt einen Blog. Erfordert einen Write-Key. Als JSON fuer reine Textblogs oder mit `title_image_media_id`, wenn vorher ein Bild ueber `/api/cms/blog/media/` hochgeladen wurde. Alternativ als Multipart-Formdaten, wenn direkt ein `title_image` mitgesendet wird.</p>
                             <pre class="mt-3 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100"><code>{
   "title": "Event Rückblick",
   "description": "Kurzer SEO-Teaser für Blogkarten und Meta Description.",
   "markdown": "## Rueckblick\n\nHTML-freier Markdown-Inhalt des automatisch generierten Blogartikels.",
+  "title_image_media_id": 44,
   "active": true,
   "language": "de"
 }</code></pre>
@@ -144,7 +145,7 @@ alt_text: Volles Haus beim Event</code></pre>
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-200 px-6 py-5">
                     <h2 class="text-xl font-semibold text-slate-900">Blog Felder</h2>
-                    <p class="mt-1 text-sm text-slate-500">Die API nimmt JSON oder Multipart-Formdaten an. `title_image` kann als Datei hochgeladen werden.</p>
+                    <p class="mt-1 text-sm text-slate-500">Die API nimmt JSON oder Multipart-Formdaten an. Fuer JSON-Workflows erst Medien hochladen und dann per ID referenzieren.</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-100 text-sm">
@@ -166,6 +167,7 @@ alt_text: Volles Haus beim Event</code></pre>
                             <tr><td class="px-6 py-4 font-mono">language</td><td class="px-6 py-4">string</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Zum Beispiel `de` oder `en`.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">original</td><td class="px-6 py-4">integer/null</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">ID des Original-Blogs, wenn eine Sprachvariante erstellt wird. Pro Original kann jede Sprache nur einmal vorkommen.</td></tr>
                             <tr><td class="px-6 py-4 font-mono">title_image</td><td class="px-6 py-4">file</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">Titelbild per Multipart-Upload.</td></tr>
+                            <tr><td class="px-6 py-4 font-mono">title_image_media_id</td><td class="px-6 py-4">integer</td><td class="px-6 py-4">nein</td><td class="px-6 py-4">ID aus `POST /api/cms/blog/media/`, um ein zuvor hochgeladenes Bild als Titelbild zu verwenden. Fuer JSON-Requests statt `title_image` nutzen.</td></tr>
                         </tbody>
                     </table>
                 </div>

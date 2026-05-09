@@ -135,6 +135,17 @@ Content-Bilder fuer Markdown-Blogs koennen per Multipart direkt hochgeladen werd
 
 Die Antwort enthaelt `url`, `markdown` und `html`. Fuer KI-Workflows reicht es meist, das `markdown`-Snippet direkt in den Blog-Markdown einzusetzen. Ein Titelbild kann beim Erstellen oder Aktualisieren eines Blogs weiterhin als Multipart-Feld `title_image` an `/api/cms/blog/` bzw. `/api/cms/blog/<id>/` gesendet werden.
 
+Wenn du den Blog als JSON erstellst, kann `title_image` keine URL sein. Lade das Bild vorher ueber `/api/cms/blog/media/` hoch und sende danach die erhaltene `id` als `title_image_media_id`:
+
+        {
+          "title": "Event Rueckblick",
+          "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
+          "markdown": "## Rueckblick\n\nMarkdown-Inhalt.",
+          "title_image_media_id": 44,
+          "active": true,
+          "language": "de"
+        }
+
 ## Deployment
 
 https://www.youtube.com/watch?v=DLxcyndCvO4 hier ab minute 28

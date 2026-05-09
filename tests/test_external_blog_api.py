@@ -202,6 +202,7 @@ def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
             "title": "Blog mit Bild",
             "description": "Beschreibung mit Bild.",
             "markdown": f"## Galerie\n\n{upload_response.data['markdown']}",
+            "title_image_media_id": upload_response.data["id"],
             "active": True,
             "language": "de",
         },
@@ -210,6 +211,8 @@ def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
 
     assert create_response.status_code == 201
     blog = Blog.objects.get(title="Blog mit Bild")
+    assert blog.title_image
+    assert create_response.data["title_image_url"].endswith(".png")
     assert upload_response.data["markdown"] in blog.markdown
     assert 'class="rounded-2xl my-4"' in blog.body
 
