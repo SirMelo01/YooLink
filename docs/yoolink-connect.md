@@ -121,6 +121,36 @@ GET https://<cms-domain>/api/cms/blog/
 Authorization: Bearer yl_live_...
 ```
 
+Die wichtigsten Blog-Workflows fuer KI-Plattformen sind in der separaten Detaildoku beschrieben:
+
+- `docs/yoolink-blog-api.md`
+
+Kurzfassung fuer die Einrichtung:
+
+1. Nach dem Token Exchange `ping_url` aufrufen und die Verbindung pruefen.
+2. Fuer Blog-Erstellung muss `access_level` den Wert `write` haben und `allowed_apps` muss `blog` enthalten.
+3. Inhalte bevorzugt als `markdown` an `POST /api/cms/blog/` senden.
+4. Bilder zuerst per `POST /api/cms/blog/media/` hochladen und danach das zurueckgegebene Markdown-Snippet in den Blog einfuegen.
+5. Ein Titelbild bei JSON-Requests ueber `title_image_media_id` setzen, nicht als externe URL.
+6. OpenAPI Schema fuer Client-Generatoren: `https://<cms-domain>/api/schema/`.
+7. Swagger UI fuer Menschen und Tests im Browser: `https://<cms-domain>/api/docs/`.
+
+Minimaler KI-Blog-Create:
+
+```http
+POST https://<cms-domain>/api/cms/blog/
+Authorization: Bearer yl_live_...
+Content-Type: application/json
+
+{
+  "title": "KI Event Rueckblick",
+  "description": "Kurzer SEO-Teaser fuer Blogkarten und Meta Description.",
+  "markdown": "## Rueckblick\n\nDer Event war stark besucht.",
+  "active": true,
+  "language": "de"
+}
+```
+
 ## Next.js Beispiel
 
 ### 1. PKCE Helper
