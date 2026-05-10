@@ -24,6 +24,7 @@ urlpatterns = [
     path("leistungen/", views.site_view_leistungen, name="site_leistungen"),
     path("leistungen/cms/", views.site_view_cmsinfo, name="site_leistungen_cms"),
     path("leistungen/logos/", views.site_view_logos, name="site_leistungen_logos"),
+    path("leistungen/visitenkarte/", views.site_view_visitenkarte, name="site_leistungen_visitenkarte"),
     path("datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),
     path("datenschutz/save/", views.save_privacy_policy, name="save_privacy_policy"),
 ]

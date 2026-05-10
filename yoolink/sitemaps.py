@@ -13,7 +13,7 @@ class StaticViewSitemap(Sitemap):
         return [
             'home',
             'impressum', 'datenschutz', 'cookies', 
-            'kunden', 'kontakt', 'leistungen', 'leistungen_cms', 'leistungen_logos',
+            'kunden', 'kontakt', 'leistungen', 'leistungen_cms', 'leistungen_logos', 'leistungen_visitenkarte',
             'blog:blog'
             ]
     
