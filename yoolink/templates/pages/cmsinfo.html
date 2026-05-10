@@ -26,7 +26,7 @@
             class="container flex flex-col items-center justify-between h-full max-w-6xl px-8 mx-auto -mt-32 lg:flex-row xl:px-0">
             <div
                 class="z-30 xxl:-ml-24 flex flex-col items-center w-full max-w-xl pt-48 text-center lg:items-start lg:w-1/2 lg:pt-40 xl:pt-40 lg:text-left">
-                <h1 class="relative mb-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-6xl xl:mb-8">
+                <h1 class="relative mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
                 {{ textContent_hero.header|default:"Verwalte deine eigene Website" }}
                 </h1>
 
@@ -125,10 +125,10 @@
             <div class="items-center gap-8 lg:grid lg:grid-cols-2 xl:gap-16">
                 <div class="md:text-lg pb-14 lg:pb-0" data-aos="fade-right">
 
-                    <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
+                    <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
                     {{ textContent_sec1.title|default:"Verwalte den Inhalt der Website jederzeit und ohne Hilfe" }}
                     </h2>
-                    <p class="mb-8 text-base leading-7 xl:text-xl text-gray-600">
+                    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
                     {{ textContent_sec1.description|default:"Deine Website ist in verschiedene Sektionen unterteilt ... (dein Default Text)" }}
                     </p>
 
@@ -172,10 +172,10 @@
                 <img data-aos="fade-right" id="mainImage2" class="w-full mb-4 rounded-lg lg:mb-0 flex order-2 md:order-none" src="{% static 'images/designImg/filler.png' %}" alt="Bilder, Videos und Galerien Dashboard">
                 
                 <div data-aos="fade-left" class="md:text-lg order-1 md:order-none">
-                    <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
+                    <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
                     {{ textContent_sec2.title|default:"Bilder, Videos und Galerien flexibel gestalten" }}
                     </h2>
-                    <p class="mb-8 text-base leading-7 xl:text-xl text-gray-600">
+                    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
                     {{ textContent_sec2.description|default:"Lade ganz einfach Bilder, Videos und andere Dateien ... (dein Default Text)" }}
                     </p>
 
@@ -208,10 +208,10 @@
             <!-- Row -->
             <div class="items-center gap-8 lg:grid lg:grid-cols-2 xl:gap-16">
                 <div data-aos="fade-right" class="md:text-lg">
-                    <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
+                    <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
                     {{ textContent_blog.title|default:"Verbessere das Ranking deiner Website mit unserem Blog-Builder" }}
                     </h2>
-                    <p class="mb-8 text-base leading-7 xl:text-xl text-gray-600">
+                    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
                     {{ textContent_blog.description|default:"Erstelle mit unserem integrierten Blog-Tool ..." }}
                     </p>
                     <!-- List -->
@@ -250,10 +250,10 @@
             <div class="items-center gap-8 grid grid-cols-1 lg:grid-cols-2 xl:gap-16">
                 <img data-aos="fade-right" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl order-2 md:order-none" src="{% if image_company %}{{ image_company.file.url }}{% else %}{% static 'images/cmsinfo/cmscompanydata.png' %}{% endif %}" {% responsive_image_attrs image_company "(min-width: 1024px) 50vw, 100vw" %} loading="lazy" alt="Dashboard Unternehmensdaten">
                 <div data-aos="fade-left" class="md:text-lg order-1 md:order-none">
-                    <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
+                    <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
                     {{ textContent_company.title|default:"Alle Unternehmensdaten auf einem Blick verwalten" }}
                     </h2>
-                    <p class="mb-8 text-base leading-7 xl:text-xl text-gray-600">
+                    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
                     {{ textContent_company.description|default:"Pflege alle wichtigen Informationen ..." }}
                     </p>
 
@@ -299,10 +299,10 @@
                 <p class="text-lg font-medium text-blue-900">
                 {{ textContent_trust.header|default:"Von Unternehmen im Einsatz" }}
                 </p>
-                <h2 class="mt-3 mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
+                <h2 class="mt-3 mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
                 {{ textContent_trust.title|default:"Vertrauen von Anfang an – Zahlen, die für sich sprechen" }}
                 </h2>
-                <p class="text-base leading-7 xl:text-xl text-gray-600">
+                <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
                 {{ textContent_trust.description|default:"Obwohl wir noch am Anfang stehen ..." }}
                 </p>
                 <div class="pt-6 mt-6 space-y-4 border-t border-gray-200">
@@ -382,7 +382,7 @@
     <section class="bg-gray-700">
         <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16 lg:px-6">
             <div class="max-w-screen-sm mx-auto text-center">
-                <h2 class="mb-4 text-3xl font-bold tracking-tight text-white">
+                <h2 class="mb-4 text-3xl sm:text-4xl font-bold tracking-tight text-white">
                 {{ textContent_bottomcta.title|default:"Jetzt unverbindlich Kontakt aufnehmen" }}
                 </h2>
                 <p class="mb-6 text-white md:text-lg">

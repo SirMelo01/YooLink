@@ -1,14 +1,12 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# YooLink translations.
+# Copyright (C) YooLink
+# This file is distributed under the same license as the YooLink package.
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-01 19:53+0100\n"
+"POT-Creation-Date: 2026-05-10 18:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,93 +24,61 @@ msgstr "Deutsch"
 msgid "Englisch"
 msgstr "Englisch"
 
-#: yoolink/templates/base.html:118 yoolink/templates/base.html:227
+#: yoolink/templates/base.html:107 yoolink/templates/base.html:265
 msgid "NAVBAR_LEISTUNGEN"
 msgstr "Leistungen"
 
-#: yoolink/templates/base.html:124 yoolink/templates/base.html:233
-msgid "NAVBAR_CMS"
-msgstr "CMS"
-
-#: yoolink/templates/base.html:138 yoolink/templates/base.html:239
+#: yoolink/templates/base.html:172 yoolink/templates/base.html:299
 msgid "NAVBAR_PRICING"
 msgstr "Preise"
 
-#: yoolink/templates/base.html:144 yoolink/templates/base.html:245
+#: yoolink/templates/base.html:178 yoolink/templates/base.html:305
 msgid "NAVBAR_REFERENCES"
-msgstr "Referenzen"
+msgstr "Kunden"
 
-#: yoolink/templates/base.html:182 yoolink/templates/base.html:184
-#: yoolink/templates/base.html:251
+#: yoolink/templates/base.html:216 yoolink/templates/base.html:218
+#: yoolink/templates/base.html:311
 msgid "NAVBAR_CONTACT_BTN"
 msgstr "Kontakt"
 
-#: yoolink/templates/base.html:322
-msgid "cookies_title"
-msgstr "Cookie-Richtlinie"
-
-#: yoolink/templates/base.html:326
-msgid "cookies_description"
-msgstr ""
-"Diese Website verwendet Cookies. Weitere Informationen zu den Cookie-Arten "
-"finden sich unter den jeweiligen Kategorien. Dort lassen sich auch einzelne "
-"Cookies aktivieren. Die Cookie-Einstellungen können jederzeit über den Link "
-"im Footer dieser Website angepasst werden."
-
-#: yoolink/templates/base.html:329
-msgid "cookies_imprint"
-msgstr "Impressum"
-
-#: yoolink/templates/base.html:330
-msgid "cookies_privacy_policy"
-msgstr "Datenschutz"
-
-#: yoolink/templates/base.html:338
-msgid "cookies_accept"
-msgstr "Bestätigen"
-
-#: yoolink/templates/base.html:341
-msgid "cookies_decline"
-msgstr "Ablehnen"
-
-#: yoolink/templates/base.html:382 yoolink/templates/cms-login-base.html:165
+#: yoolink/templates/base.html:403 yoolink/templates/cms-login-base.html:105
 msgid "FOOTER_HEADING"
 msgstr ""
 "Ihr digitales Aushängeschild – modern, benutzerfreundlich und auf den Punkt."
 
-#: yoolink/templates/base.html:442 yoolink/templates/cms-login-base.html:225
+#: yoolink/templates/base.html:466 yoolink/templates/cms-login-base.html:166
 msgid "FOOTER_USEFUL_LINKS"
 msgstr "Nützliche Links"
 
-#: yoolink/templates/base.html:445 yoolink/templates/cms-login-base.html:228
+#: yoolink/templates/base.html:469 yoolink/templates/cms-login-base.html:169
 msgid "FOOTER_HOME"
 msgstr "Startseite"
 
-#: yoolink/templates/base.html:448 yoolink/templates/cms-login-base.html:231
+#: yoolink/templates/base.html:472 yoolink/templates/cms-login-base.html:172
 msgid "FOOTER_CONTACT"
 msgstr "Kontakt"
 
-#: yoolink/templates/base.html:451 yoolink/templates/cms-login-base.html:234
+#: yoolink/templates/base.html:475 yoolink/templates/cms-login-base.html:175
 msgid "FOOTER_REFERENCES"
 msgstr "Referenzen"
 
-#: yoolink/templates/base.html:454 yoolink/templates/cms-login-base.html:237
+#: yoolink/templates/base.html:478 yoolink/templates/cms-login-base.html:178
 msgid "FOOTER_BLOG"
 msgstr "Blog"
 
-#: yoolink/templates/base.html:459 yoolink/templates/cms-login-base.html:242
+#: yoolink/templates/base.html:483 yoolink/templates/cms-login-base.html:183
 msgid "FOOTER_Rechtliches"
 msgstr "Rechtliches"
 
-#: yoolink/templates/base.html:462 yoolink/templates/cms-login-base.html:245
+#: yoolink/templates/base.html:486 yoolink/templates/cms-login-base.html:186
 msgid "FOOTER_Impressum"
 msgstr "Impressum"
 
-#: yoolink/templates/base.html:465 yoolink/templates/cms-login-base.html:248
+#: yoolink/templates/base.html:489 yoolink/templates/cms-login-base.html:189
 msgid "FOOTER_Datenschutz"
 msgstr "Datenschutz"
 
-#: yoolink/templates/base.html:468 yoolink/templates/cms-login-base.html:251
+#: yoolink/templates/base.html:492 yoolink/templates/cms-login-base.html:192
 msgid "FOOTER_Cookies"
 msgstr "Cookies"
 
@@ -124,28 +90,23 @@ msgstr "Bilder"
 msgid "Ihre Nachricht"
 msgstr ""
 
-#: yoolink/templates/pages/index.html:450
-msgid "learn_more"
-msgstr "Erfahre mehr"
-
-#: yoolink/templates/pages/index.html:595
-#: yoolink/templates/pages/index.html:628
-#: yoolink/templates/pages/index.html:659
-#: yoolink/templates/pages/kunden.html:46
-#: yoolink/templates/pages/kunden.html:77
-#: yoolink/templates/pages/kunden.html:108
-#: yoolink/templates/pages/kunden.html:140
-#: yoolink/templates/pages/kunden.html:269
-#: yoolink/templates/pages/kunden.html:301
-#: yoolink/templates/pages/kunden.html:347
+#: yoolink/templates/pages/components/customer_card.html:60
+#: yoolink/templates/pages/components/customer_card.html:85
+#: yoolink/templates/pages/index.html:521
+#: yoolink/templates/pages/index.html:554
+#: yoolink/templates/pages/index.html:585
 msgid "client_published_on"
 msgstr "Veröffentlicht am"
 
-#: yoolink/templates/pages/index.html:722
+#: yoolink/templates/pages/index.html:376
+msgid "learn_more"
+msgstr "Erfahre mehr"
+
+#: yoolink/templates/pages/index.html:648
 msgid "pricing_month"
 msgstr "Monat"
 
-#: yoolink/templates/pages/index.html:725
+#: yoolink/templates/pages/index.html:651
 msgid "pricing_one_off_payment"
 msgstr "Einmalzahlung"
 
@@ -189,9 +150,34 @@ msgstr ""
 msgid "Information successfully updated"
 msgstr ""
 
-#: yoolink/ycms/models.py:249
+#: yoolink/ycms/models.py:302
 msgid "Bezieht sich auf den Original-Blog (z.B. auf Deutsch)"
 msgstr ""
+
+#~ msgid "NAVBAR_CMS"
+#~ msgstr "CMS"
+
+#~ msgid "cookies_title"
+#~ msgstr "Cookie-Richtlinie"
+
+#~ msgid "cookies_description"
+#~ msgstr ""
+#~ "Diese Website verwendet Cookies. Weitere Informationen zu den Cookie-"
+#~ "Arten finden sich unter den jeweiligen Kategorien. Dort lassen sich auch "
+#~ "einzelne Cookies aktivieren. Die Cookie-Einstellungen können jederzeit "
+#~ "über den Link im Footer dieser Website angepasst werden."
+
+#~ msgid "cookies_imprint"
+#~ msgstr "Impressum"
+
+#~ msgid "cookies_privacy_policy"
+#~ msgstr "Datenschutz"
+
+#~ msgid "cookies_accept"
+#~ msgstr "Bestätigen"
+
+#~ msgid "cookies_decline"
+#~ msgstr "Ablehnen"
 
 #~ msgid "NAVBAR_RESPONSIVE"
 #~ msgstr "Responsive"

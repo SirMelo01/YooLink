@@ -104,9 +104,9 @@
                         {{ customer.subtitle }}
                     </p>
                 {% endif %}
-                <h1 class="text-4xl font-bold leading-tight tracking-tight sm:text-5xl xl:text-6xl">{{ customer.name }}</h1>
+                <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight sm:text-5xl xl:text-6xl">{{ customer.name }}</h1>
                 {% if customer.short_description %}
-                    <p class="mt-5 max-w-2xl text-base leading-relaxed text-blue-100 md:text-lg">{{ customer.short_description }}</p>
+                    <p class="mt-5 max-w-2xl text-base leading-7 text-blue-100 md:text-lg xl:text-xl">{{ customer.short_description }}</p>
                 {% endif %}
 
                 <div class="mt-8 flex flex-wrap gap-3">
@@ -199,7 +199,7 @@
                         <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
                             <i class="bi bi-bookmark-heart text-xl"></i>
                         </span>
-                        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">Das Projekt</h2>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">Das Projekt</h2>
                     </div>
                     <div class="case-prose rounded-2xl bg-blue-50/60 p-6 text-base leading-relaxed text-gray-700 ring-1 ring-blue-100 md:p-8 md:text-lg">
                         <div class="whitespace-pre-line">{{ customer.description }}</div>
@@ -227,7 +227,7 @@
                             <i class="bi bi-images text-xl"></i>
                         </span>
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">Eindrücke</h2>
+                            <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">Eindrücke</h2>
                             <p class="text-sm text-gray-500">{{ gallery_images|length }} Bild{{ gallery_images|length|pluralize:"er" }} aus der Galerie</p>
                         </div>
                     </div>
@@ -337,7 +337,7 @@
             <p class="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-900 ring-1 ring-blue-100">
                 <i class="bi bi-collection"></i> Weitere Projekte
             </p>
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Diese Referenzen könnten dich interessieren</h2>
+            <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">Diese Referenzen könnten dich interessieren</h2>
         </div>
 
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

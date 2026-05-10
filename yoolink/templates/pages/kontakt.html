@@ -13,8 +13,8 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     </div>
-    <h1 class="mb-3 text-3xl font-bold text-gray-900">Nachricht gesendet!</h1>
-    <p class="mb-8 text-base text-gray-500 leading-relaxed">Vielen Dank für Ihre Nachricht. Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.</p>
+    <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">Nachricht gesendet!</h1>
+    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">Vielen Dank für Ihre Nachricht. Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.</p>
     <a href="{% url 'home' %}" class="inline-block rounded-full bg-blue-900 px-8 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800">Zurück zur Startseite</a>
   </div>
 </section>
@@ -23,8 +23,8 @@
 
 <!-- ── HERO ── -->
 <div class="bg-white pt-16 pb-10 text-center px-4">
-  <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Nehmen Sie Kontakt auf</h1>
-  <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-gray-500 md:text-lg">Wir freuen uns auf Ihre Anfrage – egal ob Projekt, Frage oder einfach Hallo.</p>
+  <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">Nehmen Sie Kontakt auf</h1>
+  <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl">Wir freuen uns auf Ihre Anfrage – egal ob Projekt, Frage oder einfach Hallo.</p>
 </div>
 
 <!-- ── MAIN CARD ── -->
@@ -43,8 +43,8 @@
         {% elif owner_data and owner_data.full_name %}
         <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-blue-300">{{ owner_data.full_name }}</p>
         {% endif %}
-        <h2 class="text-2xl font-bold leading-snug sm:text-3xl">Wir sind für<br>Sie da.</h2>
-        <p class="mt-3 text-sm leading-relaxed text-blue-200">Lassen Sie uns gemeinsam Ihr nächstes digitales Projekt umsetzen. Schreiben Sie uns – wir antworten schnell.</p>
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none">Wir sind für<br>Sie da.</h2>
+        <p class="mt-3 text-base leading-7 text-blue-200 md:text-lg">Lassen Sie uns gemeinsam Ihr nächstes digitales Projekt umsetzen. Schreiben Sie uns – wir antworten schnell.</p>
 
         <div class="mt-10 space-y-6">
           <!-- Address -->

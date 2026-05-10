@@ -6,6 +6,20 @@
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+<style>
+  html {
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 1023px) {
+    [data-aos="fade-left"],
+    [data-aos="fade-right"],
+    [data-aos="fade-up-left"],
+    [data-aos="fade-up-right"] {
+      transform: translate3d(0, 60px, 0);
+    }
+  }
+</style>
 {% endcompress css %} 
 {% endblock css %}
 
@@ -954,11 +968,15 @@
 
 {% endcompress js %}
 <script>
-  AOS.init({
-    duration: 800, // Dauer der Animation in ms
-    once: true,     // Animation nur beim ersten Scroll
-    easing: 'ease-out',
-    disable: "phone"
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!window.AOS) return;
+
+    AOS.init({
+      duration: 800, // Dauer der Animation in ms
+      once: true,     // Animation nur beim ersten Scroll
+      easing: 'ease-out',
+      disable: "phone"
+    });
   });
 </script>
 {% endblock javascriptend %}

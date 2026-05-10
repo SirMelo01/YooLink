@@ -3,6 +3,12 @@
     position: relative;
 }
 
+.navbar-dropdown-trigger.hover-overline-animation {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
 .hover-overline-animation::before {
     content: '';
     position: absolute;

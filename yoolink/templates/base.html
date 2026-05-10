@@ -97,26 +97,75 @@
             <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
           </a>
           <ul class="hidden items-center space-x-8 lg:flex">
-            <li>
-              <a href="{% url 'leistungen' %}" aria-label="Leistungen" title="Leistungen"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
+            <li class="relative" data-leistungen-dropdown>
+              <button type="button"
+                id="leistungenDropdownButtonDesktop"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="leistungenDropdownMenuDesktop"
+                class="navbar-dropdown-trigger flex items-center gap-1 font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 {% trans "NAVBAR_LEISTUNGEN" %}
-              </a>
+                <svg class="h-4 w-4 transition-transform duration-200" data-leistungen-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+
+              <div id="leistungenDropdownMenuDesktop"
+                role="menu"
+                aria-labelledby="leistungenDropdownButtonDesktop"
+                class="hidden absolute left-0 top-full z-50 mt-4 w-80 overflow-hidden rounded-2xl bg-white text-gray-900 shadow-2xl ring-1 ring-black/5">
+                <a href="{% url 'leistungen' %}" role="menuitem"
+                  class="group flex items-start gap-3 border-b border-gray-100 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-grid-1x2 text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">Übersicht</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Alle Leistungen auf einen Blick</span>
+                  </span>
+                </a>
+                <a href="{% url 'leistungen_cms' %}" role="menuitem"
+                  class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-window-stack text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">CMS</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Eigenes Content-Management-System</span>
+                  </span>
+                </a>
+                <a href="{% url 'leistungen_logos' %}" role="menuitem"
+                  class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-palette text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">Logos</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Markenlogo Design mit Strategie</span>
+                  </span>
+                </a>
+                <a href="{% url 'leistungen_medien' %}" role="menuitem"
+                  class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-camera text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">Medien &amp; Fotografie</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Bildmaterial direkt mit der Website</span>
+                  </span>
+                </a>
+                <a href="{% url 'leistungen_visitenkarte' %}" role="menuitem"
+                  class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-card-text text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">Visitenkarten</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Hochwertige Visitenkarten Design</span>
+                  </span>
+                </a>
+              </div>
             </li>
-            <li>
-              <a href="{% url 'leistungen_cms' %}" aria-label="CMS" title="CMS"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                {% trans "NAVBAR_CMS" %}
-              </a>
-            </li>
-            <!--
-            <li>
-              <a href="/" aria-label="Referenzen" title="Referenzen"
-                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400">
-                Referenzen
-              </a>
-            </li>
-            -->
             <li>
               <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
@@ -124,9 +173,15 @@
               </a>
             </li>
             <li>
-              <a href="{% url 'kunden' %}" aria-label="Referenzen" title="Referenzen"
+              <a href="{% url 'kunden' %}" aria-label="Kunden" title="Kunden"
                 class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                 {% trans "NAVBAR_REFERENCES" %}
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'blog:blog' %}" aria-label="Blogs" title="Blogs"
+                class="font-medium tracking-wide text-white transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
+                Blogs
               </a>
             </li>
           </ul>
@@ -206,17 +261,43 @@
                 </div>
                 <nav aria-label="Hauptnavigation Mobile">
                   <ul class="space-y-4">
-                    <li>
-                      <a href="{% url 'leistungen' %}" aria-label="Leistungen" title="Leistungen"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        {% trans "NAVBAR_LEISTUNGEN" %}
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'leistungen_cms' %}" aria-label="Produkt" title="Produkt"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
-                        {% trans "NAVBAR_CMS" %}
-                      </a>
+                    <li data-leistungen-dropdown-mobile>
+                      <button type="button"
+                        id="leistungenDropdownButtonMobile"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-controls="leistungenDropdownMenuMobile"
+                        class="flex w-full items-center justify-between font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        <span>{% trans "NAVBAR_LEISTUNGEN" %}</span>
+                        <svg class="h-5 w-5 transition-transform duration-200" data-leistungen-chevron-mobile xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                      <div id="leistungenDropdownMenuMobile"
+                        class="hidden mt-1 ml-1 space-y-3 border-l-2 border-blue-100 pl-4"
+                        role="menu"
+                        aria-labelledby="leistungenDropdownButtonMobile">
+                        <a href="{% url 'leistungen' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-grid-1x2 text-blue-900"></i> Übersicht
+                        </a>
+                        <a href="{% url 'leistungen_cms' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-window-stack text-blue-900"></i> CMS
+                        </a>
+                        <a href="{% url 'leistungen_logos' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-palette text-blue-900"></i> Logos
+                        </a>
+                        <a href="{% url 'leistungen_medien' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-camera text-blue-900"></i> Medien &amp; Fotografie
+                        </a>
+                        <a href="{% url 'leistungen_visitenkarte' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-card-text text-blue-900"></i> Visitenkarten
+                        </a>
+                      </div>
                     </li>
                     <li>
                       <a href="{% url 'home' %}#Preise" aria-label="Preise" title="Preise"
@@ -225,9 +306,15 @@
                       </a>
                     </li>
                     <li>
-                      <a href="{% url 'kunden' %}" aria-label="Referenzen" title="Referenzen"
+                      <a href="{% url 'kunden' %}" aria-label="Kunden" title="Kunden"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
                         {% trans "NAVBAR_REFERENCES" %}
+                      </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'blog:blog' %}" aria-label="Blogs" title="Blogs"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 hover-overline-animation">
+                        Blogs
                       </a>
                     </li>
                     <li>
