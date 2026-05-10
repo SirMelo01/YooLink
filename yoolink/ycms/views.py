@@ -614,6 +614,47 @@ def delete_file(request, id):
     return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
 
 @login_required(login_url='login')
+def generate_mobile_file(request, id):
+    if request.method != 'POST':
+        return JsonResponse({"error": "Ungueltige Anfrage"}, status=405)
+
+    image = get_object_or_404(fileentry, id=id)
+    if image.mobile_file:
+        return JsonResponse({
+            "success": "Mobile Variante ist bereits vorhanden",
+            "mobile_url": image.mobile_file.url,
+            "srcset": image.responsive_srcset,
+            "has_mobile": True,
+        })
+
+    try:
+        image.file.open("rb")
+        mobile_image = optimize_image_for_upload(
+            image.file,
+            max_dimensions=MOBILE_IMAGE_MAX_DIMENSIONS,
+            max_size_kb=MOBILE_IMAGE_TARGET_KB,
+            variant_suffix="mobile",
+        )
+    except Exception:
+        return JsonResponse(
+            {"error": "Mobile Variante konnte nicht erstellt werden."},
+            status=400,
+        )
+    finally:
+        image.file.close()
+
+    image.mobile_file.save(mobile_image.name, mobile_image, save=True)
+
+    return JsonResponse({
+        "success": "Mobile Variante wurde erstellt",
+        "mobile_url": image.mobile_file.url,
+        "srcset": image.responsive_srcset,
+        "has_mobile": True,
+        "mobile": image_variant_metadata(mobile_image),
+    })
+
+
+@login_required(login_url='login')
 def update_file(request, id):
     if request.method == 'POST':
         title = request.POST.get('title', '')

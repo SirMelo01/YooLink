@@ -2,6 +2,73 @@ var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').valu
 
 $(document).ready(function () {
     var $editImg = null;
+    var imageViewSettings = {
+        large: {
+            gallery: 'mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:mt-8',
+            card: 'image-card relative overflow-hidden rounded-lg',
+            link: 'image-link block',
+            image: 'image-thumb h-64 w-full object-cover border rounded-lg shadow-lg',
+            details: 'image-list-details hidden min-w-0 flex-1 pr-20',
+            badge: 'image-format-badge absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-1 text-xs font-semibold text-gray-700 shadow ring-1 ring-gray-200',
+            mobileButton: 'generate-mobile absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-lg ring-2 ring-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300'
+        },
+        small: {
+            gallery: 'mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 sm:mt-8',
+            card: 'image-card relative overflow-hidden rounded-lg',
+            link: 'image-link block',
+            image: 'image-thumb h-36 w-full object-cover border rounded-lg shadow-md',
+            details: 'image-list-details hidden min-w-0 flex-1 pr-20',
+            badge: 'image-format-badge absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-1 text-[10px] font-semibold text-gray-700 shadow ring-1 ring-gray-200',
+            mobileButton: 'generate-mobile absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg ring-2 ring-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300'
+        },
+        list: {
+            gallery: 'mt-6 grid grid-cols-1 gap-3 sm:mt-8',
+            card: 'image-card relative flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 shadow-sm',
+            link: 'image-link block h-20 w-28 flex-shrink-0 overflow-hidden rounded-md sm:h-24 sm:w-36',
+            image: 'image-thumb h-full w-full rounded-md object-cover',
+            details: 'image-list-details min-w-0 flex-1 pr-24',
+            badge: 'image-format-badge hidden rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-gray-700 ring-1 ring-blue-100 sm:inline-flex sm:items-center sm:gap-1',
+            mobileButton: 'generate-mobile absolute left-16 top-1/2 z-30 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg ring-2 ring-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 sm:left-20'
+        }
+    };
+
+    function setImageView(view) {
+        var nextView = imageViewSettings[view] ? view : 'large';
+        var settings = imageViewSettings[nextView];
+
+        $('#imageGallery').attr('class', settings.gallery);
+        $('.image-card').attr('class', settings.card);
+        $('.image-link').attr('class', settings.link);
+        $('.image-thumb').attr('class', settings.image);
+        $('.image-list-details').attr('class', settings.details);
+        $('.image-format-badge').attr('class', settings.badge);
+        $('.generate-mobile').attr('class', settings.mobileButton);
+
+        $('.image-view-btn').each(function () {
+            var button = $(this);
+            var isActive = button.data('view') === nextView;
+            button.toggleClass('bg-blue-600 text-white border-blue-600 shadow-sm', isActive);
+            button.toggleClass('bg-white text-gray-600 border-transparent hover:bg-gray-100', !isActive);
+        });
+
+        try {
+            localStorage.setItem('ycms-image-view', nextView);
+        } catch (error) {
+            // localStorage can be unavailable in private or locked-down contexts.
+        }
+    }
+
+    $('.image-view-btn').on('click', function () {
+        setImageView($(this).data('view'));
+    });
+
+    var savedImageView = 'large';
+    try {
+        savedImageView = localStorage.getItem('ycms-image-view') || 'large';
+    } catch (error) {
+        savedImageView = 'large';
+    }
+    setImageView(savedImageView);
 
     $('.deleter').each(function () {
         $(this).on('click', function () {
@@ -41,6 +108,47 @@ $(document).ready(function () {
     });
 
 
+
+    $('.generate-mobile').each(function () {
+        $(this).on('click', function () {
+            var button = $(this);
+            var imageId = button.data('id');
+            var card = button.closest('.image-card');
+            var image = card.find('img').first();
+            var badge = card.find('.image-format-badge').first();
+
+            button.prop('disabled', true);
+            button.html('<i class="bi bi-arrow-repeat animate-spin"></i> Wird erstellt...');
+
+            $.ajax({
+                url: 'mobile/' + imageId + '/',
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                },
+                success: function (response) {
+                    if (response.srcset) {
+                        image.attr('srcset', response.srcset);
+                        image.attr('sizes', '(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw');
+                    }
+                    if (response.mobile_url) {
+                        image.attr('data-mobile-url', response.mobile_url);
+                    }
+                    badge.html(badge.text().trim() + ' <span class="text-blue-600">+ Mobil</span>');
+                    button.remove();
+                    sendNotif(response.success || "Mobile Variante wurde erstellt", "success");
+                },
+                error: function (error) {
+                    var message = error.responseJSON && error.responseJSON.error
+                        ? error.responseJSON.error
+                        : "Mobile Variante konnte nicht erstellt werden";
+                    button.prop('disabled', false);
+                    button.html('<i class="bi bi-phone"></i> Mobil erstellen');
+                    sendNotif(message, "error");
+                }
+            });
+        });
+    });
 
     // Klick-Handler für das aktuelle Element definieren
     $('#selectImg').on('click', function () {

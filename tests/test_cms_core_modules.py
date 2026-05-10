@@ -253,6 +253,41 @@ def test_image_delete_endpoint_removes_image_after_confirmation(logged_in_client
     assert not fileentry.objects.filter(id=image.id).exists()
 
 
+def test_existing_image_can_generate_mobile_variant(logged_in_client):
+    buffer = BytesIO()
+    Image.new("RGB", (1200, 800), color=(40, 120, 200)).save(buffer, format="JPEG")
+    buffer.seek(0)
+    image = fileentry.objects.create(
+        file=SimpleUploadedFile("legacy.jpg", buffer.read(), content_type="image/jpeg"),
+        title="legacy.jpg",
+    )
+
+    response = logged_in_client.post(reverse("ycms:image-generate-mobile", args=[image.id]))
+
+    assert response.status_code == 200
+    payload = response.json()
+    image.refresh_from_db()
+    assert image.mobile_file
+    assert payload["mobile_url"] == image.mobile_file.url
+    assert payload["srcset"] == image.responsive_srcset
+    assert payload["has_mobile"] is True
+
+
+def test_images_overview_renders_view_switcher(logged_in_client):
+    image = fileentry.objects.create(
+        file=SimpleUploadedFile("overview.jpg", b"image", content_type="image/jpeg"),
+        title="overview.jpg",
+    )
+
+    response = logged_in_client.get(reverse("ycms:images-view"))
+
+    assert response.status_code == 200
+    assert b'data-view="large"' in response.content
+    assert b'data-view="small"' in response.content
+    assert b'data-view="list"' in response.content
+    assert f'data-id="{image.id}"'.encode() in response.content
+
+
 def test_profile_update_resets_2fa_when_email_changes(logged_in_client, cms_user):
     settings_obj = cms_user.usersettings
     settings_obj.two_factor_email_enabled = True

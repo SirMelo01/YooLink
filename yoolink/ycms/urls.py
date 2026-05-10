@@ -24,6 +24,7 @@ urlpatterns = [
     path("upload/post", views.file_upload_view, name="post-upload"),
     path("images/", views.images_view, name="images-view"),
     path("images/delete/<int:id>/", views.delete_file, name="image-delete"),
+    path("images/mobile/<int:id>/", views.generate_mobile_file, name="image-generate-mobile"),
     path("images/update/<int:id>/", views.update_file, name="image-update"),
     path("images/all/", views.all_images, name="all-images"),
 
