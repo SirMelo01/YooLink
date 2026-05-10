@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.applications.content.models import PrivacyPolicy, TextContent
+from yoolink.ycms.applications.content.models import Customer, PrivacyPolicy, TextContent
 from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, UserSettings
 import datetime
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
 from django.conf import settings
 
@@ -31,7 +31,49 @@ def load_kunden(request):
     if TextContent.objects.filter(name="main_kunden2").exists():
         context["kundenText2"] = TextContent.objects.get(name='main_kunden2')
 
+    customers_qs = list(
+        Customer.objects.filter(active=True)
+        .select_related("title_image", "logo")
+        .order_by("order", "-published_date", "id")
+    )
+    references = [c for c in customers_qs if c.section == Customer.SECTION_REFERENCES]
+    specials = [c for c in customers_qs if c.section == Customer.SECTION_SPECIAL]
+    context["customers_references"] = references
+    context["customers_special"] = specials
+    context["customers_total"] = len(references) + len(specials)
+
     return render(request, 'pages/kunden.html', context=context)
+
+
+def load_kunde_detail(request, slug):
+    customer = (
+        Customer.objects.filter(slug=slug, active=True, show_detail_page=True)
+        .select_related("title_image", "banner_image", "logo", "gallery")
+        .first()
+    )
+    if not customer:
+        raise Http404("Kunde nicht gefunden")
+
+    gallery_images = []
+    if customer.gallery:
+        gallery_images = list(customer.gallery.images.all())
+
+    services = [line.strip() for line in (customer.services_text or "").splitlines() if line.strip()]
+
+    related_customers = (
+        Customer.objects.filter(active=True, show_detail_page=True)
+        .exclude(pk=customer.pk)
+        .order_by("-published_date", "order")[:3]
+    )
+
+    context = {
+        "customer": customer,
+        "gallery_images": gallery_images,
+        "services": services,
+        "related_customers": related_customers,
+    }
+    context.update(get_opening_hours())
+    return render(request, "pages/kunde_detail.html", context=context)
 
 def load_index(request):
     faq = FAQ.objects.all()

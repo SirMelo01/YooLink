@@ -1,7 +1,9 @@
 import re
 
 from django.db import models
+from django.urls import reverse
 from django.utils.html import escape
+from django.utils.text import slugify
 
 
 class TextContent(models.Model):
@@ -173,3 +175,118 @@ class PrivacyPolicy(models.Model):
         content = cls.ensure_responsible_section(content, as_html)
         return content
 
+
+def _generate_unique_customer_slug(instance, base_slug):
+    slug = slugify(base_slug or "kunde") or "kunde"
+    unique_slug = slug
+    counter = 2
+    queryset = Customer.objects.filter(slug=unique_slug)
+    if instance.pk:
+        queryset = queryset.exclude(pk=instance.pk)
+    while queryset.exists():
+        unique_slug = f"{slug}-{counter}"
+        queryset = Customer.objects.filter(slug=unique_slug)
+        if instance.pk:
+            queryset = queryset.exclude(pk=instance.pk)
+        counter += 1
+    return unique_slug
+
+
+class Customer(models.Model):
+    SECTION_REFERENCES = "references"
+    SECTION_SPECIAL = "special"
+
+    SECTION_CHOICES = [
+        (SECTION_REFERENCES, "Referenzen / Kunden"),
+        (SECTION_SPECIAL, "Spezielle Programmierungen"),
+    ]
+
+    LOGO_STYLE_CIRCLE = "circle"
+    LOGO_STYLE_SQUARE = "square"
+    LOGO_STYLE_WIDE = "wide"
+    LOGO_STYLE_TEXT = "text"
+
+    LOGO_STYLE_CHOICES = [
+        (LOGO_STYLE_CIRCLE, "Logo rund (kompakt)"),
+        (LOGO_STYLE_SQUARE, "Logo quadratisch (kompakt)"),
+        (LOGO_STYLE_WIDE, "Logo breit (mit integriertem Text)"),
+        (LOGO_STYLE_TEXT, "Nur Text/Initialen (kein Logo)"),
+    ]
+
+    name = models.CharField(max_length=160, default="")
+    subtitle = models.CharField(max_length=200, blank=True, default="")
+    slug = models.SlugField(max_length=180, unique=True, blank=True)
+
+    website_url = models.URLField(blank=True, default="")
+    website_display = models.CharField(max_length=200, blank=True, default="")
+    published_date = models.DateField(null=True, blank=True)
+
+    section = models.CharField(
+        max_length=20, choices=SECTION_CHOICES, default=SECTION_REFERENCES
+    )
+
+    short_description = models.TextField(blank=True, default="")
+    description = models.TextField(blank=True, default="")
+    services_text = models.TextField(blank=True, default="")
+    testimonial = models.TextField(blank=True, default="")
+    testimonial_author = models.CharField(max_length=160, blank=True, default="")
+
+    title_image = models.ForeignKey(
+        "ycms.fileentry",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="customer_title_images",
+    )
+    banner_image = models.ForeignKey(
+        "ycms.fileentry",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="customer_banner_images",
+    )
+    logo = models.ForeignKey(
+        "ycms.fileentry",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="customer_logos",
+    )
+    gallery = models.ForeignKey(
+        "ycms.Galerie",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="customers",
+    )
+
+    logo_style = models.CharField(
+        max_length=10, choices=LOGO_STYLE_CHOICES, default=LOGO_STYLE_CIRCLE
+    )
+    logo_fallback_text = models.CharField(max_length=8, blank=True, default="")
+
+    active = models.BooleanField(default=True)
+    show_detail_page = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "ycms_customer"
+        ordering = ["order", "-published_date", "id"]
+
+    def __str__(self):
+        return self.name or f"Customer #{self.pk}"
+
+    def save(self, *args, **kwargs):
+        base = self.slug or self.name
+        self.slug = _generate_unique_customer_slug(self, base)
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("kunde-detail", kwargs={"slug": self.slug})
+
+    @property
+    def has_detail(self):
+        return self.active and self.show_detail_page

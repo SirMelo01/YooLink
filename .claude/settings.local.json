@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir d:\\\\YooLink\\\\Programmierung\\\\Core\\\\YooLink)",
+      "Bash(python manage.py makemigrations cms_content)",
+      "Bash(py manage.py makemigrations cms_content)",
+      "Bash(ls \"/d/YooLink/Programmierung/Core/YooLink\" | grep -i venv; ls \"/d/YooLink/Programmierung/Core/YooLink/../\" 2>&1 | head -10)",
+      "Read(//d/YooLink/Programmierung/Core//**)",
+      "Bash(where python *)",
+      "Bash(where py *)"
+    ]
+  }
+}

@@ -6,13 +6,13 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, load_cmsinfo, load_logos, datenschutz_view, leistungen_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_kunde_detail, load_cmsinfo, load_logos, datenschutz_view, leistungen_view
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
 
 from django.contrib.sitemaps.views import sitemap
-from yoolink.sitemaps import StaticViewSitemap, BlogSitemap, ProductSitemap
+from yoolink.sitemaps import StaticViewSitemap, BlogSitemap, CustomerSitemap, ProductSitemap
 
 from yoolink.ycms.applications.shop.views import cart_verify_success_view, cart_view, order_verify_success_view, order_verify_view
 
@@ -20,6 +20,7 @@ sitemaps = {
     'static': StaticViewSitemap,
     'blog': BlogSitemap,
     'product': ProductSitemap,
+    'customer': CustomerSitemap,
 }
 
 from django.conf.urls.i18n import i18n_patterns, set_language
@@ -53,6 +54,7 @@ urlpatterns += i18n_patterns(
     path("blog/", include("yoolink.blog.urls", namespace="blog")),
     path("users/", include("yoolink.users.urls", namespace="users")),
     path("kunden/", view=load_kunden, name="kunden"),
+    path("kunden/<slug:slug>/", view=load_kunde_detail, name="kunde-detail"),
     path("leistungen/", view=leistungen_view, name="leistungen"),
     path("products/", include("yoolink.ycms.applications.shop.public_product_urls")),
     prefix_default_language=False,

@@ -2,8 +2,29 @@
 $(document).ready(function () {
     const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
+    function setSaveTextLoading($btn, isLoading) {
+        if (!$btn || !$btn.length) return;
+        if (isLoading) {
+            if (!$btn.data('original-html')) $btn.data('original-html', $btn.html());
+            if (!$btn.data('original-pointer')) $btn.data('original-pointer', $btn.css('pointer-events'));
+            $btn.css('pointer-events', 'none').addClass('cursor-not-allowed opacity-70');
+            $btn.html(
+                '<svg class="h-4 w-4 animate-spin text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">' +
+                '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+                '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>' +
+                '</svg><span>Speichert ...</span>'
+            );
+        } else {
+            const original = $btn.data('original-html');
+            if (original) $btn.html(original);
+            $btn.css('pointer-events', $btn.data('original-pointer') || '').removeClass('cursor-not-allowed opacity-70');
+        }
+    }
+
     $('#saveTextData').click(function (event) {
         event.preventDefault();
+        const $btn = $(this);
+        if ($btn.hasClass('opacity-70')) return; // Already saving
 
         const requestData = {
             name: $(this).attr('name'),
@@ -99,6 +120,8 @@ $(document).ready(function () {
         });
         requestData.videos = JSON.stringify(videos);
 
+        setSaveTextLoading($btn, true);
+
         $.ajax({
             type: "POST",
             url: "/cms/seiten/save/",
@@ -116,6 +139,9 @@ $(document).ready(function () {
             error: function (error) {
                 console.error("Error occurred: " + error.statusText);
                 sendNotif("Beim Speichern ist ein Fehler aufgetreten", "error");
+            },
+            complete: function () {
+                setSaveTextLoading($btn, false);
             }
         });
     });

@@ -19,11 +19,13 @@
   <!-- Kunden Section -->
   <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
     <h2 class="text-lg font-bold mb-4">Kunden (/kunden)</h2>
-    <p class="mb-4">Hier kannst du den Inhalt der Kunden Seite anpassen</p>
+    <p class="mb-4">Pflege Sektionstitel und einzelne Kundenkarten inkl. dynamischer Detailseiten.</p>
     <div class="flex-grow"></div>
-    <div class="flex justify-center mt-6 sm:mt-12">
+    <div class="flex flex-col gap-2 mt-6 sm:mt-12 sm:flex-row sm:justify-center">
       <a href="{% url 'cms:site_kunden' %}"
-        class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
+        class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Texte</a>
+      <a href="{% url 'cms:customer-list' %}"
+        class="w-full rounded bg-blue-700 px-4 py-3 text-center font-bold text-white hover:bg-blue-900 sm:w-auto sm:py-2">Verwalten</a>
     </div>
   </div>
   <!-- Datenschutz Section -->

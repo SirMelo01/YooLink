@@ -1,6 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import reverse
 from django.utils import timezone
+from yoolink.ycms.applications.content.models import Customer
 from yoolink.ycms.applications.shop.models import Product
 from yoolink.ycms.models import Blog
 #from django.urls import reverse
@@ -36,6 +37,19 @@ class ProductSitemap(Sitemap):
      changefreq = "weekly"
      def items(self):
           return Product.objects.filter(is_active=True)
-     
+
      def lastmod(self, obj):
           return obj.updated_at
+
+
+class CustomerSitemap(Sitemap):
+    changefreq = "monthly"
+
+    def items(self):
+        return Customer.objects.filter(active=True, show_detail_page=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return reverse("kunde-detail", kwargs={"slug": obj.slug})

@@ -3,13 +3,15 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
+from django.db.models import Max
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils.translation import activate, get_language_from_request
+from django.views.decorators.http import require_http_methods
 
 from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, fileentry
 
-from .models import PrivacyPolicy, TextContent
+from .models import Customer, PrivacyPolicy, TextContent
 
 DEFAULT_LANGUAGE = "en"
 
@@ -427,3 +429,229 @@ def save_privacy_policy(request):
 
     return JsonResponse({"success": "DatenschutzerklÃ¤rung wurde gespeichert"}, status=200)
 
+
+# ----------------------------------------------------------------------
+# Customer (Kunden) CMS-Views
+# ----------------------------------------------------------------------
+
+CUSTOMER_TRANSLATED_FIELDS = (
+    "subtitle",
+    "short_description",
+    "description",
+    "services_text",
+    "testimonial",
+    "testimonial_author",
+)
+CUSTOMER_PLAIN_FIELDS = (
+    "name",
+    "website_url",
+    "website_display",
+    "logo_fallback_text",
+)
+
+
+def _resolve_fileentry(value):
+    if value in (None, "", 0, "0", "-1"):
+        return None
+    try:
+        return fileentry.objects.get(pk=int(value))
+    except (fileentry.DoesNotExist, TypeError, ValueError):
+        return None
+
+
+def _resolve_galerie(value):
+    if value in (None, "", 0, "0", "-1"):
+        return None
+    try:
+        return Galerie.objects.get(pk=int(value))
+    except (Galerie.DoesNotExist, TypeError, ValueError):
+        return None
+
+
+def _apply_customer_payload(customer, payload, lang):
+    is_create = customer.pk is None
+
+    name = (payload.get("name") or "").strip()
+    if not name:
+        return "Name darf nicht leer sein"
+    customer.name = name
+
+    section = payload.get("section") or Customer.SECTION_REFERENCES
+    if section not in dict(Customer.SECTION_CHOICES):
+        section = Customer.SECTION_REFERENCES
+    customer.section = section
+
+    logo_style = payload.get("logo_style") or Customer.LOGO_STYLE_CIRCLE
+    if logo_style not in dict(Customer.LOGO_STYLE_CHOICES):
+        logo_style = Customer.LOGO_STYLE_CIRCLE
+    customer.logo_style = logo_style
+
+    customer.website_url = (payload.get("website_url") or "").strip()
+    customer.website_display = (payload.get("website_display") or "").strip()
+    customer.logo_fallback_text = (payload.get("logo_fallback_text") or "").strip()[:8]
+
+    raw_date = (payload.get("published_date") or "").strip()
+    if raw_date:
+        try:
+            from datetime import date
+
+            year, month, day = (int(part) for part in raw_date.split("-"))
+            customer.published_date = date(year, month, day)
+        except (ValueError, TypeError):
+            customer.published_date = None
+    else:
+        customer.published_date = None
+
+    customer.active = bool(payload.get("active", True))
+    customer.show_detail_page = bool(payload.get("show_detail_page", True))
+
+    customer.title_image = _resolve_fileentry(payload.get("title_image_id"))
+    customer.banner_image = _resolve_fileentry(payload.get("banner_image_id"))
+    customer.logo = _resolve_fileentry(payload.get("logo_id"))
+    customer.gallery = _resolve_galerie(payload.get("gallery_id"))
+
+    for field in CUSTOMER_TRANSLATED_FIELDS:
+        value = (payload.get(field) or "").strip()
+        if is_create or value:
+            setattr(customer, f"{field}_{lang}", value)
+        if lang == DEFAULT_LANGUAGE and (is_create or value):
+            setattr(customer, field, value)
+
+    if is_create:
+        max_order = Customer.objects.aggregate(m=Max("order"))["m"] or 0
+        customer.order = max_order + 1
+
+    customer.save()
+    return None
+
+
+@login_required(login_url="login")
+def customer_list_view(request):
+    customers = list(
+        Customer.objects.select_related("title_image", "logo", "gallery")
+        .order_by("section", "order", "id")
+    )
+    references = [c for c in customers if c.section == Customer.SECTION_REFERENCES]
+    specials = [c for c in customers if c.section == Customer.SECTION_SPECIAL]
+
+    total_count = len(customers)
+    active_count = sum(1 for c in customers if c.active)
+    inactive_count = total_count - active_count
+    detail_count = sum(1 for c in customers if c.active and c.show_detail_page)
+
+    return render(
+        request,
+        "pages/cms/content/customers/customer_list.html",
+        {
+            "references": references,
+            "specials": specials,
+            "total_count": total_count,
+            "active_count": active_count,
+            "inactive_count": inactive_count,
+            "detail_count": detail_count,
+        },
+    )
+
+
+@login_required(login_url="login")
+def customer_create_view(request):
+    if request.method == "GET":
+        return render(
+            request,
+            "pages/cms/content/customers/customer_form.html",
+            {
+                "customer": None,
+                "form_title": "Neuen Kunden erstellen",
+                "submit_label": "Erstellen",
+                "section_choices": Customer.SECTION_CHOICES,
+                "logo_style_choices": Customer.LOGO_STYLE_CHOICES,
+            },
+        )
+
+    if request.method != "POST":
+        return JsonResponse({"error": "UngÃ¼ltige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "UngÃ¼ltige Daten"}, status=400)
+
+    lang = get_active_language(request)
+    customer = Customer()
+    error = _apply_customer_payload(customer, payload, lang)
+    if error:
+        return JsonResponse({"error": error}, status=400)
+
+    return JsonResponse(
+        {"success": "Kunde wurde erstellt", "id": customer.id, "slug": customer.slug},
+        status=201,
+    )
+
+
+@login_required(login_url="login")
+def customer_edit_view(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+
+    if request.method == "GET":
+        return render(
+            request,
+            "pages/cms/content/customers/customer_form.html",
+            {
+                "customer": customer,
+                "form_title": "Kunde bearbeiten",
+                "submit_label": "Speichern",
+                "section_choices": Customer.SECTION_CHOICES,
+                "logo_style_choices": Customer.LOGO_STYLE_CHOICES,
+            },
+        )
+
+    if request.method != "POST":
+        return JsonResponse({"error": "UngÃ¼ltige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "UngÃ¼ltige Daten"}, status=400)
+
+    lang = get_active_language(request)
+    error = _apply_customer_payload(customer, payload, lang)
+    if error:
+        return JsonResponse({"error": error}, status=400)
+
+    return JsonResponse(
+        {"success": "Kunde wurde gespeichert", "id": customer.id, "slug": customer.slug},
+        status=200,
+    )
+
+
+@login_required(login_url="login")
+@require_http_methods(["POST", "DELETE"])
+def customer_delete_view(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    customer.delete()
+    return JsonResponse({"success": "Kunde wurde gelÃ¶scht"}, status=200)
+
+
+@login_required(login_url="login")
+def customer_reorder_view(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "UngÃ¼ltige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "UngÃ¼ltige Daten"}, status=400)
+
+    order = payload.get("order") or []
+    if not isinstance(order, list):
+        return JsonResponse({"error": "UngÃ¼ltige Reihenfolge"}, status=400)
+
+    try:
+        ids = [int(x) for x in order]
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "UngÃ¼ltige IDs"}, status=400)
+
+    for index, customer_id in enumerate(ids, start=1):
+        Customer.objects.filter(pk=customer_id).update(order=index)
+
+    return JsonResponse({"success": "Reihenfolge gespeichert"}, status=200)
