@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress static i18n %}
+{% load compress static i18n custom_filters %}
 
 {% block title %}{{ block.super }} | {{ customer.name }}{% endblock title %}
 {% block meta_description %}Referenz: {{ customer.name }} – {{ customer.short_description|default:customer.subtitle|default:customer.name }}{% endblock %}
@@ -32,10 +32,15 @@
         position: absolute;
         inset: 0;
         z-index: -2;
-        background-size: cover;
-        background-position: center;
         filter: blur(2px) saturate(1.05);
         transform: scale(1.05);
+        overflow: hidden;
+    }
+    .case-hero-bg-image img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     /* Soft pattern */
@@ -66,7 +71,11 @@
 <!-- HERO -->
 <section class="case-hero {% if customer.banner_image %}has-banner{% endif %} px-4 pt-16 pb-20 text-white sm:pt-20 sm:pb-24">
     {% if customer.banner_image and customer.banner_image.file %}
-        <div class="case-hero-bg-image" style="background-image: url('{{ customer.banner_image.file.url }}');" aria-hidden="true"></div>
+        <div class="case-hero-bg-image" aria-hidden="true">
+            <img src="{{ customer.banner_image.file.url }}"
+                {% responsive_image_attrs customer.banner_image "100vw" %}
+                alt="" />
+        </div>
     {% endif %}
     <div class="case-hero-pattern" aria-hidden="true"></div>
 
@@ -84,6 +93,7 @@
                 {% if customer.logo_style == 'wide' and customer.logo and customer.logo.file %}
                     <div class="mb-6 flex max-w-md items-center">
                         <img src="{{ customer.logo.file.url }}" alt="{{ customer.name }} Logo"
+                            {% responsive_image_attrs customer.logo "(min-width: 640px) 28rem, 80vw" %}
                             class="h-14 w-auto max-w-full object-contain object-left sm:h-16" />
                     </div>
                 {% endif %}
@@ -120,11 +130,11 @@
                 <div class="hidden md:flex">
                     {% if customer.logo_style == 'square' %}
                         <div class="flex h-32 w-32 items-center justify-center rounded-3xl bg-white p-5 shadow-2xl ring-1 ring-white/40 lg:h-40 lg:w-40 lg:p-6">
-                            <img src="{{ customer.logo.file.url }}" alt="{{ customer.name }} Logo" class="h-full w-full object-contain" />
+                            <img src="{{ customer.logo.file.url }}" alt="{{ customer.name }} Logo" {% responsive_image_attrs customer.logo "10rem" %} class="h-full w-full object-contain" />
                         </div>
                     {% else %}
                         <div class="flex h-32 w-32 items-center justify-center rounded-full bg-white p-3 shadow-2xl ring-1 ring-white/40 lg:h-40 lg:w-40 lg:p-4">
-                            <img src="{{ customer.logo.file.url }}" alt="{{ customer.name }} Logo" class="h-full w-full rounded-full object-cover" />
+                            <img src="{{ customer.logo.file.url }}" alt="{{ customer.name }} Logo" {% responsive_image_attrs customer.logo "10rem" %} class="h-full w-full rounded-full object-cover" />
                         </div>
                     {% endif %}
                 </div>
@@ -179,7 +189,7 @@
 
                 {% if customer.title_image and customer.title_image.file %}
                 <figure class="overflow-hidden rounded-2xl shadow-xl" data-aos="fade-up">
-                    <img src="{{ customer.title_image.file.url }}" alt="{{ customer.name }}" class="w-full" />
+                    <img src="{{ customer.title_image.file.url }}" {% responsive_image_attrs customer.title_image "(min-width: 1024px) 66vw, 100vw" %} alt="{{ customer.name }}" class="w-full" />
                 </figure>
                 {% endif %}
 

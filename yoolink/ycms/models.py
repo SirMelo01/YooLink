@@ -50,15 +50,43 @@ def unique_image_name(instance, filename):
 
 class fileentry(models.Model):
     file = models.ImageField(upload_to=unique_image_name)
+    mobile_file = models.ImageField(upload_to=unique_image_name, blank=True, null=True)
     uploaddate = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, default="Bildtitel")
     place = models.CharField(max_length=60, default="")
 
     def __str__(self):
         return os.path.basename(self.file.name)
+
+    @property
+    def mobile_file_url(self):
+        if not self.mobile_file:
+            return ""
+        try:
+            return self.mobile_file.url
+        except ValueError:
+            return ""
+
+    @property
+    def responsive_srcset(self):
+        mobile_url = self.mobile_file_url
+        if not mobile_url:
+            return ""
+        try:
+            desktop_url = self.file.url
+        except ValueError:
+            return ""
+        return f"{mobile_url} 900w, {desktop_url} 1920w"
+
+    @property
+    def file_extension(self):
+        return os.path.splitext(self.file.name)[1].lstrip(".").upper()
     
     def delete(self, *args, **kwargs):
-        self.file.storage.delete(self.file.name)
+        if self.file:
+            self.file.storage.delete(self.file.name)
+        if self.mobile_file:
+            self.mobile_file.storage.delete(self.mobile_file.name)
         super(fileentry, self).delete(*args, **kwargs)
 
     def delete_model_only(self, *args, **kwargs):

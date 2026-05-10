@@ -106,9 +106,14 @@
         <div class="relative">
           <a href="{{ file.file.url }}" target="_blank" rel="noopener">
             <img place="{{ file.place }}" key="{{ file.id }}" src="{{ file.file.url }}"
+                 {% if file.responsive_srcset %}srcset="{{ file.responsive_srcset }}" sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"{% endif %}
                  title="{{ file.title }}" alt="{{ file.title }}"
                  class="h-64 w-full object-cover border rounded-lg shadow-lg">
           </a>
+
+          <span class="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-1 text-xs font-semibold text-gray-700 shadow ring-1 ring-gray-200">
+            {{ file.file_extension }}{% if file.mobile_file %}<span class="text-blue-600">+ Mobil</span>{% endif %}
+          </span>
 
           <span class="bg-red-700 text-white rounded-full p-2 absolute top-2 right-2 hover:cursor-pointer deleter"
                 id="{{ file.id }}" title="Bild löschen">

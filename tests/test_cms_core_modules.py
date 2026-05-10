@@ -1,4 +1,5 @@
 import json
+import random
 from io import BytesIO
 from datetime import time
 
@@ -190,7 +191,7 @@ def test_logo_site_editor_renders_and_saves_public_content(logged_in_client):
 
 def test_image_upload_returns_uploaded_image_metadata(logged_in_client):
     buffer = BytesIO()
-    Image.new("RGB", (12, 12), color="blue").save(buffer, format="PNG")
+    Image.new("RGBA", (12, 12), color=(0, 0, 255, 80)).save(buffer, format="PNG")
     buffer.seek(0)
 
     response = logged_in_client.post(
@@ -202,7 +203,42 @@ def test_image_upload_returns_uploaded_image_metadata(logged_in_client):
     payload = response.json()
     image = fileentry.objects.get(id=payload["image"]["id"])
     assert payload["image"]["url"] == image.file.url
+    assert payload["image"]["mobile_url"] == image.mobile_file.url
+    assert payload["image"]["srcset"] == image.responsive_srcset
     assert payload["image"]["title"] == "cms-upload.png"
+    assert image.file.name.endswith(".png")
+    assert image.mobile_file.name.endswith(".png")
+
+    image.file.open("rb")
+    with Image.open(image.file) as uploaded:
+        assert uploaded.format == "PNG"
+        assert uploaded.mode == "RGBA"
+    image.file.close()
+
+
+def test_large_png_without_transparency_is_converted_for_smaller_delivery(logged_in_client):
+    source = Image.new("RGB", (700, 700))
+    rng = random.Random(42)
+    pixels = [
+        (rng.randrange(256), rng.randrange(256), rng.randrange(256))
+        for _ in range(700 * 700)
+    ]
+    source.putdata(pixels)
+    buffer = BytesIO()
+    source.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    response = logged_in_client.post(
+        reverse("ycms:post-upload"),
+        {"file": SimpleUploadedFile("large-flat.png", buffer.read(), content_type="image/png")},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    image = fileentry.objects.get(id=payload["image"]["id"])
+    assert image.file.name.endswith(".jpeg")
+    assert image.mobile_file.name.endswith(".jpeg")
+    assert "PNG ohne Transparenz" in payload["image"]["optimization"]["note"]
 
 
 def test_image_delete_endpoint_removes_image_after_confirmation(logged_in_client):

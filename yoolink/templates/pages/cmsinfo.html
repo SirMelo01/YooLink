@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static %} {% block title%}{{block.super}} | Eigenes Content Management System{% endblock title %} {% block content %}
+{% extends "base.html" %} {% load compress static custom_filters %} {% block title%}{{block.super}} | Eigenes Content Management System{% endblock title %} {% block content %}
 
 
 {% block css %}
@@ -136,20 +136,28 @@
                     <div class="flex space-x-4 pt-4 pr-10" id="cardContainer">
                         <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec1_card_1 %}{{ image_sec1_card_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsteamcard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec1_card_1 "(min-width: 1024px) 12vw, 25vw" %}
                             loading="lazy" alt="CMS Team-Bereich Vorschau"
-                            data-image="{% if image_sec1_preview_1 %}{{ image_sec1_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsteam.png' %}{% endif %}">
+                            data-image="{% if image_sec1_preview_1 %}{{ image_sec1_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsteam.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec1_preview_1 %}">
                         <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec1_card_2 %}{{ image_sec1_card_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsfaqcard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec1_card_2 "(min-width: 1024px) 12vw, 25vw" %}
                             loading="lazy" alt="CMS FAQ-Bereich Vorschau"
-                            data-image="{% if image_sec1_preview_2 %}{{ image_sec1_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsfaq.png' %}{% endif %}">
+                            data-image="{% if image_sec1_preview_2 %}{{ image_sec1_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsfaq.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec1_preview_2 %}">
                         <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec1_card_3 %}{{ image_sec1_card_3.file.url }}{% else %}{% static 'images/cmsinfo/cmspreiscard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec1_card_3 "(min-width: 1024px) 12vw, 25vw" %}
                             loading="lazy" alt="CMS Preis-Bereich Vorschau"
-                            data-image="{% if image_sec1_preview_3 %}{{ image_sec1_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmspreis.png' %}{% endif %}">
+                            data-image="{% if image_sec1_preview_3 %}{{ image_sec1_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmspreis.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec1_preview_3 %}">
                         <img class="cms-card w-1/4 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec1_card_4 %}{{ image_sec1_card_4.file.url }}{% else %}{% static 'images/cmsinfo/cmswissencard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec1_card_4 "(min-width: 1024px) 12vw, 25vw" %}
                             loading="lazy" alt="CMS Wissen-Bereich Vorschau"
-                            data-image="{% if image_sec1_preview_4 %}{{ image_sec1_preview_4.file.url }}{% else %}{% static 'images/cmsinfo/cmswissen.png' %}{% endif %}">
+                            data-image="{% if image_sec1_preview_4 %}{{ image_sec1_preview_4.file.url }}{% else %}{% static 'images/cmsinfo/cmswissen.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec1_preview_4 %}">
                     </div>
                 </div>
 
@@ -174,16 +182,22 @@
                     <div class="flex space-x-4 pt-4 pr-10" id="cardContainer2">
                         <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec2_card_1 %}{{ image_sec2_card_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsbildercard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec2_card_1 "(min-width: 1024px) 16vw, 33vw" %}
                             loading="lazy" alt="CMS Bilder Karte"
-                            data-image="{% if image_sec2_preview_1 %}{{ image_sec2_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsbilder.png' %}{% endif %}">
+                            data-image="{% if image_sec2_preview_1 %}{{ image_sec2_preview_1.file.url }}{% else %}{% static 'images/cmsinfo/cmsbilder.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec2_preview_1 %}">
                         <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec2_card_2 %}{{ image_sec2_card_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsgaleriecard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec2_card_2 "(min-width: 1024px) 16vw, 33vw" %}
                             loading="lazy" alt="CMS Galerie Karte"
-                            data-image="{% if image_sec2_preview_2 %}{{ image_sec2_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsgalerie.png' %}{% endif %}">
+                            data-image="{% if image_sec2_preview_2 %}{{ image_sec2_preview_2.file.url }}{% else %}{% static 'images/cmsinfo/cmsgalerie.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec2_preview_2 %}">
                         <img class="cms-card-2 w-1/3 h-auto rounded-lg transform transition duration-300 ease-in-out filter hover:brightness-75 hover:scale-105 cursor-pointer"
                             src="{% if image_sec2_card_3 %}{{ image_sec2_card_3.file.url }}{% else %}{% static 'images/cmsinfo/cmsvideocard.png' %}{% endif %}"
+                            {% responsive_image_attrs image_sec2_card_3 "(min-width: 1024px) 16vw, 33vw" %}
                             loading="lazy" alt="CMS Video Karte"
-                            data-image="{% if image_sec2_preview_3 %}{{ image_sec2_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmsvideo.png' %}{% endif %}">
+                            data-image="{% if image_sec2_preview_3 %}{{ image_sec2_preview_3.file.url }}{% else %}{% static 'images/cmsinfo/cmsvideo.png' %}{% endif %}"
+                            data-srcset="{% responsive_image_srcset image_sec2_preview_3 %}">
                     </div>
                 </div>
             </div>
@@ -230,11 +244,11 @@
                         </li>
                     </ul>
                 </div>
-                <img data-aos="fade-left" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl" src="{% if image_blog %}{{ image_blog.file.url }}{% else %}{% static 'images/cmsinfo/cmsblog.png' %}{% endif %}" loading="lazy" alt="Dashboard Blog Builder">
+                <img data-aos="fade-left" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl" src="{% if image_blog %}{{ image_blog.file.url }}{% else %}{% static 'images/cmsinfo/cmsblog.png' %}{% endif %}" {% responsive_image_attrs image_blog "(min-width: 1024px) 50vw, 100vw" %} loading="lazy" alt="Dashboard Blog Builder">
             </div>
             <!-- Row -->
             <div class="items-center gap-8 grid grid-cols-1 lg:grid-cols-2 xl:gap-16">
-                <img data-aos="fade-right" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl order-2 md:order-none" src="{% if image_company %}{{ image_company.file.url }}{% else %}{% static 'images/cmsinfo/cmscompanydata.png' %}{% endif %}" loading="lazy" alt="Dashboard Unternehmensdaten">
+                <img data-aos="fade-right" class="w-full mb-4 rounded-lg lg:mb-0 flex shadow-2xl order-2 md:order-none" src="{% if image_company %}{{ image_company.file.url }}{% else %}{% static 'images/cmsinfo/cmscompanydata.png' %}{% endif %}" {% responsive_image_attrs image_company "(min-width: 1024px) 50vw, 100vw" %} loading="lazy" alt="Dashboard Unternehmensdaten">
                 <div data-aos="fade-left" class="md:text-lg order-1 md:order-none">
                     <h2 class="mb-4 text-3xl font-bold tracking-tight sm:leading-none text-gray-900">
                     {{ textContent_company.title|default:"Alle Unternehmensdaten auf einem Blick verwalten" }}
@@ -394,11 +408,19 @@
         const cards1 = document.querySelectorAll(".cms-card");
         const mainImage1 = document.getElementById("mainImage");
         const imageSources1 = Array.from(cards1).map(card => card.getAttribute("data-image"));
+        const imageSrcsets1 = Array.from(cards1).map(card => card.getAttribute("data-srcset"));
         let currentIndex1 = 0;
         let autoRotate1 = true;
 
         function setImage1(index) {
             mainImage1.src = imageSources1[index];
+            if (imageSrcsets1[index]) {
+                mainImage1.srcset = imageSrcsets1[index];
+                mainImage1.sizes = "(min-width: 1024px) 50vw, 100vw";
+            } else {
+                mainImage1.removeAttribute("srcset");
+                mainImage1.removeAttribute("sizes");
+            }
             cards1.forEach((card, i) => {
                 card.classList.remove("grayscale", "ring-4", "ring-blue-500");
                 if (i === index) card.classList.add("grayscale", "ring-4", "ring-blue-500");
@@ -424,11 +446,19 @@
         const cards2 = document.querySelectorAll(".cms-card-2");
         const mainImage2 = document.getElementById("mainImage2");
         const imageSources2 = Array.from(cards2).map(card => card.getAttribute("data-image"));
+        const imageSrcsets2 = Array.from(cards2).map(card => card.getAttribute("data-srcset"));
         let currentIndex2 = 0;
         let autoRotate2 = true;
 
         function setImage2(index) {
             mainImage2.src = imageSources2[index];
+            if (imageSrcsets2[index]) {
+                mainImage2.srcset = imageSrcsets2[index];
+                mainImage2.sizes = "(min-width: 1024px) 50vw, 100vw";
+            } else {
+                mainImage2.removeAttribute("srcset");
+                mainImage2.removeAttribute("sizes");
+            }
             cards2.forEach((card, i) => {
                 card.classList.remove("grayscale", "ring-4", "ring-blue-500");
                 if (i === index) card.classList.add("grayscale", "ring-4", "ring-blue-500");

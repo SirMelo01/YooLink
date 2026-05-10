@@ -399,6 +399,9 @@ function renderTeamImageLibrary(images) {
         const $button = $(`
             <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
                 <img src="${image.url}" imgId="${image.id}" alt="${title}" class="h-36 w-full object-cover">
+                <span class="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-1 text-[11px] font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
+                    ${(image.format || 'IMG')}${image.has_mobile ? ' + Mobil' : ''}
+                </span>
                 <span class="absolute right-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100 image-delete-button" data-image-id="${image.id}">
                     <i class="bi bi-trash"></i>
                 </span>
@@ -502,7 +505,7 @@ function uploadTeamImageFiles(fileList, csrfToken) {
                 xhr.setRequestHeader('X-CSRFToken', csrfToken);
             },
             success: function (response) {
-                setTeamUploadItemStatus(itemId, 'Fertig', 'text-green-700');
+                setTeamUploadItemStatus(itemId, 'Fertig', 'text-green-700', teamUploadOptimizationText(response.image));
                 if (response.image) {
                     teamImageLibraryItems.unshift(response.image);
                     renderTeamImageLibrary(teamImageLibraryItems);
@@ -522,18 +525,38 @@ function uploadTeamImageFiles(fileList, csrfToken) {
 
 function addTeamUploadItem(id, name) {
     $('#imageUploadItems').prepend(`
-        <div id="${id}" class="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-sm">
-            <span class="truncate pr-3 text-slate-700">${escapeTeamImageHtml(name)}</span>
-            <span class="upload-status text-slate-500">Lädt...</span>
+        <div id="${id}" class="rounded-md bg-slate-50 px-3 py-2 text-sm">
+            <div class="flex items-center justify-between gap-3">
+                <span class="truncate text-slate-700">${escapeTeamImageHtml(name)}</span>
+                <span class="upload-status shrink-0 text-slate-500">Laedt...</span>
+            </div>
+            <p class="upload-detail mt-1 hidden text-xs leading-snug text-slate-500"></p>
         </div>
     `);
+    $('#' + id).children('.upload-status').remove();
 }
 
-function setTeamUploadItemStatus(id, text, className) {
-    $('#' + id).find('.upload-status')
+function setTeamUploadItemStatus(id, text, className, detail) {
+    const $item = $('#' + id);
+    $item.children('.upload-status').remove();
+    $item.find('.upload-status')
         .removeClass('text-slate-500 text-green-700 text-red-700')
         .addClass(className)
         .text(text);
+
+    if (detail) {
+        $item.find('.upload-detail').text(detail).removeClass('hidden');
+    }
+}
+
+function teamUploadOptimizationText(image) {
+    if (!image || !image.optimization) return '';
+    const optimization = image.optimization;
+    const desktop = optimization.desktop || {};
+    const mobile = optimization.mobile || {};
+    const desktopSaved = optimization.desktop_saved_percent > 0 ? ` / -${optimization.desktop_saved_percent}%` : '';
+    const mobileSaved = optimization.mobile_saved_percent > 0 ? ` / -${optimization.mobile_saved_percent}%` : '';
+    return `Original ${optimization.original_size_kb || 0} KB | Desktop ${desktop.size_kb || 0} KB${desktopSaved} | Mobil ${mobile.size_kb || 0} KB${mobileSaved}`;
 }
 
 function escapeTeamImageHtml(value) {

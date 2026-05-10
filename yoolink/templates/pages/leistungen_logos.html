@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static i18n %}
+{% extends "base.html" %} {% load compress static i18n custom_filters %}
 
 {% block title %}{{ block.super }} | Logo Design Agentur - Firmenlogo professionell erstellen lassen{% endblock title %}
 
@@ -276,7 +276,7 @@
               <div class="logo-orbit-billboard" style="--angle: 0deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
                   {% if image_hero_logo_1 %}
-                    <img src="{{ image_hero_logo_1.file.url }}" loading="lazy" alt="{{ image_hero_logo_1.title|default:'Logo Beispiel 1' }}" />
+                    <img src="{{ image_hero_logo_1.file.url }}" {% responsive_image_attrs image_hero_logo_1 "12rem" %} loading="lazy" alt="{{ image_hero_logo_1.title|default:'Logo Beispiel 1' }}" />
                   {% else %}
                     <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="YooLink Markenlogo Beispiel" />
                   {% endif %}
@@ -287,7 +287,7 @@
               <div class="logo-orbit-billboard" style="--angle: 60deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
                   {% if image_hero_logo_2 %}
-                    <img src="{{ image_hero_logo_2.file.url }}" loading="lazy" alt="{{ image_hero_logo_2.title|default:'Logo Beispiel 2' }}" />
+                    <img src="{{ image_hero_logo_2.file.url }}" {% responsive_image_attrs image_hero_logo_2 "12rem" %} loading="lazy" alt="{{ image_hero_logo_2.title|default:'Logo Beispiel 2' }}" />
                   {% else %}
                     <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo Beispiel" class="brightness-0" />
                   {% endif %}
@@ -298,7 +298,7 @@
               <div class="logo-orbit-billboard" style="--angle: 120deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
                   {% if image_hero_logo_3 %}
-                    <img src="{{ image_hero_logo_3.file.url }}" loading="lazy" alt="{{ image_hero_logo_3.title|default:'Logo Beispiel 3' }}" />
+                    <img src="{{ image_hero_logo_3.file.url }}" {% responsive_image_attrs image_hero_logo_3 "12rem" %} loading="lazy" alt="{{ image_hero_logo_3.title|default:'Logo Beispiel 3' }}" />
                   {% else %}
                     <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RS Autoglas Logo Beispiel" />
                   {% endif %}
@@ -309,7 +309,7 @@
               <div class="logo-orbit-billboard" style="--angle: 180deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
                   {% if image_hero_logo_4 %}
-                    <img src="{{ image_hero_logo_4.file.url }}" loading="lazy" alt="{{ image_hero_logo_4.title|default:'Logo Beispiel 4' }}" />
+                    <img src="{{ image_hero_logo_4.file.url }}" {% responsive_image_attrs image_hero_logo_4 "12rem" %} loading="lazy" alt="{{ image_hero_logo_4.title|default:'Logo Beispiel 4' }}" />
                   {% else %}
                     <img src="{% static 'images/references/HolzHirsch.svg' %}" loading="lazy" alt="HolzHirsch Logo Beispiel" />
                   {% endif %}
@@ -330,7 +330,7 @@
               <div class="logo-orbit-billboard" style="--angle: 300deg;">
                 <div class="logo-orbit-card logo-orbit-card--light">
                   {% if image_hero_logo_5 %}
-                    <img src="{{ image_hero_logo_5.file.url }}" loading="lazy" alt="{{ image_hero_logo_5.title|default:'Logo Beispiel 5' }}" />
+                    <img src="{{ image_hero_logo_5.file.url }}" {% responsive_image_attrs image_hero_logo_5 "12rem" %} loading="lazy" alt="{{ image_hero_logo_5.title|default:'Logo Beispiel 5' }}" />
                   {% else %}
                     <img src="{% static 'images/references/HDGlas-Logo.png' %}" loading="lazy" alt="HDGlas Logo Beispiel" />
                   {% endif %}

@@ -57,6 +57,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.templatetags.static import static
 from django.utils import translation
 from django.utils.html import strip_tags
+from django.utils.text import slugify
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_POST
@@ -66,6 +67,11 @@ from random import SystemRandom
 from yoolink.ycms.tasks import send_login_2fa_email
 
 DEFAULT_LANGUAGE = "en"
+DESKTOP_IMAGE_MAX_DIMENSIONS = (1920, 1920)
+MOBILE_IMAGE_MAX_DIMENSIONS = (900, 900)
+DESKTOP_IMAGE_TARGET_KB = 500
+MOBILE_IMAGE_TARGET_KB = 260
+PNG_TO_JPEG_THRESHOLD_KB = 300
 
 
 
@@ -563,17 +569,36 @@ def file_upload_view(request):
         if not my_file:
             return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
 
-        resized_image = resize_image(my_file)
-        scaled_image = scale_image(resized_image)
-        compressed_image = compress_image(scaled_image)
+        desktop_image = optimize_image_for_upload(
+            my_file,
+            max_dimensions=DESKTOP_IMAGE_MAX_DIMENSIONS,
+            max_size_kb=DESKTOP_IMAGE_TARGET_KB,
+            variant_suffix="desktop",
+        )
+        mobile_image = optimize_image_for_upload(
+            my_file,
+            max_dimensions=MOBILE_IMAGE_MAX_DIMENSIONS,
+            max_size_kb=MOBILE_IMAGE_TARGET_KB,
+            variant_suffix="mobile",
+        )
+        optimization = image_optimization_metadata(my_file, desktop_image, mobile_image)
 
-        image = fileentry.objects.create(file=compressed_image, title=getattr(my_file, 'name', 'Bild'))
+        image = fileentry.objects.create(
+            file=desktop_image,
+            mobile_file=mobile_image,
+            title=getattr(my_file, 'name', 'Bild'),
+        )
         return JsonResponse({
             'success': 'Bild erfolgreich hochgeladen',
             'image': {
                 'id': image.id,
                 'url': image.file.url,
+                'mobile_url': image.mobile_file_url,
+                'srcset': image.responsive_srcset,
                 'title': image.title,
+                'format': image.file_extension,
+                'has_mobile': bool(image.mobile_file),
+                'optimization': optimization,
             },
         })
     return JsonResponse({'post': 'false'})
@@ -662,87 +687,216 @@ def images_view(request):
         },
     )
 
-def resize_image(image):
-    """
-    Resize the image without changing its resolution and format.
-    """
-    img = Image.open(image)
-    format = img.format
-    img = img.resize((int(img.width), int(img.height)), resample=Image.Resampling.LANCZOS)
-    img.info['dpi'] = (72, 72)
-    
-    buffer = BytesIO()
-    img.save(buffer, format=format)
-    
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        f"image/{format.lower()}",
-        buffer.getbuffer().nbytes,
-        None
-    )
-    return file
+def image_has_alpha(img):
+    return img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info)
 
 
-def scale_image(image, max_dimensions=(1920, 1920)):
-    """
-    Scale the image dimensions to fit within max_dimensions while maintaining the aspect ratio.
-    """
-    img = Image.open(image)
-    format = img.format
-    img.thumbnail(max_dimensions, Image.Resampling.LANCZOS)
-    
-    buffer = BytesIO()
-    img.save(buffer, format=format, quality=100)
+def image_upload_name(image, variant_suffix, extension):
+    base_name = os.path.splitext(os.path.basename(getattr(image, "name", "image")))[0]
+    safe_base = slugify(base_name) or "image"
+    return f"{safe_base}_{variant_suffix}.{extension}"
+
+
+def uploaded_image(buffer, image, variant_suffix, extension, content_type):
     buffer.seek(0)
-    
-    file = InMemoryUploadedFile(
+    return InMemoryUploadedFile(
         buffer,
         None,
-        f"{image.name.split('.')[0]}.{format.lower()}",
-        f"image/{format.lower()}",
-        buffer.tell(),
-        None
+        image_upload_name(image, variant_suffix, extension),
+        content_type,
+        buffer.getbuffer().nbytes,
+        None,
     )
-    return file
 
 
-def compress_image(image, max_size_kb=500):
-    """
-    Compress the image to ensure its size is under max_size_kb.
-    """
-    img = Image.open(image)
+def original_uploaded_image(image, variant_suffix):
+    image.seek(0)
+    buffer = BytesIO(image.read())
+    extension = os.path.splitext(getattr(image, "name", ""))[1].lstrip(".").lower() or "jpg"
+    content_type = getattr(image, "content_type", "") or f"image/{extension}"
+    image.seek(0)
+    return uploaded_image(buffer, image, variant_suffix, extension, content_type)
+
+
+def filesize_kb(size):
+    return int(round((size or 0) / 1024))
+
+
+def image_variant_metadata(file_obj):
+    return {
+        "name": os.path.basename(file_obj.name),
+        "size": file_obj.size,
+        "size_kb": filesize_kb(file_obj.size),
+        "format": os.path.splitext(file_obj.name)[1].lstrip(".").upper(),
+    }
+
+
+def normalized_image_format(img, image):
+    source_format = (img.format or "").upper()
+    if source_format:
+        return "JPEG" if source_format == "JPG" else source_format
+
+    extension = os.path.splitext(getattr(image, "name", ""))[1].lower()
+    if extension in (".jpg", ".jpeg"):
+        return "JPEG"
+    if extension == ".png":
+        return "PNG"
+    if extension == ".webp":
+        return "WEBP"
+    return "JPEG"
+
+
+def save_optimized_png(img, image, max_dimensions, max_size_kb, variant_suffix):
+    target_size = max_size_kb * 1024
+    working = img.copy()
+    working.thumbnail(max_dimensions, Image.Resampling.LANCZOS)
+
+    if image_has_alpha(working):
+        working = working.convert("RGBA")
+    elif working.mode not in ("RGB", "L", "P"):
+        working = working.convert("RGB")
+
     buffer = BytesIO()
-    
-    target_size = max_size_kb * 1024  # Convert KB to bytes
-    quality = 95  # Start with high quality
-    format = "JPEG"  # Use JPEG for better compression
-
-    # Convert to JPEG and remove alpha channel if necessary
-    if img.mode in ("RGBA", "P"):  # Handle transparency
-        img = img.convert("RGB")
-    
     while True:
         buffer.seek(0)
         buffer.truncate()
-        img.save(buffer, format=format, quality=quality)
-        
-        if buffer.tell() <= target_size or quality <= 5:  # Stop if file size is within limits or quality is too low
-            break
-        
-        quality -= 5  # Gradually reduce quality to compress further
+        working.save(buffer, format="PNG", optimize=True)
 
-    buffer.seek(0)
-    file = InMemoryUploadedFile(
-        buffer,
-        None,
-        f"{image.name.split('.')[0]}.jpeg",
-        f"image/jpeg",
-        buffer.tell(),
-        None
+        smallest_side = min(working.size) if working.size else 0
+        if buffer.tell() <= target_size or smallest_side <= 420:
+            break
+
+        next_size = (
+            max(1, int(working.width * 0.9)),
+            max(1, int(working.height * 0.9)),
+        )
+        working = working.resize(next_size, Image.Resampling.LANCZOS)
+
+    return uploaded_image(buffer, image, variant_suffix, "png", "image/png")
+
+
+def save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, output_format):
+    target_size = max_size_kb * 1024
+    has_alpha = image_has_alpha(img)
+    working = img.copy()
+    working.thumbnail(max_dimensions, Image.Resampling.LANCZOS)
+
+    if output_format == "WEBP":
+        extension = "webp"
+        content_type = "image/webp"
+        if has_alpha:
+            working = working.convert("RGBA")
+        else:
+            working = working.convert("RGB")
+    else:
+        extension = "jpeg"
+        content_type = "image/jpeg"
+        working = working.convert("RGB")
+
+    buffer = BytesIO()
+    quality = 92
+    while True:
+        buffer.seek(0)
+        buffer.truncate()
+        save_kwargs = {"quality": quality, "optimize": True}
+        if output_format == "JPEG":
+            save_kwargs["progressive"] = True
+        if output_format == "WEBP":
+            save_kwargs["method"] = 6
+        working.save(buffer, format=output_format, **save_kwargs)
+
+        if buffer.tell() <= target_size or quality <= 55:
+            break
+        quality -= 7
+
+    return uploaded_image(buffer, image, variant_suffix, extension, content_type)
+
+
+def optimize_image_for_upload(
+    image,
+    max_dimensions=DESKTOP_IMAGE_MAX_DIMENSIONS,
+    max_size_kb=DESKTOP_IMAGE_TARGET_KB,
+    variant_suffix="desktop",
+):
+    """
+    Create an optimized upload while preserving PNG transparency.
+    PNG inputs stay PNG so logos and cutouts keep transparent backgrounds.
+    """
+    image.seek(0)
+    img = Image.open(image)
+
+    if getattr(img, "is_animated", False):
+        image.seek(0)
+        buffer = BytesIO(image.read())
+        return uploaded_image(
+            buffer,
+            image,
+            variant_suffix,
+            os.path.splitext(image.name)[1].lstrip(".") or "gif",
+            getattr(image, "content_type", "image/gif"),
+        )
+
+    source_format = normalized_image_format(img, image)
+    has_alpha = image_has_alpha(img)
+    should_keep_png = source_format == "PNG" and (
+        has_alpha or getattr(image, "size", 0) <= PNG_TO_JPEG_THRESHOLD_KB * 1024
     )
-    return file
+
+    if should_keep_png or has_alpha:
+        optimized = save_optimized_png(img, image, max_dimensions, max_size_kb, variant_suffix)
+    elif source_format == "WEBP":
+        optimized = save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, "WEBP")
+    else:
+        optimized = save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, "JPEG")
+
+    original_size = getattr(image, "size", 0)
+    original_fits_variant = img.width <= max_dimensions[0] and img.height <= max_dimensions[1]
+    if original_size and original_fits_variant and optimized.size > original_size:
+        optimized = original_uploaded_image(image, variant_suffix)
+
+    image.seek(0)
+    return optimized
+
+
+def resize_image(image):
+    return optimize_image_for_upload(image, variant_suffix="desktop")
+
+
+def scale_image(image, max_dimensions=(1920, 1920)):
+    return optimize_image_for_upload(image, max_dimensions=max_dimensions, variant_suffix="desktop")
+
+
+def compress_image(image, max_size_kb=500):
+    return optimize_image_for_upload(image, max_size_kb=max_size_kb, variant_suffix="desktop")
+
+
+def image_optimization_metadata(original, desktop_image, mobile_image):
+    original_size = getattr(original, "size", 0)
+    desktop_saved_bytes = original_size - desktop_image.size
+    mobile_saved_bytes = original_size - mobile_image.size
+    desktop_saved_percent = round((desktop_saved_bytes / original_size) * 100) if original_size else 0
+    mobile_saved_percent = round((mobile_saved_bytes / original_size) * 100) if original_size else 0
+
+    original_format = os.path.splitext(getattr(original, "name", ""))[1].lstrip(".").upper()
+    desktop_format = os.path.splitext(desktop_image.name)[1].lstrip(".").upper()
+
+    note = "Bild wurde fuer Web und Mobil optimiert."
+    if original_format == "PNG" and desktop_format == "PNG":
+        note = "PNG mit Transparenz oder kleiner Dateigroesse: bleibt PNG, wird verlustfrei optimiert und fuer Mobil verkleinert."
+    elif original_format == "PNG":
+        note = "PNG ohne Transparenz und grosser Dateigroesse: wurde als JPEG gespeichert, damit die Website schneller laedt."
+
+    return {
+        "original_size": original_size,
+        "original_size_kb": filesize_kb(original_size),
+        "desktop": image_variant_metadata(desktop_image),
+        "mobile": image_variant_metadata(mobile_image),
+        "desktop_saved_bytes": desktop_saved_bytes,
+        "desktop_saved_percent": desktop_saved_percent,
+        "mobile_saved_bytes": mobile_saved_bytes,
+        "mobile_saved_percent": mobile_saved_percent,
+        "note": note,
+    }
 
 from django.utils.translation import get_language_from_request, activate
 
@@ -957,10 +1111,7 @@ def create_blog(request):
                 blog.active = False
             blog.save()
             if title_image:
-                resized_image = resize_image(title_image)
-                scaled_image = scale_image(resized_image)
-                compressed_image = compress_image(scaled_image)
-                blog.title_image = compressed_image
+                blog.title_image = optimize_image_for_upload(title_image)
             blog.description = description
             blog.save()
             return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
@@ -974,8 +1125,6 @@ def create_blog(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
-
-from django.utils.text import slugify
 
 @login_required(login_url='login')
 def update_blog(request, id):
@@ -1016,10 +1165,7 @@ def update_blog(request, id):
             else:
                 blog.active = False
             if title_image:
-                resized_image = resize_image(title_image)
-                scaled_image = scale_image(resized_image)
-                compressed_image = compress_image(scaled_image)
-                blog.title_image = compressed_image
+                blog.title_image = optimize_image_for_upload(title_image)
             blog.save()
             return JsonResponse({'success': 'Blog successfully updated', 'blogId': blog.id}, status=201)
 
@@ -1204,10 +1350,8 @@ def save_galery(request, id):
 def upload_galery_img(request, id):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
-        resized_image = resize_image(my_file)
-        scaled_image = scale_image(resized_image)
-        compressed_image = compress_image(scaled_image)
-        doc = GaleryImage.objects.create(upload=compressed_image)
+        optimized_image = optimize_image_for_upload(my_file)
+        doc = GaleryImage.objects.create(upload=optimized_image)
         galery = Galerie.objects.get(id=id)
         galery.images.add(doc)
         galery.save()
@@ -1249,8 +1393,12 @@ def all_images(request):
             image_url = entry.file.url
             data = {
                 "url": image_url,
+                "mobile_url": entry.mobile_file_url,
+                "srcset": entry.responsive_srcset,
                 "id": entry.id,
                 "title": entry.title,
+                "format": entry.file_extension,
+                "has_mobile": bool(entry.mobile_file),
             }
             # URL zur Liste hinzufügen
             image_urls.append(data)

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static %} {% block title %}{{ block.super }} | Leistungen{% endblock title %} {% block content %}
+{% extends "base.html" %} {% load compress static custom_filters %} {% block title %}{{ block.super }} | Leistungen{% endblock title %} {% block content %}
 
 {% block css %}
 {% compress css inline %}
@@ -87,7 +87,7 @@
     </div>
     <div data-aos="fade-left">
       {% if image_cms %}
-      <img src="{{ image_cms.file.url }}" loading="lazy" alt="{{ image_cms.title|default:'CMS Vorschau' }}" class="rounded-xl shadow-xl" />
+      <img src="{{ image_cms.file.url }}" {% responsive_image_attrs image_cms "(min-width: 768px) 50vw, 100vw" %} loading="lazy" alt="{{ image_cms.title|default:'CMS Vorschau' }}" class="rounded-xl shadow-xl" />
       {% else %}
       <img src="{% static 'images/CMS-2.0.png' %}" loading="lazy" alt="CMS Vorschau" class="rounded-xl shadow-xl" />
       {% endif %}
@@ -97,7 +97,7 @@
   <div class="mx-auto mt-40 grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
     <div class="order-2 md:order-1" data-aos="fade-right">
       {% if image_webdesign %}
-      <img src="{{ image_webdesign.file.url }}" loading="lazy" alt="{{ image_webdesign.title|default:'Website Vorschau' }}" class="rounded-xl shadow-xl" />
+      <img src="{{ image_webdesign.file.url }}" {% responsive_image_attrs image_webdesign "(min-width: 768px) 50vw, 100vw" %} loading="lazy" alt="{{ image_webdesign.title|default:'Website Vorschau' }}" class="rounded-xl shadow-xl" />
       {% else %}
       <img src="{% static 'images/references/THP_Full-min.png' %}" loading="lazy" alt="Website Vorschau Tierheilpraxis Meissner" class="rounded-xl shadow-xl" />
       {% endif %}
@@ -124,22 +124,22 @@
     </p>
     <div class="grid grid-cols-2 justify-items-center gap-6 md:grid-cols-4">
       {% if image_logo_1 %}
-      <img src="{{ image_logo_1.file.url }}" loading="lazy" alt="{{ image_logo_1.title|default:'Logo 1' }}" class="h-20 object-contain" />
+      <img src="{{ image_logo_1.file.url }}" {% responsive_image_attrs image_logo_1 "10rem" %} loading="lazy" alt="{{ image_logo_1.title|default:'Logo 1' }}" class="h-20 object-contain" />
       {% else %}
       <img src="https://www.tierheilpraxis-meissner.net/img/logo.png" loading="lazy" alt="Tierheilpraxis Meissner Logo" class="h-20 object-contain" />
       {% endif %}
       {% if image_logo_2 %}
-      <img src="{{ image_logo_2.file.url }}" loading="lazy" alt="{{ image_logo_2.title|default:'Logo 2' }}" class="h-20 object-contain" />
+      <img src="{{ image_logo_2.file.url }}" {% responsive_image_attrs image_logo_2 "10rem" %} loading="lazy" alt="{{ image_logo_2.title|default:'Logo 2' }}" class="h-20 object-contain" />
       {% else %}
       <img src="{% static 'images/references/knn-truck.svg' %}" loading="lazy" alt="KNN Truck Claim Logo" class="h-20 object-contain" />
       {% endif %}
       {% if image_logo_3 %}
-      <img src="{{ image_logo_3.file.url }}" loading="lazy" alt="{{ image_logo_3.title|default:'Logo 3' }}" class="h-20 object-contain" />
+      <img src="{{ image_logo_3.file.url }}" {% responsive_image_attrs image_logo_3 "10rem" %} loading="lazy" alt="{{ image_logo_3.title|default:'Logo 3' }}" class="h-20 object-contain" />
       {% else %}
       <img src="{% static 'images/references/yoolinklogo.png' %}" loading="lazy" alt="Yoolink Logo" class="h-20 object-contain" />
       {% endif %}
       {% if image_logo_4 %}
-      <img src="{{ image_logo_4.file.url }}" loading="lazy" alt="{{ image_logo_4.title|default:'Logo 4' }}" class="h-20 object-contain" />
+      <img src="{{ image_logo_4.file.url }}" {% responsive_image_attrs image_logo_4 "10rem" %} loading="lazy" alt="{{ image_logo_4.title|default:'Logo 4' }}" class="h-20 object-contain" />
       {% else %}
       <img src="{% static 'images/references/rsautoglaslogo.png' %}" loading="lazy" alt="RSAutoglas Logo" class="h-20 object-contain" />
       {% endif %}
@@ -163,7 +163,7 @@
     </div>
     <div data-aos="fade-left">
       {% if image_custom %}
-      <img src="{{ image_custom.file.url }}" loading="lazy" alt="{{ image_custom.title|default:'Individuelle Webentwicklung' }}" class="rounded-xl shadow-xl" />
+      <img src="{{ image_custom.file.url }}" {% responsive_image_attrs image_custom "(min-width: 768px) 50vw, 100vw" %} loading="lazy" alt="{{ image_custom.title|default:'Individuelle Webentwicklung' }}" class="rounded-xl shadow-xl" />
       {% else %}
       <img src="{% static 'images/references/MovieBattle_BG.png' %}" loading="lazy" alt="MovieBattle Preview" class="rounded-xl shadow-xl" />
       {% endif %}
@@ -176,7 +176,7 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="aspect-[1.75/1] overflow-hidden rounded-xl shadow-lg ring-1 ring-gray-200 -rotate-2 transition-transform hover:rotate-0 hover:scale-105">
           {% if image_vk_1 %}
-          <img src="{{ image_vk_1.file.url }}" loading="lazy" alt="Visitenkarte 1" class="h-full w-full object-cover" />
+          <img src="{{ image_vk_1.file.url }}" {% responsive_image_attrs image_vk_1 "(min-width: 1024px) 25vw, 50vw" %} loading="lazy" alt="Visitenkarte 1" class="h-full w-full object-cover" />
           {% else %}
           <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900 p-4 text-white">
             <div class="mb-1 h-2 w-16 rounded-full bg-white/40"></div>
@@ -187,7 +187,7 @@
         </div>
         <div class="aspect-[1.75/1] overflow-hidden rounded-xl shadow-lg ring-1 ring-gray-200 rotate-2 transition-transform hover:rotate-0 hover:scale-105">
           {% if image_vk_2 %}
-          <img src="{{ image_vk_2.file.url }}" loading="lazy" alt="Visitenkarte 2" class="h-full w-full object-cover" />
+          <img src="{{ image_vk_2.file.url }}" {% responsive_image_attrs image_vk_2 "(min-width: 1024px) 25vw, 50vw" %} loading="lazy" alt="Visitenkarte 2" class="h-full w-full object-cover" />
           {% else %}
           <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-700 to-blue-900 p-4 text-white">
             <div class="mb-1 h-2 w-16 rounded-full bg-white/40"></div>
@@ -198,7 +198,7 @@
         </div>
         <div class="aspect-[1.75/1] overflow-hidden rounded-xl shadow-lg ring-1 ring-gray-200 rotate-1 transition-transform hover:rotate-0 hover:scale-105">
           {% if image_vk_3 %}
-          <img src="{{ image_vk_3.file.url }}" loading="lazy" alt="Visitenkarte 3" class="h-full w-full object-cover" />
+          <img src="{{ image_vk_3.file.url }}" {% responsive_image_attrs image_vk_3 "(min-width: 1024px) 25vw, 50vw" %} loading="lazy" alt="Visitenkarte 3" class="h-full w-full object-cover" />
           {% else %}
           <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-800 p-4 text-white">
             <div class="mb-1 h-2 w-16 rounded-full bg-white/40"></div>
@@ -209,7 +209,7 @@
         </div>
         <div class="aspect-[1.75/1] overflow-hidden rounded-xl shadow-lg ring-1 ring-gray-200 -rotate-1 transition-transform hover:rotate-0 hover:scale-105">
           {% if image_vk_4 %}
-          <img src="{{ image_vk_4.file.url }}" loading="lazy" alt="Visitenkarte 4" class="h-full w-full object-cover" />
+          <img src="{{ image_vk_4.file.url }}" {% responsive_image_attrs image_vk_4 "(min-width: 1024px) 25vw, 50vw" %} loading="lazy" alt="Visitenkarte 4" class="h-full w-full object-cover" />
           {% else %}
           <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-emerald-600 to-teal-800 p-4 text-white">
             <div class="mb-1 h-2 w-16 rounded-full bg-white/40"></div>
@@ -259,7 +259,7 @@
     </div>
     <div data-aos="fade-left">
       {% if image_medien %}
-      <img src="{{ image_medien.file.url }}" loading="lazy" alt="{{ image_medien.title|default:'Medien & Fotografie' }}" class="rounded-xl shadow-xl" />
+      <img src="{{ image_medien.file.url }}" {% responsive_image_attrs image_medien "(min-width: 768px) 50vw, 100vw" %} loading="lazy" alt="{{ image_medien.title|default:'Medien & Fotografie' }}" class="rounded-xl shadow-xl" />
       {% else %}
       <div class="flex h-80 items-center justify-center rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 shadow-xl">
         <div class="text-center text-white/60">
