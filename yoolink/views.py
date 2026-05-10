@@ -217,6 +217,12 @@ def load_logos(request):
     return render(request, 'pages/leistungen_logos.html', context=context)
 
 
+def load_medien(request):
+    context = {}
+    context.update(get_opening_hours())
+    return render(request, 'pages/leistungen_medien.html', context=context)
+
+
 def load_visitenkarte(request):
     context = {}
     context.update(get_opening_hours())
