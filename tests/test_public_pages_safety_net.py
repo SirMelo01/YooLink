@@ -36,7 +36,14 @@ def test_home_page_renders_cms_managed_content(client):
 
 
 def test_static_content_pages_render_without_cms_data(client):
-    for url_name in ["kontakt", "leistungen_cms", "leistungen_logos", "kunden", "leistungen"]:
+    for url_name in [
+        "kontakt",
+        "leistungen_cms",
+        "leistungen_logos",
+        "leistungen_visitenkarte",
+        "kunden",
+        "leistungen",
+    ]:
         response = client.get(reverse(url_name))
         assert response.status_code == 200
 

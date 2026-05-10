@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static i18n %}
+{% extends "base.html" %} {% load compress static i18n custom_filters %}
 
 {% block title %}{{ block.super }} | Visitenkarten Design - Hochwertige Visitenkarten erstellen lassen{% endblock title %}
 
@@ -478,7 +478,7 @@
             <!-- FRONT -->
             <div class="vk-face vk-face--photo">
               {% if image_hero_front %}
-                <img src="{{ image_hero_front.file.url }}" alt="{{ image_hero_front.title|default:'Visitenkarte Vorderseite' }}" class="absolute inset-0 h-full w-full object-cover" />
+                <img src="{{ image_hero_front.file.url }}" {% responsive_image_attrs image_hero_front "30rem" %} alt="{{ image_hero_front.title|default:'Visitenkarte Vorderseite' }}" class="absolute inset-0 h-full w-full object-cover" />
               {% else %}
                 <img src="{% static 'images/visitenkarte/Sebastian Visitenkarte EU Format vorne.png' %}" alt="Visitenkarte Vorderseite" class="absolute inset-0 h-full w-full object-cover" />
               {% endif %}
@@ -486,7 +486,7 @@
             <!-- BACK -->
             <div class="vk-face vk-face--photo vk-face--back-photo">
               {% if image_hero_back %}
-                <img src="{{ image_hero_back.file.url }}" alt="{{ image_hero_back.title|default:'Visitenkarte Rückseite' }}" class="absolute inset-0 h-full w-full object-cover" />
+                <img src="{{ image_hero_back.file.url }}" {% responsive_image_attrs image_hero_back "30rem" %} alt="{{ image_hero_back.title|default:'Visitenkarte Rückseite' }}" class="absolute inset-0 h-full w-full object-cover" />
               {% else %}
                 <img src="{% static 'images/visitenkarte/Sebastian Visitenkarte EU Format hinten.png' %}" alt="Visitenkarte Rückseite" class="absolute inset-0 h-full w-full object-cover" />
               {% endif %}
@@ -540,7 +540,7 @@
       <div class="flex flex-col items-center" data-aos="fade-right">
         <div class="aspect-[85/55] w-full overflow-hidden rounded-xl shadow-xl ring-1 ring-gray-200 rotate-1 transition-transform duration-500 hover:rotate-0 hover:scale-[1.03]">
           {% if image_showcase_front %}
-            <img src="{{ image_showcase_front.file.url }}" loading="lazy" alt="{{ image_showcase_front.title|default:'Visitenkarte - Vorderseite' }}" class="h-full w-full object-cover" />
+            <img src="{{ image_showcase_front.file.url }}" {% responsive_image_attrs image_showcase_front "(min-width: 640px) 28rem, 100vw" %} loading="lazy" alt="{{ image_showcase_front.title|default:'Visitenkarte - Vorderseite' }}" class="h-full w-full object-cover" />
           {% else %}
             <img src="{% static 'images/visitenkarte/Sebastian Visitenkarte EU Format vorne.png' %}" loading="lazy" alt="Visitenkarte Sebastian - Vorderseite" class="h-full w-full object-cover" />
           {% endif %}
@@ -552,7 +552,7 @@
       <div class="flex flex-col items-center" data-aos="fade-left" data-aos-delay="100">
         <div class="aspect-[85/55] w-full overflow-hidden rounded-xl shadow-xl ring-1 ring-gray-200 -rotate-1 transition-transform duration-500 hover:rotate-0 hover:scale-[1.03]">
           {% if image_showcase_back %}
-            <img src="{{ image_showcase_back.file.url }}" loading="lazy" alt="{{ image_showcase_back.title|default:'Visitenkarte - Rückseite' }}" class="h-full w-full object-cover" />
+            <img src="{{ image_showcase_back.file.url }}" {% responsive_image_attrs image_showcase_back "(min-width: 640px) 28rem, 100vw" %} loading="lazy" alt="{{ image_showcase_back.title|default:'Visitenkarte - Rückseite' }}" class="h-full w-full object-cover" />
           {% else %}
             <img src="{% static 'images/visitenkarte/Sebastian Visitenkarte EU Format hinten.png' %}" loading="lazy" alt="Visitenkarte Sebastian - Rückseite" class="h-full w-full object-cover" />
           {% endif %}
