@@ -217,6 +217,46 @@ def load_logos(request):
     return render(request, 'pages/leistungen_logos.html', context=context)
 
 
+def load_visitenkarte(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    def get_image(place: str):
+        return fileentry.objects.filter(place=place).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_visitenkarte_hero")
+    context["textContent_hero_secondary"] = get_text("main_visitenkarte_hero_secondary")
+    context["image_hero_front"] = get_image("main_visitenkarte_hero_front")
+    context["image_hero_back"] = get_image("main_visitenkarte_hero_back")
+
+    # Showcase / Bisherige Arbeiten
+    context["textContent_showcase"] = get_text("main_visitenkarte_showcase")
+    context["textContent_showcase_label_front"] = get_text("main_visitenkarte_showcase_label_front")
+    context["textContent_showcase_label_back"] = get_text("main_visitenkarte_showcase_label_back")
+    context["image_showcase_front"] = get_image("main_visitenkarte_showcase_front")
+    context["image_showcase_back"] = get_image("main_visitenkarte_showcase_back")
+
+    # Formate
+    context["textContent_formate"] = get_text("main_visitenkarte_formate")
+    context["textContent_format_standard"] = get_text("main_visitenkarte_format_standard")
+    context["textContent_format_slim"] = get_text("main_visitenkarte_format_slim")
+
+    # Papier / Qualität
+    context["textContent_papier"] = get_text("main_visitenkarte_papier")
+    context["textContent_papier_card1"] = get_text("main_visitenkarte_papier_card1")
+    context["textContent_papier_card2"] = get_text("main_visitenkarte_papier_card2")
+    context["textContent_papier_card3"] = get_text("main_visitenkarte_papier_card3")
+
+    # Bottom CTA
+    context["textContent_bottomcta"] = get_text("main_visitenkarte_bottomcta")
+
+    return render(request, 'pages/leistungen_visitenkarte.html', context=context)
+
+
 def load_cmsinfo(request):
     context = {}
 

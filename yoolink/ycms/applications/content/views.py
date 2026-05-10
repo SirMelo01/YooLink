@@ -295,6 +295,33 @@ def site_view_logos(request):
 
 
 @login_required(login_url="login")
+def site_view_visitenkarte(request):
+    return render(
+        request,
+        "pages/cms/content/sites/VisitenkarteSite.html",
+        {
+            "textContent_hero": _get_text("main_visitenkarte_hero"),
+            "textContent_hero_secondary": _get_text("main_visitenkarte_hero_secondary"),
+            "image_hero_front": _get_image("main_visitenkarte_hero_front"),
+            "image_hero_back": _get_image("main_visitenkarte_hero_back"),
+            "textContent_showcase": _get_text("main_visitenkarte_showcase"),
+            "textContent_showcase_label_front": _get_text("main_visitenkarte_showcase_label_front"),
+            "textContent_showcase_label_back": _get_text("main_visitenkarte_showcase_label_back"),
+            "image_showcase_front": _get_image("main_visitenkarte_showcase_front"),
+            "image_showcase_back": _get_image("main_visitenkarte_showcase_back"),
+            "textContent_formate": _get_text("main_visitenkarte_formate"),
+            "textContent_format_standard": _get_text("main_visitenkarte_format_standard"),
+            "textContent_format_slim": _get_text("main_visitenkarte_format_slim"),
+            "textContent_papier": _get_text("main_visitenkarte_papier"),
+            "textContent_papier_card1": _get_text("main_visitenkarte_papier_card1"),
+            "textContent_papier_card2": _get_text("main_visitenkarte_papier_card2"),
+            "textContent_papier_card3": _get_text("main_visitenkarte_papier_card3"),
+            "textContent_bottomcta": _get_text("main_visitenkarte_bottomcta"),
+        },
+    )
+
+
+@login_required(login_url="login")
 def site_view_datenschutz(request):
     policy = PrivacyPolicy.objects.first()
     owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
