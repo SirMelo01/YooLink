@@ -223,6 +223,85 @@ def load_medien(request):
     return render(request, 'pages/leistungen_medien.html', context=context)
 
 
+def load_webdesign(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_webdesign_hero")
+    context["textContent_hero_secondary"] = get_text("main_webdesign_hero_secondary")
+    context["textContent_hero_badge1"] = get_text("main_webdesign_hero_badge1")
+    context["textContent_hero_badge2"] = get_text("main_webdesign_hero_badge2")
+    context["textContent_hero_badge3"] = get_text("main_webdesign_hero_badge3")
+
+    # Ansatz
+    context["textContent_ansatz"] = get_text("main_webdesign_ansatz")
+    context["textContent_ansatz_card1"] = get_text("main_webdesign_ansatz_card1")
+    context["textContent_ansatz_card2"] = get_text("main_webdesign_ansatz_card2")
+    context["textContent_ansatz_card3"] = get_text("main_webdesign_ansatz_card3")
+
+    # Prozess
+    context["textContent_prozess"] = get_text("main_webdesign_prozess")
+    context["textContent_prozess_step1"] = get_text("main_webdesign_prozess_step1")
+    context["textContent_prozess_step2"] = get_text("main_webdesign_prozess_step2")
+    context["textContent_prozess_step3"] = get_text("main_webdesign_prozess_step3")
+    context["textContent_prozess_step4"] = get_text("main_webdesign_prozess_step4")
+    context["textContent_prozess_step5"] = get_text("main_webdesign_prozess_step5")
+
+    # Tech Stack
+    context["textContent_tech"] = get_text("main_webdesign_tech")
+    context["textContent_tech_bullet1"] = get_text("main_webdesign_tech_bullet1")
+    context["textContent_tech_bullet2"] = get_text("main_webdesign_tech_bullet2")
+    context["textContent_tech_bullet3"] = get_text("main_webdesign_tech_bullet3")
+    context["textContent_tech_bullet4"] = get_text("main_webdesign_tech_bullet4")
+
+    # Hosting bei Hetzner
+    context["textContent_hosting"] = get_text("main_webdesign_hosting")
+    context["textContent_hosting_tile1"] = get_text("main_webdesign_hosting_tile1")
+    context["textContent_hosting_tile2"] = get_text("main_webdesign_hosting_tile2")
+    context["textContent_hosting_tile3"] = get_text("main_webdesign_hosting_tile3")
+    context["textContent_hosting_tile4"] = get_text("main_webdesign_hosting_tile4")
+    context["textContent_hosting_bullet1"] = get_text("main_webdesign_hosting_bullet1")
+    context["textContent_hosting_bullet2"] = get_text("main_webdesign_hosting_bullet2")
+    context["textContent_hosting_bullet3"] = get_text("main_webdesign_hosting_bullet3")
+    context["textContent_hosting_bullet4"] = get_text("main_webdesign_hosting_bullet4")
+    context["textContent_hosting_bullet5"] = get_text("main_webdesign_hosting_bullet5")
+
+    # Technische Schwerpunkte
+    context["textContent_schwerpunkte"] = get_text("main_webdesign_schwerpunkte")
+    context["textContent_schwerpunkte_card1"] = get_text("main_webdesign_schwerpunkte_card1")
+    context["textContent_schwerpunkte_card1_bullet1"] = get_text("main_webdesign_schwerpunkte_card1_bullet1")
+    context["textContent_schwerpunkte_card1_bullet2"] = get_text("main_webdesign_schwerpunkte_card1_bullet2")
+    context["textContent_schwerpunkte_card1_bullet3"] = get_text("main_webdesign_schwerpunkte_card1_bullet3")
+    context["textContent_schwerpunkte_card2"] = get_text("main_webdesign_schwerpunkte_card2")
+    context["textContent_schwerpunkte_card2_bullet1"] = get_text("main_webdesign_schwerpunkte_card2_bullet1")
+    context["textContent_schwerpunkte_card2_bullet2"] = get_text("main_webdesign_schwerpunkte_card2_bullet2")
+    context["textContent_schwerpunkte_card2_bullet3"] = get_text("main_webdesign_schwerpunkte_card2_bullet3")
+    context["textContent_schwerpunkte_card3"] = get_text("main_webdesign_schwerpunkte_card3")
+    context["textContent_schwerpunkte_card3_bullet1"] = get_text("main_webdesign_schwerpunkte_card3_bullet1")
+    context["textContent_schwerpunkte_card3_bullet2"] = get_text("main_webdesign_schwerpunkte_card3_bullet2")
+    context["textContent_schwerpunkte_card3_bullet3"] = get_text("main_webdesign_schwerpunkte_card3_bullet3")
+    context["textContent_schwerpunkte_card4"] = get_text("main_webdesign_schwerpunkte_card4")
+    context["textContent_schwerpunkte_card4_bullet1"] = get_text("main_webdesign_schwerpunkte_card4_bullet1")
+    context["textContent_schwerpunkte_card4_bullet2"] = get_text("main_webdesign_schwerpunkte_card4_bullet2")
+    context["textContent_schwerpunkte_card4_bullet3"] = get_text("main_webdesign_schwerpunkte_card4_bullet3")
+
+    # Warum dieser Ansatz
+    context["textContent_warum"] = get_text("main_webdesign_warum")
+    context["textContent_warum_card1"] = get_text("main_webdesign_warum_card1")
+    context["textContent_warum_card2"] = get_text("main_webdesign_warum_card2")
+    context["textContent_warum_card3"] = get_text("main_webdesign_warum_card3")
+    context["textContent_warum_card4"] = get_text("main_webdesign_warum_card4")
+
+    # Bottom CTA
+    context["textContent_bottomcta"] = get_text("main_webdesign_bottomcta")
+
+    return render(request, 'pages/leistungen_webdesign.html', context=context)
+
+
 def load_visitenkarte(request):
     context = {}
     context.update(get_opening_hours())

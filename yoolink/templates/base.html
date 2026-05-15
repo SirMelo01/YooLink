@@ -124,6 +124,16 @@
                     <span class="mt-0.5 text-xs leading-5 text-gray-500">Alle Leistungen auf einen Blick</span>
                   </span>
                 </a>
+                <a href="{% url 'leistungen_webdesign' %}" role="menuitem"
+                  class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
+                  <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                    <i class="bi bi-code-slash text-lg"></i>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-gray-900">Webdesign</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Moderne Websites mit Django &amp; Tailwind</span>
+                  </span>
+                </a>
                 <a href="{% url 'leistungen_cms' %}" role="menuitem"
                   class="group flex items-start gap-3 px-5 py-4 transition hover:bg-blue-50">
                   <span class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
@@ -280,6 +290,10 @@
                         <a href="{% url 'leistungen' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
                           <i class="bi bi-grid-1x2 text-blue-900"></i> Übersicht
+                        </a>
+                        <a href="{% url 'leistungen_webdesign' %}" role="menuitem"
+                          class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
+                          <i class="bi bi-code-slash text-blue-900"></i> Webdesign
                         </a>
                         <a href="{% url 'leistungen_cms' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
