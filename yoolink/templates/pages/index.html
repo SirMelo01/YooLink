@@ -121,6 +121,16 @@
         >
           <img src="{{img.upload.url}}" fetchpriority="high" alt="{{img.title}}" />
         </div>
+        {% empty %}
+        <div class="icon-cards__item d-flex align-items-center justify-content-center">
+          <img src="{% static 'images/Template1.png' %}" fetchpriority="high" alt="Template 1" />
+        </div>
+        <div class="icon-cards__item d-flex align-items-center justify-content-center">
+          <img src="{% static 'images/Template2.png' %}" fetchpriority="high" alt="Template 2" />
+        </div>
+        <div class="icon-cards__item d-flex align-items-center justify-content-center">
+          <img src="{% static 'images/Template3.png' %}" fetchpriority="high" alt="Template 3" />
+        </div>
         {% endfor %}
       </div>
     </figure>
