@@ -97,17 +97,17 @@
   <div
     class="flex flex-col items-center justify-center px-4 pt-6 mx-auto sm:max-w-xl md:max-w-full lg:pt-6 md:px-0"
   >
-    <div class="flex flex-col items-center max-w-2xl md:px-8">
+    <div class="flex flex-col items-center max-w-4xl md:px-8">
       <div
-        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12"
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-4xl md:mb-12"
       >
         <h1
-          class="max-w-xl mb-6 mt-8 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center"
+          class="mb-6 mt-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl md:mx-auto text-center"
         >
-          {{heroText.title}}
+          {{ heroText.title|default:"Webdesign - YooLink" }}
         </h1>
         <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          {{heroText.description}}
+          {{ heroText.description|default:"Verbessern Sie Ihre digitale Präsenz und steigern Sie Ihren Umsatz mit einer neuen Website von YooLink! Durch eine ansprechende Ästhetik, intuitive Navigation und relevantem Inhalt erstellen wir als Webdesign Agentur einen Internetauftritt, der Ihr Unternehmen auf innovative Weise präsentiert." }}
         </p>
       </div>
     </div>
@@ -139,10 +139,10 @@
     >
       <a
         href="{% url 'kontakt' %}"
-        aria-label="{{ heroText.buttonText }}"
-        class="flex items-center justify-center h-12 px-6 font-medium text-white"
+        aria-label="{{ heroText.buttonText|default:'Kontakt' }}"
+        class="flex items-center justify-center h-[3.3rem] px-[1.65rem] text-[1.1rem] font-medium text-white"
       >
-        {{ heroText.buttonText }}
+        {{ heroText.buttonText|default:"Kontakt" }}
       </a>
     </div>
   
