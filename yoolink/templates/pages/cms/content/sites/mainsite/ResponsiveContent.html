@@ -4,9 +4,7 @@
 
 <!-- Needed for Galery (Slick) -->
 {% block javascript %}
-<!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
-<!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
 {% endblock %}
 
@@ -16,8 +14,11 @@
 
 <div class="container mx-auto mt-8">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 class="text-2xl "><a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> / <a
-                href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> / <span>Responsive</span></h1>
+        <h1 class="text-2xl">
+            <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> /
+            <a href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> /
+            <span>Responsive</span>
+        </h1>
         <div>
             {% csrf_token %}
             <a class="block w-full rounded bg-green-500 px-4 py-3 text-center font-bold text-white hover:cursor-pointer hover:bg-green-700 sm:w-auto sm:py-2"
@@ -27,132 +28,113 @@
         </div>
     </div>
 
-    <section class="scroll-my-4 -mb-0 xs:-mb-48 lg:-mb-0 mt-8" id="Responsive">
-        <div class="grid grid-cols-2 gap-4 lg:pt-16">
-            <div class="mb-5 lg:mb-0 h-full">
-                <div class="w-6xl mb-5 flex flex-col justify-center items-center">
-                    <input
-                        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded-lg w-2/3 text-center inline-block py-2 px-4 text-xs font-semibold tracking-wider text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                        id="header" type="text"
-                        value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}EINE WEBSITE OPTIMIERT FÜR ALLE GERÄTE{% endif %}">
-                    <input
-                        class="bg-gray-200 mt-3 appearance-none text-center border-2 border-gray-200 rounded-lg w-full inline-block py-2 px-4 mb-6 text-2xl font-bold tracking-tight text-teal-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                        id="title" type="text"
-                        value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Responsive Design{% endif %}">
-                    <textarea rows="8"
-                        class="bg-gray-200 h-full rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 md:text-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                        id="description" type="text">{% if textContent and textContent.title %}{{textContent.description}}{% else %}Moderne Websites sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsive Webdesign passen sich Websites automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten. Wir als Web Agentur haben umfangreiche Erfahrung im Entwerfen und Entwickeln von responsive Websites, die sowohl auf dem Desktop als auch auf mobilen Geräten beeindrucken.
-                        {% endif %}
-                    </textarea>
+    <div class="mt-8 grid gap-8">
+        <!-- Texte -->
+        <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Texte</h2>
 
-                </div>
+            <div class="mb-5">
+                <label for="header" class="block text-sm font-medium text-gray-600 mb-1">Header / Badge</label>
+                <input
+                    class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-xs font-semibold tracking-wider text-gray-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="header" type="text"
+                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}EINE WEBSITE OPTIMIERT FÜR ALLE GERÄTE{% endif %}">
             </div>
-            <!--Imageslider-->
-            <div class="container content-center px-1">
-                <!--Browser-->
-                <div class="container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="browser">
-                    <img src="{% static 'images/MacBookPro16.png' %}"
-                        class="absolute xs:object-top lg:object-center w-full object-contain z-10"
-                        alt="MacBookPro16 Bezel" />
-                    <span id="slider">
-                        <img src="{% static 'images/MacBook-RSAutoglas1.png' %}"
-                            class="relative w-full object-contain xs:object-top lg:object-center"
-                            alt="MacBookPro16 Bezel RS-Autoglas" />
-                        <img src="{% static 'images/MacBook-RSAutoglas2.png' %}"
-                            class="hidden relative w-full object-contain xs:object-top lg:object-center"
-                            alt="MacBookPro16 Bezel RS-Autoglas" />
-                    </span>
-                </div>
-                <!--Phone-->
-                <div class="hidden container animate-fade-in-down xs:h-129 sm:h-130 md:h-131 relative" id="phone">
-                    <img src="{% static 'images/iPhone-Frame.png' %}" class="absolute w-full object-contain z-10"
-                        alt="iPhone-Frame Bezel" />
-                    <span id="slider">
-                        <img src="{% static 'images/iPhone-RSAutoglas.png' %}"
-                            class="relative w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas" />
-                        <img src="{% static 'images/iPhone-RSAutoglas.png' %}"
-                            class="hidden relative w-full object-contain" alt="iPhone-Frame Bezel RS-Autoglas" />
-                    </span>
-                </div>
+
+            <div class="mb-5">
+                <label for="title" class="block text-sm font-medium text-gray-600 mb-1">Überschrift</label>
+                <input
+                    class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-lg font-bold tracking-tight text-gray-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="title" type="text"
+                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Responsive Design{% endif %}">
             </div>
-        </div>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:pt-4">
-            <!-- Responsive Desktop -->
-            <div class="col-span-3">
-                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Desktop-Modus </label>
-                <div class="flex flex-col justify-center w-full items-center">
-                    <div class="galery-container relative justify-center max-w-3xl w-full mt-4" galery-id="-1" key="main_responsive_desktop">
-                        <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"><i class="bi bi-pencil-square"></i></span>
-                        <div class="carousel rounded-lg">
-                            {% if responsiveDesktopImages %}
-                                {% for img in responsiveDesktopImages %}
-                                <div>
-                                    <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96" />
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                            <div>
-                                <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" 
-                                    alt="Template Design" class="w-full rounded-xl h-96"/>
-                            </div>
-                            <div>
-                                <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" 
-                                    alt="Template Design" class="w-full rounded-xl h-96"/>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Responsive Handy -->
+
             <div>
-                <label class="mb-1 block w-40 self-start pr-4 font-bold text-gray-500 md:mb-0" for="title"> Handy-Modus </label>
-                <div class="flex flex-col justify-center w-full items-center">
-                    <div class="galery-container relative justify-center max-w-3xl w-full mt-4" galery-id="-1" key="main_responsive_handy">
-                        <span class="absolute top-0 left-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"><i class="bi bi-pencil-square"></i></span>
-                        <div class="carousel rounded-lg">
-                            {% if responsiveHandyImages %}
-                                {% for img in responsiveHandyImages %}
-                                <div>
-                                    <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96" />
-                                </div>
-                                {% endfor %}
-                            {% else %}
+                <label for="description" class="block text-sm font-medium text-gray-600 mb-1">Beschreibung</label>
+                <textarea rows="7"
+                    class="bg-gray-50 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 leading-relaxed focus:outline-none focus:bg-white focus:border-blue-500"
+                    id="description">{% if textContent and textContent.description %}{{textContent.description}}{% else %}Moderne Websites sind dynamisch gestaltet, um auf PCs und mobilen Geräten optimal dargestellt zu werden. Mit responsive Webdesign passen sich Websites automatisch an die Bildschirmgröße und -auflösung an, um eine optimale Benutzererfahrung zu bieten. Wir als Web Agentur haben umfangreiche Erfahrung im Entwerfen und Entwickeln von responsive Websites, die sowohl auf dem Desktop als auch auf mobilen Geräten beeindrucken.{% endif %}</textarea>
+            </div>
+        </div>
+
+        <!-- Bildergalerien -->
+        <div class="grid gap-8 lg:grid-cols-2">
+            <!-- Desktop -->
+            <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1">Desktop-Modus</h2>
+                <p class="text-sm text-gray-500 mb-4">Bilder, die im MacBook-Bezel angezeigt werden.</p>
+
+                <div class="galery-container relative w-full" galery-id="-1" key="main_responsive_desktop">
+                    <span class="absolute top-2 left-2 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"
+                        title="Bilder bearbeiten">
+                        <i class="bi bi-pencil-square"></i>
+                    </span>
+                    <div class="carousel rounded-lg">
+                        {% if responsiveDesktopImages %}
+                            {% for img in responsiveDesktopImages %}
                             <div>
-                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" 
-                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                                <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96 object-cover" />
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                <img src="{% static 'images/MacBook-RSAutoglas1.png' %}" alt="Desktop-Vorschau" class="w-full rounded-xl h-96 object-cover" />
                             </div>
                             <div>
-                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" 
-                                    alt="Template Design" class="w-full rounded-xl h-96"/>
+                                <img src="{% static 'images/MacBook-RSAutoglas2.png' %}" alt="Desktop-Vorschau" class="w-full rounded-xl h-96 object-cover" />
                             </div>
-                            {% endif %}
-                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Handy -->
+            <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1">Handy-Modus</h2>
+                <p class="text-sm text-gray-500 mb-4">Bilder, die im iPhone-Bezel angezeigt werden.</p>
+
+                <div class="galery-container relative w-full" galery-id="-1" key="main_responsive_handy">
+                    <span class="absolute top-2 left-2 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full z-40 hover:cursor-pointer edit-galery"
+                        title="Bilder bearbeiten">
+                        <i class="bi bi-pencil-square"></i>
+                    </span>
+                    <div class="carousel rounded-lg">
+                        {% if responsiveHandyImages %}
+                            {% for img in responsiveHandyImages %}
+                            <div>
+                                <img src="{{img.upload.url}}" alt="{{img.title}}" class="w-full rounded-xl h-96 object-cover" />
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" alt="Handy-Vorschau" class="w-full rounded-xl h-96 object-cover" />
+                            </div>
+                            <div>
+                                <img src="{% static 'images/iPhone-RSAutoglas.png' %}" alt="Handy-Vorschau" class="w-full rounded-xl h-96 object-cover" />
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
+    </div>
 
     {% block javascriptend %}
     {% compress js inline %}
     <script defer src="{% static 'js/cms.js' %}"></script>
     <script src="{% static 'js/cms/content/save-text.js' %}"></script>
     <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
-    <!-- Needed for Galery -->
     <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
     <script>
         $('.carousel').slick({
-        dots: true,  // Display navigation dots
-        arrows: true,  // Display navigation arrows
-        infinite: true,  // Enable infinite looping
-        slidesToShow: 1,  // Number of slides to show at once
-        slidesToScroll: 1,  // Number of slides to scroll at a time
-        autoplay: true,
-        autoplaySpeed: 3000,
-        // Add any other configuration options as needed
-    });
+            dots: true,
+            arrows: true,
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 3000,
+        });
     </script>
     <script defer>
         $(document).ready(function () {
@@ -162,6 +144,4 @@
     {% endcompress js %}
     {% endblock javascriptend %}
 
-
-
-    {% endblock content %}
+{% endblock content %}
