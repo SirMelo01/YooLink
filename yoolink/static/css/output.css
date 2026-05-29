@@ -904,10 +904,6 @@ video {
   grid-column: span 2 / span 2;
 }
 
-.col-span-3 {
-  grid-column: span 3 / span 3;
-}
-
 .col-span-4 {
   grid-column: span 4 / span 4;
 }
@@ -918,10 +914,6 @@ video {
 
 .m-0 {
   margin: 0px;
-}
-
-.m-8 {
-  margin: 2rem;
 }
 
 .m-auto {
@@ -1015,10 +1007,6 @@ video {
 
 .-mb-0 {
   margin-bottom: -0px;
-}
-
-.-ml-24 {
-  margin-left: -6rem;
 }
 
 .-mr-1 {
@@ -1320,12 +1308,12 @@ video {
   aspect-ratio: 16/10;
 }
 
-.aspect-\[16\/9\] {
-  aspect-ratio: 16/9;
+.aspect-\[16\/6\] {
+  aspect-ratio: 16/6;
 }
 
-.aspect-\[4\/3\] {
-  aspect-ratio: 4/3;
+.aspect-\[16\/9\] {
+  aspect-ratio: 16/9;
 }
 
 .aspect-\[85\/55\] {
@@ -2236,6 +2224,11 @@ video {
        column-gap: 2.5rem;
 }
 
+.gap-x-5 {
+  -moz-column-gap: 1.25rem;
+       column-gap: 1.25rem;
+}
+
 .gap-x-6 {
   -moz-column-gap: 1.5rem;
        column-gap: 1.5rem;
@@ -2248,6 +2241,10 @@ video {
 
 .gap-y-10 {
   row-gap: 2.5rem;
+}
+
+.gap-y-2 {
+  row-gap: 0.5rem;
 }
 
 .gap-y-4 {
@@ -2777,10 +2774,6 @@ video {
 .bg-blue-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(30 58 138 / var(--tw-bg-opacity));
-}
-
-.bg-blue-900\/5 {
-  background-color: rgb(30 58 138 / 0.05);
 }
 
 .bg-blue-900\/80 {
@@ -3466,11 +3459,6 @@ video {
 .py-\[100px\] {
   padding-top: 100px;
   padding-bottom: 100px;
-}
-
-.py-px {
-  padding-top: 1px;
-  padding-bottom: 1px;
 }
 
 .pb-0 {
@@ -6687,10 +6675,6 @@ video {
     padding-right: 4rem;
   }
 
-  .md\:pt-24 {
-    padding-top: 6rem;
-  }
-
   .md\:text-left {
     text-align: left;
   }
@@ -6777,10 +6761,6 @@ video {
     margin-bottom: 0px;
   }
 
-  .lg\:mb-28 {
-    margin-bottom: 7rem;
-  }
-
   .lg\:mr-2 {
     margin-right: 0.5rem;
   }
@@ -6799,10 +6779,6 @@ video {
 
   .lg\:mt-16 {
     margin-top: 4rem;
-  }
-
-  .lg\:mt-20 {
-    margin-top: 5rem;
   }
 
   .lg\:mt-24 {
@@ -6929,10 +6905,6 @@ video {
     max-width: 36rem;
   }
 
-  .lg\:flex-auto {
-    flex: 1 1 auto;
-  }
-
   .lg\:scale-90 {
     --tw-scale-x: .9;
     --tw-scale-y: .9;
@@ -6973,10 +6945,6 @@ video {
 
   .lg\:grid-cols-\[18rem_minmax\(0\2c 1fr\)\] {
     grid-template-columns: 18rem minmax(0,1fr);
-  }
-
-  .lg\:grid-cols-\[1fr_360px\] {
-    grid-template-columns: 1fr 360px;
   }
 
   .lg\:grid-cols-\[260px\2c minmax\(0\2c 1fr\)\] {
@@ -7189,10 +7157,6 @@ video {
     padding-right: 5rem;
   }
 
-  .lg\:pt-0 {
-    padding-top: 0px;
-  }
-
   .lg\:pt-12 {
     padding-top: 3rem;
   }
@@ -7211,10 +7175,6 @@ video {
 
   .lg\:pt-32 {
     padding-top: 8rem;
-  }
-
-  .lg\:pt-4 {
-    padding-top: 1rem;
   }
 
   .lg\:pt-40 {
