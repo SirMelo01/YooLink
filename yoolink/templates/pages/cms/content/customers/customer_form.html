@@ -323,11 +323,11 @@
                                     <img id="previewLogoImage" src="{% if customer.logo and customer.logo.file %}{{ customer.logo.file.url }}{% endif %}" class="h-full w-full object-contain">
                                 </div>
                                 <div id="previewFallbackBadge" class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-blue-900 text-base font-bold text-white shadow-md {% if customer.logo %}hidden{% endif %}">
-                                    <span id="previewFallback">{{ customer.logo_fallback_text|default:customer.name|slice:":1"|upper|default:"?" }}</span>
+                                    <span id="previewFallback">{% if customer.logo_fallback_text %}{{ customer.logo_fallback_text|slice:":1"|upper }}{% elif customer.name %}{{ customer.name|slice:":1"|upper }}{% else %}?{% endif %}</span>
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <p id="previewName" class="truncate text-sm font-bold text-gray-900">{{ customer.name|default:"Neuer Kunde" }}</p>
-                                    <p id="previewSubline" class="truncate text-xs text-gray-500">{{ customer.website_display|default:customer.subtitle|default:"—" }}</p>
+                                    <p id="previewSubline" class="truncate text-xs text-gray-500">{% firstof customer.website_display customer.subtitle "—" %}</p>
                                 </div>
                             </div>
 
@@ -337,7 +337,7 @@
                                     <img id="previewWideLogoImage" src="{% if customer.logo and customer.logo.file %}{{ customer.logo.file.url }}{% endif %}" class="h-full max-w-full object-contain object-left">
                                 </div>
                                 <p id="previewWideName" class="mt-2 truncate text-sm font-bold text-gray-900">{{ customer.name|default:"Neuer Kunde" }}</p>
-                                <p id="previewWideSubline" class="truncate text-xs text-gray-500">{{ customer.website_display|default:customer.subtitle|default:"—" }}</p>
+                                <p id="previewWideSubline" class="truncate text-xs text-gray-500">{% firstof customer.website_display customer.subtitle "—" %}</p>
                             </div>
                         </div>
                     </div>
