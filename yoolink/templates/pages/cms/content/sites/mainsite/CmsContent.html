@@ -32,7 +32,7 @@
                 <input
                     class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-xs font-semibold tracking-wider text-gray-900 uppercase leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="header" type="text"
-                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Dynamische Inhalte{% endif %}">
+                    value="{% if textContent and textContent.header %}{{textContent.header}}{% else %}Eigenes CMS{% endif %}">
             </div>
 
             <div class="mb-5">
@@ -40,14 +40,14 @@
                 <input
                     class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-lg font-bold tracking-tight text-gray-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="title" type="text"
-                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Content Management System{% endif %}">
+                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Inhalte selbst pflegen – ganz ohne Code{% endif %}">
             </div>
 
             <div class="mb-5">
                 <label for="description" class="block text-sm font-medium text-gray-600 mb-1">Beschreibung</label>
                 <textarea rows="8"
                     class="bg-gray-50 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 leading-relaxed focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="description">{% if textContent and textContent.description %}{{textContent.description}}{% else %}Unser eigenes Content-Management-System (CMS) ist eine leistungsstarke Lösung für die Verwaltung und Aktualisierung Ihrer Website. Ein CMS ermöglicht es Ihnen, Inhalte wie Texte, Bilder und Videos einfach zu erstellen, zu bearbeiten und zu veröffentlichen. Darüber hinaus ermöglicht unser CMS eine dynamische Anpassung Ihrer Homepage, indem es Ihnen die einfache Integration interaktiver Elemente und die automatische Aktualisierung von Inhalten ermöglicht.{% endif %}</textarea>
+                    id="description">{% if textContent and textContent.description %}{{textContent.description}}{% else %}Mit unserem Content-Management-System aktualisieren Sie Texte, Bilder und Blogartikel jederzeit selbst. Schnell, intuitiv und ohne laufende Kosten für jede kleine Änderung.{% endif %}</textarea>
             </div>
 
             <div>
@@ -55,7 +55,7 @@
                 <input
                     class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-base font-medium text-gray-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="buttonText" type="text"
-                    value="{% if textContent and textContent.buttonText %}{{textContent.buttonText}}{% else %}Angebot{% endif %}">
+                    value="{% if textContent and textContent.buttonText %}{{textContent.buttonText}}{% else %}Angebot ansehen{% endif %}">
             </div>
         </div>
 

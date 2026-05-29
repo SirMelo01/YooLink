@@ -107,7 +107,7 @@
           {{ heroText.title|default:"Webdesign - YooLink" }}
         </h1>
         <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          {{ heroText.description|default:"Verbessern Sie Ihre digitale Präsenz und steigern Sie Ihren Umsatz mit einer neuen Website von YooLink! Durch eine ansprechende Ästhetik, intuitive Navigation und relevantem Inhalt erstellen wir als Webdesign Agentur einen Internetauftritt, der Ihr Unternehmen auf innovative Weise präsentiert." }}
+          {{ heroText.description|default:"Wir entwickeln moderne Websites, die Ihre Marke stärken und Besucher zu Kunden machen. Als Webdesign-Agentur aus Niederbayern setzen wir auf klares Design, schnelle Ladezeiten und durchdachte SEO." }}
         </p>
       </div>
     </div>
@@ -211,15 +211,15 @@
         data-aos-delay="100">
         <div class="w-6xl mb-5">
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-            {{responsiveText.header}}
+            {{ responsiveText.header|default:"Optimiert für alle Geräte" }}
           </p>
           <h2
             class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
           >
-            {{responsiveText.title}}
+            {{ responsiveText.title|default:"Responsive Webdesign" }}
           </h2>
           <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-            {{responsiveText.description}}
+            {{ responsiveText.description|default:"Mehr als die Hälfte aller Aufrufe kommen heute vom Smartphone. Unsere Websites passen sich automatisch an jedes Display an – vom Desktop über das Tablet bis zum Handy. So überzeugen Sie Kunden auf jedem Gerät." }}
           </p>
           <br />
           <div class="flex" data-aos="fade-up" data-aos-delay="200">
@@ -380,17 +380,17 @@
           data-aos="fade-left"
           data-aos-delay="100">
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-            {{ cmsText.header }}
+            {{ cmsText.header|default:"Eigenes CMS" }}
           </p>
           <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
-            {{ cmsText.title }}
+            {{ cmsText.title|default:"Inhalte selbst pflegen – ganz ohne Code" }}
           </h2>
           <p class="mt-6 text-base leading-7 md:text-lg xl:text-xl text-gray-600">
-            {{ cmsText.description }}
+            {{ cmsText.description|default:"Mit unserem Content-Management-System aktualisieren Sie Texte, Bilder und Blogartikel jederzeit selbst. Schnell, intuitiv und ohne laufende Kosten für jede kleine Änderung." }}
           </p>
           <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
             <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-900 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">
-              {{ cmsText.buttonText }}
+              {{ cmsText.buttonText|default:"Angebot ansehen" }}
             </a>
             <a href="{% url 'leistungen_cms' %}" class="text-sm font-semibold leading-6">
               {% trans "learn_more" %} <span aria-hidden="true">→</span>
@@ -431,13 +431,13 @@
         <!-- Headline und Text -->
         <div class="mx-auto max-w-2xl lg:text-center" data-aos="fade-up">
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-            {% if knowHowContent and knowHowContent.header %}{{knowHowContent.header}}{% endif %}
+            {{ knowHowContent.header|default:"Know-how" }}
           </p>
           <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {% if knowHowContent and knowHowContent.title %}{{knowHowContent.title}}{% endif %}
+            {{ knowHowContent.title|default:"Was wir richtig gut können" }}
           </h2>
           <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
-            {% if knowHowContent and knowHowContent.description %}{{knowHowContent.description}}{% endif %}
+            {{ knowHowContent.description|default:"Webdesign ist mehr als hübsche Bilder. Wir verbinden ansprechendes Design mit technischer Performance und gezielter SEO – damit Ihre Website nicht nur gefällt, sondern auch gefunden wird und konvertiert." }}
           </p>
         </div>
         <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
@@ -452,10 +452,10 @@
                 </div>
               </div>
               <dt class="text-2xl text-center font-semibold leading-7 text-gray-900">
-                {% if knowHowContentCard1 and knowHowContentCard1.title %}{{knowHowContentCard1.title}}{% endif %}
+                {{ knowHowContentCard1.title|default:"Individuelles Design" }}
               </dt>
               <dd class="mt-2 text-base text-center leading-7 text-gray-600">
-                {% if knowHowContentCard1 and knowHowContentCard1.description %}{{knowHowContentCard1.description}}{% endif %}
+                {{ knowHowContentCard1.description|default:"Jede Website entsteht maßgeschneidert für Ihre Marke. Klare Strukturen, durchdachte Nutzerführung und ein Design, das im Gedächtnis bleibt – keine Templates von der Stange." }}
               </dd>
             </div>
             <div class="relative" data-aos="fade-up" data-aos-delay="200">
@@ -466,10 +466,10 @@
                 </div>
               </div>
               <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
-                {% if knowHowContentCard2 and knowHowContentCard2.title %}{{knowHowContentCard2.title}}{% endif %}
+                {{ knowHowContentCard2.title|default:"SEO & Sichtbarkeit" }}
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
-                {% if knowHowContentCard2 and knowHowContentCard2.description %}{{knowHowContentCard2.description}}{% endif %}
+                {{ knowHowContentCard2.description|default:"Wir bauen Ihre Website so, dass Google sie liebt: saubere Struktur, schnelle Ladezeiten und gezielte On-Page-Optimierung für bessere Rankings und mehr organischen Traffic." }}
               </dd>
             </div>
             <div class="relative" data-aos="fade-up" data-aos-delay="300">
@@ -480,10 +480,10 @@
                 </div>
               </div>
               <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
-                {% if knowHowContentCard3 and knowHowContentCard3.title %}{{knowHowContentCard3.title}}{% endif %}
+                {{ knowHowContentCard3.title|default:"Saubere Technik" }}
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
-                {% if knowHowContentCard3 and knowHowContentCard3.description %}{{knowHowContentCard3.description}}{% endif %}
+                {{ knowHowContentCard3.description|default:"Modernes Frontend trifft auf solides Backend. Wir setzen auf bewährte Tools, sauberen Code und nachhaltige Architektur – für eine Website, die schnell läuft und langfristig wartbar bleibt." }}
               </dd>
             </div>
           </dl>
@@ -500,15 +500,15 @@
       <div class="flex justify-center mb-12">
         <div class="max-w-2xl lg:text-center" data-aos="fade-up">
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-            {% if kundenText and kundenText.header %}{{kundenText.header}}{% endif %}
+            {{ kundenText.header|default:"Referenzen" }}
           </p>
           <h2
             class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
-            {% if kundenText and kundenText.title %}{{kundenText.title}}{% endif %}
+            {{ kundenText.title|default:"Websites, die wir umgesetzt haben" }}
           </h2>
           <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
-            {% if kundenText and kundenText.description %}{{kundenText.description}}{% endif %}
+            {{ kundenText.description|default:"Vom Zahnarzt bis zum Reiseanbieter – unsere Kunden kommen aus den unterschiedlichsten Branchen. Was sie verbindet: der Wunsch nach einer modernen Website, die ihr Geschäft sichtbar voranbringt." }}
           </p>
         </div>
       </div>
@@ -618,7 +618,7 @@
               aria-label="Alle unsere Kunden ansehen"
               class="flex items-center justify-center h-12 px-6 font-medium text-white"
             >
-            {% if kundenText and kundenText.buttonText %}{{kundenText.buttonText}}{% endif %}
+            {{ kundenText.buttonText|default:"Alle Kunden ansehen" }}
             </a>
           </div>
       </div>
@@ -638,17 +638,17 @@
         data-aos="fade-up"
       >
         <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-          {{priceText.header}}
+          {{ priceText.header|default:"Preise" }}
         </p>
         <h2
           class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto"
         >
           <span class="relative inline-block">
-            <span class="relative text-gray-900">{{priceText.title}}</span>
+            <span class="relative text-gray-900">{{ priceText.title|default:"Faire Preise ohne Überraschungen" }}</span>
           </span>
         </h2>
         <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-          {{priceText.description}}
+          {{ priceText.description|default:"Sie wissen vorher genau, was Sie investieren. Keine versteckten Kosten, keine Folgegebühren für Änderungen – nur transparente Pakete, die zu Ihrem Unternehmen passen." }}
         </p>
       </div>
       <div class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
@@ -700,13 +700,13 @@
     >
     <div class="mx-auto mb-10 lg:max-w-xl text-center" data-aos="fade-up" data-aos-delay="100">
       <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
-        {{teamText.header}}
+        {{ teamText.header|default:"Team" }}
       </p>
       <h2 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
-        {% if teamText.title %}{{teamText.title}}{% else %}Das sind wir!{% endif %}
+        {{ teamText.title|default:"Die Köpfe hinter YooLink" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        {{teamText.description}}
+        {{ teamText.description|default:"Ein eingespieltes Team aus Niederbayern mit langjähriger Erfahrung in Webentwicklung, Design und SEO. Persönlicher Kontakt, kurze Wege und volle Verantwortung für Ihr Projekt – von der ersten Skizze bis zum Go-Live." }}
       </p>
     </div>
     
@@ -877,17 +877,17 @@
         data-aos-delay="100"
       >
         <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-white">
-          {% if faqText and faqText.header %}{{faqText.header}}{% endif %}
+          {{ faqText.header|default:"FAQ" }}
         </p>
         <h2
           class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto"
         >
           <span class="relative inline-block">
-            <span class="relative">{% if faqText and faqText.title %}{{faqText.title}}{% endif %}</span>
+            <span class="relative">{{ faqText.title|default:"Antworten auf die häufigsten Fragen" }}</span>
           </span>
         </h2>
         <p class="text-base leading-7 text-white md:text-lg xl:text-xl">
-          {% if faqText and faqText.description %}{{faqText.description}}{% endif %}
+          {{ faqText.description|default:"Sie haben Fragen zu Ablauf, Preisen oder Technik? Hier finden Sie die wichtigsten Antworten. Wenn etwas fehlt, melden Sie sich gerne direkt bei uns." }}
         </p>
       </div>
       <div class="space-y-4">

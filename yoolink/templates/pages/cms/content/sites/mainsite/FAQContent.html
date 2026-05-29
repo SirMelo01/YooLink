@@ -38,14 +38,14 @@
                 <input
                     class="bg-gray-50 appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-lg font-bold tracking-tight text-gray-900 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     id="title" type="text"
-                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Häufig gestellte Fragen{% endif %}">
+                    value="{% if textContent and textContent.title %}{{textContent.title}}{% else %}Antworten auf die häufigsten Fragen{% endif %}">
             </div>
 
             <div>
                 <label for="description" class="block text-sm font-medium text-gray-600 mb-1">Beschreibung</label>
                 <textarea rows="7"
                     class="bg-gray-50 rounded-lg appearance-none border-2 border-gray-200 w-full py-2 px-4 text-base text-gray-800 leading-relaxed focus:outline-none focus:bg-white focus:border-blue-500"
-                    id="description">{% if textContent and textContent.description %}{{textContent.description}}{% else %}Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir das wichtigste hier zu beantworten. Bei weiteren Fragen können Sie sich jederzeit gerne melden.{% endif %}</textarea>
+                    id="description">{% if textContent and textContent.description %}{{textContent.description}}{% else %}Sie haben Fragen zu Ablauf, Preisen oder Technik? Hier finden Sie die wichtigsten Antworten. Wenn etwas fehlt, melden Sie sich gerne direkt bei uns.{% endif %}</textarea>
             </div>
         </div>
 
