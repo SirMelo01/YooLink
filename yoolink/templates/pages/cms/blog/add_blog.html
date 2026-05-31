@@ -31,11 +31,32 @@
 
 {% include 'pages/cms/blog/modals/ImageModal.html' %}
 
+{% include 'pages/cms/blog/modals/MarkdownImageModal.html' %}
+
+{% include 'pages/cms/blog/modals/MarkdownMediaModal.html' %}
+
 {% include 'pages/cms/blog/modals/YoutubeModal.html' %}
 
 {% include 'pages/cms/blog/modals/GaleryModal.html' %}
 
 <!-- **************** Content **************** -->
+
+<div id="editorModeSwitch" class="mb-3 flex flex-wrap items-center gap-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+    <span class="text-sm font-semibold text-gray-700">Editor</span>
+    <button type="button" data-blog-editor-mode="builder"
+        class="blog-editor-mode rounded-lg border px-4 py-2 text-sm font-semibold transition">
+        <i class="bi bi-layout-three-columns"></i> Builder
+    </button>
+    <button type="button" data-blog-editor-mode="markdown"
+        class="blog-editor-mode rounded-lg border px-4 py-2 text-sm font-semibold transition">
+        <i class="bi bi-markdown"></i> Markdown
+    </button>
+    <a class="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 hover:text-gray-950"
+        href="{% url 'cms:blog-view' %}" title="Zur Blog Übersicht">
+        <i class="bi bi-house"></i>
+        <span class="hidden sm:inline">Übersicht</span>
+    </a>
+</div>
 
 <div id="buttonBar" class="sticky top-[4.25rem] z-[45] mb-3 flex w-full gap-2 overflow-x-auto rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-shadow duration-300 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:p-4">
     <button id="addTitle" class="shrink-0 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600">
@@ -76,7 +97,9 @@
     </button>
 </div>
 <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
-    <div class="nested-sortable min-h-[10rem] w-full rounded-2xl border border-gray-200 p-3 shadow-xl sm:p-4 xl:col-span-2" id="blogContent">
+    <div class="xl:col-span-2">
+    <div id="builderEditorPanel">
+    <div class="nested-sortable min-h-[10rem] w-full rounded-2xl border border-gray-200 p-3 shadow-xl sm:p-4" id="blogContent">
 
         <!-- Text -->
         <div class="relative" element-type="textArea">
@@ -94,6 +117,27 @@
             </textarea>
         </div>
 
+    </div>
+    </div>
+    <div id="markdownEditorPanel" class="hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-xl sm:p-4">
+        <label class="mb-3 block text-lg font-semibold text-gray-800" for="blogMarkdown">Markdown</label>
+        <textarea id="blogMarkdown" rows="22" spellcheck="false"
+            class="min-h-[32rem] w-full resize-y rounded-2xl border border-gray-300 bg-slate-50 px-4 py-3 font-mono text-sm leading-6 text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            placeholder="## Abschnitt&#10;&#10;Text einfügen oder schreiben.&#10;&#10;![Bildtext](/media/yoolink/images/bild.png)"></textarea>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+            <button id="openMarkdownImageModal" type="button"
+                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"
+                title="Bild einfügen">
+                <i class="bi bi-image"></i> Bild
+            </button>
+            <button id="openMarkdownMediaModal" type="button"
+                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"
+                title="Medien und Builder-Elemente einfügen">
+                <i class="bi bi-plus-square"></i> Elemente
+            </button>
+        </div>
+    </div>
     </div>
     <!-- XXX -->
     <div class="h-fit max-h-fit rounded-xl border border-gray-200 p-3 shadow-xl sm:p-4">
@@ -188,6 +232,7 @@
 
 {% block javascriptend %}
 {% compress js inline %}
+<script defer src="{% static 'js/cms/blog/blog-markdown.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 {% endcompress js %}

@@ -2,11 +2,21 @@ import json
 import re
 from html import escape
 from html.parser import HTMLParser
+from urllib.parse import parse_qs, urlparse
 
 from django.utils.html import strip_tags
 
 
 ALLOWED_ATTR_RE = re.compile(r"^[a-zA-Z_:][a-zA-Z0-9:._-]*$")
+IMAGE_MARKDOWN_RE = re.compile(r"^!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?$")
+IMAGE_OPTION_RE = re.compile(r"(width|height)=(\"[^\"]+\"|'[^']+'|[^\s}]+)")
+SHORTCODE_RE = re.compile(r"^::(youtube|video|file)\s*(?:\{([^}]*)\})?\s*$", re.I)
+SHORTCODE_ATTR_RE = re.compile(r"([a-zA-Z_][\w-]*)=(?:\"([^\"]*)\"|'([^']*)'|([^\s}]+))|(?<![=\w-])(controls|autoplay|muted|loop|playsinline)(?![=\w-])")
+GALLERY_START_RE = re.compile(r"^:::\s*gallery(?:\s*\{([^}]*)\})?\s*$", re.I)
+GALLERY_END_RE = re.compile(r"^:::\s*$")
+SAFE_CSS_SIZE_RE = re.compile(r"^(?:auto|0|\d+(?:\.\d+)?(?:px|%|rem|em|vw|vh))$")
+IMAGE_DEFAULT_CSS = {"height": "auto", "width": "100%"}
+VIDEO_BOOLEAN_ATTRS = ("controls", "autoplay", "muted", "loop", "playsinline")
 
 
 def build_default_code_from_html(body):
@@ -75,7 +85,25 @@ def blog_code_to_markdown(code, body=""):
             src = attributes.get("src") or ""
             alt = attributes.get("alt") or attributes.get("title") or ""
             if src:
-                markdown_blocks.append(f"![{alt}]({src})")
+                markdown_blocks.append(f"![{_markdown_image_alt(alt)}]({src}){_image_options_to_markdown(block.get('css') or {})}")
+        elif name == "galery":
+            images = block.get("images") or []
+            image_alts = block.get("imageAlts") or []
+            gallery_lines = []
+            for index, src in enumerate(images):
+                if not src:
+                    continue
+                alt = image_alts[index] if index < len(image_alts) else "Galeriebild"
+                gallery_lines.append(f"![{_markdown_image_alt(alt)}]({src})")
+            if gallery_lines:
+                gallery_options = _image_options_to_markdown(block.get("css") or {})
+                markdown_blocks.append(f":::gallery{gallery_options}\n" + "\n".join(gallery_lines) + "\n:::")
+        elif name == "yt-video":
+            markdown_blocks.append(_youtube_block_to_markdown(block))
+        elif name == "video":
+            markdown_blocks.append(_video_block_to_markdown(block))
+        elif name == "file":
+            markdown_blocks.append(_file_block_to_markdown(block))
         elif name == "code":
             language = _code_language(block)
             markdown_blocks.append(f"```{language}\n{value}\n```")
@@ -88,15 +116,299 @@ def blog_code_to_markdown(code, body=""):
     return markdown or html_to_markdown(body)
 
 
+def _parse_markdown_image(line):
+    image = IMAGE_MARKDOWN_RE.match((line or "").strip())
+    if not image:
+        return None
+    alt_text, src, options = image.groups()
+    return alt_text, src, _parse_image_options(options)
+
+
+def _parse_image_options(options):
+    parsed = {}
+    if not options:
+        return parsed
+
+    for key, raw_value in IMAGE_OPTION_RE.findall(options):
+        value = _safe_css_size(raw_value.strip("\"'"))
+        if value:
+            parsed[key] = value
+
+    return parsed
+
+
+def _parse_shortcode(line):
+    shortcode = SHORTCODE_RE.match((line or "").strip())
+    if not shortcode:
+        return None
+    return shortcode.group(1).lower(), _parse_shortcode_attrs(shortcode.group(2) or "")
+
+
+def _parse_shortcode_attrs(value):
+    attrs = {}
+    for match in SHORTCODE_ATTR_RE.finditer(value or ""):
+        key = match.group(1)
+        if key:
+            attrs[key.replace("-", "_")] = next(group for group in match.groups()[1:4] if group is not None)
+            continue
+
+        boolean_key = match.group(5)
+        if boolean_key:
+            attrs[boolean_key] = True
+    return attrs
+
+
+def _markdown_short_attrs(attrs):
+    parts = []
+    for key, value in attrs.items():
+        if value in (None, "", False):
+            continue
+        if value is True:
+            parts.append(str(key).replace("_", "-"))
+            continue
+        value = str(value)
+        if re.search(r"\s|[{}'\"]", value):
+            value = '"' + value.replace('"', "&quot;") + '"'
+        parts.append(f"{str(key).replace('_', '-')}={value}")
+    return "{" + " ".join(parts) + "}" if parts else "{}"
+
+
+def _safe_css_size(value):
+    value = (value or "").strip()
+    if not value:
+        return ""
+
+    if re.match(r"^\d+(?:\.\d+)?$", value):
+        return "0" if value == "0" else f"{value}px"
+
+    return value if SAFE_CSS_SIZE_RE.match(value) else ""
+
+
+def _image_css_from_options(options):
+    css = dict(IMAGE_DEFAULT_CSS)
+    for key in ("width", "height"):
+        value = _safe_css_size((options or {}).get(key))
+        if value:
+            css[key] = value
+    return css
+
+
+def _image_options_to_markdown(css):
+    css = css or {}
+    parts = []
+    for key in ("width", "height"):
+        value = _safe_css_size(css.get(key))
+        if value and value != IMAGE_DEFAULT_CSS[key]:
+            parts.append(f"{key}={value}")
+    return "{" + " ".join(parts) + "}" if parts else ""
+
+
+def _image_style_attr(css, include_defaults=False):
+    css = _image_css_from_options(css or {}) if include_defaults else css or {}
+    parts = []
+    for key in ("width", "height"):
+        value = _safe_css_size(css.get(key))
+        if value:
+            parts.append(f"{key}: {value}")
+    return f' style="{escape("; ".join(parts), quote=True)}"' if parts else ""
+
+
+def _image_css_from_html_attrs(attrs):
+    css = {}
+    for key in ("width", "height"):
+        value = _safe_css_size((attrs or {}).get(key))
+        if value:
+            css[key] = value
+
+    for declaration in (attrs or {}).get("style", "").split(";"):
+        if ":" not in declaration:
+            continue
+        key, value = declaration.split(":", 1)
+        key = key.strip().lower()
+        if key in ("width", "height"):
+            safe_value = _safe_css_size(value)
+            if safe_value:
+                css[key] = safe_value
+
+    return css
+
+
+def _markdown_image_alt(value):
+    return str(value or "").replace("\r", " ").replace("\n", " ").replace("[", " ").replace("]", " ").strip()
+
+
+def _youtube_embed_url(url):
+    url = (url or "").strip()
+    if not url:
+        return ""
+
+    parsed = urlparse(url)
+    host = parsed.netloc.lower().replace("www.", "")
+    path = parsed.path.strip("/")
+
+    if host in ("youtube.com", "m.youtube.com"):
+        if path.startswith("embed/"):
+            return url
+        video_id = parse_qs(parsed.query).get("v", [""])[0]
+        if video_id:
+            return f"https://www.youtube.com/embed/{video_id}"
+        if path.startswith("shorts/"):
+            return f"https://www.youtube.com/embed/{path.split('/', 1)[1]}"
+
+    if host == "youtu.be" and path:
+        return f"https://www.youtube.com/embed/{path.split('/', 1)[0]}"
+
+    return url
+
+
+def _media_css_from_options(options, default_width="100%", default_height="auto"):
+    css = {"height": default_height, "width": default_width}
+    for key in ("width", "height"):
+        value = _safe_css_size((options or {}).get(key))
+        if value:
+            css[key] = value
+    return css
+
+
+def _youtube_block_from_options(options):
+    src = _youtube_embed_url(options.get("url") or options.get("src"))
+    if not src:
+        return None
+
+    title = (options.get("title") or "YouTube Video").strip()
+    css = _media_css_from_options(options, default_width="100%", default_height="315px")
+    return {
+        "name": "yt-video",
+        "type": "iframe",
+        "attributes": {
+            "src": src,
+            "title": title,
+            "frameborder": "0",
+            "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+            "allowfullscreen": "True",
+            "loading": "lazy",
+            "class": "my-8 rounded-2xl",
+        },
+        "css": css,
+    }
+
+
+def _video_block_from_options(options):
+    src = (options.get("src") or options.get("url") or "").strip()
+    if not src:
+        return None
+
+    attrs = {
+        "src": src,
+        "poster": (options.get("poster") or "").strip(),
+        "title": (options.get("title") or "Video").strip(),
+        "preload": (options.get("preload") or "metadata").strip(),
+        "class": "my-8 rounded-2xl",
+        "data-alt_text": (options.get("alt") or options.get("alt_text") or "").strip(),
+        "data-description": (options.get("description") or "").strip(),
+        "data-tags": (options.get("tags") or "").strip(),
+        "data-duration": (options.get("duration") or "").strip(),
+        "data-video_id": (options.get("id") or options.get("video_id") or "").strip(),
+    }
+    for key in VIDEO_BOOLEAN_ATTRS:
+        if options.get(key) in (True, "true", "1", key):
+            attrs[key] = key
+
+    if not any(key in attrs for key in VIDEO_BOOLEAN_ATTRS):
+        attrs["controls"] = "controls"
+
+    return {
+        "name": "video",
+        "type": "video",
+        "attributes": attrs,
+        "css": _media_css_from_options(options),
+    }
+
+
+def _file_block_from_options(options):
+    href = (options.get("href") or options.get("url") or "").strip()
+    if not href:
+        return None
+
+    title = (options.get("title") or options.get("text") or "Datei herunterladen").strip()
+    return {
+        "name": "file",
+        "type": "a",
+        "attributes": {
+            "href": href,
+            "target": "_blank",
+            "rel": "noopener",
+            "title": title,
+            "data-id": (options.get("id") or "").strip(),
+            "data-ext": (options.get("ext") or "").strip(),
+            "class": "file-attachment flex items-center gap-2 p-3 border rounded my-3",
+        },
+        "value": title,
+    }
+
+
+def _youtube_block_to_markdown(block):
+    attrs = block.get("attributes") or {}
+    css = block.get("css") or {}
+    options = {
+        "url": attrs.get("src") or "",
+        "title": attrs.get("title") or "YouTube Video",
+    }
+    size_source = dict(css)
+    if not size_source.get("width") and attrs.get("width"):
+        size_source["width"] = attrs.get("width")
+    if not size_source.get("height") and attrs.get("height"):
+        size_source["height"] = attrs.get("height")
+    options.update({key: value for key, value in _media_css_from_options(size_source).items() if value != IMAGE_DEFAULT_CSS[key]})
+    return f"::youtube{_markdown_short_attrs(options)}"
+
+
+def _video_block_to_markdown(block):
+    attrs = block.get("attributes") or {}
+    css = block.get("css") or {}
+    options = {
+        "src": attrs.get("src") or "",
+        "poster": attrs.get("poster") or "",
+        "title": attrs.get("title") or "Video",
+        "alt": attrs.get("data-alt_text") or "",
+        "preload": attrs.get("preload") or "metadata",
+    }
+    for key in ("data-description", "data-tags", "data-duration", "data-video_id"):
+        if attrs.get(key):
+            options[key.replace("data-", "").replace("-", "_")] = attrs.get(key)
+    for key in VIDEO_BOOLEAN_ATTRS:
+        if attrs.get(key):
+            options[key] = True
+    options.update({key: value for key, value in _media_css_from_options(css).items() if value != IMAGE_DEFAULT_CSS[key]})
+    return f"::video{_markdown_short_attrs(options)}"
+
+
+def _file_block_to_markdown(block):
+    attrs = block.get("attributes") or {}
+    options = {
+        "href": attrs.get("href") or "",
+        "title": block.get("value") or attrs.get("title") or "Datei herunterladen",
+        "ext": attrs.get("data-ext") or "",
+    }
+    if attrs.get("data-id"):
+        options["id"] = attrs.get("data-id")
+    return f"::file{_markdown_short_attrs(options)}"
+
+
 class MarkdownToBlogCodeParser:
     def __init__(self, markdown):
         self.lines = markdown.splitlines()
         self.blocks = []
         self.paragraph = []
         self.list_items = []
+        self.text_parts = []
         self.in_code = False
         self.code_language = ""
         self.code_lines = []
+        self.in_gallery = False
+        self.gallery_images = []
+        self.gallery_alts = []
+        self.gallery_options = {}
 
     def parse(self):
         for line in self.lines:
@@ -110,22 +422,59 @@ class MarkdownToBlogCodeParser:
                 self.code_lines.append(line)
                 continue
 
+            if self.in_gallery:
+                if GALLERY_END_RE.match(stripped):
+                    self._append_gallery_block()
+                    self.in_gallery = False
+                    self.gallery_images = []
+                    self.gallery_alts = []
+                    self.gallery_options = {}
+                    continue
+
+                image = _parse_markdown_image(stripped)
+                if image:
+                    alt_text, src, _options = image
+                    self.gallery_images.append(src)
+                    self.gallery_alts.append(alt_text)
+                continue
+
             if not stripped:
                 self._flush_paragraph()
                 self._flush_list()
                 continue
 
-            image = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", stripped)
+            shortcode = _parse_shortcode(stripped)
+            if shortcode:
+                self._flush_paragraph()
+                self._flush_list()
+                self._flush_text_block()
+                self._append_shortcode_block(shortcode[0], shortcode[1])
+                continue
+
+            gallery_start = GALLERY_START_RE.match(stripped)
+            if gallery_start:
+                self._flush_paragraph()
+                self._flush_list()
+                self._flush_text_block()
+                self.in_gallery = True
+                self.gallery_images = []
+                self.gallery_alts = []
+                self.gallery_options = _parse_image_options(gallery_start.group(1))
+                continue
+
+            image = _parse_markdown_image(stripped)
             if image:
                 self._flush_paragraph()
                 self._flush_list()
-                self._append_image_block(image.group(1), image.group(2))
+                self._flush_text_block()
+                self._append_image_block(image[0], image[1], image[2])
                 continue
 
             heading = re.match(r"^(#{1,6})\s+(.+)$", stripped)
             if heading:
                 self._flush_paragraph()
                 self._flush_list()
+                self._flush_text_block()
                 self._append_heading_block(len(heading.group(1)), heading.group(2))
                 continue
 
@@ -138,16 +487,19 @@ class MarkdownToBlogCodeParser:
             if _is_raw_html_block(stripped):
                 self._flush_paragraph()
                 self._flush_list()
-                self._append_text_block(line)
+                self._append_text_part(line)
                 continue
 
             self.paragraph.append(line)
 
         self._flush_paragraph()
         self._flush_list()
+        self._flush_text_block()
 
         if self.in_code:
             self._append_code_block()
+        elif self.in_gallery:
+            self._append_gallery_block()
 
         return self.blocks or build_default_code_from_html(render_markdown_to_html("\n".join(self.lines)))
 
@@ -161,6 +513,7 @@ class MarkdownToBlogCodeParser:
 
         self._flush_paragraph()
         self._flush_list()
+        self._flush_text_block()
         self.in_code = True
         self.code_language = stripped[3:].strip()
         self.code_lines = []
@@ -171,7 +524,7 @@ class MarkdownToBlogCodeParser:
 
         text = " ".join(line.strip() for line in self.paragraph if line.strip())
         if text:
-            self._append_text_block(f"<p>{_render_inline_markdown(text)}</p>")
+            self._append_text_part(f"<p>{_render_inline_markdown(text)}</p>")
         self.paragraph.clear()
 
     def _flush_list(self):
@@ -179,7 +532,7 @@ class MarkdownToBlogCodeParser:
             return
 
         items = "".join(f"<li>{_render_inline_markdown(item)}</li>" for item in self.list_items)
-        self._append_text_block(f'<ul class="my-4 list-disc pl-6">{items}</ul>')
+        self._append_text_part(f'<ul class="my-4 list-disc pl-6">{items}</ul>')
         self.list_items.clear()
 
     def _append_heading_block(self, level, text):
@@ -209,8 +562,18 @@ class MarkdownToBlogCodeParser:
                 "value": clean_text,
             })
 
-    def _append_text_block(self, value):
+    def _append_text_part(self, value):
         value = (value or "").strip()
+        if not value:
+            return
+        self.text_parts.append(value)
+
+    def _flush_text_block(self):
+        if not self.text_parts:
+            return
+
+        value = "\n".join(part.strip() for part in self.text_parts if part and part.strip()).strip()
+        self.text_parts.clear()
         if not value:
             return
 
@@ -221,7 +584,7 @@ class MarkdownToBlogCodeParser:
             "value": value,
         })
 
-    def _append_image_block(self, alt_text, src):
+    def _append_image_block(self, alt_text, src, options=None):
         src = (src or "").strip()
         if not src:
             return
@@ -235,12 +598,40 @@ class MarkdownToBlogCodeParser:
                 "title": alt_text,
                 "alt": alt_text,
                 "class": "rounded-2xl my-4",
+                "loading": "lazy",
+                "decoding": "async",
             },
-            "css": {
-                "height": "auto",
-                "width": "100%",
-            },
+            "css": _image_css_from_options(options or {}),
         })
+
+    def _append_gallery_block(self):
+        images = [src.strip() for src in self.gallery_images if src and src.strip()]
+        if not images:
+            return
+
+        self.blocks.append({
+            "name": "galery",
+            "type": "div",
+            "attributes": {
+                "class": "carousel rounded-lg !w-full",
+            },
+            "css": _image_css_from_options(self.gallery_options or {}),
+            "images": images,
+            "imageAlts": [alt.strip() for alt in self.gallery_alts],
+            "imageClass": "w-full rounded-xl",
+        })
+
+    def _append_shortcode_block(self, name, options):
+        block = None
+        if name == "youtube":
+            block = _youtube_block_from_options(options)
+        elif name == "video":
+            block = _video_block_from_options(options)
+        elif name == "file":
+            block = _file_block_from_options(options)
+
+        if block:
+            self.blocks.append(block)
 
     def _append_code_block(self):
         language_class = f" language-{self.code_language}" if self.code_language else ""
@@ -307,7 +698,7 @@ class SimpleHtmlToMarkdownParser(HTMLParser):
             alt = attrs.get("alt") or attrs.get("title") or ""
             src = attrs.get("src") or ""
             if src:
-                self.parts.append(f"![{alt}]({src})")
+                self.parts.append(f"![{_markdown_image_alt(alt)}]({src}){_image_options_to_markdown(_image_css_from_html_attrs(attrs))}")
         elif tag in ("ul", "ol"):
             self.list_depth += 1
             self._ensure_block()
@@ -384,6 +775,10 @@ def render_markdown_to_html(markdown):
     in_code = False
     code_language = ""
     code_lines = []
+    in_gallery = False
+    gallery_images = []
+    gallery_alts = []
+    gallery_options = {}
 
     def flush_paragraph():
         if paragraph:
@@ -422,18 +817,54 @@ def render_markdown_to_html(markdown):
             code_lines.append(line)
             continue
 
+        if in_gallery:
+            if GALLERY_END_RE.match(stripped):
+                html.append(_render_markdown_gallery_html(gallery_images, gallery_alts, gallery_options))
+                in_gallery = False
+                gallery_images = []
+                gallery_alts = []
+                gallery_options = {}
+                continue
+
+            image = _parse_markdown_image(stripped)
+            if image:
+                alt_text, src, _options = image
+                gallery_images.append(src)
+                gallery_alts.append(alt_text)
+            continue
+
         if not stripped:
             flush_paragraph()
             flush_list()
             continue
 
-        image = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", stripped)
+        shortcode = _parse_shortcode(stripped)
+        if shortcode:
+            flush_paragraph()
+            flush_list()
+            shortcode_html = _render_shortcode_html(shortcode[0], shortcode[1])
+            if shortcode_html:
+                html.append(shortcode_html)
+            continue
+
+        gallery_start = GALLERY_START_RE.match(stripped)
+        if gallery_start:
+            flush_paragraph()
+            flush_list()
+            in_gallery = True
+            gallery_images = []
+            gallery_alts = []
+            gallery_options = _parse_image_options(gallery_start.group(1))
+            continue
+
+        image = _parse_markdown_image(stripped)
         if image:
             flush_paragraph()
             flush_list()
-            alt_text = escape(image.group(1), quote=True)
-            src = escape(image.group(2), quote=True)
-            html.append(f'<img src="{src}" alt="{alt_text}" class="rounded-2xl my-4">')
+            alt_text = escape(image[0], quote=True)
+            src = escape(image[1], quote=True)
+            style = _image_style_attr(_image_css_from_options(image[2]) if image[2] else {})
+            html.append(f'<img src="{src}" alt="{alt_text}" class="rounded-2xl my-4" loading="lazy" decoding="async"{style}>')
             continue
 
         if _is_raw_html_block(stripped):
@@ -456,7 +887,7 @@ def render_markdown_to_html(markdown):
             html.append(f'<h{level} class="{classes}">{_render_inline_markdown(heading.group(2))}</h{level}>')
             continue
 
-        list_match = re.match(r"^[-*]\s+(.+)$", stripped)
+        list_match = re.match(r"^(?:[-*]|\d+\.)\s+(.+)$", stripped)
         if list_match:
             flush_paragraph()
             list_items.append(list_match.group(1))
@@ -470,8 +901,46 @@ def render_markdown_to_html(markdown):
     if in_code:
         code = escape("\n".join(code_lines))
         html.append(f'<pre class="my-4 rounded-2xl"><code>{code}</code></pre>')
+    elif in_gallery:
+        html.append(_render_markdown_gallery_html(gallery_images, gallery_alts, gallery_options))
 
     return "\n".join(html)
+
+
+def _render_markdown_gallery_html(images, alts=None, options=None):
+    image_css = _image_css_from_options(options or {})
+    image_style = _image_style_attr(image_css)
+    image_html = []
+    alts = alts or []
+
+    for index, src in enumerate(images or []):
+        if not src:
+            continue
+        alt_text = alts[index] if index < len(alts) else "Galeriebild"
+        image_html.append(
+            '<div>'
+            f'<img src="{escape(str(src), quote=True)}" alt="{escape(str(alt_text), quote=True)}" '
+            f'class="w-full rounded-xl" loading="lazy" decoding="async"{image_style}>'
+            '</div>'
+        )
+
+    if not image_html:
+        return ""
+
+    container_style = _image_style_attr(image_css)
+    return f'<div class="carousel rounded-lg !w-full"{container_style}>{"".join(image_html)}</div>'
+
+
+def _render_shortcode_html(name, options):
+    block = None
+    if name == "youtube":
+        block = _youtube_block_from_options(options)
+    elif name == "video":
+        block = _video_block_from_options(options)
+    elif name == "file":
+        block = _file_block_from_options(options)
+
+    return render_blog_code_to_html([block]) if block else ""
 
 
 def _is_raw_html_block(line):
@@ -486,9 +955,14 @@ def _render_inline_markdown(text):
         return f"@@MD{len(placeholders) - 1}@@"
 
     escaped = escape(text)
-    escaped = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: stash(
-        f'<img src="{escape(m.group(2), quote=True)}" alt="{escape(m.group(1), quote=True)}">'
-    ), escaped)
+    def render_inline_image(match):
+        options = _parse_image_options(match.group(3))
+        style = _image_style_attr(_image_css_from_options(options)) if options else ""
+        return stash(
+            f'<img src="{escape(match.group(2), quote=True)}" alt="{escape(match.group(1), quote=True)}" loading="lazy" decoding="async"{style}>'
+        )
+
+    escaped = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?", render_inline_image, escaped)
     escaped = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: stash(
         f'<a class="text-blue-500 hover:text-blue-600" href="{escape(m.group(2), quote=True)}">{m.group(1)}</a>'
     ), escaped)
@@ -558,7 +1032,12 @@ def render_blog_code_to_html(code):
         if not ALLOWED_ATTR_RE.match(tag_name):
             tag_name = "div"
 
-        attrs = _render_attrs(block.get("attributes") or {}, block.get("css") or {})
+        attributes = dict(block.get("attributes") or {})
+        if name == "image":
+            attributes.setdefault("loading", "lazy")
+            attributes.setdefault("decoding", "async")
+
+        attrs = _render_attrs(attributes, block.get("css") or {})
         value = block.get("value") or ""
 
         if name == "image":
@@ -567,6 +1046,8 @@ def render_blog_code_to_html(code):
             rendered.append(f"<pre><code{attrs}>{escape(value)}</code></pre>")
         elif name == "galery":
             rendered.append(_render_gallery(block, attrs))
+        elif name == "file":
+            rendered.append(f"<a{attrs}>{escape(value)}</a>")
         elif tag_name == "iframe":
             rendered.append(f"<iframe{attrs}></iframe>")
         else:
@@ -601,10 +1082,17 @@ def _render_attrs(attributes, css):
 
 def _render_gallery(block, attrs):
     images = block.get("images") or []
+    image_alts = block.get("imageAlts") or []
     image_class = block.get("imageClass") or "w-full rounded-xl"
-    image_html = "".join(
-        f'<div><img src="{escape(str(url), quote=True)}" class="{escape(image_class, quote=True)}"></div>'
-        for url in images
-        if url
-    )
+    image_style = _image_style_attr(block.get("css") or {})
+    image_html = ""
+    for index, url in enumerate(images):
+        if not url:
+            continue
+        alt_text = image_alts[index] if index < len(image_alts) else ""
+        image_html += (
+            f'<div><img src="{escape(str(url), quote=True)}" '
+            f'alt="{escape(str(alt_text), quote=True)}" '
+            f'class="{escape(image_class, quote=True)}" loading="lazy" decoding="async"{image_style}></div>'
+        )
     return f"<div{attrs}>{image_html}</div>"

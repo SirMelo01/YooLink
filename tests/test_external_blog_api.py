@@ -1,5 +1,6 @@
 from datetime import timedelta
 from io import BytesIO
+import json
 from urllib.parse import parse_qs, urlparse
 
 import pytest
@@ -339,6 +340,129 @@ def test_markdown_is_split_into_builder_blocks(cms_user):
     assert "![Buehne](https://example.com/event.png)" in blog.markdown
 
 
+def test_markdown_groups_section_text_into_one_builder_textarea(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/",
+        {
+            "title": "Gruppierter Markdown Blog",
+            "description": "Markdown bleibt im Builder kompakt.",
+            "markdown": (
+                "### Vom Entwurf zum fertigen Artikel\n\n"
+                "Der wichtigste Schritt ist eine klare Trennung: Titel und Beschreibung werden im CMS gepflegt, "
+                "der eigentliche Artikel kommt als Markdown in den Editor.\n\n"
+                "Ein typischer Ablauf sieht so aus:\n\n"
+                "- Thema und Zielgruppe festlegen\n"
+                "- Artikelstruktur mit Zwischenüberschriften erstellen\n"
+                "- Text als Markdown schreiben oder einfügen\n\n"
+                "### Warum Bilder eine eigene Rolle spielen\n\n"
+                "Bilder sollten über die CMS-Mediathek gespeichert werden."
+            ),
+            "active": True,
+            "language": "de",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="Gruppierter Markdown Blog")
+    assert [block["name"] for block in blog.code] == ["title-2", "textArea", "title-2", "textArea"]
+    assert blog.code[1]["value"].count("<p>") == 2
+    assert "<ul" in blog.code[1]["value"]
+    assert blog.code[1]["value"].count("<li>") == 3
+
+
+def test_markdown_image_options_are_rendered_and_preserved(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/",
+        {
+            "title": "Markdown Bildgröße",
+            "description": "Markdown Bild mit Größe.",
+            "markdown": "## Bild\n\n![Buehne](https://example.com/event.png){width=50% height=320px}",
+            "active": True,
+            "language": "de",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="Markdown Bildgröße")
+    assert 'style="width: 50%; height: 320px"' in blog.body
+    assert blog.code[1]["css"] == {"height": "320px", "width": "50%"}
+    assert "![Buehne](https://example.com/event.png){width=50% height=320px}" in blog.markdown
+
+
+def test_markdown_gallery_block_renders_and_maps_to_builder(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/",
+        {
+            "title": "Markdown Galerie",
+            "description": "Markdown Galerie mit Bildern.",
+            "markdown": (
+                "## Bilder\n\n"
+                ":::gallery{height=240px}\n"
+                "![Erstes Bild](https://example.com/one.png)\n"
+                "![Zweites Bild](https://example.com/two.png)\n"
+                ":::"
+            ),
+            "active": True,
+            "language": "de",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="Markdown Galerie")
+    assert [block["name"] for block in blog.code] == ["title-1", "galery"]
+    assert blog.code[1]["images"] == ["https://example.com/one.png", "https://example.com/two.png"]
+    assert blog.code[1]["imageAlts"] == ["Erstes Bild", "Zweites Bild"]
+    assert blog.code[1]["css"] == {"height": "240px", "width": "100%"}
+    assert 'class="carousel rounded-lg !w-full"' in blog.body
+    assert 'src="https://example.com/two.png"' in blog.body
+
+
+def test_markdown_special_builder_shortcodes_render_and_map_to_builder(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/",
+        {
+            "title": "Markdown Builder Elemente",
+            "description": "Markdown mit Video und Datei.",
+            "markdown": (
+                "## Medien\n\n"
+                "::youtube{url=https://youtu.be/dQw4w9WgXcQ title=\"Produktvideo\" height=360px}\n\n"
+                "::video{src=/media/yoolink/videos/demo.mp4 poster=/media/yoolink/images/poster.jpg title=\"CMS Video\" alt=\"Video Demo\" controls preload=metadata width=100% height=420px}\n\n"
+                "::file{href=/media/yoolink/files/guide.pdf title=\"Guide herunterladen\" ext=.pdf}"
+            ),
+            "active": True,
+            "language": "de",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="Markdown Builder Elemente")
+    assert [block["name"] for block in blog.code] == ["title-1", "yt-video", "video", "file"]
+    assert blog.code[1]["attributes"]["src"] == "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    assert blog.code[1]["attributes"]["loading"] == "lazy"
+    assert blog.code[2]["attributes"]["controls"] == "controls"
+    assert blog.code[2]["attributes"]["data-alt_text"] == "Video Demo"
+    assert blog.code[3]["attributes"]["rel"] == "noopener"
+    assert "<iframe" in blog.body
+    assert "<video" in blog.body
+    assert "Guide herunterladen" in blog.body
+
+
 def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
     _, raw_key = issue_key(cms_user)
     client = api_client_for(raw_key)
@@ -411,6 +535,143 @@ def test_cms_builder_create_stores_markdown(client, cms_user):
     blog = Blog.objects.get(title="Builder Markdown Blog")
     assert "## Builder Titel" in blog.markdown
     assert "Builder Text" in blog.markdown
+
+
+def test_cms_markdown_editor_pages_include_image_dialog(client, cms_user):
+    client.force_login(cms_user)
+    blog = Blog.objects.create(
+        title="Dialog Blog",
+        description="Dialog Beschreibung.",
+        body="<p>Text</p>",
+        markdown="## Text",
+        code=[],
+        author=cms_user,
+    )
+
+    add_response = client.get(reverse("ycms:blog-add"))
+    edit_response = client.get(reverse("ycms:blog-details", args=[blog.id]))
+
+    assert add_response.status_code == 200
+    assert edit_response.status_code == 200
+    assert b'id="openMarkdownImageModal"' in add_response.content
+    assert b'id="markdownImageModal"' in add_response.content
+    assert b'id="openMarkdownMediaModal"' in add_response.content
+    assert b'id="markdownMediaModal"' in add_response.content
+    assert b'id="openMarkdownImageModal"' in edit_response.content
+    assert b'id="markdownImageModal"' in edit_response.content
+    assert b'id="openMarkdownMediaModal"' in edit_response.content
+    assert b'id="markdownMediaModal"' in edit_response.content
+
+
+def test_cms_markdown_create_renders_body_and_builder_code(client, cms_user):
+    client.force_login(cms_user)
+
+    response = client.post(
+        reverse("ycms:blog-create"),
+        {
+            "title": "CMS Markdown Blog",
+            "description": "Direkt im CMS eingefuegt.",
+            "content_source": "markdown",
+            "markdown": "## CMS Abschnitt\n\nText aus Markdown.\n\n![Alt Text](/media/yoolink/images/bild.png)",
+            "active": "true",
+        },
+    )
+
+    assert response.status_code == 201
+    blog = Blog.objects.get(title="CMS Markdown Blog")
+    assert blog.markdown.startswith("## CMS Abschnitt")
+    assert "<h2" in blog.body
+    assert 'src="/media/yoolink/images/bild.png"' in blog.body
+    assert [block["name"] for block in blog.code] == ["title-1", "textArea", "image"]
+    assert blog.active is True
+
+
+def test_cms_markdown_update_regenerates_body_and_builder_code(client, cms_user):
+    client.force_login(cms_user)
+    blog = Blog.objects.create(
+        title="Alter CMS Blog",
+        description="Alte Beschreibung.",
+        body="<p>Alt</p>",
+        markdown="Alt",
+        code=[],
+        author=cms_user,
+    )
+
+    response = client.post(
+        reverse("ycms:blog-update", args=[blog.id]),
+        {
+            "title": "Neuer CMS Blog",
+            "description": "Neue Beschreibung.",
+            "content_source": "markdown",
+            "markdown": "### Neue Ebene\n\n- Punkt eins\n- Punkt zwei",
+            "active": "false",
+        },
+    )
+
+    assert response.status_code == 201
+    blog.refresh_from_db()
+    assert blog.title == "Neuer CMS Blog"
+    assert blog.markdown == "### Neue Ebene\n\n- Punkt eins\n- Punkt zwei"
+    assert "<h3" in blog.body
+    assert "<li>Punkt eins</li>" in blog.body
+    assert [block["name"] for block in blog.code] == ["title-2", "textArea"]
+    assert blog.active is False
+
+
+def test_cms_markdown_preview_uses_blog_renderer(client, cms_user):
+    client.force_login(cms_user)
+
+    response = client.post(
+        reverse("ycms:blog-markdown-preview"),
+        {"markdown": "## Preview\n\nDas ist **fett**."},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert "<h2" in payload["body"]
+    assert "<strong>fett</strong>" in payload["body"]
+    assert payload["code"][0]["name"] == "title-1"
+
+
+def test_cms_builder_code_can_be_converted_to_markdown_for_editor_sync(client, cms_user):
+    client.force_login(cms_user)
+
+    response = client.post(
+        reverse("ycms:blog-code-to-markdown"),
+        {
+            "code": json.dumps([
+                {"name": "title-1", "type": "h2", "value": "Builder Abschnitt"},
+                {"name": "textArea", "type": "p", "value": "<p>Builder Text</p>"},
+                {
+                    "name": "image",
+                    "type": "img",
+                    "attributes": {"src": "/media/yoolink/images/bild.png", "alt": "Bild"},
+                    "css": {"width": "50%", "height": "auto"},
+                },
+                {
+                    "name": "yt-video",
+                    "type": "iframe",
+                    "attributes": {"src": "https://www.youtube.com/embed/video-id", "title": "Video"},
+                    "css": {"width": "100%", "height": "315px"},
+                },
+                {
+                    "name": "file",
+                    "type": "a",
+                    "attributes": {"href": "/media/yoolink/files/guide.pdf", "title": "Guide", "data-ext": ".pdf"},
+                    "value": "Guide",
+                },
+            ]),
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert "## Builder Abschnitt" in payload["markdown"]
+    assert "Builder Text" in payload["markdown"]
+    assert "![Bild](/media/yoolink/images/bild.png){width=50%}" in payload["markdown"]
+    assert "::youtube" in payload["markdown"]
+    assert "::file" in payload["markdown"]
+    assert "<h2" in payload["body"]
 
 
 def test_blog_detail_includes_language_variant_links(cms_user):

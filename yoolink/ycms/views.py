@@ -921,11 +921,11 @@ def image_optimization_metadata(original, desktop_image, mobile_image):
     original_format = os.path.splitext(getattr(original, "name", ""))[1].lstrip(".").upper()
     desktop_format = os.path.splitext(desktop_image.name)[1].lstrip(".").upper()
 
-    note = "Bild wurde fuer Web und Mobil optimiert."
+    note = "Bild wurde für Web und Mobil optimiert."
     if original_format == "PNG" and desktop_format == "PNG":
-        note = "PNG mit Transparenz oder kleiner Dateigroesse: bleibt PNG, wird verlustfrei optimiert und fuer Mobil verkleinert."
+        note = "PNG mit Transparenz oder kleiner Dateigröße: bleibt PNG, wird verlustfrei optimiert und für Mobil verkleinert."
     elif original_format == "PNG":
-        note = "PNG ohne Transparenz und grosser Dateigroesse: wurde als JPEG gespeichert, damit die Website schneller laedt."
+        note = "PNG ohne Transparenz und großer Dateigröße: wurde als JPEG gespeichert, damit die Website schneller lädt."
 
     return {
         "original_size": original_size,
@@ -1117,6 +1117,43 @@ def delete_blog(request, id):
     blog.delete()
     return JsonResponse({'success': True}, status=200)
 
+
+def _blog_content_from_cms_request(request, title, description):
+    content_source = (request.POST.get("content_source") or "").strip().lower()
+    markdown_provided = "markdown" in request.POST
+
+    if content_source == "markdown" or (markdown_provided and not request.POST.get("code")):
+        markdown = (request.POST.get("markdown") or "").strip()
+        if not markdown:
+            return None, JsonResponse({"error": "Der Markdown-Inhalt darf nicht leer sein!"}, status=400)
+
+        return {
+            "body": render_markdown_to_html(markdown),
+            "code": build_default_code_from_markdown(markdown),
+            "markdown": markdown,
+        }, None
+
+    body = request.POST.get("body") or ""
+    raw_code = request.POST.get("code")
+    if not raw_code:
+        return None, JsonResponse({"error": "Der Blog-Inhalt darf nicht leer sein!"}, status=400)
+
+    try:
+        code = json.loads(raw_code)
+    except json.JSONDecodeError:
+        return None, JsonResponse({"error": "Der Blog-Inhalt konnte nicht gelesen werden."}, status=400)
+
+    body = _strip_generated_blog_intro(body, title, description)
+    markdown = blog_code_to_markdown(code, body)
+    rendered_body = render_markdown_to_html(markdown) or body
+
+    return {
+        "body": rendered_body,
+        "code": code,
+        "markdown": markdown,
+    }, None
+
+
 @login_required(login_url='login')
 def create_blog(request):
     if request.method == 'POST':
@@ -1127,9 +1164,7 @@ def create_blog(request):
         if Blog.objects.filter(title=title).exists():
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
 
-        body = request.POST.get('body')
         description = (request.POST.get('description') or '').strip()
-        code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)
         
         title_image = request.FILES.get('title_image', '')
@@ -1140,12 +1175,18 @@ def create_blog(request):
             if not description:
                 return JsonResponse({'error': 'Die Beschreibung darf nicht leer sein!'}, status=400)
 
-            body = _strip_generated_blog_intro(body, title, description)
-            markdown = blog_code_to_markdown(code, body)
-            rendered_body = render_markdown_to_html(markdown) or body
+            content_data, error_response = _blog_content_from_cms_request(request, title, description)
+            if error_response:
+                return error_response
 
             # Create
-            blog = Blog(title=title, body=rendered_body, markdown=markdown, code=code, author=request.user)
+            blog = Blog(
+                title=title,
+                body=content_data["body"],
+                markdown=content_data["markdown"],
+                code=content_data["code"],
+                author=request.user,
+            )
             if active == "true":
                 blog.active = True
             else:
@@ -1178,8 +1219,6 @@ def update_blog(request, id):
         if blog.title != title and Blog.objects.filter(title=title).exists():
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
         description = (request.POST.get('description') or '').strip()
-        body = request.POST.get('body')
-        code = json.loads(request.POST.get('code'))
         active = request.POST.get('active', False)
         title_image = request.FILES.get('title_image', '')
 
@@ -1187,7 +1226,9 @@ def update_blog(request, id):
             if not description:
                 return JsonResponse({'error': 'Die Beschreibung darf nicht leer sein!'}, status=400)
 
-            body = _strip_generated_blog_intro(body, title, description)
+            content_data, error_response = _blog_content_from_cms_request(request, title, description)
+            if error_response:
+                return error_response
 
             # Create
             blog.description = description
@@ -1198,9 +1239,9 @@ def update_blog(request, id):
                 blog.slug = f"{base_slug}-{blog.language.lower()}"
             else:
                 blog.slug = base_slug
-            blog.markdown = blog_code_to_markdown(code, body)
-            blog.body = render_markdown_to_html(blog.markdown) or body
-            blog.code = code 
+            blog.markdown = content_data["markdown"]
+            blog.body = content_data["body"]
+            blog.code = content_data["code"]
             if active == "true":
                 blog.active = True
             else:
@@ -1265,6 +1306,45 @@ def blog_code(request, id):
     blog = get_or_create_translated_blog(request, id)
     code = blog.code or build_default_code_from_markdown(blog.markdown)
     return JsonResponse({"code": code, "markdown": blog.markdown, "success": "true"})
+
+
+@login_required(login_url='login')
+def preview_blog_markdown(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=400)
+
+    markdown = (request.POST.get("markdown") or "").strip()
+    if not markdown:
+        return JsonResponse({"error": "Der Markdown-Inhalt darf nicht leer sein!"}, status=400)
+
+    return JsonResponse({
+        "success": "true",
+        "markdown": markdown,
+        "body": render_markdown_to_html(markdown),
+        "code": build_default_code_from_markdown(markdown),
+    })
+
+
+@login_required(login_url='login')
+def convert_blog_code_to_markdown(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=400)
+
+    raw_code = request.POST.get("code")
+    if not raw_code:
+        return JsonResponse({"error": "Der Blog-Inhalt darf nicht leer sein!"}, status=400)
+
+    try:
+        code = json.loads(raw_code)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Der Blog-Inhalt konnte nicht gelesen werden."}, status=400)
+
+    markdown = blog_code_to_markdown(code)
+    return JsonResponse({
+        "success": "true",
+        "markdown": markdown,
+        "body": render_markdown_to_html(markdown),
+    })
 
 # --------------- [GALERY] ---------------
 # Render Galery Detail View
@@ -2861,7 +2941,10 @@ def get_video_details(request, pk):
         "url": video.file.url,
         "poster": video.thumbnail.url if video.thumbnail else static("images/designImg/filler.png"),
         "title": video.title,
-        "description": video.description,
+        "description": video.description or "",
+        "alt_text": video.alt_text or "",
+        "tags": video.tags or "",
+        "duration": video.duration,
         "autoplay": video.autoplay,
         "muted": video.muted,
         "loop": video.loop,

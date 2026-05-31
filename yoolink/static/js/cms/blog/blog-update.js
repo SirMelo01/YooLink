@@ -16,6 +16,14 @@ $(document).ready(function () {
             url: 'getCode/',
             success: function (data) {
                 // Handle the success response
+                if (window.YooLinkBlogMarkdown) {
+                    YooLinkBlogMarkdown.setMarkdown(data.markdown || '');
+                }
+                if (window.YooLinkBlogBuilder && typeof YooLinkBlogBuilder.applyCode === 'function') {
+                    YooLinkBlogBuilder.applyCode(data.code || []);
+                    sendNotif('Daten wurden geladen', "success")
+                    return;
+                }
                 $.each(data.code, function (index, element) {
                     const $container = $('<div class="relative">')
                     switch (element.name) {
@@ -90,17 +98,7 @@ $(document).ready(function () {
                                 $(this).parent().remove()
                             });
                             $container.find('.edit-img').click(function () {
-                                $editImg = $(this).siblings('img');
-                                height = typeof $editImg[0].style !== 'undefined' && $editImg[0].style.height ? $editImg[0].style.height : $editImg.height();
-                                width = typeof $editImg[0].style !== 'undefined' && $editImg[0].style.width ? $editImg[0].style.width : $editImg.width();
-                                if (width == 0 || width == "0") { width = "100%" }
-                                $('#imgHeight').val(height)
-                                $('#imgWidth').val(width)
-                                $('#imgText').val($editImg.attr('title'))
-                                if ($("#myDiv").is(":empty")) {
-                                    loadImages()
-                                }
-                                $('#imageModal').toggleClass("hidden");
+                                openBlogImageModal($(this).siblings('img'));
                             });
                             $blogContent.append($container)
                             break;
@@ -150,17 +148,7 @@ $(document).ready(function () {
                                 $(this).parent().remove()
                             });
                             $container.find('.edit-slider').click(function () {
-                                $editSlider = $(this).siblings('.carousel');
-                                const $editSliderImg = $editSlider.find("img");
-
-                                height = typeof $editSliderImg[0].style !== 'undefined' && $editSliderImg[0].style.height ? $editSliderImg[0].style.height : $editSliderImg.height();
-                                width = typeof $editSliderImg[0].style !== 'undefined' && $editSliderImg[0].style.width ? $editSliderImg[0].style.width : $editSliderImg.width();
-
-                                if (width == 0 || width == "0") { width = "100%" }
-
-                                $('#galeryHeight').val(height)
-                                $('#galeryWidth').val(width)
-                                $('#galleryModal').toggleClass("hidden");
+                                openBlogGalleryModal($(this).siblings('.carousel'));
                             });
                             $blogContent.append($container)
                             break;
@@ -199,41 +187,7 @@ $(document).ready(function () {
 
                             // Edit: aktuelles Video -> Modal mit Props füllen + ggf. vorselektieren
                             $container.find('.edit-cmsvideo').click(function () {
-                                const $modal = $('#videoModal');
-                                const $v = $(this).siblings('video');
-
-                                $modal.data('target', $(this).parent());
-
-                                // aktuelle Werte aus DOM ziehen
-                                const currentData = {
-                                    id: $v.data('video_id') || null,
-                                    url: $v.attr('src') || '',
-                                    poster: $v.attr('poster') || '',
-                                    title: $v.attr('title') || '',
-                                    autoplay: $v.prop('autoplay'),
-                                    muted: $v.prop('muted'),
-                                    loop: $v.prop('loop'),
-                                    playsinline: $v.prop('playsinline'),
-                                    preload: $v.attr('preload') || 'metadata',
-                                    width: $v.css('width') || $v.attr('width') || '',
-                                    height: $v.css('height') || $v.attr('height') || '',
-                                    alt_text: $v.data('alt_text') || ''
-                                };
-
-                                // Inputs füllen
-                                $('#videoTitle').val(currentData.title);
-                                $('#videoAlt').val(currentData.alt_text || '');
-                                $('#videoAutoplay').prop('checked', currentData.autoplay);
-                                $('#videoMuted').prop('checked', currentData.muted);
-                                $('#videoLoop').prop('checked', currentData.loop);
-                                $('#videoPlaysinline').prop('checked', currentData.playsinline);
-                                $('#videoPreload').val(currentData.preload);
-                                $('#videoWidth').val(currentData.width);
-                                $('#videoHeight').val(currentData.height);
-
-                                // Modal zeigen + Backend-Videos laden (vorselektieren, falls ID vorhanden)
-                                $('#videoProperties').removeClass('hidden');
-                                $('#videoModal').removeClass('hidden');
+                                openBlogVideoModal($(this).parent());
                             });
 
                             $blogContent.append($container);
@@ -322,6 +276,50 @@ $(document).ready(function () {
         }
 
         var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+        if (window.YooLinkBlogMarkdown && YooLinkBlogMarkdown.isMarkdownMode()) {
+            if (YooLinkBlogMarkdown.getMarkdown().trim() === "") {
+                sendNotif("Bitte füge Markdown-Inhalt ein.", "error")
+                disableSpinner($(this))
+                return;
+            }
+
+            var markdownFormData = new FormData();
+            markdownFormData.append('title', $('#blogTitle').val());
+            markdownFormData.append('active', $('#activeSwitch').is(':checked'));
+            markdownFormData.append('description', description);
+            YooLinkBlogMarkdown.appendMarkdownToFormData(markdownFormData);
+            if (files.length > 0) markdownFormData.append('title_image', files[0], "blogTitleImage");
+
+            $.ajax({
+                type: "POST",
+                url: "update/",
+                data: markdownFormData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                },
+                success: function (response) {
+                    if (response.error) {
+                        sendNotif(response.error, "error")
+                        return;
+                    }
+                    sendNotif("Der Blog wurde erfolgreich gespeichert", "success")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Request failed:", error);
+                    const message = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Es kam zu einem unerwarten Fehler. Versuche es später nochmal";
+                    sendNotif(message, "error")
+                },
+                complete: function () {
+                    disableSpinner($('#updateBlog'))
+                }
+            });
+            return;
+        }
+
         // Get Code
         const $blockContent = $('#blogContent')
         // Select the first element with attr("element-type") = 'textArea' within elements with class 'relative' in 'blockContent'

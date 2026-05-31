@@ -9,12 +9,18 @@
     <h1 class="text-2xl">
       <a href="{% url 'cms:cms' %}" class="text-blue-500">CMS</a> / <span>Blogs</span>
     </h1>
-    <a href="{% url 'cms:blog-add' %}" class="w-full md:w-auto">
-      <button class="flex w-full items-center justify-center gap-2 rounded bg-green-500 px-4 py-3 font-bold text-white hover:bg-green-700 md:w-auto md:py-2">
-        <i class="bi bi-send"></i>
-        Erstellen
-      </button>
-    </a>
+    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:w-auto">
+      <a href="{% url 'cms:blog-add' %}?editor=builder"
+         class="flex w-full items-center justify-center gap-2 rounded bg-green-500 px-4 py-3 font-bold text-white hover:bg-green-700 md:w-auto md:py-2">
+        <i class="bi bi-layout-three-columns"></i>
+        Builder
+      </a>
+      <a href="{% url 'cms:blog-add' %}?editor=markdown"
+         class="flex w-full items-center justify-center gap-2 rounded border border-green-600 bg-white px-4 py-3 font-bold text-green-700 hover:bg-green-50 md:w-auto md:py-2">
+        <i class="bi bi-markdown"></i>
+        Markdown
+      </a>
+    </div>
   </div>
 
   <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
