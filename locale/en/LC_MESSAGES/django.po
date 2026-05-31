@@ -1,12 +1,12 @@
 # YooLink translations.
 # Copyright (C) YooLink
 # This file is distributed under the same license as the YooLink package.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 18:43+0200\n"
+"POT-Creation-Date: 2026-05-31 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,60 +24,60 @@ msgstr "German"
 msgid "Englisch"
 msgstr "English"
 
-#: yoolink/templates/base.html:107 yoolink/templates/base.html:265
+#: yoolink/templates/base.html:107 yoolink/templates/base.html:281
 msgid "NAVBAR_LEISTUNGEN"
 msgstr "Services"
 
-#: yoolink/templates/base.html:172 yoolink/templates/base.html:299
+#: yoolink/templates/base.html:182 yoolink/templates/base.html:319
 msgid "NAVBAR_PRICING"
 msgstr "Pricing"
 
-#: yoolink/templates/base.html:178 yoolink/templates/base.html:305
+#: yoolink/templates/base.html:188 yoolink/templates/base.html:325
 msgid "NAVBAR_REFERENCES"
 msgstr "Customers"
 
-#: yoolink/templates/base.html:216 yoolink/templates/base.html:218
-#: yoolink/templates/base.html:311
+#: yoolink/templates/base.html:232 yoolink/templates/base.html:234
+#: yoolink/templates/base.html:337
 msgid "NAVBAR_CONTACT_BTN"
 msgstr "Contact"
 
-#: yoolink/templates/base.html:403 yoolink/templates/cms-login-base.html:105
+#: yoolink/templates/base.html:429 yoolink/templates/cms-login-base.html:105
 msgid "FOOTER_HEADING"
 msgstr "Your digital flagship - modern, user-friendly and to the point."
 
-#: yoolink/templates/base.html:466 yoolink/templates/cms-login-base.html:166
+#: yoolink/templates/base.html:492 yoolink/templates/cms-login-base.html:166
 msgid "FOOTER_USEFUL_LINKS"
 msgstr "Useful Links"
 
-#: yoolink/templates/base.html:469 yoolink/templates/cms-login-base.html:169
+#: yoolink/templates/base.html:495 yoolink/templates/cms-login-base.html:169
 msgid "FOOTER_HOME"
 msgstr "Home"
 
-#: yoolink/templates/base.html:472 yoolink/templates/cms-login-base.html:172
+#: yoolink/templates/base.html:498 yoolink/templates/cms-login-base.html:172
 msgid "FOOTER_CONTACT"
 msgstr "Contact"
 
-#: yoolink/templates/base.html:475 yoolink/templates/cms-login-base.html:175
+#: yoolink/templates/base.html:501 yoolink/templates/cms-login-base.html:175
 msgid "FOOTER_REFERENCES"
 msgstr "References"
 
-#: yoolink/templates/base.html:478 yoolink/templates/cms-login-base.html:178
+#: yoolink/templates/base.html:504 yoolink/templates/cms-login-base.html:178
 msgid "FOOTER_BLOG"
 msgstr "Blog"
 
-#: yoolink/templates/base.html:483 yoolink/templates/cms-login-base.html:183
+#: yoolink/templates/base.html:509 yoolink/templates/cms-login-base.html:183
 msgid "FOOTER_Rechtliches"
 msgstr "Legal Matters"
 
-#: yoolink/templates/base.html:486 yoolink/templates/cms-login-base.html:186
+#: yoolink/templates/base.html:512 yoolink/templates/cms-login-base.html:186
 msgid "FOOTER_Impressum"
 msgstr "Imprint"
 
-#: yoolink/templates/base.html:489 yoolink/templates/cms-login-base.html:189
+#: yoolink/templates/base.html:515 yoolink/templates/cms-login-base.html:189
 msgid "FOOTER_Datenschutz"
 msgstr "Privacy Policy"
 
-#: yoolink/templates/base.html:492 yoolink/templates/cms-login-base.html:192
+#: yoolink/templates/base.html:518 yoolink/templates/cms-login-base.html:192
 msgid "FOOTER_Cookies"
 msgstr "Cookies"
 
@@ -89,25 +89,129 @@ msgstr "Images"
 msgid "Ihre Nachricht"
 msgstr ""
 
-#: yoolink/templates/pages/components/customer_card.html:60
-#: yoolink/templates/pages/components/customer_card.html:85
-#: yoolink/templates/pages/index.html:521
-#: yoolink/templates/pages/index.html:554
-#: yoolink/templates/pages/index.html:585
+#: yoolink/templates/pages/components/customer_card.html:54
+#: yoolink/templates/pages/components/customer_card.html:79
 msgid "client_published_on"
 msgstr "Published on"
 
-#: yoolink/templates/pages/index.html:376
+#: yoolink/templates/pages/index.html:396
 msgid "learn_more"
 msgstr "Learn more"
 
-#: yoolink/templates/pages/index.html:648
+#: yoolink/templates/pages/index.html:573
 msgid "pricing_month"
 msgstr "month"
 
-#: yoolink/templates/pages/index.html:651
+#: yoolink/templates/pages/index.html:576
 msgid "pricing_one_off_payment"
 msgstr "One-off payment"
+
+# Static text on the customer reference detail page (kunde_detail.html)
+#: yoolink/templates/pages/kunde_detail.html:5
+msgid "case_meta_reference"
+msgstr "Reference"
+
+#: yoolink/templates/pages/kunde_detail.html:7
+msgid "case_og_reference_by"
+msgstr "Reference by YooLink"
+
+#: yoolink/templates/pages/kunde_detail.html:8
+msgid "case_og_default_description"
+msgstr "Reference project by YooLink"
+
+#: yoolink/templates/pages/kunde_detail.html:83
+msgid "case_breadcrumb_aria"
+msgstr "Breadcrumbs"
+
+#: yoolink/templates/pages/kunde_detail.html:84
+msgid "case_breadcrumb_home"
+msgstr "Home"
+
+#: yoolink/templates/pages/kunde_detail.html:86
+msgid "case_breadcrumb_references"
+msgstr "References"
+
+#: yoolink/templates/pages/kunde_detail.html:117
+msgid "case_visit_website"
+msgstr "Visit website"
+
+#: yoolink/templates/pages/kunde_detail.html:123
+msgid "case_request_own_project"
+msgstr "Request your own project"
+
+#: yoolink/templates/pages/kunde_detail.html:155
+#: yoolink/templates/pages/kunde_detail.html:281
+msgid "case_fact_client"
+msgstr "Client"
+
+#: yoolink/templates/pages/kunde_detail.html:164
+#: yoolink/templates/pages/kunde_detail.html:286
+msgid "case_fact_industry"
+msgstr "Industry"
+
+#: yoolink/templates/pages/kunde_detail.html:165
+msgid "case_industry_general"
+msgstr "General"
+
+#: yoolink/templates/pages/kunde_detail.html:173
+#: yoolink/templates/pages/kunde_detail.html:302
+msgid "case_fact_live_since"
+msgstr "Live since"
+
+#: yoolink/templates/pages/kunde_detail.html:202
+msgid "case_section_project"
+msgstr "The project"
+
+#: yoolink/templates/pages/kunde_detail.html:230
+msgid "case_section_impressions"
+msgstr "Impressions"
+
+#: yoolink/templates/pages/kunde_detail.html:231
+#, python-format
+msgid "%(counter)s image from the gallery"
+msgid_plural "%(counter)s images from the gallery"
+msgstr[0] "%(counter)s image from the gallery"
+msgstr[1] "%(counter)s images from the gallery"
+
+#: yoolink/templates/pages/kunde_detail.html:259
+msgid "case_services_provided"
+msgstr "Services provided"
+
+#: yoolink/templates/pages/kunde_detail.html:277
+msgid "case_quick_info"
+msgstr "Quick info"
+
+#: yoolink/templates/pages/kunde_detail.html:292
+msgid "case_website"
+msgstr "Website"
+
+#: yoolink/templates/pages/kunde_detail.html:295
+msgid "case_open"
+msgstr "Open"
+
+#: yoolink/templates/pages/kunde_detail.html:315
+msgid "case_cta_title"
+msgstr "Looking for a modern web presence?"
+
+#: yoolink/templates/pages/kunde_detail.html:317
+msgid "case_cta_text"
+msgstr "We build websites that fit your company."
+
+#: yoolink/templates/pages/kunde_detail.html:322
+msgid "case_cta_button"
+msgstr "Request now"
+
+#: yoolink/templates/pages/kunde_detail.html:338
+msgid "case_more_projects"
+msgstr "More projects"
+
+#: yoolink/templates/pages/kunde_detail.html:340
+msgid "case_related_heading"
+msgstr "These references might interest you"
+
+#: yoolink/templates/pages/kunde_detail.html:351
+msgid "case_view_all_references"
+msgstr "View all references"
 
 #: yoolink/templates/pages/leistungen.html:80
 msgid "skills_easy_changes"

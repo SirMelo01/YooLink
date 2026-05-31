@@ -133,6 +133,13 @@ def load_index(request):
     active_team_members = TeamMember.objects.filter(active=True)
     context['teamMembers'] = active_team_members
 
+    # Referenzen (dynamisch aus dem CMS) - nur die ersten drei für die Startseite
+    context["customers_references"] = list(
+        Customer.objects.filter(active=True, section=Customer.SECTION_REFERENCES)
+        .select_related("title_image", "logo")
+        .order_by("order", "-published_date", "id")[:3]
+    )
+
     context.update(get_opening_hours())
 
     return render(request, 'pages/index.html', context=context)
