@@ -71,5 +71,12 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.text-balance': { 'text-wrap': 'balance' },
+        '.text-pretty': { 'text-wrap': 'pretty' },
+      })
+    }
+  ],
 };

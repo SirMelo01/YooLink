@@ -145,6 +145,48 @@ def load_index(request):
     return render(request, 'pages/index.html', context=context)
 
 
+def load_webdesign_deggendorf(request):
+    def get_text(name):
+        return TextContent.objects.filter(name=name).first()
+
+    faq = FAQ.objects.all()
+    context = {'FAQ': faq}
+
+    context["heroText"] = get_text("deggendorf_hero")
+    context["responsiveText"] = get_text("deggendorf_responsive") or get_text("main_responsive")
+    context["cmsText"] = get_text("deggendorf_cms") or get_text("main_cms")
+    context["priceText"] = get_text("main_price")
+    context["teamText"] = get_text("main_team")
+    context["kundenText"] = get_text("deggendorf_kunden") or get_text("main_kunden")
+    context["knowHowContent"] = get_text("main_know_how")
+    context["knowHowContentCard1"] = get_text("main_know_how_card_1")
+    context["knowHowContentCard2"] = get_text("main_know_how_card_2")
+    context["knowHowContentCard3"] = get_text("main_know_how_card_3")
+    context["faqText"] = get_text("main_faq")
+
+    if Galerie.objects.filter(place='main_hero').exists():
+        context["heroImages"] = Galerie.objects.get(place='main_hero').images.all()
+    if Galerie.objects.filter(place='main_responsive_desktop').exists():
+        context['responsiveDesktopImages'] = Galerie.objects.get(place='main_responsive_desktop').images.all()
+    if Galerie.objects.filter(place='main_responsive_handy').exists():
+        context['responsiveHandyImages'] = Galerie.objects.get(place='main_responsive_handy').images.all()
+
+    context["pricing_cards"] = PricingCard.objects.select_related("button").prefetch_related("features").filter(active=True)
+
+    if fileentry.objects.filter(place='main_cms').exists():
+        context["cmsImage"] = fileentry.objects.get(place='main_cms')
+
+    context['teamMembers'] = TeamMember.objects.filter(active=True)
+    context["customers_references"] = list(
+        Customer.objects.filter(active=True, section=Customer.SECTION_REFERENCES)
+        .select_related("title_image", "logo")
+        .order_by("order", "-published_date", "id")[:3]
+    )
+
+    context.update(get_opening_hours())
+    return render(request, 'pages/webdesign_deggendorf.html', context=context)
+
+
 def load_logos(request):
     context = {}
     context.update(get_opening_hours())
