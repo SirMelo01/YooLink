@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, load_kunde_detail, load_cmsinfo, load_logos, load_visitenkarte, load_medien, load_webdesign, datenschutz_view, leistungen_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_kunde_detail, load_cmsinfo, load_logos, load_visitenkarte, load_medien, load_webdesign, datenschutz_view, leistungen_view, load_webdesign_deggendorf
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
@@ -59,6 +59,7 @@ urlpatterns += i18n_patterns(
     path("kunden/", view=load_kunden, name="kunden"),
     path("kunden/<slug:slug>/", view=load_kunde_detail, name="kunde-detail"),
     path("leistungen/", view=leistungen_view, name="leistungen"),
+    path("webdesign-deggendorf/", view=load_webdesign_deggendorf, name="webdesign_deggendorf"),
     path("products/", include("yoolink.ycms.applications.shop.public_product_urls")),
     prefix_default_language=False,
 )
