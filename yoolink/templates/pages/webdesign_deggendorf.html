@@ -1,34 +1,29 @@
 {% extends "pages/index.html" %}
 {% load compress static custom_filters i18n %}
 
-{% block title %}Webdesign Deggendorf | YooLink – Webdesign Agentur Niederbayern{% endblock %}
+{% block title %}{% trans "DEGGENDORF_META_TITLE" %}{% endblock %}
 
-{% block meta_description %}YooLink – Ihre Webdesign Agentur aus Deggendorf. Professionelle Websites für Unternehmen in
-Deggendorf, Straubing, Plattlingen und ganz Niederbayern. ✓ Responsive ✓ SEO-optimiert ✓ Eigenes CMS{% endblock %}
+{% block meta_description %}{% trans "DEGGENDORF_META_DESCRIPTION" %}{% endblock %}
 
-{% block canonical_url %}https://yoolink.de/webdesign-deggendorf/{% endblock %}
+{% block og_title %}{% trans "DEGGENDORF_OG_TITLE" %}{% endblock %}
 
-{% block og_title %}Webdesign Deggendorf | YooLink – Webdesign Agentur Niederbayern{% endblock %}
+{% block og_description %}{% trans "DEGGENDORF_OG_DESCRIPTION" %}{% endblock %}
 
-{% block og_description %}Webdesign Agentur aus Deggendorf für die gesamte Region Niederbayern. Moderne Websites, SEO &
-eigenes CMS für Unternehmen in Deggendorf, Straubing und Plattlingen.{% endblock %}
+{% block twitter_title %}{% trans "DEGGENDORF_TWITTER_TITLE" %}{% endblock %}
 
-{% block twitter_title %}Webdesign Deggendorf | YooLink{% endblock %}
-
-{% block twitter_description %}Webdesign Agentur aus Deggendorf – Responsive Websites, SEO & eigenes CMS für Unternehmen
-in Niederbayern.{% endblock %}
+{% block twitter_description %}{% trans "DEGGENDORF_TWITTER_DESCRIPTION" %}{% endblock %}
 
 {% block structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": ["ProfessionalService", "LocalBusiness"],
-  "@id": "https://yoolink.de/webdesign-deggendorf/#business",
-  "name": "YooLink – Webdesign Deggendorf",
-  "description": "Webdesign Agentur aus dem Raum Deggendorf für Unternehmen in Deggendorf, Straubing, Plattlingen und ganz Niederbayern. Professionelle, responsive Websites mit SEO und eigenem CMS.",
-  "url": "https://yoolink.de/webdesign-deggendorf/",
+  "@id": "https://yoolink.de{% url 'webdesign_deggendorf' %}#business",
+  "name": "{% trans 'DEGGENDORF_SCHEMA_NAME' %}",
+  "description": "{% trans 'DEGGENDORF_SCHEMA_DESCRIPTION' %}",
+  "url": "https://yoolink.de{% url 'webdesign_deggendorf' %}",
   "telephone": "+491705977862",
-  "priceRange": "ab 40 €/Monat",
+  "priceRange": "{% trans 'DEGGENDORF_SCHEMA_PRICERANGE' %}",
   "image": "https://yoolink.de{% static 'images/og-preview.png' %}",
   "address": {
     "@type": "PostalAddress",
@@ -46,9 +41,9 @@ in Niederbayern.{% endblock %}
   "areaServed": [
     { "@type": "City", "name": "Deggendorf" },
     { "@type": "City", "name": "Straubing" },
-    { "@type": "City", "name": "Plattlingen" },
+    { "@type": "City", "name": "Plattling" },
     { "@type": "City", "name": "Hengersberg" },
-    { "@type": "AdministrativeArea", "name": "Niederbayern" }
+    { "@type": "AdministrativeArea", "name": "{% trans 'DEGGENDORF_SCHEMA_REGION' %}" }
   ],
   "openingHoursSpecification": [{
     "@type": "OpeningHoursSpecification",
@@ -62,9 +57,9 @@ in Niederbayern.{% endblock %}
     "price": "40",
     "itemOffered": {
       "@type": "Service",
-      "name": "Webdesign Deggendorf",
-      "serviceType": "Webdesign & Website-Erstellung",
-      "areaServed": "Niederbayern"
+      "name": "{% trans 'DEGGENDORF_SCHEMA_SERVICE_NAME' %}",
+      "serviceType": "{% trans 'DEGGENDORF_SCHEMA_SERVICETYPE' %}",
+      "areaServed": "{% trans 'DEGGENDORF_SCHEMA_REGION' %}"
     }
   }
 }
@@ -74,8 +69,8 @@ in Niederbayern.{% endblock %}
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://yoolink.de/" },
-    { "@type": "ListItem", "position": 2, "name": "Webdesign Deggendorf", "item": "https://yoolink.de/webdesign-deggendorf/" }
+    { "@type": "ListItem", "position": 1, "name": "{% trans 'DEGGENDORF_BREADCRUMB_HOME' %}", "item": "https://yoolink.de{% url 'home' %}" },
+    { "@type": "ListItem", "position": 2, "name": "{% trans 'DEGGENDORF_BREADCRUMB_CURRENT' %}", "item": "https://yoolink.de{% url 'webdesign_deggendorf' %}" }
   ]
 }
 </script>
@@ -88,21 +83,21 @@ in Niederbayern.{% endblock %}
     <!-- Text Links -->
     <div class="lg:w-1/2 max-w-xl" data-aos="fade-right" data-aos-delay="100">
       <p class="text-blue-900 font-semibold text-sm tracking-wide mb-5 uppercase">
-        {{ heroText.header|default:"In einer Woche online & lokal in Deggendorf betreut" }}
+        {% trans "DEGGENDORF_HERO_TAGLINE" %}
       </p>
       <h1
         class="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl xl:text-6xl text-balance mb-6">
-        <span class="text-blue-900">Webdesign Deggendorf</span><span class="block mt-2">Deine Website ab 40 € <span
-            class="text-xl sm:text-2xl font-medium text-slate-700 mb-2 inline-block">/ Monat</span></span>
+        <span class="text-blue-900">{% trans "DEGGENDORF_HERO_TITLE_LINE1" %}</span><span class="block mt-2">{% trans "DEGGENDORF_HERO_TITLE_LINE2" %} <span
+            class="text-xl sm:text-2xl font-medium text-slate-700 mb-2 inline-block">{% trans "DEGGENDORF_HERO_TITLE_PER_MONTH" %}</span></span>
       </h1>
-      <p class="text-slate-600 text-base md:text-lg leading-7 mb-8 text-pretty max-w-lg">{{ heroText.description|default:"Wir kombinieren modernste Technologie mit persönlicher Expertise aus Niederbayern. Für überzeugende Websites, die sichtbar machen und Anfragen bringen. Ohne komplizierte Agentur-Prozesse oder anonyme Baukästen." }}</p>
+      <p class="text-slate-600 text-base md:text-lg leading-7 mb-8 text-pretty max-w-lg">{% trans "DEGGENDORF_HERO_DESCRIPTION" %}</p>
 
 
       <!-- CTA -->
       <div class="flex flex-wrap items-center gap-4">
-        <a href="{% url 'kontakt' %}" aria-label="{{ heroText.buttonText|default:'Jetzt anfragen' }}"
+        <a href="{% url 'kontakt' %}" aria-label="{% trans 'DEGGENDORF_HERO_CTA' %}"
           class="inline-flex items-center gap-2 rounded-xl bg-blue-900 text-white px-6 py-3.5 text-base font-semibold hover:bg-blue-700 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-blue-900/30">
-          {{ heroText.buttonText|default:"Jetzt anfragen" }}
+          {% trans "DEGGENDORF_HERO_CTA" %}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
             <path fill-rule="evenodd"
               d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
@@ -111,7 +106,7 @@ in Niederbayern.{% endblock %}
         </a>
         <a href="{% url 'webdesign_deggendorf' %}#Preise"
           class="text-blue-700 hover:text-blue-900 text-sm font-medium transition-colors duration-200">
-          Preise ansehen →
+          {% trans "DEGGENDORF_HERO_VIEW_PRICING" %}
         </a>
       </div>
 
@@ -436,18 +431,18 @@ in Niederbayern.{% endblock %}
         }
       </style>
 
-      <div class="dc" role="img" aria-label="Website-Vorschau auf Laptop, Smartphone und Tablet">
+      <div class="dc" role="img" aria-label="{% trans 'DEGGENDORF_DEVICE_ARIA' %}">
 
         <!-- iPhone links – überlappt Laptop -->
         <div class="dc-phone">
           <div class="dc-ph-screen">
             <div class="dc-ph-top"></div>
             <div class="dc-ph-body">
-              <div class="dc-ph-h">Responsive</div>
+              <div class="dc-ph-h">{% trans "DEGGENDORF_DEVICE_PHONE_HEADLINE" %}</div>
               <div class="dc-ph-ln"></div>
               <div class="dc-ph-ln sh"></div>
               <div class="dc-ph-card"></div>
-              <div class="dc-ph-btn">Anfragen →</div>
+              <div class="dc-ph-btn">{% trans "DEGGENDORF_DEVICE_PHONE_BTN" %}</div>
             </div>
           </div>
         </div>
@@ -457,12 +452,12 @@ in Niederbayern.{% endblock %}
           <div class="dc-screen">
             <div class="dc-bar">
               <i></i><i></i><i></i>
-              <div class="dc-menu"><span>RESPONSIVE</span><span>CMS</span><span>PREISE</span><span>KUNDEN</span></div>
+              <div class="dc-menu"><span>{% trans "DEGGENDORF_DEVICE_MENU_RESPONSIVE" %}</span><span>{% trans "DEGGENDORF_DEVICE_MENU_CMS" %}</span><span>{% trans "DEGGENDORF_DEVICE_MENU_PRICING" %}</span><span>{% trans "DEGGENDORF_DEVICE_MENU_CLIENTS" %}</span></div>
             </div>
             <div class="dc-body">
               <span class="dc-pill">// Live Preview</span>
-              <div class="dc-h">Ihr Geschäft.<br>Endlich online.</div>
-              <div class="dc-btns"><span class="p">Kontakt</span><span class="s">Mehr erfahren</span></div>
+              <div class="dc-h">{% trans "DEGGENDORF_DEVICE_HEADLINE_LINE1" %}<br>{% trans "DEGGENDORF_DEVICE_HEADLINE_LINE2" %}</div>
+              <div class="dc-btns"><span class="p">{% trans "DEGGENDORF_DEVICE_BTN_CONTACT" %}</span><span class="s">{% trans "DEGGENDORF_DEVICE_BTN_LEARN" %}</span></div>
               <div class="dc-grid">
                 <div></div>
                 <div></div>
@@ -475,7 +470,7 @@ in Niederbayern.{% endblock %}
         <!-- Galerie Karte rechts – Vordergrund -->
         <div class="dc-tablet">
           <div class="dc-tab-screen">
-            <div class="dc-tab-h">Galerie</div>
+            <div class="dc-tab-h">{% trans "DEGGENDORF_DEVICE_TABLET_HEADLINE" %}</div>
             <div class="dc-tab-grid">
               <div></div>
               <div></div>
@@ -504,24 +499,21 @@ in Niederbayern.{% endblock %}
         <div class="mt-0.5 flex-shrink-0 text-blue-300">
           <i class="bi bi-calendar2-check text-2xl"></i>
         </div>
-        <p class="text-white text-sm leading-6">Wir erstellen deine neue Website <strong>innerhalb von einer
-            Woche</strong> – startklar und online.</p>
+        <p class="text-white text-sm leading-6">{% blocktrans %}Wir erstellen deine neue Website <strong>innerhalb von einer Woche</strong> – startklar und online.{% endblocktrans %}</p>
       </div>
 
       <div class="flex items-start gap-4 rounded-2xl bg-white/10 px-7 py-7" data-aos="fade-up" data-aos-delay="200">
         <div class="mt-0.5 flex-shrink-0 text-blue-300">
           <i class="bi bi-check2-circle text-2xl"></i>
         </div>
-        <p class="text-white text-sm leading-6"><strong>Wir übernehmen alles.</strong> Von Rechtstexten über SEO bis zu
-          Domain &amp; Hosting – alles aus einer Hand.</p>
+        <p class="text-white text-sm leading-6">{% blocktrans %}<strong>Wir übernehmen alles.</strong> Von Rechtstexten über SEO bis zu Domain &amp; Hosting – alles aus einer Hand.{% endblocktrans %}</p>
       </div>
 
       <div class="flex items-start gap-4 rounded-2xl bg-white/10 px-7 py-7" data-aos="fade-up" data-aos-delay="300">
         <div class="mt-0.5 flex-shrink-0 text-blue-300">
           <i class="bi bi-geo-alt text-2xl"></i>
         </div>
-        <p class="text-white text-sm leading-6"><strong>Kein anonymer Anbieter</strong> — dein persönlicher Partner aus
-          Niederbayern.</p>
+        <p class="text-white text-sm leading-6">{% blocktrans %}<strong>Kein anonymer Anbieter</strong> — dein persönlicher Partner aus Niederbayern.{% endblocktrans %}</p>
       </div>
 
     </div>
@@ -532,30 +524,27 @@ in Niederbayern.{% endblock %}
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
 
     <div class="mb-14 text-center" data-aos="fade-up">
-      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance">Das sind deine Vorteile</h2>
+      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance">{% trans "DEGGENDORF_ADVANTAGES_TITLE" %}</h2>
     </div>
 
     <div class="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-12">
 
       <div data-aos="fade-up" data-aos-delay="100">
         <span class="text-5xl font-extrabold text-blue-200">01</span>
-        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">Fairer Festpreis – kein Risiko</h3>
-        <p class="text-slate-600 leading-7 text-pretty">Kein Stundensatz, keine versteckten Kosten. Du weißt vorher
-          genau, was deine neue Website kostet – und bekommst dafür ein Ergebnis, das sich sehen lässt.</p>
+        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">{% trans "DEGGENDORF_ADVANTAGE_01_TITLE" %}</h3>
+        <p class="text-slate-600 leading-7 text-pretty">{% trans "DEGGENDORF_ADVANTAGE_01_TEXT" %}</p>
       </div>
 
       <div data-aos="fade-up" data-aos-delay="200">
         <span class="text-5xl font-extrabold text-blue-200">02</span>
-        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">Persönlicher Ansprechpartner</h3>
-        <p class="text-slate-600 leading-7 text-pretty">Du bekommst einen direkten Ansprechpartner aus Niederbayern, der
-          dich von der ersten Idee bis zum Go-Live begleitet. Kein Callcenter, kein Ticketsystem.</p>
+        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">{% trans "DEGGENDORF_ADVANTAGE_02_TITLE" %}</h3>
+        <p class="text-slate-600 leading-7 text-pretty">{% trans "DEGGENDORF_ADVANTAGE_02_TEXT" %}</p>
       </div>
 
       <div data-aos="fade-up" data-aos-delay="300">
         <span class="text-5xl font-extrabold text-blue-200">03</span>
-        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">Jederzeit selbst bearbeitbar</h3>
-        <p class="text-slate-600 leading-7 text-pretty">Mit unserem CMS kannst du Texte, Bilder und Blogartikel selbst
-          pflegen – ganz ohne Code. Sogar vom Smartphone aus. Das macht dich unabhängig.</p>
+        <h3 class="text-xl font-bold text-slate-900 mt-4 mb-3">{% trans "DEGGENDORF_ADVANTAGE_03_TITLE" %}</h3>
+        <p class="text-slate-600 leading-7 text-pretty">{% trans "DEGGENDORF_ADVANTAGE_03_TEXT" %}</p>
       </div>
 
     </div>
@@ -563,7 +552,7 @@ in Niederbayern.{% endblock %}
     <div class="mt-14 flex justify-center" data-aos="fade-up" data-aos-delay="200">
       <a href="{% url 'kontakt' %}"
         class="inline-flex items-center gap-2 rounded-xl bg-blue-900 text-white px-7 py-3.5 text-base font-semibold hover:bg-blue-700 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-blue-900/30">
-        Jetzt anfragen
+        {% trans "DEGGENDORF_HERO_CTA" %}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
           <path fill-rule="evenodd"
             d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
@@ -582,8 +571,8 @@ in Niederbayern.{% endblock %}
 
     <!-- Headline -->
     <div class="mx-auto max-w-2xl text-center mb-12" data-aos="fade-up">
-      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance">Mehr als Baukasten oder Agentur</h2>
-      <p class="mt-6 text-base md:text-lg leading-7 text-slate-600 text-pretty">Wir kombinieren die Einfachheit eines Baukastens mit der Unterstützung und Strategie einer Agentur — maximal flexibel und preiswert.</p>
+      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance">{% trans "DEGGENDORF_COMPARISON_TITLE" %}</h2>
+      <p class="mt-6 text-base md:text-lg leading-7 text-slate-600 text-pretty">{% trans "DEGGENDORF_COMPARISON_LEAD" %}</p>
     </div>
 
     <!-- Vergleichstabelle -->
@@ -592,8 +581,8 @@ in Niederbayern.{% endblock %}
         <thead>
           <tr>
             <th></th>
-            <th class="px-4 pb-6 text-center text-sm sm:text-base font-semibold text-slate-400">Baukasten</th>
-            <th class="px-4 pb-6 text-center text-sm sm:text-base font-semibold text-slate-400">Agentur</th>
+            <th class="px-4 pb-6 text-center text-sm sm:text-base font-semibold text-slate-400">{% trans "DEGGENDORF_COMPARISON_BUILDER" %}</th>
+            <th class="px-4 pb-6 text-center text-sm sm:text-base font-semibold text-slate-400">{% trans "DEGGENDORF_COMPARISON_AGENCY" %}</th>
             <th class="px-4 pt-5 pb-5 text-center bg-blue-900 rounded-t-2xl">
               <span class="block text-base sm:text-lg font-bold text-white">YooLink</span>
             </th>
@@ -604,7 +593,7 @@ in Niederbayern.{% endblock %}
             <td class="py-5 pr-4 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900"><i class="bi bi-pencil-square"></i></span>
-                <span class="text-sm sm:text-base font-medium text-slate-800">Jederzeit selbst bearbeiten</span>
+                <span class="text-sm sm:text-base font-medium text-slate-800">{% trans "DEGGENDORF_COMPARISON_ROW_EDIT" %}</span>
               </div>
             </td>
             <td class="px-4 py-5 text-center border-b border-slate-100"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100"><i class="bi bi-check-lg text-lg text-blue-600"></i></span></td>
@@ -615,7 +604,7 @@ in Niederbayern.{% endblock %}
             <td class="py-5 pr-4 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900"><i class="bi bi-person-check"></i></span>
-                <span class="text-sm sm:text-base font-medium text-slate-800">Persönliche Begleitung</span>
+                <span class="text-sm sm:text-base font-medium text-slate-800">{% trans "DEGGENDORF_COMPARISON_ROW_GUIDANCE" %}</span>
               </div>
             </td>
             <td class="px-4 py-5 text-center border-b border-slate-100"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100"><i class="bi bi-x-lg text-sm text-slate-400"></i></span></td>
@@ -626,7 +615,7 @@ in Niederbayern.{% endblock %}
             <td class="py-5 pr-4 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900"><i class="bi bi-arrow-left-right"></i></span>
-                <span class="text-sm sm:text-base font-medium text-slate-800">Volle Flexibilität</span>
+                <span class="text-sm sm:text-base font-medium text-slate-800">{% trans "DEGGENDORF_COMPARISON_ROW_FLEX" %}</span>
               </div>
             </td>
             <td class="px-4 py-5 text-center border-b border-slate-100"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100"><i class="bi bi-x-lg text-sm text-slate-400"></i></span></td>
@@ -637,7 +626,7 @@ in Niederbayern.{% endblock %}
             <td class="py-5 pr-4">
               <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-900"><i class="bi bi-currency-euro"></i></span>
-                <span class="text-sm sm:text-base font-medium text-slate-800">Übliche Kosten</span>
+                <span class="text-sm sm:text-base font-medium text-slate-800">{% trans "DEGGENDORF_COMPARISON_ROW_COST" %}</span>
               </div>
             </td>
             <td class="px-4 py-5 text-center text-lg font-bold text-slate-400">€</td>

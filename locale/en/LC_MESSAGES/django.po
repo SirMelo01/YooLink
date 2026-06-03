@@ -257,6 +257,246 @@ msgstr ""
 msgid "Bezieht sich auf den Original-Blog (z.B. auf Deutsch)"
 msgstr ""
 
+# ---------- Webdesign Deggendorf ----------
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_META_TITLE"
+msgstr "Web Design Deggendorf | YooLink – Web Design Agency Lower Bavaria"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_META_DESCRIPTION"
+msgstr ""
+"YooLink – Your web design agency from Deggendorf. Professional websites for "
+"businesses in Deggendorf, Straubing, Plattling and all of Lower Bavaria. ✓ "
+"Responsive ✓ SEO-optimized ✓ In-house CMS"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_OG_TITLE"
+msgstr "Web Design Deggendorf | YooLink – Web Design Agency Lower Bavaria"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_OG_DESCRIPTION"
+msgstr ""
+"Web design agency from Deggendorf for the entire Lower Bavaria region. "
+"Modern websites, SEO & in-house CMS for businesses in Deggendorf, Straubing "
+"and Plattling."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_TWITTER_TITLE"
+msgstr "Web Design Deggendorf | YooLink"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_TWITTER_DESCRIPTION"
+msgstr ""
+"Web design agency from Deggendorf – responsive websites, SEO & in-house CMS "
+"for businesses in Lower Bavaria."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_NAME"
+msgstr "YooLink – Web Design Deggendorf"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_DESCRIPTION"
+msgstr ""
+"Web design agency from the Deggendorf area for businesses in Deggendorf, "
+"Straubing, Plattling and all of Lower Bavaria. Professional, responsive "
+"websites with SEO and an in-house CMS."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_PRICERANGE"
+msgstr "from €40/month"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_REGION"
+msgstr "Lower Bavaria"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_SERVICE_NAME"
+msgstr "Web Design Deggendorf"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_SCHEMA_SERVICETYPE"
+msgstr "Web Design & Website Development"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_BREADCRUMB_HOME"
+msgstr "Home"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_BREADCRUMB_CURRENT"
+msgstr "Web Design Deggendorf"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_TAGLINE"
+msgstr "Online in one week & locally supported in Deggendorf"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_TITLE_LINE1"
+msgstr "Web Design Deggendorf"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_TITLE_LINE2"
+msgstr "Your website from €40"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_TITLE_PER_MONTH"
+msgstr "/ month"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_DESCRIPTION"
+msgstr ""
+"We combine cutting-edge technology with personal expertise from Lower "
+"Bavaria. For compelling websites that get noticed and bring in enquiries. "
+"Without complicated agency processes or anonymous website builders."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_CTA"
+msgstr "Get a quote"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_HERO_VIEW_PRICING"
+msgstr "View pricing →"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_ARIA"
+msgstr "Website preview on laptop, smartphone and tablet"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_PHONE_HEADLINE"
+msgstr "Responsive"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_PHONE_BTN"
+msgstr "Inquire →"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_MENU_RESPONSIVE"
+msgstr "RESPONSIVE"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_MENU_CMS"
+msgstr "CMS"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_MENU_PRICING"
+msgstr "PRICING"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_MENU_CLIENTS"
+msgstr "CLIENTS"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_HEADLINE_LINE1"
+msgstr "Your business."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_HEADLINE_LINE2"
+msgstr "Finally online."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_BTN_CONTACT"
+msgstr "Contact"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_BTN_LEARN"
+msgstr "Learn more"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_DEVICE_TABLET_HEADLINE"
+msgstr "Gallery"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid ""
+"Wir erstellen deine neue Website <strong>innerhalb von einer Woche</strong> "
+"– startklar und online."
+msgstr ""
+"We build your new website <strong>within one week</strong> – ready to launch "
+"and live."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid ""
+"<strong>Wir übernehmen alles.</strong> Von Rechtstexten über SEO bis zu "
+"Domain &amp; Hosting – alles aus einer Hand."
+msgstr ""
+"<strong>We handle everything.</strong> From legal pages and SEO to domain "
+"&amp; hosting – all from a single source."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid ""
+"<strong>Kein anonymer Anbieter</strong> — dein persönlicher Partner aus "
+"Niederbayern."
+msgstr ""
+"<strong>No anonymous provider</strong> — your personal partner from Lower "
+"Bavaria."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGES_TITLE"
+msgstr "Your advantages"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_01_TITLE"
+msgstr "Fair fixed price – no risk"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_01_TEXT"
+msgstr ""
+"No hourly rates, no hidden costs. You know exactly what your new website "
+"will cost – and you get a result that speaks for itself."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_02_TITLE"
+msgstr "Personal contact"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_02_TEXT"
+msgstr ""
+"You get a direct contact from Lower Bavaria who supports you from the first "
+"idea all the way to go-live. No call center, no ticket system."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_03_TITLE"
+msgstr "Edit anytime yourself"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_ADVANTAGE_03_TEXT"
+msgstr ""
+"With our CMS you can edit texts, images and blog articles yourself – no "
+"code required. Even from your smartphone. That makes you independent."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_TITLE"
+msgstr "More than a website builder or agency"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_LEAD"
+msgstr ""
+"We combine the simplicity of a website builder with the support and "
+"strategy of an agency — maximum flexibility, affordable price."
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_BUILDER"
+msgstr "Website Builder"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_AGENCY"
+msgstr "Agency"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_ROW_EDIT"
+msgstr "Edit anytime yourself"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_ROW_GUIDANCE"
+msgstr "Personal guidance"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_ROW_FLEX"
+msgstr "Full flexibility"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "DEGGENDORF_COMPARISON_ROW_COST"
+msgstr "Typical cost"
+
 #~ msgid "NAVBAR_CMS"
 #~ msgstr "CMS"
 
