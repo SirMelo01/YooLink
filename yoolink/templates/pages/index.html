@@ -95,24 +95,30 @@
 {% block Templates %}
 <section class="bg-white mb-20">
   <div
-    class="flex flex-col items-center justify-center px-4 pt-16 sm:pt-24 mx-auto sm:max-w-xl md:max-w-full md:px-0"
+    class="flex flex-col items-center justify-center px-4 pt-6 mx-auto sm:max-w-xl md:max-w-full lg:pt-6 md:px-0"
   >
     <div class="flex flex-col items-center max-w-4xl md:px-8">
-      <div class="max-w-xl mb-10 md:mx-auto text-center lg:max-w-4xl md:mb-12">
+      <div
+        class="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-4xl md:mb-12"
+      >
         <h1
-          class="mb-6 mt-6 text-3xl font-bold leading-none tracking-tight text-slate-900 sm:text-5xl xl:text-6xl md:mx-auto text-balance"
+          class="mb-6 mt-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl md:mx-auto text-center"
         >
           {{ heroText.title|default:"Webdesign - YooLink" }}
         </h1>
-        <p class="text-base leading-7 text-slate-600 md:text-lg xl:text-xl text-pretty">
+        <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
           {{ heroText.description|default:"Wir entwickeln moderne Websites, die Ihre Marke stärken und Besucher zu Kunden machen. Als Webdesign-Agentur aus Niederbayern setzen wir auf klares Design, schnelle Ladezeiten und durchdachte SEO." }}
         </p>
       </div>
     </div>
+
+    <!--Cardslider Beginn-->
     <figure class="icon-cards mt-3">
       <div class="icon-cards__content">
         {% for img in heroImages %}
-        <div class="icon-cards__item d-flex align-items-center justify-content-center">
+        <div
+          class="icon-cards__item d-flex align-items-center justify-content-center"
+        >
           <img src="{{img.upload.url}}" fetchpriority="high" alt="{{img.title}}" />
         </div>
         {% empty %}
@@ -129,17 +135,18 @@
       </div>
     </figure>
     <div
-      class="inline-flex items-center justify-center mx-auto bg-blue-900 hover:bg-blue-700 rounded-xl mt-12 transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 shadow-lg shadow-blue-900/30"
+    class="inline-flex items-center justify-center mx-auto bg-blue-900 hover:bg-blue-700 rounded-xl mt-12 transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1"
     >
       <a
         href="{% url 'kontakt' %}"
         aria-label="{{ heroText.buttonText|default:'Kontakt' }}"
-        class="flex items-center justify-center gap-2 h-14 px-7 text-base font-semibold text-white"
+        class="flex items-center justify-center h-[3.3rem] px-[1.65rem] text-[1.1rem] font-medium text-white"
       >
         {{ heroText.buttonText|default:"Kontakt" }}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>
       </a>
     </div>
+  
+    <!--Cardslider End-->
   </div>
 </section>
 {% endblock Templates %}
@@ -207,14 +214,15 @@
             {{ responsiveText.header|default:"Optimiert für alle Geräte" }}
           </p>
           <h2
-            class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl leading-tight text-balance"
+            class="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
           >
             {{ responsiveText.title|default:"Responsive Webdesign" }}
           </h2>
-          <p class="text-base leading-7 text-slate-600 md:text-lg xl:text-xl">
+          <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
             {{ responsiveText.description|default:"Mehr als die Hälfte aller Aufrufe kommen heute vom Smartphone. Unsere Websites passen sich automatisch an jedes Display an – vom Desktop über das Tablet bis zum Handy. So überzeugen Sie Kunden auf jedem Gerät." }}
           </p>
-          <div class="flex mt-6" data-aos="fade-up" data-aos-delay="200">
+          <br />
+          <div class="flex" data-aos="fade-up" data-aos-delay="200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -240,7 +248,7 @@
                 aria-label="Ansicht wechseln zwischen Desktop und Mobile"
               />
               <div
-                class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"
+                class="w-14 h-7 bg-blue-300 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-900"
               ></div>
             </label>
             <svg
@@ -374,14 +382,14 @@
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
             {{ cmsText.header|default:"Eigenes CMS" }}
           </p>
-          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 text-balance">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
             {{ cmsText.title|default:"Inhalte selbst pflegen – ganz ohne Code" }}
           </h2>
-          <p class="mt-6 text-base leading-7 md:text-lg xl:text-xl text-slate-600 text-pretty">
+          <p class="mt-6 text-base leading-7 md:text-lg xl:text-xl text-gray-600">
             {{ cmsText.description|default:"Mit unserem Content-Management-System aktualisieren Sie Texte, Bilder und Blogartikel jederzeit selbst. Schnell, intuitiv und ohne laufende Kosten für jede kleine Änderung." }}
           </p>
           <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
-            <a href="{% url 'home' %}#Preise" class="rounded-xl bg-blue-900 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-blue-700 transition-colors duration-200">
+            <a href="{% url 'home' %}#Preise" class="rounded-md bg-blue-900 text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm">
               {{ cmsText.buttonText|default:"Angebot ansehen" }}
             </a>
             <a href="{% url 'leistungen_cms' %}" class="text-sm font-semibold leading-6">
@@ -425,52 +433,59 @@
           <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
             {{ knowHowContent.header|default:"Know-how" }}
           </p>
-          <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance">
+          <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {{ knowHowContent.title|default:"Was wir richtig gut können" }}
           </h2>
-          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-slate-600 text-pretty">
+          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
             {{ knowHowContent.description|default:"Webdesign ist mehr als hübsche Bilder. Wir verbinden ansprechendes Design mit technischer Performance und gezielter SEO – damit Ihre Website nicht nur gefällt, sondern auch gefunden wird und konvertiert." }}
           </p>
         </div>
         <div class="mx-auto mt-12 max-w-2xl sm:mt-14 lg:mt-16 lg:max-w-5xl">
-          <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16">
-
+          <dl
+            class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 md:max-w-none lg:grid-cols-3 lg:gap-y-16"
+          >
             <div class="relative" data-aos="fade-up" data-aos-delay="100">
-              <div class="mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-blue-900 shadow-lg shadow-blue-900/30">
-                <i class="bi bi-columns-gap text-2xl text-white"></i>
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-columns-gap text-4xl text-blue-900 p-1"></i>
+                </div>
               </div>
-              <dt class="text-2xl font-semibold leading-7 text-slate-900">
+              <dt class="text-2xl text-center font-semibold leading-7 text-gray-900">
                 {{ knowHowContentCard1.title|default:"Individuelles Design" }}
               </dt>
-              <dd class="mt-2 text-base leading-7 text-slate-600">
+              <dd class="mt-2 text-base text-center leading-7 text-gray-600">
                 {{ knowHowContentCard1.description|default:"Jede Website entsteht maßgeschneidert für Ihre Marke. Klare Strukturen, durchdachte Nutzerführung und ein Design, das im Gedächtnis bleibt – keine Templates von der Stange." }}
               </dd>
             </div>
-
             <div class="relative" data-aos="fade-up" data-aos-delay="200">
-              <div class="mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-blue-900 shadow-lg shadow-blue-900/30">
-                <i class="bi bi-bar-chart text-2xl text-white"></i>
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-bar-chart text-4xl text-blue-900 p-1"></i>
+                </div>
               </div>
-              <dt class="text-2xl font-semibold leading-7 text-slate-900">
+              <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
                 {{ knowHowContentCard2.title|default:"SEO & Sichtbarkeit" }}
               </dt>
-              <dd class="mt-2 text-base leading-7 text-slate-600">
+              <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
                 {{ knowHowContentCard2.description|default:"Wir bauen Ihre Website so, dass Google sie liebt: saubere Struktur, schnelle Ladezeiten und gezielte On-Page-Optimierung für bessere Rankings und mehr organischen Traffic." }}
               </dd>
             </div>
-
             <div class="relative" data-aos="fade-up" data-aos-delay="300">
-              <div class="mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-blue-900 shadow-lg shadow-blue-900/30">
-                <i class="bi bi-code-slash text-2xl text-white"></i>
+              <div class="flex justify-center">
+                <div
+                  class="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-200/60 shadow-lg shadow-gray-500/20">
+                  <i class="bi bi-code-slash text-4xl text-blue-900 p-1"></i>
+                </div>
               </div>
-              <dt class="text-2xl font-semibold leading-7 text-slate-900">
+              <dt class="text-2xl font-semibold leading-7 text-gray-900 text-center">
                 {{ knowHowContentCard3.title|default:"Saubere Technik" }}
               </dt>
-              <dd class="mt-2 text-base leading-7 text-slate-600">
+              <dd class="mt-2 text-base leading-7 text-gray-600 text-center">
                 {{ knowHowContentCard3.description|default:"Modernes Frontend trifft auf solides Backend. Wir setzen auf bewährte Tools, sauberen Code und nachhaltige Architektur – für eine Website, die schnell läuft und langfristig wartbar bleibt." }}
               </dd>
             </div>
-
           </dl>
         </div>
       </div>
@@ -488,11 +503,11 @@
             {{ kundenText.header|default:"Referenzen" }}
           </p>
           <h2
-            class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-balance"
+            class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
             {{ kundenText.title|default:"Websites, die wir umgesetzt haben" }}
           </h2>
-          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-slate-600 text-pretty">
+          <p class="mt-6 text-base md:text-lg xl:text-xl leading-7 text-gray-600">
             {{ kundenText.description|default:"Vom Zahnarzt bis zum Reiseanbieter – unsere Kunden kommen aus den unterschiedlichsten Branchen. Was sie verbindet: der Wunsch nach einer modernen Website, die ihr Geschäft sichtbar voranbringt." }}
           </p>
         </div>
@@ -537,64 +552,48 @@
           {{ priceText.header|default:"Preise" }}
         </p>
         <h2
-          class="max-w-lg mb-6 font-sans text-3xl font-bold leading-tight tracking-tight sm:text-4xl text-balance"
+          class="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight sm:text-4xl md:mx-auto"
         >
           <span class="relative inline-block">
-            <span class="relative text-slate-900">{{ priceText.title|default:"Faire Preise ohne Überraschungen" }}</span>
+            <span class="relative text-gray-900">{{ priceText.title|default:"Faire Preise ohne Überraschungen" }}</span>
           </span>
         </h2>
-        <p class="text-base leading-7 text-slate-600 md:text-lg xl:text-xl text-pretty">
+        <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
           {{ priceText.description|default:"Sie wissen vorher genau, was Sie investieren. Keine versteckten Kosten, keine Folgegebühren für Änderungen – nur transparente Pakete, die zu Ihrem Unternehmen passen." }}
         </p>
       </div>
-      <div class="grid max-w-md gap-8 lg:gap-6 lg:max-w-screen-lg sm:mx-auto lg:grid-cols-3">
+      <div class="grid max-w-md gap-10 lg:gap-0 row-gap-5 lg:max-w-screen-lg sm:row-gap-10 lg:grid-cols-3 xl:max-w-screen-lg sm:mx-auto">
         {% for card in pricing_cards %}
-          <div data-aos="{{ card.animation }}" data-aos-delay="{{ card.animation_delay }}"
-               class="{% if forloop.counter0 == 1 %}lg:scale-105 z-10{% else %}lg:scale-95 opacity-90{% endif %} transition-transform duration-300">
-            <div class="relative flex flex-col h-full rounded-2xl overflow-hidden shadow-2xl bg-blue-900 hover:-translate-y-1 transition-transform duration-300">
-
-              {% if forloop.counter0 == 1 %}
-                <div class="bg-blue-500 text-white text-xs font-bold uppercase tracking-widest text-center py-2 letter-spacing-wide">
-                  ★ Beliebt
+          <div data-aos="{{ card.animation }}" data-aos-delay="{{ card.animation_delay }}">
+            <div class="{% if forloop.counter0 == 1 %}scale-100{% else %}lg:scale-90{% endif %} flex flex-col justify-between p-8 transition-shadow duration-300 bg-blue-300 rounded-2xl shadow-2xl sm:items-center hover:shadow">
+              <div class="text-center">
+                <div class="text-lg font-semibold">{{ card.title }}</div>
+                <div class="flex items-center justify-center mt-2">
+                  <div class="mr-1 text-5xl font-bold">{{ card.monthly_price }}</div>
+                  <div class="text-gray-700">/ {% trans "pricing_month" %}</div>
                 </div>
-              {% endif %}
-
-              <div class="{% if forloop.counter0 == 1 %}bg-blue-400{% else %}bg-blue-700{% endif %} h-1"></div>
-
-              <div class="flex flex-col flex-1 p-8">
-                <div class="text-center mb-6">
-                  <div class="text-xs font-bold uppercase tracking-widest text-blue-400 mb-3">{{ card.title }}</div>
-                  <div class="flex items-end justify-center gap-1">
-                    <span class="text-5xl font-bold text-white leading-none">{{ card.monthly_price }}</span>
-                    <span class="text-blue-300 text-sm mb-1">/ {% trans "pricing_month" %}</span>
-                  </div>
-                  {% if card.one_time_price %}
-                    <div class="text-blue-300 text-sm mt-2">{{ card.one_time_price }} {% trans "pricing_one_off_payment" %}</div>
-                  {% endif %}
-                </div>
-
-                <div class="border-t border-white mb-3"></div>
-
-                <ul class="space-y-3 flex-1 mb-8">
+                <div class="mt-2 space-y-3">
+                  <div class="text-black text-lg">{{ card.one_time_price }} {% trans "pricing_one_off_payment" %}</div>
                   {% for feature in card.features.all %}
-                    <li class="flex items-start gap-3 text-sm text-slate-100">
-                      <span class="text-blue-400 flex-shrink-0 mt-0.5">✓</span>
-                      {{ feature.text }}
-                    </li>
+                    <div class="text-gray-700">{{ feature.text }}</div>
                   {% endfor %}
-                </ul>
-
+                </div>
+              </div>
+              <div>
                 {% if card.button %}
-                  <a href="{{ card.button.url }}" target="{{ card.button.target }}" title="{{ card.button.hover_text }}"
-                     class="block w-full text-center py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 {% if forloop.counter0 == 1 %}bg-white text-blue-900 hover:bg-blue-50{% else %}bg-blue-500 text-white hover:bg-blue-400{% endif %}">
+                  <a
+                    href="{{ card.button.url }}"
+                    target="{{ card.button.target }}"
+                    title="{{ card.button.hover_text }}"
+                    class="{{ card.button.css_classes }}"
+                  >
                     {{ card.button.text }}
                   </a>
                 {% endif %}
-                {% if card.description %}
-                  <p class="mt-4 text-xs text-blue-300 text-center">{{ card.description }}</p>
-                {% endif %}
+                <p class="max-w-xs mt-6 text-xs text-gray-600 sm:text-sm sm:text-center sm:max-w-sm sm:mx-auto">
+                  {{ card.description }}
+                </p>
               </div>
-
             </div>
           </div>
         {% endfor %}
@@ -614,10 +613,10 @@
       <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
         {{ teamText.header|default:"Team" }}
       </p>
-      <h2 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-slate-900 sm:text-4xl md:mx-auto">
+      <h2 class="max-w-xl my-4 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl md:mx-auto text-center">
         {{ teamText.title|default:"Die Köpfe hinter YooLink" }}
       </h2>
-      <p class="text-base leading-7 text-slate-600 md:text-lg xl:text-xl text-pretty">
+      <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
         {{ teamText.description|default:"Ein eingespieltes Team aus Niederbayern mit langjähriger Erfahrung in Webentwicklung, Design und SEO. Persönlicher Kontakt, kurze Wege und volle Verantwortung für Ihr Projekt – von der ersten Skizze bis zum Go-Live." }}
       </p>
     </div>
@@ -638,7 +637,7 @@
                 <p class="text-lg font-bold text-blue-900">
                   {{ member.full_name }}
                 </p>
-                <p class="mb-5 text-xs text-slate-800">{{ member.position }}</p>
+                <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
               </div>
             </div>
           {% else %}
@@ -655,7 +654,7 @@
                   <p class="text-lg font-bold text-blue-900">
                     {{ member.full_name }}
                   </p>
-                  <p class="mb-5 text-xs text-slate-800">{{ member.position }}</p>
+                  <p class="mb-5 text-xs text-gray-800">{{ member.position }}</p>
                 </div>
               </div>
             </div>
@@ -674,7 +673,7 @@
           </div>
           <div class="flex flex-col sm:text-center">
             <p class="text-lg font-bold text-blue-900">Sebastian Rauch</p>
-            <p class="mb-5 text-xs text-slate-800">Produkt Manager</p>
+            <p class="mb-5 text-xs text-gray-800">Produkt Manager</p>
           </div>
         </div>
         <div data-aos="fade-up-left" data-aos-delay="200">
@@ -687,7 +686,7 @@
           </div>
           <div class="flex flex-col sm:text-center">
             <p class="text-lg font-bold text-blue-900">Lennert Meißner</p>
-            <p class="mb-5 text-xs text-slate-800">Entwickler</p>
+            <p class="mb-5 text-xs text-gray-800">Entwickler</p>
           </div>
         </div>
       </div>
@@ -777,7 +776,7 @@
 <section
   itemscope
   itemtype="https://schema.org/FAQPage"
-  class="bg-slate-700 text-white -mt-5"
+  class="bg-gray-700 text-white -mt-5"
 >
   <div
     class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
@@ -798,7 +797,7 @@
             <span class="relative">{{ faqText.title|default:"Antworten auf die häufigsten Fragen" }}</span>
           </span>
         </h2>
-        <p class="text-base leading-7 text-white md:text-lg xl:text-xl text-pretty">
+        <p class="text-base leading-7 text-white md:text-lg xl:text-xl">
           {{ faqText.description|default:"Sie haben Fragen zu Ablauf, Preisen oder Technik? Hier finden Sie die wichtigsten Antworten. Wenn etwas fehlt, melden Sie sich gerne direkt bei uns." }}
         </p>
       </div>
@@ -807,11 +806,11 @@
 
         <div 
           itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"
-          class="border border-slate-600 bg-slate-800 rounded-xl shadow-lg hover:shadow-none"
+          class="border border-gray-600 bg-gray-800 rounded-xl shadow-lg hover:shadow-none"
           data-aos="{% if forloop.counter0|divisibleby:2 %}fade-left{% else %}fade-right{% endif %}"
           data-aos-delay='{{ forloop.counter0|add:"1" }}00'>
           <button
-            class="faq-question w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-slate-100 transition"
+            class="faq-question w-full flex justify-between gap-4 items-start px-6 py-5 text-left text-lg sm:text-xl font-medium text-gray-100 transition"
             onclick="toggleFaq(this)"
           >
             <span itemprop="name" class="flex-1">{{faq.question}}</span>
@@ -827,7 +826,7 @@
             </svg>
           </button>
 
-          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-content max-h-0 overflow-hidden px-6 text-slate-300 transition-all duration-500">
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-content max-h-0 overflow-hidden px-6 text-gray-300 transition-all duration-500">
             <p itemprop="text" class="py-4">
               {{faq.answer}}
             </p>

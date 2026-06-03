@@ -70,14 +70,6 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
-# django-allauth
-# ------------------------------------------------------------------------------
-ACCOUNT_EMAIL_VERIFICATION = "none"
-
-# django-allauth
-# ------------------------------------------------------------------------------
-ACCOUNT_EMAIL_VERIFICATION = "none"
-
 # Your stuff...
 # ------------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent

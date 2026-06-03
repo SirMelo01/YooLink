@@ -12,9 +12,8 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         return [
             'home',
-            'impressum', 'datenschutz', 'cookies',
+            'impressum', 'datenschutz', 'cookies', 
             'kunden', 'kontakt', 'leistungen', 'leistungen_cms', 'leistungen_logos', 'leistungen_visitenkarte', 'leistungen_medien', 'leistungen_webdesign',
-            'webdesign_deggendorf',
             'blog:blog'
             ]
     
