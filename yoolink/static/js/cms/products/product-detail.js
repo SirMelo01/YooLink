@@ -255,7 +255,7 @@ $(document).ready(function () {
     updateAutocompleteCategoryList(true);
   });
 
-  addCategoryBtn.on("click", function () {
+  function addSelectedCategory() {
     const selectedCategory = categoryInput.val().trim();
 
     if (selectedCategory && !addedCategories.includes(selectedCategory)) {
@@ -263,6 +263,17 @@ $(document).ready(function () {
       removeCategoryFromAutocomplete(selectedCategory);
       categoryInput.val("");
       categoryInput.focus();
+    }
+  }
+
+  addCategoryBtn.on("click", function () {
+    addSelectedCategory();
+  });
+
+  categoryInput.on("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addSelectedCategory();
     }
   });
 

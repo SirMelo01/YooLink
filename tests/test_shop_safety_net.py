@@ -184,7 +184,7 @@ def test_cms_product_create_search_update_and_delete(logged_in_client):
 def test_cms_product_create_saves_discount_price(logged_in_client):
     response = logged_in_client.post(
         reverse("ycms:product-create-upload"),
-        _product_payload(reducedPrice="39.90"),
+        _product_payload(isReduced="true", reducedPrice="39.90"),
     )
 
     assert response.status_code == 201
@@ -193,10 +193,36 @@ def test_cms_product_create_saves_discount_price(logged_in_client):
     assert product.discount_price == Decimal("39.90")
 
 
+def test_cms_product_create_ignores_reduced_price_when_switch_is_off(logged_in_client):
+    response = logged_in_client.post(
+        reverse("ycms:product-create-upload"),
+        _product_payload(reducedPrice="39.90"),
+    )
+
+    assert response.status_code == 201
+    product = Product.objects.get()
+    assert product.is_reduced is False
+    assert product.discount_price is None
+
+
+def test_cms_product_update_can_disable_discount_with_stale_reduced_price(logged_in_client):
+    product = _create_product(is_reduced=True, discount_price=Decimal("39.90"))
+
+    response = logged_in_client.post(
+        reverse("ycms:product-detail-update", args=[product.id, product.slug]),
+        _product_payload(isReduced="false", reducedPrice="39.90"),
+    )
+
+    assert response.status_code == 200
+    product.refresh_from_db()
+    assert product.is_reduced is False
+    assert product.discount_price is None
+
+
 def test_cms_product_create_returns_discount_validation_message(logged_in_client):
     response = logged_in_client.post(
         reverse("ycms:product-create-upload"),
-        _product_payload(reducedPrice="59.90"),
+        _product_payload(isReduced="true", reducedPrice="59.90"),
     )
 
     assert response.status_code == 400

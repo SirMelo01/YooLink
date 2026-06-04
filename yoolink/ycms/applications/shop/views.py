@@ -444,7 +444,7 @@ def apply_product_form_data(request, product):
     is_active = parse_bool(request.POST.get("isActive"))
     is_in_stock = parse_bool(request.POST.get("isInStock"))
     online_sell = parse_bool(request.POST.get("isOnlineAvailable"))
-    is_reduced = parse_bool(request.POST.get("isReduced")) or reduced_price is not None
+    is_reduced = parse_bool(request.POST.get("isReduced"))
     showcase_only = parse_bool(request.POST.get("isShowcaseOnly"))
     show_price_when_showcase = parse_bool(request.POST.get("showPriceWhenShowcase"))
 

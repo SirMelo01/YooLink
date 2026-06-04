@@ -205,6 +205,10 @@ def test_login_shows_error_alert_for_invalid_credentials():
     assert response.status_code == 200
     page = response.content.decode("utf-8")
     assert "Benutzername oder Passwort ist ungültig." in page
+    assert "Login fehlgeschlagen" in page
+    assert "id=\"loginError\"" in page
+    assert "aria-invalid=\"true\"" in page
+    assert "sendNotif" in page
     assert "role=\"alert\"" in page
 
 

@@ -8,16 +8,24 @@ $(document).ready(function () {
   const $galeryModal = $("#galeryModal");
   const $galeryModalContainer = $galeryModal.find(".modal-container");
 
+  function openGaleryModal() {
+    $galeryModal.removeClass("hidden").addClass("flex");
+  }
+
+  function closeGaleryModal() {
+    $galeryModal.addClass("hidden").removeClass("flex");
+  }
+
   $("#reloadGalerien").on("click", function () {
     loadGalerien(true);
   });
 
   $("#closeGaleryModal").on("click", function () {
-    $galeryModal.addClass("hidden");
+    closeGaleryModal();
   });
 
   $(".edit-galery").on("click", function () {
-    $galeryModal.removeClass("hidden");
+    openGaleryModal();
   });
 
   $(document).mouseup(function (e) {
@@ -25,7 +33,7 @@ $(document).ready(function () {
       !$galeryModalContainer.is(e.target) &&
       $galeryModalContainer.has(e.target).length === 0
     ) {
-      $galeryModal.addClass("hidden");
+      closeGaleryModal();
     }
   });
 });
@@ -111,7 +119,7 @@ function selectGalery(id) {
         });
 
         $productGalery.attr("galery-id", id);
-        $("#galeryModal").addClass("hidden");
+        $("#galeryModal").addClass("hidden").removeClass("flex");
         sendNotif("Galerie wurde erfolgreich geladen.", "success");
       } else {
         sendNotif("Diese Galerie ist leer. Bitte befülle sie erst!", "error");

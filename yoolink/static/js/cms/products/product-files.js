@@ -15,21 +15,32 @@ $(document).ready(function () {
   const $possibleAnyFiles = $("#possibleAnyFiles");
   const $selectedProductFiles = $("#selectedProductFiles");
   const $searchInput = $("#anyFileSearch");
+  const $selectedAnyFilesCount = $("#selectedAnyFilesCount");
+  const $selectedAnyFilesSummary = $("#selectedAnyFilesSummary");
+  const $anyFileEmptyState = $("#anyFileEmptyState");
+
+  function openAnyFileModal() {
+    $anyFileModal.removeClass("hidden").addClass("flex");
+  }
+
+  function closeAnyFileModal() {
+    $anyFileModal.addClass("hidden").removeClass("flex");
+  }
 
   initSelectedFilesFromDom();
   renderSelectedFiles();
 
   $(".edit-files").on("click", function () {
-    $anyFileModal.removeClass("hidden").addClass("flex");
+    openAnyFileModal();
     loadAnyFiles();
   });
 
   $("#closeAnyFileModal").on("click", function () {
-    $anyFileModal.addClass("hidden").removeClass("flex");
+    closeAnyFileModal();
   });
 
   $("#confirmAnyFiles").on("click", function () {
-    $anyFileModal.addClass("hidden").removeClass("flex");
+    closeAnyFileModal();
     renderSelectedFiles();
   });
 
@@ -42,7 +53,7 @@ $(document).ready(function () {
       !$modalContainer.is(e.target) &&
       $modalContainer.has(e.target).length === 0
     ) {
-      $anyFileModal.addClass("hidden").removeClass("flex");
+      closeAnyFileModal();
     }
   });
 
@@ -81,8 +92,7 @@ $(document).ready(function () {
       type: "GET",
       dataType: "json",
       success: function (response) {
-        const files = response.files || [];
-        renderAnyFiles(files);
+        renderAnyFiles(response.files || []);
 
         if (showMessage) {
           sendNotif("Dateien wurden geladen.", "success");
@@ -97,39 +107,58 @@ $(document).ready(function () {
 
   function renderAnyFiles(files) {
     $possibleAnyFiles.empty();
-
-    if (!files.length) {
-      $possibleAnyFiles.append(
-        '<div class="col-span-full rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">Keine Dateien gefunden</div>'
-      );
-      return;
-    }
+    $anyFileEmptyState.toggleClass("hidden", files.length !== 0);
 
     files.forEach(function (file) {
       const fileId = String(file.id);
+      const fileUrl = escapeHtml(file.url || "#");
       const isSelected = selectedProductFiles.has(fileId);
+      const cardClass = isSelected
+        ? "border-blue-500 bg-blue-50 ring-1 ring-blue-200"
+        : "border-slate-200 bg-white hover:border-blue-200";
+      const iconClass = isSelected
+        ? "bg-blue-600 text-white"
+        : "bg-slate-100 text-slate-500";
+      const buttonClass = isSelected
+        ? "bg-red-50 text-red-700 hover:bg-red-100"
+        : "bg-blue-50 text-blue-700 hover:bg-blue-100";
 
       const card = $(`
-        <div class="anyfile-option rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${isSelected ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white"}" data-file-id="${fileId}">
-          <div class="mb-3 flex items-start justify-between gap-3">
+        <div class="anyfile-option cursor-pointer rounded-lg border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${cardClass}" data-file-id="${fileId}">
+          <div class="mb-4 flex items-start justify-between gap-3">
             <div class="min-w-0">
-              <p class="truncate font-semibold text-gray-900">${escapeHtml(file.title || "Datei")}</p>
-              <p class="truncate text-sm text-gray-500">${escapeHtml(file.ext || "")}</p>
+              <p class="truncate text-sm font-semibold text-slate-950">${escapeHtml(file.title || "Datei")}</p>
+              <p class="mt-1 truncate text-xs text-slate-500">${escapeHtml(file.ext || "Datei")}</p>
             </div>
-            <button type="button" class="toggle-anyfile rounded-lg px-3 py-1 text-sm font-semibold ${isSelected ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${iconClass}">
+              <i class="bi ${isSelected ? "bi-check2" : "bi-file-earmark"}"></i>
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <a href="${fileUrl}" target="_blank" class="truncate text-sm font-medium text-blue-600 hover:underline">Datei öffnen</a>
+            <button type="button" class="toggle-anyfile rounded-md px-3 py-1.5 text-xs font-semibold transition ${buttonClass}">
               ${isSelected ? "Entfernen" : "Hinzufügen"}
             </button>
           </div>
-          <a href="${file.url}" target="_blank" class="text-sm font-medium text-blue-600 hover:underline">Datei öffnen</a>
         </div>
       `);
 
-      card.find(".toggle-anyfile").on("click", function () {
+      card.on("click", function (event) {
+        if ($(event.target).closest("a, button").length) {
+          return;
+        }
+        toggleFile(file);
+      });
+
+      card.find(".toggle-anyfile").on("click", function (event) {
+        event.stopPropagation();
         toggleFile(file);
       });
 
       $possibleAnyFiles.append(card);
     });
+
+    filterAnyFiles($searchInput.val().trim().toLowerCase());
   }
 
   function toggleFile(file) {
@@ -152,6 +181,7 @@ $(document).ready(function () {
 
   function renderSelectedFiles() {
     $selectedProductFiles.empty();
+    renderModalSelectionSummary();
 
     if (!selectedProductFiles.size) {
       $selectedProductFiles.append(
@@ -165,7 +195,7 @@ $(document).ready(function () {
         <div
           class="selected-product-file flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
           data-file-id="${file.id}"
-          data-file-url="${file.url}"
+          data-file-url="${escapeHtml(file.url)}"
           data-file-title="${escapeHtml(file.title)}"
           data-file-ext="${escapeHtml(file.ext)}"
         >
@@ -186,11 +216,40 @@ $(document).ready(function () {
     });
   }
 
-  function filterAnyFiles(query) {
-    $("#possibleAnyFiles .anyfile-option").each(function () {
-      const text = $(this).text().toLowerCase();
-      $(this).toggle(text.includes(query));
+  function renderModalSelectionSummary() {
+    const count = selectedProductFiles.size;
+
+    $selectedAnyFilesCount.text(count === 1 ? "1 Datei ausgewählt" : `${count} Dateien ausgewählt`);
+    $selectedAnyFilesSummary.empty();
+
+    if (!count) {
+      $selectedAnyFilesSummary.append('<p class="text-center text-slate-400">Noch keine Dateien ausgewählt</p>');
+      return;
+    }
+
+    selectedProductFiles.forEach(function (file) {
+      $selectedAnyFilesSummary.append(`
+        <div class="rounded-md bg-white px-3 py-2 shadow-sm">
+          <p class="truncate font-medium text-slate-800">${escapeHtml(file.title)}</p>
+          <p class="truncate text-xs text-slate-500">${escapeHtml(file.ext)}</p>
+        </div>
+      `);
     });
+  }
+
+  function filterAnyFiles(query) {
+    let visibleCount = 0;
+
+    $("#possibleAnyFiles .anyfile-option").each(function () {
+      const isVisible = $(this).text().toLowerCase().includes(query);
+      $(this).toggle(isVisible);
+
+      if (isVisible) {
+        visibleCount += 1;
+      }
+    });
+
+    $anyFileEmptyState.toggleClass("hidden", visibleCount !== 0);
   }
 
   function escapeHtml(value) {
