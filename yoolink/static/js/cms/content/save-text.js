@@ -145,13 +145,17 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     sendNotif(response.success, "success");
+                    // Let page-level listeners (e.g. the mainsite editor) react to a successful save.
+                    $(document).trigger("textContentSaved");
                 } else {
                     sendNotif(response.error, "error");
+                    $(document).trigger("textContentSaveError");
                 }
             },
             error: function (error) {
                 console.error("Error occurred: " + error.statusText);
                 sendNotif("Beim Speichern ist ein Fehler aufgetreten", "error");
+                $(document).trigger("textContentSaveError");
             },
             complete: function () {
                 setSaveTextLoading($btn, false);

@@ -55,7 +55,46 @@ def content_view(request):
 
 @login_required(login_url="login")
 def site_view_main(request):
-    return render(request, "pages/cms/content/sites/MainSite.html", {})
+    """Single combined editor for the whole main page (all sections at once).
+
+    Gathers the same data the individual section views provide so everything can
+    be edited on one page. Saving still goes through ``save_text_content`` via the
+    generic ``.text-content`` / galery / video markup.
+    """
+    data = {
+        "pricing_count": PricingCard.objects.count(),
+        "member_count": TeamMember.objects.count(),
+        "faq_count": FAQ.objects.count(),
+        # Texts per section
+        "hero_text": _get_text("main_hero"),
+        "responsive_text": _get_text("main_responsive"),
+        "cms_text": _get_text("main_cms"),
+        "knowhow_text": _get_text("main_know_how"),
+        "kunden_text": _get_text("main_kunden"),
+        "price_text": _get_text("main_price"),
+        "team_text": _get_text("main_team"),
+        "faq_text": _get_text("main_faq"),
+    }
+
+    # Know-How cards
+    for index in range(1, 4):
+        data[f"knowhow_card_{index}"] = _get_text(f"main_know_how_card_{index}")
+
+    # Hero galery
+    if Galerie.objects.filter(place="main_hero").exists():
+        data["heroImages"] = Galerie.objects.get(place="main_hero").images.all()
+
+    # Responsive galeries
+    if Galerie.objects.filter(place="main_responsive_desktop").exists():
+        data["responsiveDesktopImages"] = Galerie.objects.get(place="main_responsive_desktop").images.all()
+    if Galerie.objects.filter(place="main_responsive_handy").exists():
+        data["responsiveHandyImages"] = Galerie.objects.get(place="main_responsive_handy").images.all()
+
+    # CMS video
+    if VideoFile.objects.filter(place="main_cms").exists():
+        data["cmsVideo"] = VideoFile.objects.get(place="main_cms")
+
+    return render(request, "pages/cms/content/sites/MainSite.html", data)
 
 
 @login_required(login_url="login")
