@@ -172,6 +172,13 @@ Empfohlene erste Umsetzung:
    - Kurze Checkliste: Logo, Firmeninfos, SEO, Bilder, Datenschutz, Shop.
    - Keine langen Erklaertexte im UI, sondern kontextnahe Hinweise.
 
+4. Dokumentations-App im CMS
+   - Neue CMS-App fuer eine durch Template/Library erzeugte Dokumentationsseite.
+   - Inhalte nach YooLink-Versionen strukturieren, damit Kunden die passende Anleitung sehen.
+   - Schritt-fuer-Schritt-Anleitungen fuer typische Aufgaben: Blog erstellen, Produkte pflegen, Medien hochladen, Pricing bearbeiten, SEO pflegen.
+   - Suchfunktion und Kategorien fuer schnelle Hilfe direkt im CMS.
+   - Dokumentation versionierbar halten, damit neue YooLink-Funktionen erklaert werden koennen, ohne alte Kunden-Setups zu verwirren.
+
 ## Empfohlene Reihenfolge
 
 1. Security-Basis fertigstellen: Secrets und Permission-Tests.
@@ -179,6 +186,7 @@ Empfohlene erste Umsetzung:
 3. Freie CSS/HTML-Felder in Presets umbauen.
 4. Pricing CMS und Button-Erstellung mit Preview neu strukturieren.
 5. SEO-Settings pro Seite und Domain-Dynamik.
-6. Mehruser-Rollen und User-Verwaltung.
-7. Audit Log und Wiederherstellung.
-8. Draft/Preview/Publish fuer Seitencontent und Blog.
+6. CMS-interne Dokumentations-App fuer versionierte Kundenhilfe.
+7. Mehruser-Rollen und User-Verwaltung.
+8. Audit Log und Wiederherstellung.
+9. Draft/Preview/Publish fuer Seitencontent und Blog.
