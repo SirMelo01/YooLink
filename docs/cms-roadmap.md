@@ -7,6 +7,7 @@ Ziel: Das CMS soll fuer Kunden intuitiv bleiben, ohne zu einem freien Baukasten 
 - Pricing- und Button-CMS-Views serverseitig hinter Login gelegt.
 - CSRF-Ausnahmen bei Pricing-Loeschung und Pricing-Reorder entfernt.
 - Regressionstests fuer anonymen Zugriff und CSRF-Schutz ergaenzt.
+- Zentrale Upload-Grenzen pro Dateityp eingefuehrt und CMS-/API-Uploads daran angebunden.
 
 ## Phase 1: Sicherheitsbasis
 
@@ -15,17 +16,12 @@ Ziel: Das CMS soll fuer Kunden intuitiv bleiben, ohne zu einem freien Baukasten 
    - Alle Secrets nur ueber Environment-Variablen.
    - Alte/versehentlich committete Keys rotieren.
 
-2. Upload-Grenzen einfuehren
-   - Maximale Dateigroesse pro Typ: Bild, Video, PDF, Office-Datei.
-   - Optional Quota pro Website/Kunde.
-   - Bessere Fehlermeldungen bei zu grossen Dateien.
-
-3. Zentrale Permission-Tests
+2. Zentrale Permission-Tests
    - Jede CMS-Mutationsroute anonym: Redirect/403.
    - Jede POST/DELETE/PATCH-Route mit CSRF-Checks.
    - Developer API getrennt testen: Bearer Auth, Scopes, expired/revoked keys.
 
-4. HTML/CSS-Freiheiten einschraenken
+3. HTML/CSS-Freiheiten einschraenken
    - Freie Button-`css_classes` fuer normale Nutzer entfernen oder hinter Admin/Developer-Rolle verstecken.
    - Stattdessen Button-Presets: primary, secondary, outline, link, danger.
    - Privacy-/Blog-HTML nur mit Sanitizer oder erlaubten Blocktypen.
@@ -178,7 +174,7 @@ Empfohlene erste Umsetzung:
 
 ## Empfohlene Reihenfolge
 
-1. Security-Basis fertigstellen: Secrets, Upload-Limits, Permission-Tests.
+1. Security-Basis fertigstellen: Secrets und Permission-Tests.
 2. `WebsiteSettings` einfuehren und oeffentliche Website davon lesen lassen.
 3. Freie CSS/HTML-Felder in Presets umbauen.
 4. Pricing CMS und Button-Erstellung mit Preview neu strukturieren.

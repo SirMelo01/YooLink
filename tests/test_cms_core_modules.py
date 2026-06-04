@@ -5,6 +5,7 @@ from datetime import time
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
@@ -287,6 +288,47 @@ def test_large_png_without_transparency_is_converted_for_smaller_delivery(logged
     assert image.file.name.endswith(".jpeg")
     assert image.mobile_file.name.endswith(".jpeg")
     assert "PNG ohne Transparenz" in payload["image"]["optimization"]["note"]
+
+
+@override_settings(
+    YCMS_UPLOAD_LIMIT_BYTES={
+        "image": 4,
+        "video": 4,
+        "document": 4,
+        "archive": 4,
+        "subtitle": 4,
+    }
+)
+def test_upload_limits_reject_oversized_cms_files(logged_in_client):
+    image_response = logged_in_client.post(
+        reverse("ycms:post-upload"),
+        {"file": SimpleUploadedFile("too-large.png", b"12345", content_type="image/png")},
+    )
+
+    assert image_response.status_code == 400
+    assert "zu gross" in image_response.json()["error"]
+    assert fileentry.objects.count() == 0
+
+    anyfile_response = logged_in_client.post(
+        reverse("ycms:anyfile-upload"),
+        {"file": SimpleUploadedFile("too-large.pdf", b"12345", content_type="application/pdf")},
+    )
+
+    assert anyfile_response.status_code == 400
+    assert "zu gross" in anyfile_response.json()["error"]
+    assert AnyFile.objects.count() == 0
+
+    video_response = logged_in_client.post(
+        reverse("ycms:create_video"),
+        {
+            "file": SimpleUploadedFile("too-large.mp4", b"12345", content_type="video/mp4"),
+            "title": "Too big",
+        },
+    )
+
+    assert video_response.status_code == 400
+    assert "zu gross" in video_response.json()["error"]
+    assert VideoFile.objects.count() == 0
 
 
 def test_image_delete_endpoint_removes_image_after_confirmation(logged_in_client):

@@ -64,6 +64,14 @@ from django.utils import timezone
 from datetime import timedelta
 from random import SystemRandom
 from yoolink.ycms.tasks import send_login_2fa_email
+from yoolink.ycms.upload_validation import (
+    validate_anyfile_upload,
+    validate_image_upload,
+    validate_subtitle_upload,
+    validate_video_thumbnail_upload,
+    validate_video_upload,
+    validation_error_message,
+)
 
 DEFAULT_LANGUAGE = "en"
 DESKTOP_IMAGE_MAX_DIMENSIONS = (1920, 1920)
@@ -72,6 +80,9 @@ DESKTOP_IMAGE_TARGET_KB = 500
 MOBILE_IMAGE_TARGET_KB = 260
 PNG_TO_JPEG_THRESHOLD_KB = 300
 
+
+def upload_validation_error_response(error):
+    return JsonResponse({"error": validation_error_message(error)}, status=400)
 
 
 def get_active_language(request):
@@ -194,6 +205,11 @@ def cms(request):
             context['last'] = '\n'.join([f.name for f in request.FILES.getlist('file')])
             
             for file in request.FILES.getlist('file'):
+                try:
+                    validate_image_upload(file)
+                except ValidationError as error:
+                    context['last'] = validation_error_message(error)
+                    break
                 new_file = fileentry(
                     file = file
                 )
@@ -567,6 +583,11 @@ def file_upload_view(request):
         my_file = request.FILES.get('file')
         if not my_file:
             return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
+
+        try:
+            validate_image_upload(my_file)
+        except ValidationError as error:
+            return upload_validation_error_response(error)
 
         desktop_image = optimize_image_for_upload(
             my_file,
@@ -1167,6 +1188,11 @@ def create_blog(request):
         active = request.POST.get('active', False)
         
         title_image = request.FILES.get('title_image', '')
+        if title_image:
+            try:
+                validate_image_upload(title_image)
+            except ValidationError as error:
+                return upload_validation_error_response(error)
     
         #return JsonResponse({'title': title, 'body': body, 'code': code})
 
@@ -1220,6 +1246,11 @@ def update_blog(request, id):
         description = (request.POST.get('description') or '').strip()
         active = request.POST.get('active', False)
         title_image = request.FILES.get('title_image', '')
+        if title_image:
+            try:
+                validate_image_upload(title_image)
+            except ValidationError as error:
+                return upload_validation_error_response(error)
 
         if title:
             if not description:
@@ -1470,6 +1501,14 @@ def save_galery(request, id):
 def upload_galery_img(request, id):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
+        if not my_file:
+            return JsonResponse({'error': 'Keine Datei uebermittelt'}, status=400)
+
+        try:
+            validate_image_upload(my_file)
+        except ValidationError as error:
+            return upload_validation_error_response(error)
+
         optimized_image = optimize_image_for_upload(my_file)
         doc = GaleryImage.objects.create(upload=optimized_image)
         galery = Galerie.objects.get(id=id)
@@ -1982,9 +2021,17 @@ def update_logo_favicon(request):
 
     if request.method == 'POST':
         if 'logo' in request.FILES:
+            try:
+                validate_image_upload(request.FILES['logo'], label="Logo")
+            except ValidationError as error:
+                return upload_validation_error_response(error)
             user_settings.logo = request.FILES['logo']
             updated = True
         if 'favicon' in request.FILES:
+            try:
+                validate_image_upload(request.FILES['favicon'], label="Favicon")
+            except ValidationError as error:
+                return upload_validation_error_response(error)
             user_settings.favicon = request.FILES['favicon']
             updated = True
         if updated:
@@ -2636,7 +2683,14 @@ def anyfile_upload_view(request):
     if request.method == 'POST':
         uploaded_file = request.FILES.get('file')
         if uploaded_file:
-            AnyFile.objects.create(file=uploaded_file)
+            try:
+                validate_anyfile_upload(uploaded_file)
+            except ValidationError as error:
+                return upload_validation_error_response(error)
+
+            any_file = AnyFile(file=uploaded_file)
+            any_file.full_clean()
+            any_file.save()
             return HttpResponse('')
     return JsonResponse({'post': 'false'})
 
@@ -2783,6 +2837,18 @@ def create_video(request):
         video = request.FILES.get('file')
         thumbnail = request.FILES.get('thumbnail')
         subtitle = request.FILES.get('subtitle')
+        if not video:
+            return JsonResponse({'error': 'Bitte waehle eine Videodatei aus.'}, status=400)
+
+        try:
+            validate_video_upload(video)
+            if thumbnail:
+                validate_video_thumbnail_upload(thumbnail)
+            if subtitle:
+                validate_subtitle_upload(subtitle)
+        except ValidationError as error:
+            return upload_validation_error_response(error)
+
         # Sprache bestimmen
         lang = get_active_language(request)
 
@@ -2870,10 +2936,22 @@ def edit_video(request, pk):
         video.preload = request.POST.get('preload', 'metadata')
 
         if 'file' in request.FILES:
+            try:
+                validate_video_upload(request.FILES['file'])
+            except ValidationError as error:
+                return upload_validation_error_response(error)
             video.file = request.FILES['file']
         if 'thumbnail' in request.FILES:
+            try:
+                validate_video_thumbnail_upload(request.FILES['thumbnail'])
+            except ValidationError as error:
+                return upload_validation_error_response(error)
             video.thumbnail = request.FILES['thumbnail']
         if 'subtitle' in request.FILES:
+            try:
+                validate_subtitle_upload(request.FILES['subtitle'])
+            except ValidationError as error:
+                return upload_validation_error_response(error)
             video.subtitle_file = request.FILES['subtitle']
 
         if not video.slug:

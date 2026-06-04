@@ -4,6 +4,8 @@ from decimal import Decimal
 import pytest
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -203,6 +205,24 @@ def test_cms_product_create_ignores_reduced_price_when_switch_is_off(logged_in_c
     product = Product.objects.get()
     assert product.is_reduced is False
     assert product.discount_price is None
+
+
+@override_settings(YCMS_UPLOAD_LIMIT_BYTES={"image": 4})
+def test_cms_product_create_rejects_oversized_title_image(logged_in_client):
+    response = logged_in_client.post(
+        reverse("ycms:product-create-upload"),
+        _product_payload(
+            title_image=SimpleUploadedFile(
+                "too-large.png",
+                b"12345",
+                content_type="image/png",
+            )
+        ),
+    )
+
+    assert response.status_code == 400
+    assert "zu gross" in response.json()["error"]
+    assert Product.objects.count() == 0
 
 
 def test_cms_product_update_can_disable_discount_with_stale_reduced_price(logged_in_client):

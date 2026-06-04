@@ -14,6 +14,12 @@ from django.utils import timezone
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.utils.translation import get_language, gettext_lazy as _
+from .upload_validation import (
+    validate_anyfile_upload,
+    validate_subtitle_upload,
+    validate_video_thumbnail_upload,
+    validate_video_upload,
+)
 
 ## Produktiv und funktioniert
 
@@ -98,6 +104,8 @@ def unique_anyfile_name(instance, filename):
     return f"yoolink/uploads/{slugify(base)}_{timestamp}{ext}"
 
 def validate_file_extension(value):
+    validate_anyfile_upload(value)
+    return
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm',
                           '.pdf', '.zip', '.docx', '.xlsx', '.txt']
     ext = os.path.splitext(value.name)[1].lower()
@@ -123,18 +131,24 @@ def unique_video_name(instance, filename):
     return f"yoolink/videos/{slugify(base)}_{timestamp}{ext}"
 
 def validate_video_extension(value):
+    validate_video_upload(value)
+    return
     allowed = ['.mp4', '.mov', '.webm']
     ext = os.path.splitext(value.name)[1].lower()
     if ext not in allowed:
         raise ValidationError(f'Dateiformat "{ext}" wird nicht unterstützt.')
 
 def validate_image_extension(value):
+    validate_video_thumbnail_upload(value)
+    return
     allowed = ['.jpg', '.jpeg', '.png', '.webp']
     ext = os.path.splitext(value.name)[1].lower()
     if ext not in allowed:
         raise ValidationError(f'Bildformat "{ext}" wird nicht unterstützt.')
 
 def validate_vtt_extension(value):
+    validate_subtitle_upload(value)
+    return
     if not value.name.lower().endswith('.vtt'):
         raise ValidationError('Nur .vtt Untertiteldateien sind erlaubt.')
 

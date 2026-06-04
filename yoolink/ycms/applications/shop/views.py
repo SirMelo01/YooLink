@@ -22,6 +22,7 @@ from django.db.models import Q
 
 from yoolink.views import get_opening_hours
 from yoolink.ycms.models import AnyFile, Galerie, UserSettings
+from yoolink.ycms.upload_validation import validate_image_upload
 from yoolink.ycms.views import compress_image, resize_image, scale_image
 
 from .serializers import OrderItemSerializer, OrderSerializer
@@ -462,6 +463,12 @@ def apply_product_form_data(request, product):
 
     if is_reduced and reduced_price >= price:
         return None, JsonResponse({"error": "Der reduzierte Preis muss kleiner als der Normalpreis sein."}, status=400)
+
+    if uploaded_image:
+        try:
+            validate_image_upload(uploaded_image)
+        except ValidationError as error:
+            return None, JsonResponse({"error": validation_error_to_message(error)}, status=400)
 
     duplicate_qs = Product.objects.filter(title=title, language=product.language)
     if product.pk:

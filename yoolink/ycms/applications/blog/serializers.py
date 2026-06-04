@@ -1,11 +1,13 @@
 import os
 from html import escape
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.text import slugify
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 
 from yoolink.ycms.models import Blog, DeveloperApiKey, fileentry
+from yoolink.ycms.upload_validation import validate_image_upload, validation_error_message
 
 from .services import (
     blog_code_to_markdown,
@@ -201,6 +203,14 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             return path
         return request.build_absolute_uri(path)
 
+    def validate_title_image(self, value):
+        if value:
+            try:
+                validate_image_upload(value)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError(validation_error_message(exc)) from exc
+        return value
+
     def validate(self, attrs):
         attrs = super().validate(attrs)
         initial_data = getattr(self, "initial_data", {}) or {}
@@ -339,6 +349,11 @@ class ExternalBlogImageUploadSerializer(serializers.Serializer):
         filename = (value.name or "").lower()
         if not any(filename.endswith(extension) for extension in ALLOWED_BLOG_IMAGE_EXTENSIONS):
             raise serializers.ValidationError("Erlaubte Bildformate: jpg, jpeg, png, gif, webp.")
+
+        try:
+            validate_image_upload(value)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(validation_error_message(exc)) from exc
 
         return value
 

@@ -206,6 +206,14 @@ RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY", default="")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY", default="")
 GOOGLE_MAPS_EMBED_API_KEY = env("GOOGLE_MAPS_EMBED_API_KEY", default="")
 
+YCMS_UPLOAD_LIMIT_BYTES = {
+    "image": env.int("YCMS_IMAGE_UPLOAD_MAX_BYTES", default=100 * 1024 * 1024),
+    "video": env.int("YCMS_VIDEO_UPLOAD_MAX_BYTES", default=800 * 1024 * 1024),
+    "document": env.int("YCMS_DOCUMENT_UPLOAD_MAX_BYTES", default=150 * 1024 * 1024),
+    "archive": env.int("YCMS_ARCHIVE_UPLOAD_MAX_BYTES", default=120 * 1024 * 1024),
+    "subtitle": env.int("YCMS_SUBTITLE_UPLOAD_MAX_BYTES", default=10 * 1024 * 1024),
+}
+
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates

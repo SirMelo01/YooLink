@@ -5,6 +5,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
@@ -502,6 +503,22 @@ def test_write_key_can_upload_blog_media_and_use_markdown(cms_user):
     assert upload_response.data["markdown"] in blog.markdown
     assert [block["name"] for block in blog.code] == ["title-1", "image"]
     assert 'class="rounded-2xl my-4"' in blog.body
+
+
+@override_settings(YCMS_UPLOAD_LIMIT_BYTES={"image": 4})
+def test_write_key_rejects_oversized_blog_media(cms_user):
+    _, raw_key = issue_key(cms_user)
+    client = api_client_for(raw_key)
+
+    response = client.post(
+        "/api/cms/blog/media/",
+        {"file": image_upload("too-large.png")},
+        format="multipart",
+    )
+
+    assert response.status_code == 400
+    assert "zu gross" in str(response.data)
+    assert fileentry.objects.count() == 0
 
 
 def test_read_only_key_cannot_upload_blog_media(cms_user):
