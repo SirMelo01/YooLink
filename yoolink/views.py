@@ -230,6 +230,14 @@ def load_medien(request):
     return render(request, 'pages/leistungen_medien.html', context=context)
 
 
+def load_webdesign_deggendorf(request):
+    context = {
+        'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
+    }
+    context.update(get_opening_hours())
+    return render(request, 'pages/webdesign_deggendorf.html', context=context)
+
+
 def load_webdesign(request):
     context = {}
     context.update(get_opening_hours())
