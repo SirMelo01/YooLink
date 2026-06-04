@@ -43,7 +43,7 @@ from PIL import Image
 from io import BytesIO
 from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, models, transaction
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -53,7 +53,6 @@ from django.core.mail import send_mail
 from yoolink.users.models import User
 from rest_framework.permissions import IsAuthenticated
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_exempt
 from django.templatetags.static import static
 from django.utils import translation
 from django.utils.html import strip_tags
@@ -2386,13 +2385,14 @@ def reorder_team_members(request):
 ##################
 #    PRICING     #
 ##################
+@login_required(login_url='login')
 def pricing_card_overview(request):
     cards = PricingCard.objects.select_related('button').all().order_by('order')
     return render(request, 'pages/cms/pricing/pricing.html', {
         'pricing_cards': cards
     })
 
-from django.db import models
+@login_required(login_url='login')
 def create_pricing_card(request):
     if request.method == "GET":
         # Optional: Alle Buttons anzeigen, um sie im Template als Auswahl zu rendern
@@ -2431,6 +2431,7 @@ def create_pricing_card(request):
     return HttpResponseBadRequest()
 
 
+@login_required(login_url='login')
 def edit_pricing_card(request, pk):
     card = get_object_or_404(PricingCard, pk=pk)
 
@@ -2470,7 +2471,7 @@ def edit_pricing_card(request, pk):
     return HttpResponseBadRequest()
 
 
-@csrf_exempt
+@login_required(login_url='login')
 def delete_pricing_card(request, pk):
     if request.method == "POST":
         card = get_object_or_404(PricingCard, pk=pk)
@@ -2485,8 +2486,7 @@ def delete_pricing_card(request, pk):
         return JsonResponse({"success": True})
     return HttpResponseBadRequest()
 
-@csrf_exempt
-@login_required
+@login_required(login_url='login')
 def pricingcard_reorder(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -2501,6 +2501,7 @@ def pricingcard_reorder(request):
     return HttpResponseBadRequest()
 
 
+@login_required(login_url='login')
 def manage_features(request, pk):
     card = get_object_or_404(PricingCard, pk=pk)
 
@@ -2547,12 +2548,14 @@ def manage_features(request, pk):
 
     return HttpResponseBadRequest()
 
+@login_required(login_url='login')
 def button_list(request):
     buttons = Button.objects.all().order_by("order")
     return render(request, "pages/cms/buttons/button_list.html", {
         "buttons": buttons
     })
 
+@login_required(login_url='login')
 def button_create(request):
     if request.method == "GET":
         targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
@@ -2584,6 +2587,7 @@ def button_create(request):
 
     return HttpResponseBadRequest()
 
+@login_required(login_url='login')
 def button_edit(request, pk):
     button = get_object_or_404(Button, pk=pk)
 
@@ -2618,6 +2622,7 @@ def button_edit(request, pk):
 
     return HttpResponseBadRequest()
 
+@login_required(login_url='login')
 def button_delete(request, pk):
     if request.method == "POST":
         button = get_object_or_404(Button, pk=pk)

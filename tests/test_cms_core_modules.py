@@ -74,6 +74,54 @@ def test_cms_dashboard_requires_login_and_shows_module_counts(client, logged_in_
     assert response.context["galery_count"] == 1
 
 
+def test_pricing_and_button_views_require_login_and_csrf(client, cms_user):
+    protected_requests = [
+        ("get", reverse("ycms:pricingcard-list")),
+        ("get", reverse("ycms:pricingcard-create")),
+        ("post", reverse("ycms:pricingcard-create")),
+        ("get", reverse("ycms:pricingcard-edit", args=[1])),
+        ("post", reverse("ycms:pricingcard-edit", args=[1])),
+        ("post", reverse("ycms:pricingcard-delete", args=[1])),
+        ("post", reverse("ycms:pricingcard-reorder")),
+        ("get", reverse("ycms:pricingcard-features", args=[1])),
+        ("post", reverse("ycms:pricingcard-features", args=[1])),
+        ("get", reverse("ycms:button-list")),
+        ("get", reverse("ycms:button-create")),
+        ("post", reverse("ycms:button-create")),
+        ("get", reverse("ycms:button-edit", args=[1])),
+        ("post", reverse("ycms:button-edit", args=[1])),
+        ("post", reverse("ycms:button-delete", args=[1])),
+    ]
+
+    for method, url in protected_requests:
+        response = getattr(client, method)(url)
+        assert response.status_code == 302
+
+    from django.test import Client
+
+    csrf_client = Client(enforce_csrf_checks=True)
+    csrf_client.force_login(cms_user)
+
+    button = Button.objects.create(text="Kontakt", url="https://example.com")
+    card = PricingCard.objects.create(
+        title="Starter",
+        monthly_price="25 EUR",
+        one_time_price="250 EUR",
+        button=button,
+    )
+
+    csrf_checked_posts = [
+        reverse("ycms:pricingcard-delete", args=[card.id]),
+        reverse("ycms:pricingcard-reorder"),
+        reverse("ycms:button-create"),
+        reverse("ycms:button-delete", args=[button.id]),
+    ]
+
+    for url in csrf_checked_posts:
+        response = csrf_client.post(url, data=json.dumps({}), content_type="application/json")
+        assert response.status_code == 403
+
+
 def test_faq_create_update_reorder_and_delete(logged_in_client):
     create_response = logged_in_client.get(
         reverse("ycms:faq-update"),
