@@ -39,6 +39,17 @@ $(document).ready(function () {
             mobile_number: $.trim($('#mobile_number').val()),
             website: $.trim($('#website').val()),
             address: $.trim($('#address').val()),
+            social_instagram: $.trim($('#social_instagram').val()),
+            social_x: $.trim($('#social_x').val()),
+            social_facebook: $.trim($('#social_facebook').val()),
+            social_linkedin: $.trim($('#social_linkedin').val()),
+            price_range: $.trim($('#price_range').val()),
+            area_served: $.trim($('#area_served').val()),
+            business_description: $.trim($('#business_description').val()),
+            address_region: $.trim($('#address_region').val()),
+            address_country: $.trim($('#address_country').val()),
+            geo_latitude: $.trim($('#geo_latitude').val()),
+            geo_longitude: $.trim($('#geo_longitude').val()),
             global_font: $('#global_font').val(),
             csrfmiddlewaretoken: csrfToken
         };

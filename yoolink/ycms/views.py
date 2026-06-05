@@ -1694,6 +1694,17 @@ def user_settings_update(request):
     mobile_number = request.POST.get('mobile_number', '').strip()
     website = request.POST.get('website', '').strip()
     address = request.POST.get('address', '').strip()
+    social_instagram = request.POST.get('social_instagram', '').strip()
+    social_x = request.POST.get('social_x', '').strip()
+    social_facebook = request.POST.get('social_facebook', '').strip()
+    social_linkedin = request.POST.get('social_linkedin', '').strip()
+    price_range = request.POST.get('price_range', '').strip()
+    area_served = request.POST.get('area_served', '').strip()
+    business_description = request.POST.get('business_description', '').strip()
+    address_region = request.POST.get('address_region', '').strip()
+    address_country = request.POST.get('address_country', '').strip()
+    geo_latitude = request.POST.get('geo_latitude', '').strip()
+    geo_longitude = request.POST.get('geo_longitude', '').strip()
     global_font = request.POST.get('global_font', '').strip()
 
     allowed_fonts = {'', 'font-sans', 'font-serif', 'font-mono'}
@@ -1722,6 +1733,17 @@ def user_settings_update(request):
     user_settings.mobile_number = mobile_number
     user_settings.website = website
     user_settings.address = address
+    user_settings.social_instagram = social_instagram
+    user_settings.social_x = social_x
+    user_settings.social_facebook = social_facebook
+    user_settings.social_linkedin = social_linkedin
+    user_settings.price_range = price_range
+    user_settings.area_served = area_served
+    user_settings.business_description = business_description
+    user_settings.address_region = address_region
+    user_settings.address_country = address_country
+    user_settings.geo_latitude = geo_latitude
+    user_settings.geo_longitude = geo_longitude
     user_settings.global_font = global_font
 
     two_factor_reset = (

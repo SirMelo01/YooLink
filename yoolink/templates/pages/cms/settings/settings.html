@@ -108,6 +108,110 @@
                                placeholder="Unternehmensweg 2, 29299 Wohrt" />
                     </div>
 
+                    <div class="sm:col-span-2 mt-2 border-t border-slate-100 pt-5">
+                        <h3 class="text-sm font-semibold text-slate-800">SEO / Structured Data</h3>
+                        <p class="mt-1 text-xs text-slate-500">Diese Angaben erscheinen im Website-Schema (Organization &amp; LocalBusiness). Leer lassen = wird weggelassen.</p>
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="social_instagram">Instagram-URL</label>
+                        <input value="{{ settings.social_instagram }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="social_instagram"
+                               type="text"
+                               placeholder="https://www.instagram.com/yoolinkde/" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="social_x">X- / Twitter-URL</label>
+                        <input value="{{ settings.social_x }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="social_x"
+                               type="text"
+                               placeholder="https://x.com/YooLinkDE" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="social_facebook">Facebook-URL</label>
+                        <input value="{{ settings.social_facebook }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="social_facebook"
+                               type="text"
+                               placeholder="https://www.facebook.com/deineSeite" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="social_linkedin">LinkedIn-URL</label>
+                        <input value="{{ settings.social_linkedin }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="social_linkedin"
+                               type="text"
+                               placeholder="https://www.linkedin.com/company/..." />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="price_range">Preisrahmen</label>
+                        <input value="{{ settings.price_range }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="price_range"
+                               type="text"
+                               placeholder="ab 40 €/Monat" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="business_description">Kurzbeschreibung / Slogan</label>
+                        <input value="{{ settings.business_description }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="business_description"
+                               type="text"
+                               placeholder="Webdesign Agentur im Raum Niederbayern" />
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="area_served">Einzugsgebiet (kommagetrennt)</label>
+                        <input value="{{ settings.area_served }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="area_served"
+                               type="text"
+                               placeholder="Passau, Regensburg, Deggendorf, Niederbayern" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="address_region">Bundesland</label>
+                        <input value="{{ settings.address_region }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="address_region"
+                               type="text"
+                               placeholder="Bayern" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="address_country">Land (2-Buchstaben-Code)</label>
+                        <input value="{{ settings.address_country }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="address_country"
+                               type="text"
+                               placeholder="DE" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="geo_latitude">Geo Breitengrad (latitude)</label>
+                        <input value="{{ settings.geo_latitude }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="geo_latitude"
+                               type="text"
+                               placeholder="48.7667" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-slate-700" for="geo_longitude">Geo Längengrad (longitude)</label>
+                        <input value="{{ settings.geo_longitude }}"
+                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                               id="geo_longitude"
+                               type="text"
+                               placeholder="13.0500" />
+                    </div>
+
                     <div class="sm:col-span-2 xl:col-span-1">
                         <label class="mb-2 block text-sm font-medium text-slate-700" for="global_font">Globale Schriftart</label>
                         <select class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
