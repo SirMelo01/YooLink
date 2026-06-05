@@ -40,6 +40,11 @@
 
     {% block structured_data %}{% endblock %}
 
+    <!-- Wichtigste Schriftschnitte vorab laden, um FOUT zu vermeiden -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-400.woff2' %}">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-500.woff2' %}">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-700.woff2' %}">
+
     {% compress css inline %}
       <link rel="stylesheet" href="{% static 'css/icons/flag-icons.min.css' %}"/>
       <link href="{% static 'css/output.css' %}" rel="stylesheet">

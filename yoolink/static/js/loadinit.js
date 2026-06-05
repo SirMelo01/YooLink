@@ -5,12 +5,9 @@
   const CONSENT_VERSION = 1;
   const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
   const GA_ID = "G-ZYQPVZ3REE";
-  const GOOGLE_FONT_URL =
-    "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap";
 
   const defaultPreferences = {
     necessary: true,
-    preferences: false,
     analytics: false,
     external: false,
   };
@@ -75,7 +72,6 @@
       decidedAt: new Date().toISOString(),
       categories: {
         necessary: true,
-        preferences: getCookie("Cookie-Font") === "true",
         analytics: getCookie("Cookie-Analytic") === "true",
         external: getCookie("Cookie-Map") === "true",
       },
@@ -98,16 +94,14 @@
   function syncLegacyGlobals() {
     const consent = getConsent();
     window.cookieselect = consent ? String(Object.values(consent.categories).some(Boolean)) : null;
-    window.cookiefontselect = String(Boolean(consent && consent.categories.preferences));
     window.cookieanalyticselect = String(Boolean(consent && consent.categories.analytics));
     window.cookiemapselect = String(Boolean(consent && consent.categories.external));
   }
 
   function syncLegacyCookies(consent) {
     const anyOptional =
-      consent.categories.preferences || consent.categories.analytics || consent.categories.external;
+      consent.categories.analytics || consent.categories.external;
     setCookie("Cookie-Consent", String(anyOptional), CONSENT_MAX_AGE);
-    setCookie("Cookie-Font", String(consent.categories.preferences), CONSENT_MAX_AGE);
     setCookie("Cookie-Analytic", String(consent.categories.analytics), CONSENT_MAX_AGE);
     setCookie("Cookie-Map", String(consent.categories.external), CONSENT_MAX_AGE);
   }
@@ -115,34 +109,6 @@
   function cleanupAnalyticsCookies() {
     ["_ga", "_gid", "_gat", `_ga_${GA_ID.replace("G-", "")}`].forEach(deleteCookie);
     window["ga-disable-" + GA_ID] = true;
-  }
-
-  function ensureGoogleFonts() {
-    if (document.querySelector('link[data-cookie-service="google-fonts"]')) return;
-
-    const preconnectFonts = document.createElement("link");
-    preconnectFonts.rel = "preconnect";
-    preconnectFonts.href = "https://fonts.googleapis.com";
-    preconnectFonts.dataset.cookieService = "google-fonts";
-
-    const preconnectStatic = document.createElement("link");
-    preconnectStatic.rel = "preconnect";
-    preconnectStatic.href = "https://fonts.gstatic.com";
-    preconnectStatic.crossOrigin = "";
-    preconnectStatic.dataset.cookieService = "google-fonts";
-
-    const stylesheet = document.createElement("link");
-    stylesheet.rel = "stylesheet";
-    stylesheet.href = GOOGLE_FONT_URL;
-    stylesheet.dataset.cookieService = "google-fonts";
-
-    document.head.append(preconnectFonts, preconnectStatic, stylesheet);
-    document.body.classList.add("font-poppins");
-  }
-
-  function unloadGoogleFonts() {
-    document.querySelectorAll('[data-cookie-service="google-fonts"]').forEach((node) => node.remove());
-    document.body.classList.remove("font-poppins");
   }
 
   function ensureAnalytics() {
@@ -247,9 +213,6 @@
   function applyConsent() {
     const selected = categories();
 
-    if (selected.preferences) ensureGoogleFonts();
-    else unloadGoogleFonts();
-
     if (selected.analytics) ensureAnalytics();
     else unloadAnalytics();
 
@@ -276,7 +239,6 @@
 
   function acceptAll() {
     return saveConsent({
-      preferences: true,
       analytics: true,
       external: true,
     });
@@ -284,7 +246,6 @@
 
   function rejectAll() {
     return saveConsent({
-      preferences: false,
       analytics: false,
       external: false,
     });

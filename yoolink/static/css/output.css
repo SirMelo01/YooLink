@@ -434,6 +434,10 @@ video {
   display: none;
 }
 
+body {
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -668,20 +672,12 @@ video {
   bottom: -4rem;
 }
 
-.-bottom-6 {
-  bottom: -1.5rem;
-}
-
 .-left-1 {
   left: -0.25rem;
 }
 
 .-left-10 {
   left: -2.5rem;
-}
-
-.-left-4 {
-  left: -1rem;
 }
 
 .-right-1 {
@@ -834,10 +830,6 @@ video {
 
 .top-3 {
   top: 0.75rem;
-}
-
-.top-4 {
-  top: 1rem;
 }
 
 .top-6 {
@@ -1539,10 +1531,6 @@ video {
 
 .max-h-\[15rem\] {
   max-height: 15rem;
-}
-
-.max-h-\[32rem\] {
-  max-height: 32rem;
 }
 
 .max-h-\[45rem\] {
@@ -2652,6 +2640,11 @@ video {
   border-color: rgb(252 165 165 / var(--tw-border-opacity));
 }
 
+.border-red-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(248 113 113 / var(--tw-border-opacity));
+}
+
 .border-red-500 {
   --tw-border-opacity: 1;
   border-color: rgb(239 68 68 / var(--tw-border-opacity));
@@ -2706,11 +2699,6 @@ video {
 .bg-amber-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 243 199 / var(--tw-bg-opacity));
-}
-
-.bg-amber-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(251 191 36 / var(--tw-bg-opacity));
 }
 
 .bg-amber-50 {
@@ -3505,6 +3493,10 @@ video {
   padding-bottom: 5rem;
 }
 
+.pb-24 {
+  padding-bottom: 6rem;
+}
+
 .pb-3 {
   padding-bottom: 0.75rem;
 }
@@ -3927,11 +3919,6 @@ video {
   color: rgb(30 58 138 / var(--tw-text-opacity));
 }
 
-.text-blue-950 {
-  --tw-text-opacity: 1;
-  color: rgb(23 37 84 / var(--tw-text-opacity));
-}
-
 .text-current {
   color: currentColor;
 }
@@ -3949,6 +3936,11 @@ video {
 .text-gray-100 {
   --tw-text-opacity: 1;
   color: rgb(243 244 246 / var(--tw-text-opacity));
+}
+
+.text-gray-200 {
+  --tw-text-opacity: 1;
+  color: rgb(229 231 235 / var(--tw-text-opacity));
 }
 
 .text-gray-300 {
@@ -4101,6 +4093,11 @@ video {
   color: rgb(51 65 85 / var(--tw-text-opacity));
 }
 
+.text-slate-800 {
+  --tw-text-opacity: 1;
+  color: rgb(30 41 59 / var(--tw-text-opacity));
+}
+
 .text-slate-900 {
   --tw-text-opacity: 1;
   color: rgb(15 23 42 / var(--tw-text-opacity));
@@ -4136,11 +4133,6 @@ video {
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity));
-}
-
-.text-gray-200 {
-  --tw-text-opacity: 1;
-  color: rgb(229 231 235 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -4294,6 +4286,11 @@ video {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.ring-amber-200 {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(253 230 138 / var(--tw-ring-opacity));
+}
+
 .ring-black {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));
@@ -4358,16 +4355,16 @@ video {
   --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity));
 }
 
+.ring-white\/10 {
+  --tw-ring-color: rgb(255 255 255 / 0.1);
+}
+
 .ring-white\/20 {
   --tw-ring-color: rgb(255 255 255 / 0.2);
 }
 
 .ring-white\/40 {
   --tw-ring-color: rgb(255 255 255 / 0.4);
-}
-
-.ring-white\/10 {
-  --tw-ring-color: rgb(255 255 255 / 0.1);
 }
 
 .ring-opacity-5 {
@@ -4491,6 +4488,299 @@ video {
 
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------------
+   Selbstgehostete Webfonts (DSGVO-konform, kein Google-Server)
+   Dateien: yoolink/static/css/fonts/webfonts/
+   ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 300;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-300.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 500;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 600;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: normal;
+
+  font-weight: 800;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-800.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-400i.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+
+  font-style: italic;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/poppins-700i.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 300;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-300.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 500;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 600;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: normal;
+
+  font-weight: 800;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-800.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-400i.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+
+  font-style: italic;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/raleway-700i.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 300;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-300.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 500;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 600;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: normal;
+
+  font-weight: 800;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-800.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-400i.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto";
+
+  font-style: italic;
+
+  font-weight: 700;
+
+  font-display: swap;
+
+  src: url("./fonts/webfonts/roboto-700i.woff2") format("woff2");
 }
 
 .file\:mr-4::file-selector-button {
@@ -5007,6 +5297,11 @@ video {
   cursor: pointer;
 }
 
+.hover\:border-blue-200:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(191 219 254 / var(--tw-border-opacity));
+}
+
 .hover\:border-blue-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(147 197 253 / var(--tw-border-opacity));
@@ -5356,6 +5651,12 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.hover\:shadow-\[0_30px_70px_-15px_rgba\(30\2c 58\2c 138\2c 0\.65\)\]:hover {
+  --tw-shadow: 0 30px 70px -15px rgba(30,58,138,0.65);
+  --tw-shadow-colored: 0 30px 70px -15px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .hover\:shadow-lg:hover {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
@@ -5380,12 +5681,6 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.hover\:shadow-\[0_30px_70px_-15px_rgba\(30\2c 58\2c 138\2c 0\.65\)\]:hover {
-  --tw-shadow: 0 30px 70px -15px rgba(30,58,138,0.65);
-  --tw-shadow-colored: 0 30px 70px -15px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .hover\:shadow-blue-200:hover {
   --tw-shadow-color: #bfdbfe;
   --tw-shadow: var(--tw-shadow-colored);
@@ -5396,14 +5691,14 @@ video {
   --tw-shadow: var(--tw-shadow-colored);
 }
 
-.hover\:ring-blue-300:hover {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(147 197 253 / var(--tw-ring-opacity));
-}
-
 .hover\:ring-blue-200:hover {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(191 219 254 / var(--tw-ring-opacity));
+}
+
+.hover\:ring-blue-300:hover {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(147 197 253 / var(--tw-ring-opacity));
 }
 
 .hover\:ring-blue-500:hover {
@@ -5463,6 +5758,11 @@ video {
 .focus\:border-purple-500:focus {
   --tw-border-opacity: 1;
   border-color: rgb(168 85 247 / var(--tw-border-opacity));
+}
+
+.focus\:border-red-500:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(239 68 68 / var(--tw-border-opacity));
 }
 
 .focus\:border-slate-400:focus {
@@ -6072,10 +6372,6 @@ video {
 }
 
 @media (min-width: 480px) {
-  .sm\:left-2 {
-    left: 0.5rem;
-  }
-
   .sm\:left-20 {
     left: 5rem;
   }
@@ -6157,6 +6453,10 @@ video {
     display: inline-flex;
   }
 
+  .sm\:hidden {
+    display: none;
+  }
+
   .sm\:h-10 {
     height: 2.5rem;
   }
@@ -6236,10 +6536,6 @@ video {
 
   .sm\:grid-cols-5 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .sm\:grid-cols-\[1fr_auto_auto\] {
-    grid-template-columns: 1fr auto auto;
   }
 
   .sm\:grid-cols-\[minmax\(0\2c 260px\)\2c auto\] {
@@ -6952,15 +7248,15 @@ video {
     max-width: 36rem;
   }
 
-  .lg\:scale-90 {
-    --tw-scale-x: .9;
-    --tw-scale-y: .9;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
   .lg\:scale-110 {
     --tw-scale-x: 1.1;
     --tw-scale-y: 1.1;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+
+  .lg\:scale-90 {
+    --tw-scale-x: .9;
+    --tw-scale-y: .9;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
