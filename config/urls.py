@@ -33,6 +33,11 @@ urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="api-schema"), name="api-docs"),
     path('i18n/setlang/', set_language, name='set_language'),
+    path(
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+        name="robots",
+    ),
     path("cms/", include("yoolink.ycms.urls", namespace="ycms")),
     path('cart/', cart_view, name='cart-view'),
     path('cart/success/', cart_verify_success_view, name='cart-verify-success-view'),
