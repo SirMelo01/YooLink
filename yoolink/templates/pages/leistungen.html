@@ -1,14 +1,14 @@
 {% extends "base.html" %} {% load compress static custom_filters %} {% block title %}{{ block.super }} | Leistungen{% endblock title %} {% block content %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellenundboot.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 {% endcompress css %}
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}

@@ -10,7 +10,7 @@
 {% block twitter_description %}Hochwertige Visitenkarten - individuell gestaltet, in zwei Formaten und mit Premium-Papierqualität.{% endblock %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
@@ -412,7 +412,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}

@@ -2,7 +2,7 @@
 
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
@@ -10,7 +10,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}
@@ -399,7 +399,7 @@
 
 {% endblock content %} {% block javascriptend %}
 <script src="{% static 'js/aos.js' %}"></script>
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/home.js' %}"></script>
 {% endcompress js %}
 <script>

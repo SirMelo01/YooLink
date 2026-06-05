@@ -38,7 +38,7 @@
 {% endblock %}
 
 {% block javascriptend %}
-{% compress js inline %}
+{% compress js %}
 <script>
   Dropzone.autoDiscover = false;
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;

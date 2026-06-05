@@ -33,7 +33,7 @@
 {% endblock %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link rel="stylesheet" href="{% static 'css/cms/slick/slick-carousel.css' %}"/>
 <link rel="stylesheet" href="{% static 'css/cms/slick/slick-theme.css' %}"/>
 <link href="{% static 'css/prism/prism.css' %}" rel="stylesheet">
@@ -96,7 +96,7 @@
 {% endblock content %}
 
 {% block javascriptend %}
-{% compress js inline %}
+{% compress js %}
 <script defer type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 <script defer src="{% static 'js/prism/prism.js' %}" data-manual></script>
 <script>

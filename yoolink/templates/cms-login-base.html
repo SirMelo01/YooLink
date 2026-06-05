@@ -40,13 +40,13 @@
     <meta name="twitter:label2" content="Zeit zum Lesen">
     <meta name="twitter:data2" content="1 Minute">
 
-    {% compress css inline %}
+    {% compress css %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
       <link href="{% static 'css/utils.css' %}" rel="stylesheet">
       <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
-    {% compress js inline %}
+    {% compress js %}
       <script defer src="{% static 'js/loadinit.js' %}"></script>
       <!-- jQuery Bibliothek (https://jquery.com/)
            Copyright jQuery Foundation and other contributors
@@ -208,7 +208,7 @@
     {% endblock footer %}
     <!--Footer End-->
 
-    {% compress js inline %}
+    {% compress js %}
       <script defer src="{% static 'js/base.js' %}"></script>
     {% endcompress js %}
     {% block javascriptend %}

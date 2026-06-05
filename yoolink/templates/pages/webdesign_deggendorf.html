@@ -13,7 +13,7 @@
 {% block twitter_description %}Individuelle Websites mit eigenem CMS für Unternehmen aus Deggendorf und Niederbayern. Abo ab 40 € im Monat – transparent und persönlich.{% endblock %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
@@ -106,7 +106,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}
@@ -695,7 +695,7 @@
 {% endblock content %}
 
 {% block javascriptend %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {

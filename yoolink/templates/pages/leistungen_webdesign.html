@@ -10,7 +10,7 @@
 {% block twitter_description %}Moderne Website Entwicklung mit Django, Tailwind CSS und DSGVO-konformem Hosting bei Hetzner.{% endblock %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
@@ -280,7 +280,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}

@@ -4,7 +4,7 @@
 {% block title %}{{ block.super }} - Cms Login{% endblock title %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <style>
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
@@ -123,7 +123,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 {% endblock content %}
 
 {% block javascriptend %}
-{% compress js inline %}
+{% compress js %}
 <script>
     const passwordInput = document.getElementById("password");
     const toggleBtn = document.getElementById("togglePassword");

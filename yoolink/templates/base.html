@@ -49,14 +49,14 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-500.woff2' %}">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-700.woff2' %}">
 
-    {% compress css inline %}
+    {% compress css %}
       <link rel="stylesheet" href="{% static 'css/icons/flag-icons.min.css' %}"/>
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
       <link href="{% static 'css/utils.css' %}" rel="stylesheet">
       <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
-    {% compress js inline %}
+    {% compress js %}
       <script defer src="{% static 'js/loadinit.js' %}"></script>
       <!-- jQuery Bibliothek (https://jquery.com/)
            Copyright jQuery Foundation and other contributors
@@ -543,7 +543,7 @@
     {% endblock footer %}
     <!--Footer End-->
 
-    {% compress js inline %}
+    {% compress js %}
       <script defer src="{% static 'js/base.js' %}"></script>
       <script defer src="{% static 'js/translation/base-translation.js' %}"></script>
     {% endcompress js %}

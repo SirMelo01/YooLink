@@ -30,7 +30,7 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-500.woff2' %}">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-700.woff2' %}">
 
-    {% compress css inline %}
+    {% compress css %}
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/cms/cms.css' %}">
     <link rel="stylesheet" href="{% static 'css/libs/sweetalert2.min.css' %}">
@@ -42,7 +42,7 @@
 
     <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
 
-    {% compress js inline %}
+    {% compress js %}
     <script defer src="{% static 'js/loadinit.js' %}"></script>
     <script src="{% static 'js/cms.js' %}"></script>
     <!-- jQuery Bibliothek (https://jquery.com/)
@@ -390,7 +390,7 @@
     {% include "components/cookie_consent.html" %}
     {% endblock cookies %}
 
-    {% compress js inline %}
+    {% compress js %}
     <script defer src="{% static 'js/base.js' %}"></script>
     <script defer src="{% static 'js/translation/cms-translation.js' %}"></script>
     <script src="{% static 'js/libs/sweetalert.min.js' %}"></script>

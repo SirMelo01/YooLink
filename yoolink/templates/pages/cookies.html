@@ -96,7 +96,7 @@
 
 {% block javascriptend %}
   {{ block.super }}
-  {% compress js inline %}
+  {% compress js %}
     <script defer src="{% static 'js/cookies.js' %}"></script>
   {% endcompress js %}
 {% endblock javascriptend %}

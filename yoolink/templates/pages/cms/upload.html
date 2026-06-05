@@ -72,7 +72,7 @@ https://www.dropzone.dev/
 {% endblock %}
 
 {% block javascriptend %}
-{% compress js inline %}
+{% compress js %}
 <script>
   var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
   Dropzone.autoDiscover = false;

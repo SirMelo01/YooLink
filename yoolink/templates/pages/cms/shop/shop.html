@@ -38,7 +38,7 @@
 {% endblock content %}
 
 {% block javascriptend %}
-    {% compress js inline %}
+    {% compress js %}
       <script defer src="{% static 'js/cms.js' %}"></script>
     {% endcompress js %}
 {% endblock javascriptend %}

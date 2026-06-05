@@ -10,7 +10,7 @@
 {% block twitter_description %}Professionelles Logo Design vom strategischen Konzept bis zur skalierbaren Markenidentität. Individuell, langlebig und in allen Formaten geliefert.{% endblock %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
@@ -210,7 +210,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script defer src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}

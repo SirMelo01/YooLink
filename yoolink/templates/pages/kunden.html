@@ -6,7 +6,7 @@
 {% block content %}
 
 {% block css %}
-{% compress css inline %}
+{% compress css %}
 <link rel="stylesheet" href="{% static 'css/wellenundboot.css' %}" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
@@ -22,7 +22,7 @@
 {% endblock css %}
 
 {% block javascript %}
-{% compress js inline %}
+{% compress js %}
 <script src="{% static 'js/aos.js' %}"></script>
 {% endcompress %}
 {% endblock javascript %}
