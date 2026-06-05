@@ -1,7 +1,21 @@
 from django import template
+from django.urls import translate_url as django_translate_url
 from django.utils.html import format_html
 
 register = template.Library()
+
+
+@register.simple_tag(takes_context=True)
+def translate_url(context, lang_code):
+    """
+    Gibt die URL der aktuellen Seite in der angegebenen Sprache zurueck.
+    Beruecksichtigt das i18n_patterns-Praefix (z.B. /en/), sodass hreflang-
+    und canonical-Links korrekt erzeugt werden – ohne doppeltes/fehlendes Praefix.
+    """
+    request = context.get("request")
+    if request is None:
+        return ""
+    return django_translate_url(request.get_full_path(), lang_code)
 
 @register.filter
 def get_item(dictionary, key):

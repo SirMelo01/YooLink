@@ -373,6 +373,11 @@ REST_FRAMEWORK = {
     #),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # Nur JSON ausliefern. Die Browsable API (HTML-Oberflaeche) wird in
+    # local.py fuer die Entwicklung wieder aktiviert, ist in Produktion aber
+    # bewusst deaktiviert, damit oeffentliche Endpunkte keine REST-Oberflaeche
+    # mit Struktur/Formular offenlegen.
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
