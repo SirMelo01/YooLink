@@ -39,8 +39,10 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/topics/security/#ssl-https
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
-# TODO: set this to 60 seconds first and then to 518400 once you prove the former works
-SECURE_HSTS_SECONDS = 60
+# 1 year. HSTS has been proven working at 60s in production; 31536000 is also the
+# minimum required to be eligible for the HSTS preload list (SECURE_HSTS_PRELOAD below).
+# Note: with SECURE_HSTS_INCLUDE_SUBDOMAINS, every subdomain must serve valid HTTPS.
+SECURE_HSTS_SECONDS = env.int("DJANGO_SECURE_HSTS_SECONDS", default=31536000)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
     "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
@@ -57,6 +59,18 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 STORAGES["staticfiles"] = {  # noqa F405
     "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
 }
+# Treat content-hashed files as immutable so the externalized django-compressor
+# bundles (/static/CACHE/...<hash>.css|js) get a 1-year cache instead of WhiteNoise's
+# 60s default. WhiteNoise only auto-detects its own manifest hashes, not compressor's.
+import re  # noqa E402
+
+
+def immutable_file_test(path, url):
+    # Matches a content hash before the extension, e.g. output.bb4d9c4b1487.css
+    return re.match(r"^.+\.[0-9a-f]{8,}\.\w+$", url)
+
+
+WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 # MEDIA
 # ------------------------------------------------------------------------------
 
