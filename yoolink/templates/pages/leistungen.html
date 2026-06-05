@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static custom_filters %} {% block title %}{{ block.super }} | Leistungen{% endblock title %} {% block content %}
+{% extends "base.html" %} {% load compress static custom_filters %} {% block title %}{{ block.super }} | Leistungen{% endblock title %}
 
 {% block css %}
 {% compress css %}
@@ -13,6 +13,7 @@
 {% endcompress %}
 {% endblock javascript %}
 
+{% block content %}
 {% load i18n %}
 
 <section class="bg-white px-4 py-20">

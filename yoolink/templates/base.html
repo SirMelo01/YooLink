@@ -44,6 +44,10 @@
 
     {% block structured_data %}{% endblock %}
 
+    {# Site-wide Organization + WebSite + LocalBusiness graph. Built from the CMS
+       owner record in ycms.context_processors.user_settings_context (-> seo_schema). #}
+    {% if site_schema_jsonld %}<script type="application/ld+json">{{ site_schema_jsonld|safe }}</script>{% endif %}
+
     <!-- Wichtigste Schriftschnitte vorab laden, um FOUT zu vermeiden -->
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-400.woff2' %}">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{% static 'css/fonts/webfonts/poppins-500.woff2' %}">

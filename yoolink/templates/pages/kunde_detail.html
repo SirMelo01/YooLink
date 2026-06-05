@@ -8,8 +8,6 @@
 {% block og_description %}{% if customer.short_description %}{{ customer.short_description }}{% elif customer.subtitle %}{{ customer.subtitle }}{% else %}{% trans "case_og_default_description" %}{% endif %}{% endblock %}
 {% block og_image %}{% if customer.banner_image and customer.banner_image.file %}https://yoolink.de{{ customer.banner_image.file.url }}{% elif customer.title_image and customer.title_image.file %}https://yoolink.de{{ customer.title_image.file.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
-{% block content %}
-
 {% block css %}
 {% compress css %}
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
@@ -68,6 +66,7 @@
 {% endcompress %}
 {% endblock javascript %}
 
+{% block content %}
 <!-- HERO -->
 <section class="case-hero {% if customer.banner_image %}has-banner{% endif %} px-4 pt-16 pb-20 text-white sm:pt-20 sm:pb-24">
     {% if customer.banner_image and customer.banner_image.file %}

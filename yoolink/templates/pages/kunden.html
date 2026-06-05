@@ -3,8 +3,6 @@
 {% block title %}{{ block.super }} | Unsere Referenzen & Kunden{% endblock title %}
 {% block meta_description %}Ein Auszug unserer Kunden und Referenzen - vom Zahnarzt über Steuerkanzlei bis zur eigenen Web-App. Entdecke moderne Webseiten von YooLink.{% endblock %}
 
-{% block content %}
-
 {% block css %}
 {% compress css %}
 <link rel="stylesheet" href="{% static 'css/wellenundboot.css' %}" />
@@ -27,6 +25,7 @@
 {% endcompress %}
 {% endblock javascript %}
 
+{% block content %}
 <!-- HERO -->
 <section class="kunde-hero-bg px-4 pt-20 pb-12 lg:pt-24 lg:pb-20">
     <div class="mx-auto max-w-5xl text-center">

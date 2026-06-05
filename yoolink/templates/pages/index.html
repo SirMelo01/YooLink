@@ -1,6 +1,6 @@
-{% extends "base.html" %} {% load compress static custom_filters %} {% block title%}{{block.super}} | Webdesign Agentur{% endblock title %} {% block content %} 
+{% extends "base.html" %} {% load compress static custom_filters %} {% block title%}{{block.super}} | Webdesign Agentur{% endblock title %}
 
-{% block css %} 
+{% block css %}
 {% compress css %}
 <link href="{% static 'css/cardslider.css' %}" rel="stylesheet" />
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
@@ -46,6 +46,7 @@
 </script>
 {% endblock %}
 
+{% block content %}
 {% load i18n %}
 <!--Kontaktbuttons Beginn-->
 
