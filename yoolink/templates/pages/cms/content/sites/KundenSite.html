@@ -88,11 +88,37 @@
         </div>
     </section>
 
-    <!-- SEKTION 2: Spezielle Programmierungen -->
+    <!-- SEKTION 2: Referenzen-Grid Überschrift -->
+    <section class="mt-6 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-gray-200">
+        <header class="flex items-center gap-3 border-b border-gray-100 px-5 py-4 sm:px-6">
+            <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                <i class="bi bi-2-circle text-lg"></i>
+            </span>
+            <div>
+                <h2 class="text-base font-bold text-gray-900">Überschrift über dem Referenzen-Raster</h2>
+                <p class="text-xs text-gray-500">Wird über den Kundenkarten angezeigt, wenn Referenzen vorhanden sind.</p>
+            </div>
+        </header>
+        <div class="space-y-4 p-5 sm:p-6 text-content" key="main_kunden_references">
+            <div>
+                <label class="mb-1 block text-sm font-semibold text-gray-700">Überschrift</label>
+                <input inputType="title" type="text"
+                    value="{% if textContentReferences and textContentReferences.title %}{{ textContentReferences.title }}{% else %}Aktuelle Webseiten-Referenzen{% endif %}"
+                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-xl font-bold tracking-tight text-gray-900 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-semibold text-gray-700">Beschreibung</label>
+                <textarea inputType="description" rows="3"
+                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm leading-relaxed text-gray-700 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">{% if textContentReferences and textContentReferences.description %}{{ textContentReferences.description }}{% else %}Klick auf eine Karte, um mehr über das Projekt zu erfahren.{% endif %}</textarea>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKTION 3: Spezielle Programmierungen -->
     <section class="mt-6 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-gray-200">
         <header class="flex items-center gap-3 border-b border-gray-100 px-5 py-4 sm:px-6">
             <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
-                <i class="bi bi-2-circle text-lg"></i>
+                <i class="bi bi-3-circle text-lg"></i>
             </span>
             <div>
                 <h2 class="text-base font-bold text-gray-900">Untere Sektion: Spezielle Programmierungen</h2>

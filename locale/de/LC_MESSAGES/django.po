@@ -258,6 +258,74 @@ msgstr ""
 msgid "Bezieht sich auf den Original-Blog (z.B. auf Deutsch)"
 msgstr ""
 
+#: yoolink/templates/pages/leistungen_logos.html
+msgid "Skalierbarer Vektor"
+msgstr "Skalierbarer Vektor"
+
+#: yoolink/templates/pages/leistungen_logos.html
+msgid "Web & Transparenz"
+msgstr "Web & Transparenz"
+
+#: yoolink/templates/pages/leistungen_logos.html
+msgid "Universell einsetzbar"
+msgstr "Universell einsetzbar"
+
+#: yoolink/templates/pages/leistungen_logos.html
+msgid "Druckfertig"
+msgstr "Druckfertig"
+
+#: yoolink/templates/pages/leistungen_logos.html
+msgid "Optional"
+msgstr "Optional"
+
+#: yoolink/templates/pages/leistungen.html
+msgid "Fotografie"
+msgstr "Fotografie"
+
+#: yoolink/templates/pages/leistungen.html
+msgid "3D-Aufnahmen"
+msgstr "3D-Aufnahmen"
+
+#: yoolink/templates/pages/leistungen.html
+msgid "Video"
+msgstr "Video"
+
+#: yoolink/templates/pages/cmsinfo.html
+msgid "Integriert mit"
+msgstr "Integriert mit"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Hover, Klick oder Drag"
+msgstr "Hover, Klick oder Drag"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Standard"
+msgstr "Standard"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Premium"
+msgstr "Premium"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Veredelt"
+msgstr "Veredelt"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "matt / glanz"
+msgstr "matt / glanz"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "fühlbar"
+msgstr "fühlbar"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Heißfolie"
+msgstr "Heißfolie"
+
+#: yoolink/templates/pages/leistungen_visitenkarte.html
+msgid "Soft-Touch"
+msgstr "Soft-Touch"
+
 #~ msgid "NAVBAR_CMS"
 #~ msgstr "CMS"
 

@@ -195,6 +195,9 @@ def site_view_kunden(request):
     text_content2 = _get_text("main_kunden2")
     if text_content2:
         data["textContent2"] = text_content2
+    text_content_references = _get_text("main_kunden_references")
+    if text_content_references:
+        data["textContentReferences"] = text_content_references
     return render(request, "pages/cms/content/sites/KundenSite.html", data)
 
 
@@ -394,6 +397,67 @@ def site_view_webdesign(request):
             "textContent_bottomcta": _get_text("main_webdesign_bottomcta"),
         },
     )
+
+
+@login_required(login_url="login")
+def site_view_webdesign_deggendorf(request):
+    context = {
+        # Hero
+        "textContent_hero": _get_text("main_deggendorf_hero"),
+        "textContent_hero_highlight": _get_text("main_deggendorf_hero_highlight"),
+        "textContent_hero_secondary": _get_text("main_deggendorf_hero_secondary"),
+        # Intro
+        "textContent_intro": _get_text("main_deggendorf_intro"),
+        "textContent_intro_p2": _get_text("main_deggendorf_intro_p2"),
+        # Warum YooLink
+        "textContent_warum": _get_text("main_deggendorf_warum"),
+        # Preise
+        "textContent_preise": _get_text("main_deggendorf_preise"),
+        "textContent_preise_start": _get_text("main_deggendorf_preise_start"),
+        "textContent_preise_business": _get_text("main_deggendorf_preise_business"),
+        "textContent_preise_individuell": _get_text("main_deggendorf_preise_individuell"),
+        "textContent_preise_footnote": _get_text("main_deggendorf_preise_footnote"),
+        # About / Über Deggendorf
+        "textContent_about": _get_text("main_deggendorf_about"),
+        "textContent_about_p2": _get_text("main_deggendorf_about_p2"),
+        # Prozess
+        "textContent_prozess": _get_text("main_deggendorf_prozess"),
+        # Maps + Bottom CTA
+        "textContent_maps": _get_text("main_deggendorf_maps"),
+        "textContent_maps_panel": _get_text("main_deggendorf_maps_panel"),
+        "textContent_maps_region": _get_text("main_deggendorf_maps_region"),
+        "textContent_maps_response": _get_text("main_deggendorf_maps_response"),
+        "textContent_bottomcta": _get_text("main_deggendorf_bottomcta"),
+    }
+
+    # Stat-Cards (4)
+    for i in range(1, 5):
+        context[f"textContent_hero_stat{i}"] = _get_text(f"main_deggendorf_hero_stat{i}")
+
+    # Intro Bullets (4)
+    for i in range(1, 5):
+        context[f"textContent_intro_bullet{i}"] = _get_text(f"main_deggendorf_intro_bullet{i}")
+
+    # Warum-Karten (6)
+    for i in range(1, 7):
+        context[f"textContent_warum_card{i}"] = _get_text(f"main_deggendorf_warum_card{i}")
+
+    # Preis-Features (3 Tiers x 5 Features)
+    for tier in ("start", "business", "individuell"):
+        for i in range(1, 6):
+            context[f"textContent_preise_{tier}_feature{i}"] = _get_text(
+                f"main_deggendorf_preise_{tier}_feature{i}"
+            )
+
+    # About-Tiles (4)
+    for i in range(1, 5):
+        context[f"textContent_about_tile{i}"] = _get_text(f"main_deggendorf_about_tile{i}")
+
+    # Prozess-Steps (4)
+    for i in range(1, 5):
+        context[f"textContent_prozess_step{i}"] = _get_text(f"main_deggendorf_prozess_step{i}")
+
+    return render(request, "pages/cms/content/sites/WebdesignDeggendorfSite.html", context)
 
 
 @login_required(login_url="login")

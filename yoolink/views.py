@@ -31,6 +31,9 @@ def load_kunden(request):
     if TextContent.objects.filter(name="main_kunden2").exists():
         context["kundenText2"] = TextContent.objects.get(name='main_kunden2')
 
+    if TextContent.objects.filter(name="main_kunden_references").exists():
+        context["kundenReferences"] = TextContent.objects.get(name='main_kunden_references')
+
     customers_qs = list(
         Customer.objects.filter(active=True)
         .select_related("title_image", "logo")
@@ -235,6 +238,54 @@ def load_webdesign_deggendorf(request):
         'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
     }
     context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_deggendorf_hero")
+    context["textContent_hero_highlight"] = get_text("main_deggendorf_hero_highlight")
+    context["textContent_hero_secondary"] = get_text("main_deggendorf_hero_secondary")
+    for i in range(1, 5):
+        context[f"textContent_hero_stat{i}"] = get_text(f"main_deggendorf_hero_stat{i}")
+
+    # Intro (mit Grabkirche)
+    context["textContent_intro"] = get_text("main_deggendorf_intro")
+    context["textContent_intro_p2"] = get_text("main_deggendorf_intro_p2")
+    for i in range(1, 5):
+        context[f"textContent_intro_bullet{i}"] = get_text(f"main_deggendorf_intro_bullet{i}")
+
+    # Warum YooLink (USP Cards)
+    context["textContent_warum"] = get_text("main_deggendorf_warum")
+    for i in range(1, 7):
+        context[f"textContent_warum_card{i}"] = get_text(f"main_deggendorf_warum_card{i}")
+
+    # Preise / Abo-Modelle
+    context["textContent_preise"] = get_text("main_deggendorf_preise")
+    for tier in ("start", "business", "individuell"):
+        context[f"textContent_preise_{tier}"] = get_text(f"main_deggendorf_preise_{tier}")
+        for i in range(1, 6):
+            context[f"textContent_preise_{tier}_feature{i}"] = get_text(f"main_deggendorf_preise_{tier}_feature{i}")
+    context["textContent_preise_footnote"] = get_text("main_deggendorf_preise_footnote")
+
+    # About / Über Deggendorf (mit Altem Rathaus)
+    context["textContent_about"] = get_text("main_deggendorf_about")
+    context["textContent_about_p2"] = get_text("main_deggendorf_about_p2")
+    for i in range(1, 5):
+        context[f"textContent_about_tile{i}"] = get_text(f"main_deggendorf_about_tile{i}")
+
+    # Prozess / Vorgehen
+    context["textContent_prozess"] = get_text("main_deggendorf_prozess")
+    for i in range(1, 5):
+        context[f"textContent_prozess_step{i}"] = get_text(f"main_deggendorf_prozess_step{i}")
+
+    # Maps + Bottom CTA
+    context["textContent_maps"] = get_text("main_deggendorf_maps")
+    context["textContent_maps_panel"] = get_text("main_deggendorf_maps_panel")
+    context["textContent_maps_region"] = get_text("main_deggendorf_maps_region")
+    context["textContent_maps_response"] = get_text("main_deggendorf_maps_response")
+    context["textContent_bottomcta"] = get_text("main_deggendorf_bottomcta")
+
     return render(request, 'pages/webdesign_deggendorf.html', context=context)
 
 
