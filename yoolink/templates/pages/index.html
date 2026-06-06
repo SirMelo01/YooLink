@@ -70,7 +70,7 @@
       </svg>
     </div>
 </a>
-<a href="tel:+491705977862" aria-label="Kontakt per Telefon">
+<a href="tel:{% if owner_data and owner_data.tel_number %}{{ owner_data.tel_number }}{% elif owner_data and owner_data.mobile_number %}{{ owner_data.mobile_number }}{% else %}+491705977862{% endif %}" aria-label="Kontakt per Telefon">
     <div
       class="hidden md:block fixed z-50 bottom-28 right-8 bg-blue-900 rounded-full shadow-2xl p-3"
     >

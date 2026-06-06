@@ -361,7 +361,28 @@ class ExternalBlogImageUploadSerializer(serializers.Serializer):
         upload = validated_data["file"]
         alt_text = (validated_data.get("alt_text") or "").strip()
         title = (validated_data.get("title") or alt_text or upload.name).strip()
-        image = fileentry.objects.create(file=upload, title=title)
+
+        from yoolink.ycms.views import (
+            DESKTOP_IMAGE_MAX_DIMENSIONS,
+            DESKTOP_IMAGE_TARGET_KB,
+            MOBILE_IMAGE_MAX_DIMENSIONS,
+            MOBILE_IMAGE_TARGET_KB,
+            optimize_image_for_upload,
+        )
+
+        desktop_image = optimize_image_for_upload(
+            upload,
+            max_dimensions=DESKTOP_IMAGE_MAX_DIMENSIONS,
+            max_size_kb=DESKTOP_IMAGE_TARGET_KB,
+            variant_suffix="desktop",
+        )
+        mobile_image = optimize_image_for_upload(
+            upload,
+            max_dimensions=MOBILE_IMAGE_MAX_DIMENSIONS,
+            max_size_kb=MOBILE_IMAGE_TARGET_KB,
+            variant_suffix="mobile",
+        )
+        image = fileentry.objects.create(file=desktop_image, mobile_file=mobile_image, title=title)
         url = self._absolute_url(image.file.url)
         markdown_alt = alt_text.replace("[", "").replace("]", "").replace("\n", " ")
         html_alt = escape(alt_text, quote=True)

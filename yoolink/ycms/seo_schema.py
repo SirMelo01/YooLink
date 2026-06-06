@@ -2,7 +2,7 @@
 
 Builds the Organization + WebSite + LocalBusiness ``@graph`` that is rendered on
 every public page (see ``base.html``). Scalar NAP values (name, e-mail, phone,
-street, logo) are pulled from the CMS site-owner record (``UserSettings``) so they
+street, logo) are pulled from the CMS site-owner record (``WebsiteSettings``) so they
 stay editable in the CMS, with safe fallbacks so the markup is never empty/broken.
 
 This module deliberately has no Django imports so it can be unit-tested in

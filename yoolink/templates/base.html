@@ -8,7 +8,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}YooLink{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Schanzenweg 53, 94469 Deggendorf">
+    <meta name="author" content="Diese Webseite wurde erstellt von {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}{% if owner_data and owner_data.address %}, {{ owner_data.address }}{% else %}, Schanzenweg 53, 94469 Deggendorf{% endif %}">
     <meta name="description" content="{% block meta_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Ihrem Internetauftritt herauszuholen.{% endblock %}">
     {% translate_url 'de' as de_url %}
     {% translate_url 'en' as en_url %}
@@ -436,11 +436,11 @@
                   </g>
                 </svg>
                 {% endif %}
-              <span class="ml-2 text-xl font-bold tracking-wide text-white">YooLink</span>
+              <span class="ml-2 text-xl font-bold tracking-wide text-white">{% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}</span>
             </a>
             <p class="w-2/3 mt-2 text-sm">{% trans "FOOTER_HEADING" %}</p>
             <div class="mt-6 lg:mb-0 mb-6 flex justify-center lg:justify-normal ">
-              <a href="https://x.com/YooLinkDE">
+              <a href="{% if owner_data and owner_data.social_x %}{{ owner_data.social_x }}{% else %}https://x.com/YooLinkDE{% endif %}">
                 <div>
                     <button
                       type="button"
@@ -478,7 +478,7 @@
                     </button>
                   </div>
                 </a>
-                <a href="https://www.instagram.com/yoolinkde/">
+                <a href="{% if owner_data and owner_data.social_instagram %}{{ owner_data.social_instagram }}{% else %}https://www.instagram.com/yoolinkde/{% endif %}">
                   <div>
                     <button
                     type="button"
@@ -497,6 +497,24 @@
                     </button>
                   </div>
                 </a>
+                {% if owner_data and owner_data.social_facebook %}
+                <a href="{{ owner_data.social_facebook }}">
+                  <div>
+                    <button type="button" aria-label="{% if owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %} auf Facebook besuchen" data-te-ripple-init data-te-ripple-color="light" class="mb-2 ml-3 rounded px-6 py-2.5 bg-blue-500 hover:bg-blue-400">
+                      <i class="bi bi-facebook"></i>
+                    </button>
+                  </div>
+                </a>
+                {% endif %}
+                {% if owner_data and owner_data.social_linkedin %}
+                <a href="{{ owner_data.social_linkedin }}">
+                  <div>
+                    <button type="button" aria-label="{% if owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %} auf LinkedIn besuchen" data-te-ripple-init data-te-ripple-color="light" class="mb-2 ml-3 rounded px-6 py-2.5 bg-blue-500 hover:bg-blue-400">
+                      <i class="bi bi-linkedin"></i>
+                    </button>
+                  </div>
+                </a>
+                {% endif %}
             </div>
           </div>
           <div class="w-full lg:w-6/12 flex justify-evenly">
@@ -537,7 +555,7 @@
         <div class="flex flex-wrap items-center md:justify-between justify-center">
           <div class="w-full md:w-4/12 px-4 mx-auto text-center">
             <div class="text-sm  font-semibold py-1">
-              &copy; YooLink - Sebastian Rauch, {% load tz %} {% now "Y" %}.
+              &copy; {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}, {% load tz %} {% now "Y" %}.
             </div>
           </div>
         </div>

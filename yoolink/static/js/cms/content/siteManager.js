@@ -4,6 +4,17 @@ $editSlider = null;
 $editVideo = null;
 let imageLibraryItems = [];
 let galeryLibraryItems = [];
+let imageLibraryPagination = {
+    page: 1,
+    perPage: 12,
+    total: 0,
+    totalPages: 1,
+    hasPrevious: false,
+    hasNext: false,
+};
+let selectedLibraryImage = null;
+let imageSearchTimeout = null;
+let imageRequestSequence = 0;
 
 $(document).ready(function () {
     const $imageModal = $('#imageModal');
@@ -21,11 +32,40 @@ $(document).ready(function () {
     });
 
     $('#reloadImages').click(function () {
+        imageLibraryPagination.page = 1;
         loadImages(true);
     });
 
     $('#imageSearchInput').on('input', function () {
-        renderImageLibrary(imageLibraryItems);
+        window.clearTimeout(imageSearchTimeout);
+        imageSearchTimeout = window.setTimeout(function () {
+            imageLibraryPagination.page = 1;
+            loadImages(false);
+        }, 250);
+    });
+
+    $('#imagePrevPage').click(function () {
+        if (!imageLibraryPagination.hasPrevious) return;
+        imageLibraryPagination.page -= 1;
+        loadImages(false);
+    });
+
+    $('#imageNextPage').click(function () {
+        if (!imageLibraryPagination.hasNext) return;
+        imageLibraryPagination.page += 1;
+        loadImages(false);
+    });
+
+    $('#selectedImageApply').click(function () {
+        applySelectedLibraryImage();
+    });
+
+    $('#selectedImageTitleSave').click(function () {
+        saveSelectedImageTitle(csrfToken);
+    });
+
+    $('#convertImagesToWebp').click(function () {
+        convertImagesToWebp($(this), csrfToken);
     });
 
     $('.image-modal-tab').click(function () {
@@ -114,9 +154,13 @@ $(document).ready(function () {
 });
 
 function openImageModal() {
+    selectedLibraryImage = null;
     refreshSelectedImagePreview();
+    resetSelectedImageDetails();
+    imageLibraryPagination.page = 1;
     setImageModalTab('imageLibraryPanel');
     $('#imageModal').removeClass("hidden").addClass("flex");
+    loadImages(false);
 }
 
 function closeImageModal() {
@@ -147,6 +191,133 @@ function refreshSelectedImagePreview() {
     }
 }
 
+function resetSelectedImageDetails() {
+    $('#selectedImageTitleInput').val('').prop('disabled', true);
+    $('#selectedImageTitleSave').prop('disabled', true);
+    $('#selectedImageApply').prop('disabled', true);
+    $('#selectedImageMeta').text('Wähle ein Bild aus der Mediathek, um Details zu sehen.');
+}
+
+function selectLibraryImage(image) {
+    selectedLibraryImage = image;
+
+    const previewUrl = image.preview_url || image.mobile_url || image.url || '';
+    if (previewUrl) {
+        $('#selectedImagePreview').attr('src', previewUrl).removeClass('hidden');
+        $('#selectedImagePlaceholder').addClass('hidden');
+    }
+
+    $('#selectedImageTitleInput').val(image.title || '').prop('disabled', false);
+    $('#selectedImageTitleSave').prop('disabled', false);
+    $('#selectedImageApply').prop('disabled', !$editImg);
+    renderSelectedImageMetadata(image);
+    renderImageLibrary(imageLibraryItems);
+}
+
+function applySelectedLibraryImage() {
+    if (!$editImg || !selectedLibraryImage) return;
+
+    $editImg.attr('src', selectedLibraryImage.url);
+    if (selectedLibraryImage.srcset) {
+        $editImg.attr('srcset', selectedLibraryImage.srcset);
+    } else {
+        $editImg.removeAttr('srcset');
+    }
+    $editImg.attr('imgId', selectedLibraryImage.id);
+    closeImageModal();
+    sendNotif('Neues Bild ausgewählt', 'success');
+}
+
+function renderSelectedImageMetadata(image) {
+    const metadata = image.metadata || {};
+    const rows = [
+        ['Datei', metadata.filename || 'Unbekannt'],
+        ['Format', image.format || 'Unbekannt'],
+        ['Größe', metadata.size_kb ? metadata.size_kb + ' KB' : 'Unbekannt'],
+        ['Abmessung', metadata.dimensions || 'Unbekannt'],
+        ['Mobil', metadata.mobile_size_kb ? metadata.mobile_size_kb + ' KB' : (image.has_mobile ? 'Vorhanden' : 'Nein')],
+        ['Upload', metadata.uploaded_at || 'Unbekannt'],
+    ];
+
+    $('#selectedImageMeta').html(rows.map(function (row) {
+        return `<div class="flex justify-between gap-3"><span class="font-semibold text-slate-600">${escapeHtml(row[0])}</span><span class="text-right">${escapeHtml(row[1])}</span></div>`;
+    }).join(''));
+}
+
+function saveSelectedImageTitle(csrfToken) {
+    if (!selectedLibraryImage) return;
+
+    const title = ($('#selectedImageTitleInput').val() || '').trim();
+    if (!title) {
+        sendNotif('Bitte gib einen Bildtitel ein', 'error');
+        return;
+    }
+
+    $.ajax({
+        url: '/cms/images/update/' + selectedLibraryImage.id + '/',
+        type: 'POST',
+        data: { title: title },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRFToken', csrfToken);
+        },
+        success: function (response) {
+            selectedLibraryImage.title = title;
+            imageLibraryItems = imageLibraryItems.map(function (image) {
+                if (String(image.id) === String(selectedLibraryImage.id)) {
+                    return Object.assign({}, image, { title: title });
+                }
+                return image;
+            });
+            renderImageLibrary(imageLibraryItems);
+            $('#selectedImageTitleInput').val(title);
+            sendNotif(response.success || 'Bildtitel wurde gespeichert', 'success');
+        },
+        error: function () {
+            sendNotif('Bildtitel konnte nicht gespeichert werden', 'error');
+        }
+    });
+}
+
+function updateWebpConversionButton(hasNonWebp, count) {
+    const $button = $('#convertImagesToWebp');
+    if (!$button.length) return;
+
+    $button.toggleClass('hidden', !hasNonWebp);
+    $button.attr('data-count', count || 0);
+    $button.text(count ? `WebP (${count})` : 'WebP');
+}
+
+function convertImagesToWebp($button, csrfToken) {
+    if ($button.prop('disabled')) return;
+
+    const originalText = $button.text();
+    $button.prop('disabled', true).text('Konvertiere...');
+
+    $.ajax({
+        url: '/cms/images/convert-webp/',
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRFToken', csrfToken);
+        },
+        success: function (response) {
+            updateWebpConversionButton(response.has_non_webp, response.remaining);
+            imageLibraryPagination.page = 1;
+            loadImages(false);
+            const converted = response.converted_images || 0;
+            const skipped = response.skipped_variants || 0;
+            const suffix = skipped ? ` (${skipped} Varianten übersprungen)` : '';
+            sendNotif(`${converted} Bilder zu WebP konvertiert${suffix}`, 'success');
+        },
+        error: function () {
+            $button.text(originalText);
+            sendNotif('WebP-Konvertierung konnte nicht abgeschlossen werden', 'error');
+        },
+        complete: function () {
+            $button.prop('disabled', false);
+        }
+    });
+}
+
 function selectImage($image) {
     if (!$editImg) return;
 
@@ -157,22 +328,17 @@ function selectImage($image) {
 }
 
 function renderImageLibrary(images) {
-    const search = ($('#imageSearchInput').val() || '').toLowerCase().trim();
-    const filteredImages = images.filter(function (image) {
-        return !search || (image.title || '').toLowerCase().includes(search);
-    });
-
     const $container = $('#possibleImages');
     $container.empty();
 
-    filteredImages.forEach(function (image) {
+    images.forEach(function (image) {
         const title = escapeHtml(image.title || 'Bild');
+        const previewUrl = escapeHtml(image.preview_url || image.mobile_url || image.url || '');
+        const isSelected = selectedLibraryImage && String(selectedLibraryImage.id) === String(image.id);
+        const selectedRing = isSelected ? 'ring-2 ring-blue-500' : 'ring-slate-200';
         const $button = $(`
-            <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
-                <img src="${image.url}" imgId="${image.id}" alt="${title}" class="h-36 w-full object-cover">
-                <span class="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-1 text-[11px] font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
-                    ${(image.format || 'IMG')}${image.has_mobile ? ' + Mobil' : ''}
-                </span>
+            <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ${selectedRing} transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
+                <img src="${previewUrl}" imgId="${image.id}" alt="${title}" loading="lazy" decoding="async" class="h-24 w-full object-cover sm:h-28">
                 <span class="absolute right-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100 image-delete-button" data-image-id="${image.id}">
                     <i class="bi bi-trash"></i>
                 </span>
@@ -180,7 +346,7 @@ function renderImageLibrary(images) {
             </button>
         `);
         $button.click(function () {
-            selectImage($(this).find('img'));
+            selectLibraryImage(image);
         });
         $button.find('.image-delete-button').click(function (event) {
             event.preventDefault();
@@ -190,7 +356,17 @@ function renderImageLibrary(images) {
         $container.append($button);
     });
 
-    $('#imageEmptyState').toggleClass('hidden', filteredImages.length > 0);
+    $('#imageEmptyState').toggleClass('hidden', images.length > 0);
+    updateImagePaginationControls();
+}
+
+function updateImagePaginationControls() {
+    const totalPages = imageLibraryPagination.totalPages || 1;
+    const page = imageLibraryPagination.page || 1;
+    const total = imageLibraryPagination.total || 0;
+    $('#imagePaginationInfo').text(`Seite ${page} von ${totalPages} · ${total} Bilder`);
+    $('#imagePrevPage').prop('disabled', !imageLibraryPagination.hasPrevious);
+    $('#imageNextPage').prop('disabled', !imageLibraryPagination.hasNext);
 }
 
 function confirmDeleteImage(imageId, title) {
@@ -229,10 +405,20 @@ function deleteImage(imageId) {
             xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
         },
         success: function (response) {
+            if (selectedLibraryImage && String(selectedLibraryImage.id) === String(imageId)) {
+                selectedLibraryImage = null;
+                refreshSelectedImagePreview();
+                resetSelectedImageDetails();
+            }
+
             imageLibraryItems = imageLibraryItems.filter(function (image) {
                 return String(image.id) !== String(imageId);
             });
             renderImageLibrary(imageLibraryItems);
+            if (imageLibraryItems.length === 0 && imageLibraryPagination.page > 1) {
+                imageLibraryPagination.page -= 1;
+            }
+            loadImages(false);
 
             if ($editImg && String($editImg.attr('imgId')) === String(imageId)) {
                 $editImg.attr('imgId', '-1');
@@ -287,9 +473,12 @@ function uploadImageFiles(fileList, csrfToken) {
             success: function (response) {
                 setUploadItemStatus(itemId, 'Fertig', 'text-green-700', uploadOptimizationText(response.image));
                 if (response.image) {
-                    imageLibraryItems.unshift(response.image);
-                    renderImageLibrary(imageLibraryItems);
+                    $('#imageSearchInput').val('');
+                    imageLibraryPagination.page = 1;
+                    selectedLibraryImage = response.image;
                     setImageModalTab('imageLibraryPanel');
+                    loadImages(false);
+                    selectLibraryImage(response.image);
                 } else {
                     loadImages(false);
                 }
@@ -340,15 +529,32 @@ function uploadOptimizationText(image) {
 }
 
 function loadImages(sendLoadMsg) {
+    const requestId = ++imageRequestSequence;
     $.ajax({
         url: '/cms/images/all/',
         type: 'GET',
+        data: {
+            page: imageLibraryPagination.page,
+            per_page: imageLibraryPagination.perPage,
+            q: $('#imageSearchInput').val() || '',
+        },
         dataType: 'json',
         success: function (response) {
+            if (requestId !== imageRequestSequence) return;
             imageLibraryItems = response.image_urls || [];
+            const pagination = response.pagination || {};
+            imageLibraryPagination = {
+                page: pagination.page || 1,
+                perPage: pagination.per_page || imageLibraryPagination.perPage,
+                total: pagination.total || 0,
+                totalPages: pagination.total_pages || 1,
+                hasPrevious: Boolean(pagination.has_previous),
+                hasNext: Boolean(pagination.has_next),
+            };
+            updateWebpConversionButton(Boolean(response.has_non_webp), response.non_webp_count || 0);
             renderImageLibrary(imageLibraryItems);
             if (sendLoadMsg) {
-                const message = imageLibraryItems.length ? 'Alle Bilder wurden geladen' : 'Keine Bilder wurden gefunden';
+                const message = imageLibraryItems.length ? 'Bilder wurden geladen' : 'Keine Bilder wurden gefunden';
                 sendNotif(message, imageLibraryItems.length ? 'success' : 'error');
             }
         },
