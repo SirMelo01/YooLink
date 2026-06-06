@@ -38,6 +38,7 @@ urlpatterns = [
     path("blog/", views.blog_view, name="blog-view"),
     path("blog/add/", views.add_blog, name="blog-add"),
     path("blog/create/", views.create_blog, name="blog-create"),
+    path("blog/markdown/guidelines/download/", views.download_blog_markdown_guidelines, name="blog-markdown-guidelines-download"),
     path("blog/markdown/preview/", views.preview_blog_markdown, name="blog-markdown-preview"),
     path("blog/markdown/from-code/", views.convert_blog_code_to_markdown, name="blog-code-to-markdown"),
     path("blog/<int:id>/", views.blog_details, name="blog-details"),

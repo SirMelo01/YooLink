@@ -11,7 +11,7 @@
       <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Blog</h1>
       <p class="mt-1 text-sm text-gray-500">Beiträge schreiben, übersetzen und veröffentlichen.</p>
     </div>
-    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:w-auto">
+    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 md:w-auto">
       <a href="{% url 'cms:blog-add' %}?editor=builder"
          class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 font-semibold text-white transition hover:bg-green-700 md:w-auto">
         <i class="bi bi-layout-three-columns"></i> Builder
@@ -19,6 +19,10 @@
       <a href="{% url 'cms:blog-add' %}?editor=markdown"
          class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-green-600 bg-white px-4 py-2.5 font-semibold text-green-700 transition hover:bg-green-50 md:w-auto">
         <i class="bi bi-markdown"></i> Markdown
+      </a>
+      <a href="{% url 'cms:blog-markdown-guidelines-download' %}"
+         class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 md:w-auto">
+        <i class="bi bi-file-earmark-arrow-down"></i> KI-Vorlage
       </a>
     </div>
   </div>

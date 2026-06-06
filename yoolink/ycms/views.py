@@ -35,7 +35,7 @@ from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.urls import reverse
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import FileResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from .forms import fileform, Blogform
 from django.conf import settings
@@ -1120,6 +1120,21 @@ def blog_view(request):
         "draft_blog_count": base_blogs.filter(active=False).count(),
         "translation_count": Blog.objects.filter(original__isnull=False).count(),
     })
+
+
+@login_required(login_url='login')
+def download_blog_markdown_guidelines(request):
+    guidelines_path = os.path.join(settings.BASE_DIR, "docs", "yoolink-blog-markdown-guidelines.md")
+
+    if not os.path.exists(guidelines_path):
+        raise Http404("Blog Markdown Guidelines nicht gefunden.")
+
+    return FileResponse(
+        open(guidelines_path, "rb"),
+        as_attachment=True,
+        filename="yoolink-blog-markdown-guidelines.md",
+        content_type="text/markdown; charset=utf-8",
+    )
 
 
 # Delete Blog
