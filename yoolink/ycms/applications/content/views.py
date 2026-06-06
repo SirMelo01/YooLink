@@ -411,12 +411,10 @@ def site_view_webdesign_deggendorf(request):
         "textContent_intro_p2": _get_text("main_deggendorf_intro_p2"),
         # Warum YooLink
         "textContent_warum": _get_text("main_deggendorf_warum"),
-        # Preise
+        # Preise (Preiskarten zentral über die Preiskachel verwaltet)
         "textContent_preise": _get_text("main_deggendorf_preise"),
-        "textContent_preise_start": _get_text("main_deggendorf_preise_start"),
-        "textContent_preise_business": _get_text("main_deggendorf_preise_business"),
-        "textContent_preise_individuell": _get_text("main_deggendorf_preise_individuell"),
         "textContent_preise_footnote": _get_text("main_deggendorf_preise_footnote"),
+        "pricing_count": PricingCard.objects.count(),
         # About / Über Deggendorf
         "textContent_about": _get_text("main_deggendorf_about"),
         "textContent_about_p2": _get_text("main_deggendorf_about_p2"),
@@ -441,13 +439,6 @@ def site_view_webdesign_deggendorf(request):
     # Warum-Karten (6)
     for i in range(1, 7):
         context[f"textContent_warum_card{i}"] = _get_text(f"main_deggendorf_warum_card{i}")
-
-    # Preis-Features (3 Tiers x 5 Features)
-    for tier in ("start", "business", "individuell"):
-        for i in range(1, 6):
-            context[f"textContent_preise_{tier}_feature{i}"] = _get_text(
-                f"main_deggendorf_preise_{tier}_feature{i}"
-            )
 
     # About-Tiles (4)
     for i in range(1, 5):

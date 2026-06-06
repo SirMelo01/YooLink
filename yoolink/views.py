@@ -260,13 +260,14 @@ def load_webdesign_deggendorf(request):
     for i in range(1, 7):
         context[f"textContent_warum_card{i}"] = get_text(f"main_deggendorf_warum_card{i}")
 
-    # Preise / Abo-Modelle
+    # Preise / Abo-Modelle (geteilte Preiskacheln, identisch zur Hauptseite)
     context["textContent_preise"] = get_text("main_deggendorf_preise")
-    for tier in ("start", "business", "individuell"):
-        context[f"textContent_preise_{tier}"] = get_text(f"main_deggendorf_preise_{tier}")
-        for i in range(1, 6):
-            context[f"textContent_preise_{tier}_feature{i}"] = get_text(f"main_deggendorf_preise_{tier}_feature{i}")
     context["textContent_preise_footnote"] = get_text("main_deggendorf_preise_footnote")
+    context["pricing_cards"] = (
+        PricingCard.objects.select_related("button")
+        .prefetch_related("features")
+        .filter(active=True)
+    )
 
     # About / Über Deggendorf (mit Altem Rathaus)
     context["textContent_about"] = get_text("main_deggendorf_about")
