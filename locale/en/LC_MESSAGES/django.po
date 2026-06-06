@@ -456,3 +456,39 @@ msgstr "Soft-touch"
 #~ "We are often asked the same questions, so we try to answer the most "
 #~ "important ones here. If you have any further questions, feel free to "
 #~ "contact us anytime."
+
+msgid "impressum_title"
+msgstr "Imprint"
+
+msgid "impressum_legal_note"
+msgstr "Information pursuant to § 5 TMG"
+
+msgid "impressum_owner_label"
+msgstr "Owner:"
+
+msgid "impressum_address_heading"
+msgstr "Address"
+
+msgid "impressum_country_default"
+msgstr "Germany"
+
+msgid "impressum_contact_heading"
+msgstr "Contact"
+
+msgid "impressum_phone_label"
+msgstr "Phone:"
+
+msgid "impressum_fax_label"
+msgstr "Fax:"
+
+msgid "impressum_email_label"
+msgstr "Email:"
+
+msgid "impressum_website_label"
+msgstr "Website:"
+
+msgid "impressum_responsible_heading"
+msgstr "Responsible for content pursuant to § 18 (2) MStV"
+
+msgid "impressum_address_as_above"
+msgstr "Address as above"

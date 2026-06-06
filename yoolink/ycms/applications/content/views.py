@@ -694,6 +694,7 @@ def save_privacy_policy(request):
 
 @login_required(login_url="login")
 def site_view_impressum(request):
+    lang = get_active_language(request)
     owner_data = WebsiteSettings.get_site_owner()
     blocks = ImpressumBlock.objects.all()
 
@@ -703,6 +704,7 @@ def site_view_impressum(request):
         {
             "blocks": blocks,
             "owner_data": owner_data,
+            "cms_language": lang,
         },
     )
 
@@ -719,6 +721,9 @@ def save_impressum(request):
     if not isinstance(blocks, list):
         return JsonResponse({"error": "Ungültige Daten."}, status=400)
 
+    # In welcher Sprache wird gerade bearbeitet? (CMS-Sprachauswahl)
+    lang = get_active_language(request)
+
     kept_ids = []
     with transaction.atomic():
         for index, raw in enumerate(blocks):
@@ -726,19 +731,27 @@ def save_impressum(request):
             content = (raw.get("content") or "").strip()
             active = bool(raw.get("active", True))
 
-            # Komplett leere Blöcke ignorieren
-            if not title and not content:
-                continue
-
             block_id = raw.get("id")
             block = None
             if block_id not in (None, "", "null"):
                 block = ImpressumBlock.objects.filter(id=block_id).first()
+
+            # Bestehende Blöcke immer behalten (sie können Inhalte in der jeweils
+            # anderen Sprache haben). Nur einen wirklich neuen, leeren Block
+            # überspringen wir.
             if block is None:
+                if not title and not content:
+                    continue
                 block = ImpressumBlock()
 
-            block.title = title
-            block.content = content
+            # Nur die Felder der aktuell bearbeiteten Sprache schreiben.
+            setattr(block, f"title_{lang}", title)
+            setattr(block, f"content_{lang}", content)
+            # Basisfeld an der modeltranslation-Default-Sprache (de) ausrichten,
+            # damit der Fallback korrekt ist.
+            if lang == "de":
+                block.title = title
+                block.content = content
             block.order = index
             block.active = active
             block.save()

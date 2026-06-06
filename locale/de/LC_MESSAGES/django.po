@@ -457,3 +457,39 @@ msgstr "Soft-Touch"
 #~ "Oft werden uns die gleichen Fragen gestellt, deshalb versuchen wir das "
 #~ "wichtigste hier zu beantworten. Bei weiteren Fragen können Sie sich "
 #~ "jederzeit gerne melden."
+
+msgid "impressum_title"
+msgstr "Impressum"
+
+msgid "impressum_legal_note"
+msgstr "Angaben gemäß § 5 TMG"
+
+msgid "impressum_owner_label"
+msgstr "Inhaber:"
+
+msgid "impressum_address_heading"
+msgstr "Anschrift"
+
+msgid "impressum_country_default"
+msgstr "Deutschland"
+
+msgid "impressum_contact_heading"
+msgstr "Kontakt"
+
+msgid "impressum_phone_label"
+msgstr "Telefon:"
+
+msgid "impressum_fax_label"
+msgstr "Fax:"
+
+msgid "impressum_email_label"
+msgstr "E-Mail:"
+
+msgid "impressum_website_label"
+msgstr "Website:"
+
+msgid "impressum_responsible_heading"
+msgstr "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV"
+
+msgid "impressum_address_as_above"
+msgstr "Anschrift wie oben"

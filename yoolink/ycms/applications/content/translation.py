@@ -1,11 +1,16 @@
 from modeltranslation.translator import TranslationOptions, register
 
-from .models import Customer, TextContent
+from .models import Customer, ImpressumBlock, TextContent
 
 
 @register(TextContent)
 class TextContentTranslationOptions(TranslationOptions):
     fields = ("header", "title", "description", "buttonText")
+
+
+@register(ImpressumBlock)
+class ImpressumBlockTranslationOptions(TranslationOptions):
+    fields = ("title", "content")
 
 
 @register(Customer)
