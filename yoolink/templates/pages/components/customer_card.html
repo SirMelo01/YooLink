@@ -97,7 +97,7 @@
                 {% endif %}
 
                 <span class="inline-flex items-center gap-1.5 font-semibold text-blue-700 transition group-hover:gap-2.5">
-                    {% if customer.has_detail %}Mehr erfahren{% elif customer.website_url %}Webseite{% else %}Referenz{% endif %}
+                    {% if customer.has_detail %}{% trans "client_card_learn_more" %}{% elif customer.website_url %}{% trans "client_card_website" %}{% else %}{% trans "client_card_reference" %}{% endif %}
                     <i class="bi bi-arrow-right"></i>
                 </span>
             </div>

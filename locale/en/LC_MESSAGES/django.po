@@ -28,6 +28,54 @@ msgstr "English"
 msgid "NAVBAR_LEISTUNGEN"
 msgstr "Services"
 
+#: yoolink/templates/base.html
+msgid "nav_leistungen_overview_title"
+msgstr "Overview"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_overview_desc"
+msgstr "All services at a glance"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_webdesign_title"
+msgstr "Web Design"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_webdesign_desc"
+msgstr "Modern websites with Django & Tailwind"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_cms_title"
+msgstr "CMS"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_cms_desc"
+msgstr "Your own content management system"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_logos_title"
+msgstr "Logos"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_logos_desc"
+msgstr "Brand logo design with strategy"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_medien_title"
+msgstr "Media & Photography"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_medien_desc"
+msgstr "Visual content right with your website"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_visitenkarten_title"
+msgstr "Business Cards"
+
+#: yoolink/templates/base.html
+msgid "nav_leistungen_visitenkarten_desc"
+msgstr "High-quality business card design"
+
 #: yoolink/templates/base.html:182 yoolink/templates/base.html:319
 msgid "NAVBAR_PRICING"
 msgstr "Pricing"
@@ -93,6 +141,18 @@ msgstr ""
 #: yoolink/templates/pages/components/customer_card.html:79
 msgid "client_published_on"
 msgstr "Published on"
+
+#: yoolink/templates/pages/components/customer_card.html:100
+msgid "client_card_learn_more"
+msgstr "Learn more"
+
+#: yoolink/templates/pages/components/customer_card.html:100
+msgid "client_card_website"
+msgstr "Website"
+
+#: yoolink/templates/pages/components/customer_card.html:100
+msgid "client_card_reference"
+msgstr "Reference"
 
 #: yoolink/templates/pages/index.html:396
 msgid "learn_more"
