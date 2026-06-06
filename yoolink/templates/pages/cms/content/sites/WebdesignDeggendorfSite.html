@@ -205,7 +205,7 @@
          PREISE / ABO-MODELLE
     ══════════════════════════════════════════ -->
     <section class="rounded-2xl bg-blue-50 p-6">
-      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Preise &amp; Abo-Modelle (3 Tiers)</p>
+      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Preise &amp; Abo-Modelle</p>
 
       <div class="text-content flex flex-col gap-3" key="main_deggendorf_preise">
         <input inputType="header" type="text"
@@ -218,105 +218,22 @@
                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_preise.description|default:"Statt einmaliger Riesensumme zahlen Sie eine geringe monatliche Pauschale. Darin enthalten: Hosting, Pflege, Updates und persönlicher Support – damit Ihre Website über Jahre aktuell, sicher und schnell bleibt." }}</textarea>
       </div>
 
-      <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <!-- Start Tier -->
-        <div class="rounded-xl bg-white p-4 shadow-sm">
-          <div class="text-content flex flex-col gap-2" key="main_deggendorf_preise_start">
-            <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Start (links)</p>
-            <input inputType="header" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Paketname"
-                   value="{{ textContent_preise_start.header|default:'Start' }}">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-lg font-extrabold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Preis"
-                   value="{{ textContent_preise_start.title|default:'40 €' }}">
-            <input inputType="description" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Kurzbeschreibung"
-                   value="{{ textContent_preise_start.description|default:'Für Selbstständige &amp; kleine Betriebe aus Deggendorf.' }}">
-            <input inputType="buttonText" type="text"
-                   class="self-start rounded-md border border-blue-900 bg-white px-4 py-2 text-sm font-bold text-blue-900"
-                   value="{{ textContent_preise_start.buttonText|default:'Anfragen' }}">
-          </div>
-          <p class="mt-3 text-xs font-semibold uppercase tracking-wider text-gray-500">5 Features</p>
-          <div class="mt-1 flex flex-col gap-1.5">
-            {% for f in "12345" %}
-            <div class="text-content flex items-center gap-2" key="main_deggendorf_preise_start_feature{{f}}">
-              <span class="text-blue-900">✓</span>
-              <input inputType="title" type="text"
-                     class="flex-1 rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
-                     value="{% if f == '1' %}{{ textContent_preise_start_feature1.title|default:'Individuelle Onepage-Website' }}{% elif f == '2' %}{{ textContent_preise_start_feature2.title|default:'Hosting in Deutschland inklusive' }}{% elif f == '3' %}{{ textContent_preise_start_feature3.title|default:'SSL-Zertifikat &amp; DSGVO-Konformität' }}{% elif f == '4' %}{{ textContent_preise_start_feature4.title|default:'Lokale SEO-Basis für Deggendorf' }}{% else %}{{ textContent_preise_start_feature5.title|default:'Persönlicher Ansprechpartner' }}{% endif %}">
-            </div>
-            {% endfor %}
-          </div>
+      <!-- Preiskarten werden zentral über die Preiskachel verwaltet (geteilt mit der Hauptseite) -->
+      <div class="mt-4 flex flex-col gap-4 rounded-xl border border-blue-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-base font-semibold text-gray-800 flex items-center gap-2">
+            <i class="bi bi-cash-coin text-gray-500"></i> Preiskarten
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Die Preiskarten werden zentral über die Preiskachel gepflegt und sind mit der Hauptseite identisch.
+            Änderungen hier wirken sich auf beide Seiten aus.
+          </p>
+          <p class="mt-2 text-sm text-gray-700">Aktuelle Preiskarten: <strong>{{ pricing_count }}</strong></p>
         </div>
-
-        <!-- Business Tier (dunkel/hervorgehoben) -->
-        <div class="rounded-xl bg-blue-900 p-4 text-white shadow-sm">
-          <div class="text-content flex flex-col gap-2" key="main_deggendorf_preise_business">
-            <p class="text-xs font-semibold uppercase tracking-wider text-blue-200">Business (Mitte, hervorgehoben)</p>
-            <input inputType="header" type="text"
-                   class="w-full rounded-lg border-2 border-blue-700 bg-blue-800 px-3 py-1.5 text-sm font-bold text-white placeholder-blue-300 focus:border-blue-300 focus:bg-blue-700 focus:outline-none"
-                   placeholder="Paketname"
-                   value="{{ textContent_preise_business.header|default:'Business' }}">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-blue-700 bg-blue-800 px-3 py-1.5 text-lg font-extrabold text-white placeholder-blue-300 focus:border-blue-300 focus:bg-blue-700 focus:outline-none"
-                   placeholder="Preis"
-                   value="{{ textContent_preise_business.title|default:'ab 70 €' }}">
-            <input inputType="description" type="text"
-                   class="w-full rounded-lg border-2 border-blue-700 bg-blue-800 px-3 py-1.5 text-sm text-white placeholder-blue-300 focus:border-blue-300 focus:bg-blue-700 focus:outline-none"
-                   placeholder="Kurzbeschreibung"
-                   value="{{ textContent_preise_business.description|default:'Für Unternehmen mit mehreren Leistungen oder Standorten.' }}">
-            <input inputType="buttonText" type="text"
-                   class="self-start rounded-md bg-white px-4 py-2 text-sm font-bold text-blue-900"
-                   value="{{ textContent_preise_business.buttonText|default:'Angebot anfordern' }}">
-          </div>
-          <p class="mt-3 text-xs font-semibold uppercase tracking-wider text-blue-200">5 Features</p>
-          <div class="mt-1 flex flex-col gap-1.5">
-            {% for f in "12345" %}
-            <div class="text-content flex items-center gap-2" key="main_deggendorf_preise_business_feature{{f}}">
-              <span class="text-blue-300">✓</span>
-              <input inputType="title" type="text"
-                     class="flex-1 rounded-lg border-2 border-blue-700 bg-blue-800 px-3 py-1 text-sm text-white placeholder-blue-300 focus:border-blue-300 focus:bg-blue-700 focus:outline-none"
-                     value="{% if f == '1' %}{{ textContent_preise_business_feature1.title|default:'Mehrseitige Website mit individuellem Design' }}{% elif f == '2' %}{{ textContent_preise_business_feature2.title|default:'Eigenes CMS – Inhalte selbst pflegen' }}{% elif f == '3' %}{{ textContent_preise_business_feature3.title|default:'Blog- &amp; Galerie-Modul' }}{% elif f == '4' %}{{ textContent_preise_business_feature4.title|default:'Erweiterte SEO-Optimierung' }}{% else %}{{ textContent_preise_business_feature5.title|default:'Bevorzugter Support &amp; Beratung' }}{% endif %}">
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Individuell Tier -->
-        <div class="rounded-xl bg-white p-4 shadow-sm">
-          <div class="text-content flex flex-col gap-2" key="main_deggendorf_preise_individuell">
-            <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Individuell (rechts)</p>
-            <input inputType="header" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Paketname"
-                   value="{{ textContent_preise_individuell.header|default:'Individuell' }}">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-lg font-extrabold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Preis"
-                   value="{{ textContent_preise_individuell.title|default:'auf Anfrage' }}">
-            <input inputType="description" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
-                   placeholder="Kurzbeschreibung"
-                   value="{{ textContent_preise_individuell.description|default:'Shop, Buchungssystem oder individuelle Module nach Maß.' }}">
-            <input inputType="buttonText" type="text"
-                   class="self-start rounded-md border border-blue-900 bg-white px-4 py-2 text-sm font-bold text-blue-900"
-                   value="{{ textContent_preise_individuell.buttonText|default:'Beratung anfragen' }}">
-          </div>
-          <p class="mt-3 text-xs font-semibold uppercase tracking-wider text-gray-500">5 Features</p>
-          <div class="mt-1 flex flex-col gap-1.5">
-            {% for f in "12345" %}
-            <div class="text-content flex items-center gap-2" key="main_deggendorf_preise_individuell_feature{{f}}">
-              <span class="text-blue-900">✓</span>
-              <input inputType="title" type="text"
-                     class="flex-1 rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
-                     value="{% if f == '1' %}{{ textContent_preise_individuell_feature1.title|default:'Online-Shop, Termin- oder Buchungssystem' }}{% elif f == '2' %}{{ textContent_preise_individuell_feature2.title|default:'Individuelle Schnittstellen &amp; APIs' }}{% elif f == '3' %}{{ textContent_preise_individuell_feature3.title|default:'Mehrsprachige Inhalte' }}{% elif f == '4' %}{{ textContent_preise_individuell_feature4.title|default:'Erweiterbare Architektur' }}{% else %}{{ textContent_preise_individuell_feature5.title|default:'Persönliche Strategie-Beratung' }}{% endif %}">
-            </div>
-            {% endfor %}
-          </div>
-        </div>
+        <a href="{% url 'cms:pricingcard-list' %}"
+           class="self-start rounded bg-blue-500 px-4 py-2 text-center font-bold text-white hover:bg-blue-700 sm:self-auto">
+          Preiskarten verwalten
+        </a>
       </div>
 
       <div class="text-content mt-4 flex flex-col gap-2" key="main_deggendorf_preise_footnote">

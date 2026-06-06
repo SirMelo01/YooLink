@@ -132,8 +132,8 @@
                     <i class="bi bi-grid-1x2 text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">Übersicht</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Alle Leistungen auf einen Blick</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_overview_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_overview_desc" %}</span>
                   </span>
                 </a>
                 <a href="{% url 'leistungen_webdesign' %}" role="menuitem"
@@ -142,8 +142,8 @@
                     <i class="bi bi-code-slash text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">Webdesign</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Moderne Websites mit Django &amp; Tailwind</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_webdesign_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_webdesign_desc" %}</span>
                   </span>
                 </a>
                 <a href="{% url 'leistungen_cms' %}" role="menuitem"
@@ -152,8 +152,8 @@
                     <i class="bi bi-window-stack text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">CMS</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Eigenes Content-Management-System</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_cms_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_cms_desc" %}</span>
                   </span>
                 </a>
                 <a href="{% url 'leistungen_logos' %}" role="menuitem"
@@ -162,8 +162,8 @@
                     <i class="bi bi-palette text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">Logos</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Markenlogo Design mit Strategie</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_logos_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_logos_desc" %}</span>
                   </span>
                 </a>
                 <a href="{% url 'leistungen_medien' %}" role="menuitem"
@@ -172,8 +172,8 @@
                     <i class="bi bi-camera text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">Medien &amp; Fotografie</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Bildmaterial direkt mit der Website</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_medien_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_medien_desc" %}</span>
                   </span>
                 </a>
                 <a href="{% url 'leistungen_visitenkarte' %}" role="menuitem"
@@ -182,8 +182,8 @@
                     <i class="bi bi-card-text text-lg"></i>
                   </span>
                   <span class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-gray-900">Visitenkarten</span>
-                    <span class="mt-0.5 text-xs leading-5 text-gray-500">Hochwertige Visitenkarten Design</span>
+                    <span class="text-sm font-bold tracking-tight text-gray-900">{% trans "nav_leistungen_visitenkarten_title" %}</span>
+                    <span class="mt-0.5 text-xs leading-5 text-gray-500">{% trans "nav_leistungen_visitenkarten_desc" %}</span>
                   </span>
                 </a>
               </div>
@@ -301,27 +301,27 @@
                         aria-labelledby="leistungenDropdownButtonMobile">
                         <a href="{% url 'leistungen' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-grid-1x2 text-blue-900"></i> Übersicht
+                          <i class="bi bi-grid-1x2 text-blue-900"></i> {% trans "nav_leistungen_overview_title" %}
                         </a>
                         <a href="{% url 'leistungen_webdesign' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-code-slash text-blue-900"></i> Webdesign
+                          <i class="bi bi-code-slash text-blue-900"></i> {% trans "nav_leistungen_webdesign_title" %}
                         </a>
                         <a href="{% url 'leistungen_cms' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-window-stack text-blue-900"></i> CMS
+                          <i class="bi bi-window-stack text-blue-900"></i> {% trans "nav_leistungen_cms_title" %}
                         </a>
                         <a href="{% url 'leistungen_logos' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-palette text-blue-900"></i> Logos
+                          <i class="bi bi-palette text-blue-900"></i> {% trans "nav_leistungen_logos_title" %}
                         </a>
                         <a href="{% url 'leistungen_medien' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-camera text-blue-900"></i> Medien &amp; Fotografie
+                          <i class="bi bi-camera text-blue-900"></i> {% trans "nav_leistungen_medien_title" %}
                         </a>
                         <a href="{% url 'leistungen_visitenkarte' %}" role="menuitem"
                           class="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-blue-900">
-                          <i class="bi bi-card-text text-blue-900"></i> Visitenkarten
+                          <i class="bi bi-card-text text-blue-900"></i> {% trans "nav_leistungen_visitenkarten_title" %}
                         </a>
                       </div>
                     </li>
