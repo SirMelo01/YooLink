@@ -175,6 +175,18 @@ msgstr "Termin"
 msgid "deggendorf_appointment_cta"
 msgstr "Kostenloses Erstgespräch anfragen"
 
+#: yoolink/templates/pages/cookies.html
+msgid "cookies_always_active"
+msgstr "Immer aktiv"
+
+#: yoolink/templates/pages/cookies.html
+msgid "cookies_examples_label"
+msgstr "Beispiele:"
+
+#: yoolink/templates/pages/cookies.html
+msgid "Weitere Details finden Sie in der <a class=\"font-semibold text-blue-700 underline\" href=\"%(datenschutz_url)s\">Datenschutzerklärung</a>."
+msgstr ""
+
 #: yoolink/templates/pages/index.html:396
 msgid "learn_more"
 msgstr "Erfahre mehr"

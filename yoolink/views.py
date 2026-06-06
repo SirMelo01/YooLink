@@ -565,6 +565,25 @@ def datenschutz_view(request):
     )
 
 
+def cookies_view(request):
+    context = {}
+    context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_cookies_hero")
+    # Kategorie-Karten
+    context["textContent_necessary"] = get_text("main_cookies_necessary")
+    context["textContent_analytics"] = get_text("main_cookies_analytics")
+    context["textContent_external"] = get_text("main_cookies_external")
+    # Buttons + Hinweis
+    context["textContent_actions"] = get_text("main_cookies_actions")
+    context["textContent_hinweis"] = get_text("main_cookies_hinweis")
+
+    return render(request, 'pages/cookies.html', context=context)
+
 
 from .forms import ContactForm
 def kontaktform(request):

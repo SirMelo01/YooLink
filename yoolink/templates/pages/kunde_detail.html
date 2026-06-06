@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress static i18n custom_filters %}
 
-{% block title %}{{ block.super }} | {{ customer.name }}{% endblock title %}
+{% block title %}{{ customer.name }} – Webdesign-Referenz | {{ block.super }}{% endblock title %}
 {% block meta_description %}{% trans "case_meta_reference" %}: {{ customer.name }} – {{ customer.short_description|default:customer.subtitle|default:customer.name }}{% endblock %}
 
 {% block og_title %}{{ customer.name }} - {% trans "case_og_reference_by" %}{% endblock %}

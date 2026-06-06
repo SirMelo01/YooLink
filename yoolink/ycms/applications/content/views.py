@@ -533,6 +533,22 @@ def site_view_datenschutz(request):
 
 
 @login_required(login_url="login")
+def site_view_cookies(request):
+    return render(
+        request,
+        "pages/cms/content/sites/CookiesSite.html",
+        {
+            "textContent_hero": _get_text("main_cookies_hero"),
+            "textContent_necessary": _get_text("main_cookies_necessary"),
+            "textContent_analytics": _get_text("main_cookies_analytics"),
+            "textContent_external": _get_text("main_cookies_external"),
+            "textContent_actions": _get_text("main_cookies_actions"),
+            "textContent_hinweis": _get_text("main_cookies_hinweis"),
+        },
+    )
+
+
+@login_required(login_url="login")
 def save_text_content(request):
     if request.method != "POST":
         return JsonResponse({"error": "Etwas ist falsch gelaufen. Versuche es spÃ¤ter nochmal"}, status=400)
