@@ -26,6 +26,7 @@ urlpatterns = [
     path("leistungen/logos/", views.site_view_logos, name="site_leistungen_logos"),
     path("leistungen/webdesign/", views.site_view_webdesign, name="site_leistungen_webdesign"),
     path("leistungen/visitenkarte/", views.site_view_visitenkarte, name="site_leistungen_visitenkarte"),
+    path("leistungen/medien/", views.site_view_medien, name="site_leistungen_medien"),
     path("webdesign-deggendorf/", views.site_view_webdesign_deggendorf, name="site_webdesign_deggendorf"),
     path("datenschutz/", views.site_view_datenschutz, name="site_datenschutz"),
     path("datenschutz/save/", views.save_privacy_policy, name="save_privacy_policy"),

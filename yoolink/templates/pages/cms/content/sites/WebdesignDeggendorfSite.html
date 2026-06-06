@@ -3,6 +3,7 @@
 {% block title %} {{ block.super }} | CMS - Webdesign Deggendorf {% endblock %}
 
 {% block content %}
+{% include "pages/cms/components/ImageSelectModal.html" %}
 
 <div class="mx-auto mt-4 max-w-6xl px-4 sm:mt-8 sm:px-6">
 
@@ -79,7 +80,18 @@
         {% endfor %}
       </div>
 
-      <p class="mt-3 text-xs italic text-gray-500">Skyline-Bild, Grabkirche und Altes Rathaus sind statische Assets (Aquarell-Illustrationen).</p>
+      <p class="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-orange-600">
+        <i class="bi bi-image mr-1"></i>Stadtübersicht / Skyline (Hero-Hintergrundbild)
+      </p>
+      <div class="relative max-w-2xl overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+        <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+        {% if image_skyline %}
+        <img src="{{ image_skyline.file.url }}" imgId="{{ image_skyline.id }}" key="main_deggendorf_skyline" alt="Stadtübersicht Deggendorf" class="content-image aspect-[16/9] w-full rounded-xl object-cover bg-white" />
+        {% else %}
+        <img src="{% static 'images/deggendorf/skyline.png' %}" imgId="-1" key="main_deggendorf_skyline" alt="Stadtübersicht Deggendorf" class="content-image aspect-[16/9] w-full rounded-xl object-cover bg-gray-300" />
+        {% endif %}
+      </div>
+      <p class="mt-2 text-xs text-gray-500">Wird als Hintergrundbild im Hero verwendet. Ohne eigenes Bild wird die Standard-Aquarell-Illustration angezeigt.</p>
     </section>
 
     <!-- ══════════════════════════════════════════
@@ -123,6 +135,26 @@
                  value="{% if bullet == '1' %}{{ textContent_intro_bullet1.description|default:'wir kennen den Markt in Deggendorf und Umgebung.' }}{% elif bullet == '2' %}{{ textContent_intro_bullet2.description|default:'jede Website ist ein eigenes Projekt.' }}{% elif bullet == '3' %}{{ textContent_intro_bullet3.description|default:'planbare Kosten ab 40 € im Monat.' }}{% else %}{{ textContent_intro_bullet4.description|default:'Inhalte selbst pflegen ohne Zusatzkosten.' }}{% endif %}">
         </div>
         {% endfor %}
+      </div>
+
+      <p class="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-orange-600">
+        <i class="bi bi-image mr-1"></i>Bild &amp; Bildunterschrift (Grabkirche)
+      </p>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_intro %}
+          <img src="{{ image_intro.file.url }}" imgId="{{ image_intro.id }}" key="main_deggendorf_intro_image" alt="Grabkirche Deggendorf" class="content-image aspect-[3/4] w-full rounded-xl object-cover bg-white" />
+          {% else %}
+          <img src="{% static 'images/deggendorf/grabkirche.png' %}" imgId="-1" key="main_deggendorf_intro_image" alt="Grabkirche Deggendorf" class="content-image aspect-[3/4] w-full rounded-xl object-cover bg-gray-300" />
+          {% endif %}
+        </div>
+        <div class="text-content flex flex-col gap-2 self-start rounded-xl bg-white p-4 shadow-sm" key="main_deggendorf_intro_caption">
+          <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Bildunterschrift</p>
+          <input inputType="title" type="text"
+                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
+                 value="{{ textContent_intro_caption.title|default:'Grabkirche St. Peter und Paul, Deggendorf' }}">
+        </div>
       </div>
     </section>
 
@@ -285,6 +317,26 @@
         </div>
         {% endfor %}
       </div>
+
+      <p class="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-orange-600">
+        <i class="bi bi-image mr-1"></i>Bild &amp; Bildunterschrift (Altes Rathaus)
+      </p>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+          <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+          {% if image_about %}
+          <img src="{{ image_about.file.url }}" imgId="{{ image_about.id }}" key="main_deggendorf_about_image" alt="Altes Rathaus Deggendorf" class="content-image aspect-[3/4] w-full rounded-xl object-cover bg-white" />
+          {% else %}
+          <img src="{% static 'images/deggendorf/altes-rathaus.png' %}" imgId="-1" key="main_deggendorf_about_image" alt="Altes Rathaus Deggendorf" class="content-image aspect-[3/4] w-full rounded-xl object-cover bg-gray-300" />
+          {% endif %}
+        </div>
+        <div class="text-content flex flex-col gap-2 self-start rounded-xl bg-white p-4 shadow-sm" key="main_deggendorf_about_caption">
+          <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Bildunterschrift</p>
+          <input inputType="title" type="text"
+                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
+                 value="{{ textContent_about_caption.title|default:'Altes Rathaus, Deggendorf' }}">
+        </div>
+      </div>
     </section>
 
     <!-- ══════════════════════════════════════════
@@ -389,5 +441,10 @@
 <script defer src="{% static 'js/cms.js' %}"></script>
 <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
 <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script defer>
+  $(document).ready(function () {
+    loadImages(false);
+  });
+</script>
 {% endcompress js %}
 {% endblock %}

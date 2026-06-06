@@ -17,7 +17,7 @@
                 {% for item in order.orderitem_set.all %}
                 <div order-item-id="{{item.id}}" class="mt-5 order-item">
                     <div class="flex items-center justify-between rounded-2xl border px-1 lg:px-3">
-                        <a href="/products/{{item.product.id}}/{{item.product.slug}}" class="flex items-center">
+                        <a href="{% url 'product-detail' product_id=item.product.id slug=item.product.slug %}" class="flex items-center">
                             <img src="{{item.product.title_image.url}}" class="h-16 w-16 rounded-2xl hidden md:block" alt="" />
                             <p class="font-semibold ml-4">{{item.product.title}}</p>
                         </a>
@@ -116,7 +116,7 @@
                                 <div
                                     class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800">
                                 </div>
-                                <span class="ms-3 font-medium text-gray-900 dark:text-gray-400 flex"><a class="text-blue-600" href="/datenschutz">Datenschutz </a> <span class="ml-2">akzeptieren</span></span>
+                                <span class="ms-3 font-medium text-gray-900 dark:text-gray-400 flex"><a class="text-blue-600" href="{% url 'datenschutz' %}">Datenschutz </a> <span class="ml-2">akzeptieren</span></span>
                             </label>
                         </div>
 

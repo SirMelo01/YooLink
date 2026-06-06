@@ -406,9 +406,12 @@ def site_view_webdesign_deggendorf(request):
         "textContent_hero": _get_text("main_deggendorf_hero"),
         "textContent_hero_highlight": _get_text("main_deggendorf_hero_highlight"),
         "textContent_hero_secondary": _get_text("main_deggendorf_hero_secondary"),
+        "image_skyline": _get_image("main_deggendorf_skyline"),
         # Intro
         "textContent_intro": _get_text("main_deggendorf_intro"),
         "textContent_intro_p2": _get_text("main_deggendorf_intro_p2"),
+        "textContent_intro_caption": _get_text("main_deggendorf_intro_caption"),
+        "image_intro": _get_image("main_deggendorf_intro_image"),
         # Warum YooLink
         "textContent_warum": _get_text("main_deggendorf_warum"),
         # Preise (Preiskarten zentral über die Preiskachel verwaltet)
@@ -418,6 +421,8 @@ def site_view_webdesign_deggendorf(request):
         # About / Über Deggendorf
         "textContent_about": _get_text("main_deggendorf_about"),
         "textContent_about_p2": _get_text("main_deggendorf_about_p2"),
+        "textContent_about_caption": _get_text("main_deggendorf_about_caption"),
+        "image_about": _get_image("main_deggendorf_about_image"),
         # Prozess
         "textContent_prozess": _get_text("main_deggendorf_prozess"),
         # Maps + Bottom CTA
@@ -476,6 +481,37 @@ def site_view_visitenkarte(request):
             "textContent_bottomcta": _get_text("main_visitenkarte_bottomcta"),
         },
     )
+
+
+@login_required(login_url="login")
+def site_view_medien(request):
+    context = {
+        # Hero
+        "textContent_hero": _get_text("main_medien_hero"),
+        "textContent_hero_secondary": _get_text("main_medien_hero_secondary"),
+        # Inhaltsarten
+        "textContent_inhalte": _get_text("main_medien_inhalte"),
+        # Prozess
+        "textContent_prozess": _get_text("main_medien_prozess"),
+        # Mehrwert / Aus einer Hand
+        "textContent_mehrwert": _get_text("main_medien_mehrwert"),
+        # Bottom CTA
+        "textContent_bottomcta": _get_text("main_medien_bottomcta"),
+    }
+
+    # Inhaltsarten-Karten (4)
+    for i in range(1, 5):
+        context[f"textContent_inhalte_card{i}"] = _get_text(f"main_medien_inhalte_card{i}")
+
+    # Prozess-Steps (3)
+    for i in range(1, 4):
+        context[f"textContent_prozess_step{i}"] = _get_text(f"main_medien_prozess_step{i}")
+
+    # Mehrwert-Bullets (3)
+    for i in range(1, 4):
+        context[f"textContent_mehrwert_bullet{i}"] = _get_text(f"main_medien_mehrwert_bullet{i}")
+
+    return render(request, "pages/cms/content/sites/MedienSite.html", context)
 
 
 @login_required(login_url="login")

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load compress static custom_filters %} {% block title%}{{block.super}} | Eigenes Content Management System{% endblock title %}
+{% extends "base.html" %} {% load compress static custom_filters i18n %} {% block title%}{{block.super}} | Eigenes Content Management System{% endblock title %}
 
 
 {% block css %}
@@ -307,13 +307,13 @@
                 <div class="pt-6 mt-6 space-y-4 border-t border-gray-200">
                     <div>
                       <a href="{% url 'kunden' %}" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
-                        Besuche unsere Kunden
+                        {% trans "cms_visit_clients" %}
                         <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                       </a>
                     </div>
                     <div>
                       <a href="{% url 'kontakt' %}" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
-                          Kontaktiere uns direkt!
+                          {% trans "cms_contact_direct" %}
                           <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                       </a>
                       </div>

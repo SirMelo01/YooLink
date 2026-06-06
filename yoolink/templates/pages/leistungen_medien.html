@@ -584,21 +584,21 @@
 <section class="bg-white px-4 pt-20 pb-20 lg:pt-28 lg:pb-28">
   <div class="mx-auto grid max-w-6xl items-center gap-14 px-4 md:grid-cols-2">
     <div data-aos="fade-right">
-      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">Medien &amp; Bildmaterial</p>
+      <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_hero.header|default:"Medien & Bildmaterial" }}</p>
       <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
-        Eine Website wirkt nur mit den richtigen Bildern.
+        {{ textContent_hero.title|default:"Eine Website wirkt nur mit den richtigen Bildern." }}
       </h1>
       <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Professionelles Webdesign braucht mehr als gute Typografie und kluges Layout - es braucht echte, individuelle Bilder, die deine Marke greifbar machen. Wir produzieren das passende Bildmaterial direkt mit und sorgen so für einen stimmigen Gesamtauftritt aus einer Hand.
+        {{ textContent_hero.description|default:"Professionelles Webdesign braucht mehr als gute Typografie und kluges Layout - es braucht echte, individuelle Bilder, die deine Marke greifbar machen. Wir produzieren das passende Bildmaterial direkt mit und sorgen so für einen stimmigen Gesamtauftritt aus einer Hand." }}
       </p>
       <div class="flex flex-wrap gap-4">
         <a href="{% url 'kontakt' %}"
           class="inline-block rounded-md border-t border-gray-200 bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
-          Website mit Bildern anfragen
+          {{ textContent_hero.buttonText|default:"Website mit Bildern anfragen" }}
         </a>
         <a href="#prozess"
           class="inline-block rounded-md border border-blue-900 bg-white px-8 py-4 text-base font-bold text-blue-900 shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-50">
-          So läuft es ab
+          {{ textContent_hero_secondary.title|default:"So läuft es ab" }}
         </a>
       </div>
     </div>
@@ -687,12 +687,12 @@
   <!-- INHALTSARTEN -->
   <div class="mx-auto max-w-6xl px-4">
     <div class="mx-auto mb-14 max-w-3xl text-center" data-aos="fade-up">
-      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">Was wir festhalten</p>
+      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_inhalte.header|default:"Was wir festhalten" }}</p>
       <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Inhalte, die deine Marke erlebbar machen
+        {{ textContent_inhalte.title|default:"Inhalte, die deine Marke erlebbar machen" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Wir bringen die Inhalte, die deine Website erst lebendig machen. Egal ob Menschen, Räume, Abläufe oder Atmosphäre - wir setzen sie so in Szene, dass sie zu deinem digitalen Auftritt passen.
+        {{ textContent_inhalte.description|default:"Wir bringen die Inhalte, die deine Website erst lebendig machen. Egal ob Menschen, Räume, Abläufe oder Atmosphäre - wir setzen sie so in Szene, dass sie zu deinem digitalen Auftritt passen." }}
       </p>
     </div>
 
@@ -705,9 +705,9 @@
             <path d="M12 56c0-11 9-20 20-20s20 9 20 20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </div>
-        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Menschen</h3>
+        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_inhalte_card1.title|default:"Menschen" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Mitarbeiterfotos, Teambilder und Portraits, die deinem Unternehmen ein Gesicht geben.
+          {{ textContent_inhalte_card1.description|default:"Mitarbeiterfotos, Teambilder und Portraits, die deinem Unternehmen ein Gesicht geben." }}
         </p>
       </div>
 
@@ -721,9 +721,9 @@
             <rect x="36" y="32" width="10" height="10" stroke="currentColor" stroke-width="3"/>
           </svg>
         </div>
-        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Räume</h3>
+        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_inhalte_card2.title|default:"Räume" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Innenaufnahmen, Aussenansichten und Atmosphäre - so wird dein Standort sichtbar.
+          {{ textContent_inhalte_card2.description|default:"Innenaufnahmen, Aussenansichten und Atmosphäre - so wird dein Standort sichtbar." }}
         </p>
       </div>
 
@@ -737,9 +737,9 @@
             <path d="M19 32h8M37 32h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </div>
-        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Abläufe</h3>
+        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_inhalte_card3.title|default:"Abläufe" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Wie dein Unternehmen arbeitet - Schritt für Schritt visuell festgehalten.
+          {{ textContent_inhalte_card3.description|default:"Wie dein Unternehmen arbeitet - Schritt für Schritt visuell festgehalten." }}
         </p>
       </div>
 
@@ -753,9 +753,9 @@
             <path d="M10 50h44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </div>
-        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Marke</h3>
+        <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_inhalte_card4.title|default:"Marke" }}</h3>
         <p class="text-base leading-7 text-gray-600">
-          Symbolische Aufnahmen, die deine Werte und deinen Charakter transportieren.
+          {{ textContent_inhalte_card4.description|default:"Symbolische Aufnahmen, die deine Werte und deinen Charakter transportieren." }}
         </p>
       </div>
     </div>
@@ -764,12 +764,12 @@
   <!-- PROZESS / ABLAUF -->
   <div id="prozess" class="mx-auto mt-32 max-w-6xl px-4 scroll-mt-28">
     <div class="mx-auto mb-20 max-w-3xl text-center" data-aos="fade-up">
-      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">Ablauf</p>
+      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_prozess.header|default:"Ablauf" }}</p>
       <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-        Wie Bilder und Website zusammenfinden
+        {{ textContent_prozess.title|default:"Wie Bilder und Website zusammenfinden" }}
       </h2>
       <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-        Die Bildproduktion ist nicht ein nachgelagerter Schritt - sie ist ein integraler Teil deiner Website. Vom Briefing bis zur Live-Schaltung greifen die Phasen ineinander.
+        {{ textContent_prozess.description|default:"Die Bildproduktion ist nicht ein nachgelagerter Schritt - sie ist ein integraler Teil deiner Website. Vom Briefing bis zur Live-Schaltung greifen die Phasen ineinander." }}
       </p>
     </div>
 
@@ -785,9 +785,9 @@
               <path d="M24 30h16M24 38h12M24 46h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
             </svg>
           </div>
-          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Planung</h3>
+          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_prozess_step1.title|default:"Planung" }}</h3>
           <p class="text-base leading-7 text-gray-600">
-            Wir analysieren mit dir, welche Inhalte deine Website braucht - welche Stimmung, welche Motive, welche Anzahl.
+            {{ textContent_prozess_step1.description|default:"Wir analysieren mit dir, welche Inhalte deine Website braucht - welche Stimmung, welche Motive, welche Anzahl." }}
           </p>
         </div>
 
@@ -801,9 +801,9 @@
               <circle cx="48" cy="26" r="1.6" fill="currentColor"/>
             </svg>
           </div>
-          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Aufnahme</h3>
+          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_prozess_step2.title|default:"Aufnahme" }}</h3>
           <p class="text-base leading-7 text-gray-600">
-            Wir kommen vor Ort, halten die Inhalte professionell fest und passen sie auf den Look deiner Website an.
+            {{ textContent_prozess_step2.description|default:"Wir kommen vor Ort, halten die Inhalte professionell fest und passen sie auf den Look deiner Website an." }}
           </p>
         </div>
 
@@ -822,9 +822,9 @@
               <rect x="40" y="36" width="10" height="6" stroke="currentColor" stroke-width="3"/>
             </svg>
           </div>
-          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">Integration</h3>
+          <h3 class="mb-3 text-xl font-bold tracking-tight text-gray-900">{{ textContent_prozess_step3.title|default:"Integration" }}</h3>
             <p class="text-base leading-7 text-gray-600">
-            Die fertigen Bilder werden direkt in die Website eingebaut - in passender Auflösung, optimiert und perfekt platziert.
+            {{ textContent_prozess_step3.description|default:"Die fertigen Bilder werden direkt in die Website eingebaut - in passender Auflösung, optimiert und perfekt platziert." }}
             </p>
         </div>
       </div>
@@ -836,25 +836,25 @@
     <div class="md-callout">
       <div class="grid items-center gap-12 lg:grid-cols-2">
         <div data-aos="fade-right">
-          <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">Aus einer Hand</p>
+          <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-900">{{ textContent_mehrwert.header|default:"Aus einer Hand" }}</p>
           <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
-            Design, Bilder, Code - alles aus einem Guss.
+            {{ textContent_mehrwert.title|default:"Design, Bilder, Code - alles aus einem Guss." }}
           </h2>
           <p class="mb-6 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
-            Wenn Webdesign und Bildproduktion in einer Hand liegen, entsteht ein stimmiger Gesamtauftritt - ohne Stilbruch, ohne Reibungsverluste, ohne Abstimmungsmarathon.
+            {{ textContent_mehrwert.description|default:"Wenn Webdesign und Bildproduktion in einer Hand liegen, entsteht ein stimmiger Gesamtauftritt - ohne Stilbruch, ohne Reibungsverluste, ohne Abstimmungsmarathon." }}
           </p>
           <ul class="space-y-3">
             <li class="flex items-start gap-3">
               <span class="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white"><i class="bi bi-check-lg text-xs"></i></span>
-              <span class="text-base text-gray-700">Bilder, die exakt zum Layout und zur Farbwelt passen</span>
+              <span class="text-base text-gray-700">{{ textContent_mehrwert_bullet1.title|default:"Bilder, die exakt zum Layout und zur Farbwelt passen" }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white"><i class="bi bi-check-lg text-xs"></i></span>
-              <span class="text-base text-gray-700">Ein Ansprechpartner statt drei Dienstleister</span>
+              <span class="text-base text-gray-700">{{ textContent_mehrwert_bullet2.title|default:"Ein Ansprechpartner statt drei Dienstleister" }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-900 text-white"><i class="bi bi-check-lg text-xs"></i></span>
-              <span class="text-base text-gray-700">Kürzere Wege, schnellere Umsetzung, bessere Ergebnisse</span>
+              <span class="text-base text-gray-700">{{ textContent_mehrwert_bullet3.title|default:"Kürzere Wege, schnellere Umsetzung, bessere Ergebnisse" }}</span>
             </li>
           </ul>
         </div>
@@ -881,14 +881,14 @@
   <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
     <div class="mx-auto max-w-screen-sm text-center">
       <h2 class="mb-4 text-3xl sm:text-4xl font-bold tracking-tight text-white">
-        Bereit für eine Website mit echten Bildern?
+        {{ textContent_bottomcta.title|default:"Bereit für eine Website mit echten Bildern?" }}
       </h2>
       <p class="mb-6 text-white md:text-lg">
-        Erzähl uns von deinem Projekt - wir entwickeln dir eine Website inklusive passendem Bildmaterial. Ein Auftritt, der nicht nach Bilddatenbank aussieht, sondern nach dir.
+        {{ textContent_bottomcta.description|default:"Erzähl uns von deinem Projekt - wir entwickeln dir eine Website inklusive passendem Bildmaterial. Ein Auftritt, der nicht nach Bilddatenbank aussieht, sondern nach dir." }}
       </p>
       <a href="{% url 'kontakt' %}"
         class="mt-0 inline-block rounded-md bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 sm:mt-1">
-        Jetzt anfragen
+        {{ textContent_bottomcta.buttonText|default:"Jetzt anfragen" }}
       </a>
     </div>
   </div>

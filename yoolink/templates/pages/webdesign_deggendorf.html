@@ -122,7 +122,7 @@
   "url": "https://yoolink.de/webdesign-deggendorf/",
   "telephone": "+491705977862",
   "priceRange": "ab 40 €/Monat",
-  "image": "https://yoolink.de{% static 'images/deggendorf/skyline.png' %}",
+  "image": "https://yoolink.de{% if image_skyline %}{{ image_skyline.file.url }}{% else %}{% static 'images/deggendorf/skyline.png' %}{% endif %}",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Deggendorf",
@@ -173,7 +173,7 @@
      HERO mit Skyline Deggendorf
 ========================= -->
 <section class="dg-hero -mt-5">
-  <div class="dg-hero__skyline" role="img" aria-label="Stadtansicht von Deggendorf an der Donau – Blick über die Altstadt mit Kirchtürmen und Hügellandschaft Niederbayerns, im Aquarellstil"></div>
+  <div class="dg-hero__skyline" role="img" aria-label="Stadtansicht von Deggendorf an der Donau – Blick über die Altstadt mit Kirchtürmen und Hügellandschaft Niederbayerns, im Aquarellstil"{% if image_skyline %} style="background-image: url('{{ image_skyline.file.url }}')"{% endif %}></div>
   <div class="dg-hero__veil" aria-hidden="true"></div>
   <div class="dg-hero__glow" aria-hidden="true"></div>
 
@@ -266,11 +266,11 @@
 
         <div class="relative" data-aos="fade-left">
           <div class="dg-paint mx-auto aspect-[3/4] w-full max-w-md">
-            <img src="{% static 'images/deggendorf/grabkirche.png' %}"
+            <img src="{% if image_intro %}{{ image_intro.file.url }}{% else %}{% static 'images/deggendorf/grabkirche.png' %}{% endif %}"
                  alt="Grabkirche St. Peter und Paul in Deggendorf – barocker Kirchturm mit goldener Zwiebelhaube als Wahrzeichen der Altstadt"
                  title="Grabkirche St. Peter und Paul – Deggendorf"
                  loading="lazy" />
-            <div class="dg-paint__caption">Grabkirche St. Peter und Paul, Deggendorf</div>
+            <div class="dg-paint__caption">{{ textContent_intro_caption.title|default:"Grabkirche St. Peter und Paul, Deggendorf" }}</div>
           </div>
         </div>
       </div>
@@ -451,11 +451,11 @@
 
       <div class="relative" data-aos="fade-left">
         <div class="dg-paint mx-auto aspect-[3/4] w-full max-w-sm">
-          <img src="{% static 'images/deggendorf/altes-rathaus.png' %}"
+          <img src="{% if image_about %}{{ image_about.file.url }}{% else %}{% static 'images/deggendorf/altes-rathaus.png' %}{% endif %}"
                alt="Altes Rathaus Deggendorf – historisches Wahrzeichen am Oberen Stadtplatz mit Stufengiebel und Uhrturm"
                title="Altes Rathaus Deggendorf"
                loading="lazy" />
-          <div class="dg-paint__caption">Altes Rathaus, Deggendorf</div>
+          <div class="dg-paint__caption">{{ textContent_about_caption.title|default:"Altes Rathaus, Deggendorf" }}</div>
         </div>
       </div>
     </div>
@@ -569,7 +569,7 @@
                   <i class="bi bi-telephone text-lg"></i>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Telefon</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">{% trans "deggendorf_phone_label" %}</p>
                   <a href="tel:+491705977862" class="mt-0.5 block text-sm text-white transition hover:text-blue-200">+49 170 5977862</a>
                 </div>
               </div>
@@ -578,8 +578,8 @@
                   <i class="bi bi-envelope text-lg"></i>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Termin</p>
-                  <a href="{% url 'kontakt' %}" class="mt-0.5 block text-sm text-white transition hover:text-blue-200">Kostenloses Erstgespräch anfragen →</a>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">{% trans "deggendorf_appointment_label" %}</p>
+                  <a href="{% url 'kontakt' %}" class="mt-0.5 block text-sm text-white transition hover:text-blue-200">{% trans "deggendorf_appointment_cta" %} →</a>
                 </div>
               </div>
             </div>
