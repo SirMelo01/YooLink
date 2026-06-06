@@ -2243,12 +2243,35 @@ def cms_roles_view(request):
     ensure_system_roles()
 
     if request.method == "POST":
+        is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
         action = request.POST.get("action", "create")
         role_id = request.POST.get("role_id")
 
+        def _fail(msg, status=400):
+            if is_ajax:
+                return JsonResponse({"success": False, "error": msg}, status=status)
+            messages.error(request, msg)
+            return redirect("ycms:roles")
+
+        def _role_payload(role):
+            return {
+                "id": role.id,
+                "name": role.name,
+                "slug": role.slug,
+                "description": role.description,
+                "permissions": role.permissions,
+                "permission_count": len(role.permissions or []),
+            }
+
         if action == "delete":
-            role = get_object_or_404(CMSRole, id=role_id, is_system=False)
+            role = CMSRole.objects.filter(id=role_id).first()
+            if role is None:
+                return _fail("Rolle wurde nicht gefunden.", status=404)
+            if role.is_system:
+                return _fail("Systemrollen können nicht gelöscht werden.")
             role.delete()
+            if is_ajax:
+                return JsonResponse({"success": True, "message": "Rolle wurde gelöscht.", "role_id": int(role_id)})
             messages.success(request, "Rolle wurde gelöscht.")
             return redirect("ycms:roles")
 
@@ -2260,29 +2283,37 @@ def cms_roles_view(request):
         slug = slugify(name)
 
         if not name:
-            messages.error(request, "Bitte gib einen Rollennamen an.")
-        elif not permissions:
-            messages.error(request, "Bitte wähle mindestens eine Berechtigung.")
-        elif action == "update":
-            role = get_object_or_404(CMSRole, id=role_id, is_system=False)
+            return _fail("Bitte gib einen Rollennamen an.")
+        if not permissions:
+            return _fail("Bitte wähle mindestens eine Berechtigung.")
+
+        if action == "update":
+            role = CMSRole.objects.filter(id=role_id).first()
+            if role is None:
+                return _fail("Rolle wurde nicht gefunden.", status=404)
+            if role.is_system:
+                return _fail("Systemrollen können nicht bearbeitet werden.")
             if CMSRole.objects.filter(slug=slug).exclude(id=role.id).exists():
-                messages.error(request, "Eine Rolle mit diesem Namen existiert bereits.")
-                return redirect("ycms:roles")
+                return _fail("Eine Rolle mit diesem Namen existiert bereits.")
             role.name = name
             role.slug = slug
             role.description = description
             role.permissions = permissions
             role.save()
+            if is_ajax:
+                return JsonResponse({"success": True, "message": "Rolle wurde aktualisiert.", "role": _role_payload(role)})
             messages.success(request, "Rolle wurde aktualisiert.")
             return redirect("ycms:roles")
-        else:
-            if CMSRole.objects.filter(slug=slug).exists():
-                messages.error(request, "Eine Rolle mit diesem Namen existiert bereits.")
-                return redirect("ycms:roles")
-            role = CMSRole(name=name, slug=slug, description=description, permissions=permissions)
-            role.save()
-            messages.success(request, "Rolle wurde erstellt.")
-            return redirect("ycms:roles")
+
+        # create
+        if CMSRole.objects.filter(slug=slug).exists():
+            return _fail("Eine Rolle mit diesem Namen existiert bereits.")
+        role = CMSRole(name=name, slug=slug, description=description, permissions=permissions)
+        role.save()
+        if is_ajax:
+            return JsonResponse({"success": True, "message": "Rolle wurde erstellt.", "role": _role_payload(role)})
+        messages.success(request, "Rolle wurde erstellt.")
+        return redirect("ycms:roles")
 
     return render(
         request,
@@ -2290,6 +2321,7 @@ def cms_roles_view(request):
         {
             "roles": CMSRole.objects.all(),
             "permission_choices": CMS_PERMISSION_CHOICES,
+            "empty_role": {"id": "", "name": "", "description": "", "permissions": [], "is_system": False},
         },
     )
 
