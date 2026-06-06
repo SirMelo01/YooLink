@@ -59,7 +59,7 @@ def cms_permission_required(permission):
             if has_cms_permission(request.user, permission):
                 return view_func(request, *args, **kwargs)
 
-            messages.error(request, "Du hast fuer diesen CMS-Bereich keine Berechtigung.")
+            messages.error(request, "Du hast für diesen CMS-Bereich keine Berechtigung.")
             return redirect(reverse("ycms:cms"))
 
         return wrapped

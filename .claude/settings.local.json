@@ -40,7 +40,26 @@
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate ycms)",
       "Bash(git add *)",
       "Bash(git commit -q -m '@ *)",
-      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations --check --dry-run)"
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations --check --dry-run)",
+      "Bash(cat /tmp/cms_tokens.txt)",
+      "Read(//tmp/**)",
+      "Bash(sort -u -t: -k3)",
+      "Bash(grep -viE \"^\\(value|values|getvalue|queue|request|requests|requested|query|queryset|true|continue|argue|revenue|Queue\\)$\")",
+      "Bash(sed -n '130,152p' yoolink/ycms/applications/blog/views.py)",
+      "Bash(sed -n '757,761p' yoolink/ycms/models.py)",
+      "Bash(sed -n '60,64p' yoolink/ycms/permissions.py)",
+      "Bash(sed -n '8,16p' yoolink/ycms/templatetags/custom_filters.py)",
+      "Bash(sed -i -e 's/\\\\bzurueck\\\\b/zurück/g' -e s/Ueberblick/Überblick/g -e 's/\\\\bueber\\\\b/über/g' -e s/Auftraege/Aufträge/g -e s/bestuecken/bestücken/g -e s/Beitraege/Beiträge/g -e s/veroeffentlichen/veröffentlichen/g -e s/Oeffnungszeiten/Öffnungszeiten/g yoolink/templates/pages/cms/cms.html)",
+      "Bash(sed -i -e 's/\\\\bfuege\\\\b/füge/g' yoolink/templates/pages/cms/content/sites/DatenschutzSite.html)",
+      "Bash(sed -i -e 's/\\\\bfuer\\\\b/für/g' yoolink/templates/pages/cms/settings/developer_api_docs.html)",
+      "Bash(sed -i -e s/Pruefe/Prüfe/g -e 's/\\\\bfuer\\\\b/für/g' -e s/Rueckleitung/Rückleitung/g yoolink/templates/pages/cms/settings/developer_connect.html)",
+      "Bash(sed -i -e 's/zusaetzlich/zusätzlich/g' yoolink/templates/pages/cms/upload.html)",
+      "Bash(sed -i -e 's/eingefuegt/eingefügt/g' yoolink/static/js/cms/blog/blog-markdown.js)",
+      "Bash(sed -i -e s/Laedt/Lädt/g yoolink/static/js/cms/content/customers/customer-form.js yoolink/static/js/cms/content/siteManager.js yoolink/static/js/cms/team/team.js)",
+      "Bash(sed -i -e 's/\\\\bfuer\\\\b/für/g' -e 's/\\\\bFuer\\\\b/Für/g' -e s/Ungueltige/Ungültige/g -e s/uebermittelt/übermittelt/g -e s/gueltige/gültige/g -e s/zurueckgesetzt/zurückgesetzt/g -e 's/\\\\baendere\\\\b/ändere/g' -e s/loeschen/löschen/g -e s/geloescht/gelöscht/g -e 's/\\\\bwaehle\\\\b/wähle/g' -e s/Oeffnungszeiten/Öffnungszeiten/g yoolink/ycms/views.py)",
+      "Bash(sed -i -e 's/ungueltig/ungültig/g' yoolink/ycms/applications/blog/views.py)",
+      "Bash(sed -i -e 's/\\\\bfuer\\\\b/für/g' yoolink/ycms/models.py)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python -c \"import py_compile; [py_compile.compile\\(f, doraise=True\\) for f in ['yoolink/ycms/views.py','yoolink/ycms/models.py','yoolink/ycms/permissions.py','yoolink/ycms/applications/blog/views.py']]; print\\('py syntax OK'\\)\")"
     ]
   }
 }

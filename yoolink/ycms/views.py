@@ -207,13 +207,13 @@ def cms(request):
     if not request.user.is_authenticated:
         return redirect(reverse(settings.LOGIN_URL) + f"?next={request.path}")
     if "dashboard.view" not in user_permissions(request.user):
-        return HttpResponse("Du hast fuer das CMS keine Berechtigung.", status=403)
+        return HttpResponse("Du hast für das CMS keine Berechtigung.", status=403)
 
     context = {'form': None, 'last': None}
 
     if request.method == 'POST':
         if "media.edit" not in user_permissions(request.user):
-            return HttpResponse("Du hast fuer Medien-Uploads keine Berechtigung.", status=403)
+            return HttpResponse("Du hast für Medien-Uploads keine Berechtigung.", status=403)
         form = fileform(request.POST, request.FILES)
         if form.is_valid():
             context['last'] = '\n'.join([f.name for f in request.FILES.getlist('file')])
@@ -664,7 +664,7 @@ def delete_file(request, id):
 @cms_permission_required("media.edit")
 def generate_mobile_file(request, id):
     if request.method != 'POST':
-        return JsonResponse({"error": "Ungueltige Anfrage"}, status=405)
+        return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
 
     image = get_object_or_404(fileentry, id=id)
     if image.mobile_file:
@@ -1057,7 +1057,7 @@ def image_optimization_metadata(original, desktop_image, mobile_image):
     original_format = os.path.splitext(getattr(original, "name", ""))[1].lstrip(".").upper()
     desktop_format = os.path.splitext(desktop_image.name)[1].lstrip(".").upper()
 
-    note = "Bild wurde als WebP fuer Web und Mobil optimiert."
+    note = "Bild wurde als WebP für Web und Mobil optimiert."
     if original_format == "GIF" and desktop_format == "GIF":
         note = "Animierte GIFs bleiben im Originalformat, damit die Animation erhalten bleibt."
 
@@ -1652,7 +1652,7 @@ def upload_galery_img(request, id):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
         if not my_file:
-            return JsonResponse({'error': 'Keine Datei uebermittelt'}, status=400)
+            return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
 
         try:
             validate_image_upload(my_file)
@@ -2017,7 +2017,7 @@ def user_settings_update(request):
         try:
             validate_email(contact_email)
         except ValidationError:
-            return JsonResponse({'error': 'Bitte gib eine gueltige Unternehmens-E-Mail-Adresse ein.'}, status=400)
+            return JsonResponse({'error': 'Bitte gib eine gültige Unternehmens-E-Mail-Adresse ein.'}, status=400)
 
     website_settings.company_name = company_name
     website_settings.owner_name = owner_name
@@ -2071,17 +2071,17 @@ def _send_user_credentials_email(user, raw_password, request_user):
         recipient = (settings_obj.email or "").strip()
 
     if not recipient:
-        return "Fuer diesen Nutzer ist keine E-Mail-Adresse hinterlegt."
+        return "Für diesen Nutzer ist keine E-Mail-Adresse hinterlegt."
 
     login_url = request_user.build_absolute_uri(reverse("ycms:login"))
     subject = "Dein YooLink CMS Zugang"
     message = (
         f"Hallo {user.username},\n\n"
-        "fuer dich wurde ein YooLink CMS Zugang erstellt oder zurueckgesetzt.\n\n"
+        "für dich wurde ein YooLink CMS Zugang erstellt oder zurückgesetzt.\n\n"
         f"Login: {login_url}\n"
         f"Benutzername: {user.username}\n"
         f"Initiales Passwort: {raw_password}\n\n"
-        "Bitte melde dich an und aendere dein Passwort direkt beim ersten Login.\n"
+        "Bitte melde dich an und ändere dein Passwort direkt beim ersten Login.\n"
     )
     send_mail(
         subject,
@@ -2114,7 +2114,7 @@ def cms_users_view(request):
         if action == "delete":
             target = get_object_or_404(User, id=user_id)
             if target == request.user:
-                messages.error(request, "Du kannst deinen eigenen Nutzer nicht loeschen.")
+                messages.error(request, "Du kannst deinen eigenen Nutzer nicht löschen.")
             else:
                 target.is_active = False
                 target.save(update_fields=["is_active"])
@@ -2249,7 +2249,7 @@ def cms_roles_view(request):
         if action == "delete":
             role = get_object_or_404(CMSRole, id=role_id, is_system=False)
             role.delete()
-            messages.success(request, "Rolle wurde geloescht.")
+            messages.success(request, "Rolle wurde gelöscht.")
             return redirect("ycms:roles")
 
         name = (request.POST.get("name") or "").strip()
@@ -2262,7 +2262,7 @@ def cms_roles_view(request):
         if not name:
             messages.error(request, "Bitte gib einen Rollennamen an.")
         elif not permissions:
-            messages.error(request, "Bitte waehle mindestens eine Berechtigung.")
+            messages.error(request, "Bitte wähle mindestens eine Berechtigung.")
         elif action == "update":
             role = get_object_or_404(CMSRole, id=role_id, is_system=False)
             if CMSRole.objects.filter(slug=slug).exclude(id=role.id).exists():
@@ -2729,7 +2729,7 @@ from django.utils import timezone as dj_timezone
 @permission_classes([IsAuthenticated])
 def opening_hours_update(request):
     if "opening_hours.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Oeffnungszeiten.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Öffnungszeiten.'}, status=403)
 
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
@@ -2838,7 +2838,7 @@ from django.db.models import Max
 @permission_classes([IsAuthenticated])
 def create_team_member(request):
     if "team.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Team.'}, status=403)
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
@@ -2894,7 +2894,7 @@ def create_team_member(request):
 @permission_classes([IsAuthenticated])
 def get_team_member(request, id):
     if "team.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Team.'}, status=403)
 
     team_member = get_object_or_404(TeamMember, id=id)
     return JsonResponse({
@@ -2913,7 +2913,7 @@ def get_team_member(request, id):
 @permission_classes([IsAuthenticated])
 def update_team_member(request, id):
     if "team.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Team.'}, status=403)
 
     team_member = get_object_or_404(TeamMember, id=id)
     data = request.data
@@ -2958,7 +2958,7 @@ def update_team_member(request, id):
 @permission_classes([IsAuthenticated])
 def delete_team_member(request, id):
     if "team.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Team.'}, status=403)
 
     team_member = get_object_or_404(TeamMember, id=id)
     team_member.delete()
@@ -2971,7 +2971,7 @@ from django.views.decorators.http import require_POST
 @permission_classes([IsAuthenticated])
 def reorder_team_members(request):
     if "team.edit" not in user_permissions(request.user):
-        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+        return JsonResponse({'error': 'Du hast keine Berechtigung für Team.'}, status=403)
 
     # akzeptiere sowohl JSON ("order":[1,2,3]) als auch Form-POST (order[]=1&order[]=2)
     order = request.data.get('order')
@@ -3420,7 +3420,7 @@ def create_video(request):
         thumbnail = request.FILES.get('thumbnail')
         subtitle = request.FILES.get('subtitle')
         if not video:
-            return JsonResponse({'error': 'Bitte waehle eine Videodatei aus.'}, status=400)
+            return JsonResponse({'error': 'Bitte wähle eine Videodatei aus.'}, status=400)
 
         try:
             validate_video_upload(video)

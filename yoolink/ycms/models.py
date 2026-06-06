@@ -756,7 +756,7 @@ class DeveloperApiConnectAuthorization(models.Model):
         verbose_name_plural = "Developer API Connect Authorizations"
 
     def __str__(self):
-        return f"{self.client_name} fuer {self.created_by}"
+        return f"{self.client_name} für {self.created_by}"
 
     @classmethod
     def make_code_hash(cls, raw_code):

@@ -497,7 +497,7 @@ function addUploadItem(id, name) {
         <div id="${id}" class="rounded-md bg-slate-50 px-3 py-2 text-sm">
             <div class="flex items-center justify-between gap-3">
                 <span class="truncate text-slate-700">${escapeHtml(name)}</span>
-                <span class="upload-status shrink-0 text-slate-500">Laedt...</span>
+                <span class="upload-status shrink-0 text-slate-500">Lädt...</span>
             </div>
             <p class="upload-detail mt-1 hidden text-xs leading-snug text-slate-500"></p>
         </div>

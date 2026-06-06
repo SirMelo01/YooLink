@@ -234,7 +234,7 @@
 
         insertAtCursor('\n\n![' + markdownAlt(altText) + '](' + url + ')' + suffix + '\n\n');
         closeImageModal();
-        notify('Bild-Markdown wurde eingefuegt', 'success');
+        notify('Bild-Markdown wurde eingefügt', 'success');
         return true;
     }
 
@@ -510,7 +510,7 @@
             insertAtCursor('\n\n```' + language + '\n' + source + '\n```\n\n');
         }
         closeMediaModal();
-        notify('Markdown-Element wurde eingefuegt', 'success');
+        notify('Markdown-Element wurde eingefügt', 'success');
     }
 
     function setImagePanel(panelId) {

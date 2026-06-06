@@ -129,7 +129,7 @@ class ExternalConnectTokenView(APIView):
                 )
             except DeveloperApiConnectAuthorization.DoesNotExist:
                 return Response(
-                    {"error": "invalid_grant", "error_description": "Der Connect Code ist ungueltig."},
+                    {"error": "invalid_grant", "error_description": "Der Connect Code ist ungültig."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -147,7 +147,7 @@ class ExternalConnectTokenView(APIView):
 
             if not authorization.verify_code_verifier(data["code_verifier"]):
                 return Response(
-                    {"error": "invalid_grant", "error_description": "code_verifier ist ungueltig."},
+                    {"error": "invalid_grant", "error_description": "code_verifier ist ungültig."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
