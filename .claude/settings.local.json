@@ -32,7 +32,14 @@
       "Bash(grep -o 'peer-checked[^,{ ]*border-blue-500' output.css)",
       "Bash(grep -o 'peer-checked[^,{]*chk[^,{]*opacity-100' output.css)",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py check)",
-      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless --disable-gpu --hide-scrollbars --window-size=1280,900 --screenshot=d:/YooLink/Programmierung/Core/YooLink/media/_design_preview/images_modal.png http://localhost:8000/media/_design_preview/images_modal.html)"
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless --disable-gpu --hide-scrollbars --window-size=1280,900 --screenshot=d:/YooLink/Programmierung/Core/YooLink/media/_design_preview/images_modal.png http://localhost:8000/media/_design_preview/images_modal.html)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations ycms cms_content)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate ycms cms_content)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations ycms)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate ycms)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m '@ *)"
     ]
   }
 }
