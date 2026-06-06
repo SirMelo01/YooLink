@@ -198,6 +198,9 @@ def site_view_kunden(request):
     text_content_references = _get_text("main_kunden_references")
     if text_content_references:
         data["textContentReferences"] = text_content_references
+    text_content_bottomcta = _get_text("main_kunden_bottomcta")
+    if text_content_bottomcta:
+        data["textContentBottomCta"] = text_content_bottomcta
     return render(request, "pages/cms/content/sites/KundenSite.html", data)
 
 

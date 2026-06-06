@@ -1302,7 +1302,7 @@ $(document).ready(function () {
             markdownFormData.append('active', $('#activeSwitch').is(':checked'));
             markdownFormData.append('description', description);
             YooLinkBlogMarkdown.appendMarkdownToFormData(markdownFormData);
-            if (files.length > 0) markdownFormData.append('title_image', files[0], "blogTitleImage");
+            if (files.length > 0) markdownFormData.append('title_image', files[0]);
 
             $.ajax({
                 type: "POST",
@@ -1376,15 +1376,13 @@ $(document).ready(function () {
         });
         $directCodeContainer.append($modalBody)
 
-        const title_image = files[0]
-
         // Create a new FormData object
         var formData = new FormData();
         formData.append('title', $('#blogTitle').val());
         formData.append('body', $directCodeContainer.html());
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
-        formData.append('title_image', title_image, "blogTitleImage");
+        if (files.length > 0) formData.append('title_image', files[0]);
         formData.append('description', description);
 
         // Send the Ajax POST request //

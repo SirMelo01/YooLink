@@ -34,6 +34,8 @@ def load_kunden(request):
     if TextContent.objects.filter(name="main_kunden_references").exists():
         context["kundenReferences"] = TextContent.objects.get(name='main_kunden_references')
 
+    context["textContent_bottomcta"] = TextContent.objects.filter(name="main_kunden_bottomcta").first()
+
     customers_qs = list(
         Customer.objects.filter(active=True)
         .select_related("title_image", "logo")
