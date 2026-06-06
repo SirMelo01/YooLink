@@ -1,52 +1,28 @@
 {% extends "cmsbase.html" %}
-{% load compress static %}
-{% block title %} {{block.super}} | CMS{% endblock %}
+{% load compress static i18n %}
+{% block title %} {{block.super}} | Dateien{% endblock %}
 
-{% load i18n %}
 {% block content %}
+{% trans "CMS_TITLE_IMAGE" as img_title %}
 
-<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6">
-    <!-- Image Manage Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">{% trans "CMS_TITLE_IMAGE" %} <i
-                class="bi bi-image"></i></h2>
-        <p class="mb-4">Hier kannst du deine Bilder verwalten und neue hochladen</p>
-        <p class="mb-4">Bilder: <strong>{{file_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:images-view' %}"
-                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
-            <div class="flex-grow"></div>
-            <a href="{% url 'cms:upload' %}"
-                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"><i
-                    class="bi bi-plus-circle" class="size-8"></i></a>
-        </div>
-    </div>
+<!-- ── Page header ── -->
+<div>
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Dateien</h1>
+    <p class="mt-1 text-sm text-gray-500">Bilder, Videos und Dokumente an einem Ort verwalten.</p>
+</div>
 
-    <!-- Video Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Videos <i class="bi bi-file-earmark-play"></i></h2>
-        <p class="mb-4">Hier kannst du Videos hochladen und verwalten.</p>
-        <p class="mb-4">Dateien: <strong>{{videofile_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:list_videos' %}"
-                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
-        </div>
-    </div>
+<!-- ── Stats ── -->
+<div class="mt-6 grid grid-cols-3 gap-3 sm:gap-4">
+    {% include "pages/cms/components/_stat_card.html" with icon="bi-image" tone="blue" value=file_count label=img_title link_url="/cms/images/" %}
+    {% include "pages/cms/components/_stat_card.html" with icon="bi-camera-video" tone="sky" value=videofile_count label="Videos" link_url="/cms/videos/" %}
+    {% include "pages/cms/components/_stat_card.html" with icon="bi-file-earmark-arrow-up" tone="indigo" value=anyfile_count label="Dokumente" link_url="/cms/anyfiles/" %}
+</div>
 
-    <!-- Dateien Card -->
-    <div class="bg-blue-100 border-gray-200 rounded-2xl shadow-xl p-5 sm:p-6 text-black flex flex-col">
-        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex justify-between">Dateien <i class="bi bi-file-earmark-arrow-up"></i>
-        </h2>
-        <p class="mb-4">Hier kannst du beliebige Dateien (PDFs, ZIPs etc.) hochladen und verwalten.</p>
-        <p class="mb-4">Dateien: <strong>{{anyfile_count}}</strong></p>
-        <div class="flex-grow"></div>
-        <div class="flex justify-center items-center mt-4">
-            <a href="{% url 'cms:anyfile-list' %}"
-                class="w-full rounded bg-blue-500 px-4 py-3 text-center font-bold text-white hover:bg-blue-700 sm:w-auto sm:py-2">Verwalten</a>
-        </div>
-    </div>
+<!-- ── Quick access ── -->
+<div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% include "pages/cms/components/_quick_card.html" with icon="bi-image" tone="blue" title=img_title desc="Bilder hochladen, optimieren und in Inhalten verwenden." url="/cms/images/" secondary_url="/cms/upload/" secondary_label="Hochladen" %}
+    {% include "pages/cms/components/_quick_card.html" with icon="bi-file-earmark-play" tone="sky" title="Videos" desc="Videos hochladen und auf Seiten einbinden." url="/cms/videos/" %}
+    {% include "pages/cms/components/_quick_card.html" with icon="bi-file-earmark-arrow-up" tone="indigo" title="Dokumente" desc="PDFs, ZIPs und weitere Dateien verwalten." url="/cms/anyfiles/" %}
 </div>
 
 {% endblock content %}
