@@ -62,7 +62,8 @@
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python -c \"import py_compile; [py_compile.compile\\(f, doraise=True\\) for f in ['yoolink/ycms/views.py','yoolink/ycms/models.py','yoolink/ycms/permissions.py','yoolink/ycms/applications/blog/views.py']]; print\\('py syntax OK'\\)\")",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations cms_content)",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate cms_content)",
-      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py compilemessages -l de -l en)"
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py compilemessages -l de -l en)",
+      "Bash(grep -o \"lg\\\\\\\\\\\\\\\\:top-\\\\[4\\\\.25rem\\\\]\" yoolink/static/css/output.css)"
     ]
   }
 }

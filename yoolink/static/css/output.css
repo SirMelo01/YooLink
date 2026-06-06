@@ -7287,6 +7287,10 @@ body {
     top: 1.5rem;
   }
 
+  .lg\:top-\[4\.25rem\] {
+    top: 4.25rem;
+  }
+
   .lg\:z-10 {
     z-index: 10;
   }
