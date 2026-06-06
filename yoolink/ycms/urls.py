@@ -26,6 +26,7 @@ urlpatterns = [
     path("images/delete/<int:id>/", views.delete_file, name="image-delete"),
     path("images/mobile/<int:id>/", views.generate_mobile_file, name="image-generate-mobile"),
     path("images/update/<int:id>/", views.update_file, name="image-update"),
+    path("images/convert-webp/", views.convert_images_to_webp, name="image-convert-webp"),
     path("images/all/", views.all_images, name="all-images"),
 
     # FAQ

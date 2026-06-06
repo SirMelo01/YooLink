@@ -6,61 +6,68 @@
 
 <!-- **************** Edit-Image-Modal **************** -->
 <!-- Will be opened if the user clicks on one of the info buttons -->
-<div class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-500 bg-opacity-75 p-3 lg:min-w-[16rem]"
+<div class="fixed inset-0 z-[80] hidden items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm lg:min-w-[16rem]"
     id="editModal" data-prismjs-copy-timeout="500">
-    <div class="modal-container w-full max-w-4xl max-h-[92vh] overflow-auto rounded-lg bg-white p-3 shadow-lg sm:p-4">
+    <div class="modal-container max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-slate-200">
         <!-- Modal header -->
-        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-            <h3 class="text-xl font-semibold text-gray-900" id="infoTitle">
-                Bild bearbeiten
-            </h3>
+        <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-4">
+            <span class="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-600"><i class="bi bi-pencil-square text-lg"></i></span>
+            <div class="min-w-0 flex-1">
+                <p class="text-xs font-semibold uppercase tracking-wide text-blue-600">Mediathek</p>
+                <h3 class="text-lg font-semibold text-slate-900" id="infoTitle">Bild bearbeiten</h3>
+            </div>
             <button type="button" id="closeModal"
-                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                class="grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                 data-modal-hide="defaultModal">
-                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clip-rule="evenodd"></path>
-                </svg>
-                <span class="sr-only">Close modal</span>
+                <i class="bi bi-x-lg"></i>
+                <span class="sr-only">Schließen</span>
             </button>
         </div>
-        <div class="p-6 space-y-6 max-h-[45rem] overflow-auto" id="previewBody">
-            <!-- Bild-Text -->
 
-            <div class="flex flex-col gap-4 py-4 sm:flex-row sm:items-start sm:justify-between">
-                <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-3 sm:mr-4">
-                    <div class="relative h-10 w-full">
-                        <select id="imgPlace"
-                            class="peer z-40 h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50">
-                            <option value="nothing" selected>Keine Beziehung</option>
-                            <option value="main_hero">Hero</option>
-                            <option value="main_cms">CMS</option>
-                            <option value="main_responsive_team">Team</option>
-                        </select>
-                        <label
-                            class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                            Anzeigeplatz auswählen
-                        </label>
-                    </div>
-                    <div class="relative h-10 w-full">
-                        <input
-                            class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                            placeholder=" " id="imgTitle" />
-                        <label
-                            class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                            Bildtext
-                        </label>
-                    </div>
+        <!-- Modal body -->
+        <div class="max-h-[70vh] space-y-5 overflow-auto p-6" id="previewBody">
+            <!-- Vorschau -->
+            <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div class="h-24 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <img id="editPreview" src="" alt="Vorschau" class="h-full w-full object-cover">
                 </div>
-                <button id="selectImg" class="w-full rounded-xl bg-green-500 px-4 py-3 font-bold text-white hover:bg-green-700 sm:w-auto sm:py-2">
-                    Speichern
-                </button>
+                <div class="min-w-0">
+                    <p id="editPreviewName" class="truncate text-sm font-semibold text-slate-800">Bild</p>
+                    <p class="mt-0.5 text-xs text-slate-400">Vorschau des ausgewählten Bildes</p>
+                </div>
             </div>
 
+            <!-- Felder -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="imgPlace" class="mb-1.5 block text-sm font-medium text-slate-700">Anzeigeplatz</label>
+                    <select id="imgPlace"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                        <option value="nothing" selected>Keine Beziehung</option>
+                        <option value="main_hero">Hero</option>
+                        <option value="main_cms">CMS</option>
+                        <option value="main_responsive_team">Team</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="imgTitle" class="mb-1.5 block text-sm font-medium text-slate-700">Bildtitel</label>
+                    <input id="imgTitle" type="text" placeholder="Bildtitel eingeben"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                </div>
+            </div>
         </div>
 
+        <!-- Modal footer -->
+        <div class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
+            <button type="button" id="cancelEdit"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                Abbrechen
+            </button>
+            <button id="selectImg"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700">
+                <i class="bi bi-check2"></i> Speichern
+            </button>
+        </div>
     </div>
 </div>
 
@@ -110,6 +117,14 @@
         <i class="bi bi-upload"></i>
         Bilder hochladen
       </a>
+      {% if non_webp_count %}
+        <button type="button" id="convertWebpImages"
+          class="flex w-full items-center justify-center gap-2 rounded bg-slate-900 px-4 py-3 font-bold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto sm:py-2"
+          data-count="{{ non_webp_count }}">
+          <i class="bi bi-filetype-webp"></i>
+          WebP konvertieren
+        </button>
+      {% endif %}
     </div>
   </div>
 
@@ -147,14 +162,14 @@
             {{ file.file_extension }}{% if file.mobile_file %}<span class="text-blue-600">+ Mobil</span>{% endif %}
           </span>
 
-          <span class="bg-red-700 text-white rounded-full p-2 absolute top-2 right-2 hover:cursor-pointer deleter"
+          <button type="button" class="deleter absolute right-2 top-2 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-red-700 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 hover:text-red-800"
                 id="{{ file.id }}" title="Bild löschen">
             <i class="bi bi-trash"></i>
-          </span>
+          </button>
 
-          <span class="absolute top-2 left-2 inline-block px-2 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full not-sortable z-40 hover:cursor-pointer edit-img" title="Bearbeiten">
+          <button type="button" class="edit-img not-sortable absolute left-2 top-2 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-blue-700 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-50 hover:text-blue-900" title="Bearbeiten">
             <i class="bi bi-pencil-square"></i>
-          </span>
+          </button>
         </div>
       {% endfor %}
     </div>

@@ -35,6 +35,19 @@
     <link rel="stylesheet" href="{% static 'css/icons/flag-icons.min.css' %}" />
     {% endcompress css %}
 
+    <style>
+        .edit-img,
+        .edit-video,
+        .edit-galery,
+        .edit-youtube,
+        .edit-slider,
+        .edit-cmsvideo,
+        .del-elem,
+        .not-sortable.handle {
+            z-index: 5 !important;
+        }
+    </style>
+
     <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
 
     {% compress js %}
@@ -58,7 +71,7 @@
     {% csrf_token %}
 
     {# ───────────────────────── Mobile Off-Canvas Drawer ───────────────────────── #}
-    <div id="mobile-menu" class="fixed inset-0 z-[60] hidden lg:hidden">
+    <div id="mobile-menu" class="fixed inset-0 z-[100] hidden lg:hidden">
         <div class="absolute inset-0 bg-gray-950/60 backdrop-blur-sm" data-drawer-backdrop></div>
         <aside class="absolute inset-y-0 left-0 flex w-72 max-w-[82%] flex-col bg-gray-900 shadow-2xl">
             <div class="flex h-16 flex-shrink-0 items-center justify-between border-b border-white/10 px-4">
@@ -85,7 +98,7 @@
     </div>
 
     {# ───────────────────────── Desktop Sidebar ───────────────────────── #}
-    <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/5 bg-gray-900 lg:flex">
+    <aside class="fixed inset-y-0 left-0 z-[70] hidden w-64 flex-col border-r border-white/5 bg-gray-900 lg:flex">
         <div class="flex h-16 flex-shrink-0 items-center gap-2 border-b border-white/10 px-5">
             <a href="{% url 'cms:cms' %}" class="flex items-center gap-2">
                 <svg viewBox="0 0 2000 2000" class="h-9 w-9" xmlns="http://www.w3.org/2000/svg">
@@ -112,7 +125,7 @@
     <div class="lg:pl-64">
 
         {# Topbar #}
-        <header class="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-gray-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+        <header class="sticky top-0 z-[70] flex h-16 items-center gap-3 border-b border-gray-200 bg-white/90 px-4 backdrop-blur sm:px-6">
             <!-- Mobile: hamburger + brand -->
             <button type="button" id="mobile-menu-button"
                 class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:hidden"

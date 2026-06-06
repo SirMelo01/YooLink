@@ -185,11 +185,11 @@
       </div>
       <iframe
         class="hidden h-full w-full"
-        title="Google Maps Standort YooLink"
+        title="Google Maps Standort {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}"
         loading="lazy"
         allowfullscreen
         referrerpolicy="no-referrer-when-downgrade"
-        data-cookie-src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_embed_api_key }}&zoom=15&maptype=roadmap&q=Schanzenweg%2053%2C%20Deggendorf"
+        data-cookie-src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_embed_api_key }}&zoom=15&maptype=roadmap&q={% if owner_data and owner_data.address %}{{ owner_data.address|urlencode }}{% else %}Schanzenweg%2053%2C%20Deggendorf{% endif %}"
       ></iframe>
     </div>
     {% else %}

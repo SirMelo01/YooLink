@@ -221,8 +221,22 @@ def cms(request):
                 except ValidationError as error:
                     context['last'] = validation_error_message(error)
                     break
+                desktop_image = optimize_image_for_upload(
+                    file,
+                    max_dimensions=DESKTOP_IMAGE_MAX_DIMENSIONS,
+                    max_size_kb=DESKTOP_IMAGE_TARGET_KB,
+                    variant_suffix="desktop",
+                )
+                mobile_image = optimize_image_for_upload(
+                    file,
+                    max_dimensions=MOBILE_IMAGE_MAX_DIMENSIONS,
+                    max_size_kb=MOBILE_IMAGE_TARGET_KB,
+                    variant_suffix="mobile",
+                )
                 new_file = fileentry(
-                    file = file
+                    file=desktop_image,
+                    mobile_file=mobile_image,
+                    title=getattr(file, "name", "Bild"),
                 )
                 new_file.save()
 
@@ -628,16 +642,7 @@ def file_upload_view(request):
         )
         return JsonResponse({
             'success': 'Bild erfolgreich hochgeladen',
-            'image': {
-                'id': image.id,
-                'url': image.file.url,
-                'mobile_url': image.mobile_file_url,
-                'srcset': image.responsive_srcset,
-                'title': image.title,
-                'format': image.file_extension,
-                'has_mobile': bool(image.mobile_file),
-                'optimization': optimization,
-            },
+            'image': serialize_image_entry(image, optimization=optimization),
         })
     return JsonResponse({'post': 'false'})
 
@@ -768,6 +773,7 @@ def images_view(request):
             "per_page": per_page,
             "querystring": querystring,
             "total_count": paginator.count,
+            "non_webp_count": non_webp_image_count(),
         },
     )
 
@@ -903,8 +909,7 @@ def optimize_image_for_upload(
     variant_suffix="desktop",
 ):
     """
-    Create an optimized upload while preserving PNG transparency.
-    PNG inputs stay PNG so logos and cutouts keep transparent backgrounds.
+    Create an optimized WebP upload. Animated images stay in their source format.
     """
     image.seek(0)
     img = Image.open(image)
@@ -920,23 +925,7 @@ def optimize_image_for_upload(
             getattr(image, "content_type", "image/gif"),
         )
 
-    source_format = normalized_image_format(img, image)
-    has_alpha = image_has_alpha(img)
-    should_keep_png = source_format == "PNG" and (
-        has_alpha or getattr(image, "size", 0) <= PNG_TO_JPEG_THRESHOLD_KB * 1024
-    )
-
-    if should_keep_png or has_alpha:
-        optimized = save_optimized_png(img, image, max_dimensions, max_size_kb, variant_suffix)
-    elif source_format == "WEBP":
-        optimized = save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, "WEBP")
-    else:
-        optimized = save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, "JPEG")
-
-    original_size = getattr(image, "size", 0)
-    original_fits_variant = img.width <= max_dimensions[0] and img.height <= max_dimensions[1]
-    if original_size and original_fits_variant and optimized.size > original_size:
-        optimized = original_uploaded_image(image, variant_suffix)
+    optimized = save_optimized_lossy(img, image, max_dimensions, max_size_kb, variant_suffix, "WEBP")
 
     image.seek(0)
     return optimized
@@ -954,6 +943,82 @@ def compress_image(image, max_size_kb=500):
     return optimize_image_for_upload(image, max_size_kb=max_size_kb, variant_suffix="desktop")
 
 
+def field_file_is_webp(field_file):
+    return bool(field_file and os.path.splitext(field_file.name)[1].lower() == ".webp")
+
+
+def image_entry_needs_webp(entry):
+    return not field_file_is_webp(entry.file) or bool(entry.mobile_file and not field_file_is_webp(entry.mobile_file))
+
+
+def non_webp_image_count():
+    return sum(1 for entry in fileentry.objects.all().only("file", "mobile_file") if image_entry_needs_webp(entry))
+
+
+def convert_field_file_to_webp(field_file, max_dimensions, max_size_kb, variant_suffix):
+    if not field_file or field_file_is_webp(field_file):
+        return None, "unchanged"
+
+    try:
+        field_file.open("rb")
+        img = Image.open(field_file)
+        if getattr(img, "is_animated", False):
+            return None, "animated"
+        converted = save_optimized_lossy(img, field_file, max_dimensions, max_size_kb, variant_suffix, "WEBP")
+        return converted, "converted"
+    except Exception:
+        return None, "error"
+    finally:
+        try:
+            field_file.close()
+        except Exception:
+            pass
+
+
+def convert_image_entry_to_webp(entry):
+    converted_count = 0
+    skipped_count = 0
+    old_files = []
+
+    desktop_file, desktop_status = convert_field_file_to_webp(
+        entry.file,
+        DESKTOP_IMAGE_MAX_DIMENSIONS,
+        DESKTOP_IMAGE_TARGET_KB,
+        "desktop",
+    )
+    if desktop_status == "converted":
+        old_files.append(entry.file.name)
+        entry.file.save(desktop_file.name, desktop_file, save=False)
+        converted_count += 1
+    elif desktop_status not in ("unchanged",):
+        skipped_count += 1
+
+    if entry.mobile_file:
+        mobile_file, mobile_status = convert_field_file_to_webp(
+            entry.mobile_file,
+            MOBILE_IMAGE_MAX_DIMENSIONS,
+            MOBILE_IMAGE_TARGET_KB,
+            "mobile",
+        )
+        if mobile_status == "converted":
+            old_files.append(entry.mobile_file.name)
+            entry.mobile_file.save(mobile_file.name, mobile_file, save=False)
+            converted_count += 1
+        elif mobile_status not in ("unchanged",):
+            skipped_count += 1
+
+    if converted_count:
+        entry.save()
+        for old_name in old_files:
+            if old_name and old_name not in (entry.file.name, getattr(entry.mobile_file, "name", "")):
+                try:
+                    entry.file.storage.delete(old_name)
+                except Exception:
+                    pass
+
+    return converted_count, skipped_count
+
+
 def image_optimization_metadata(original, desktop_image, mobile_image):
     original_size = getattr(original, "size", 0)
     desktop_saved_bytes = original_size - desktop_image.size
@@ -964,11 +1029,9 @@ def image_optimization_metadata(original, desktop_image, mobile_image):
     original_format = os.path.splitext(getattr(original, "name", ""))[1].lstrip(".").upper()
     desktop_format = os.path.splitext(desktop_image.name)[1].lstrip(".").upper()
 
-    note = "Bild wurde für Web und Mobil optimiert."
-    if original_format == "PNG" and desktop_format == "PNG":
-        note = "PNG mit Transparenz oder kleiner Dateigröße: bleibt PNG, wird verlustfrei optimiert und für Mobil verkleinert."
-    elif original_format == "PNG":
-        note = "PNG ohne Transparenz und großer Dateigröße: wurde als JPEG gespeichert, damit die Website schneller lädt."
+    note = "Bild wurde als WebP fuer Web und Mobil optimiert."
+    if original_format == "GIF" and desktop_format == "GIF":
+        note = "Animierte GIFs bleiben im Originalformat, damit die Animation erhalten bleibt."
 
     return {
         "original_size": original_size,
@@ -1599,11 +1662,147 @@ def delete_galery(request, id):
 
 
 # --------------- [Image Helper] ---------------
+def stored_image_metadata(field_file):
+    if not field_file:
+        return {}
+
+    metadata = {
+        "name": os.path.basename(getattr(field_file, "name", "")),
+        "size": None,
+        "size_kb": None,
+        "width": None,
+        "height": None,
+        "dimensions": "",
+    }
+
+    try:
+        metadata["size"] = field_file.size
+        metadata["size_kb"] = filesize_kb(field_file.size)
+    except Exception:
+        pass
+
+    try:
+        field_file.open("rb")
+        with Image.open(field_file) as img:
+            width, height = img.size
+            metadata["width"] = width
+            metadata["height"] = height
+            metadata["dimensions"] = f"{width} x {height}px"
+    except Exception:
+        pass
+    finally:
+        try:
+            field_file.close()
+        except Exception:
+            pass
+
+    return metadata
+
+
+def serialize_image_entry(entry, optimization=None):
+    try:
+        image_url = entry.file.url
+    except ValueError:
+        image_url = ""
+
+    desktop_meta = stored_image_metadata(entry.file)
+    mobile_meta = stored_image_metadata(entry.mobile_file) if entry.mobile_file else {}
+    upload_date = entry.uploaddate.strftime("%d.%m.%Y %H:%M") if entry.uploaddate else ""
+
+    data = {
+        "url": image_url,
+        "preview_url": entry.mobile_file_url or image_url,
+        "mobile_url": entry.mobile_file_url,
+        "srcset": entry.responsive_srcset,
+        "id": entry.id,
+        "title": entry.title,
+        "format": entry.file_extension,
+        "has_mobile": bool(entry.mobile_file),
+        "is_webp": field_file_is_webp(entry.file),
+        "metadata": {
+            "filename": desktop_meta.get("name") or os.path.basename(entry.file.name),
+            "size": desktop_meta.get("size"),
+            "size_kb": desktop_meta.get("size_kb"),
+            "width": desktop_meta.get("width"),
+            "height": desktop_meta.get("height"),
+            "dimensions": desktop_meta.get("dimensions"),
+            "uploaded_at": upload_date,
+            "mobile_size_kb": mobile_meta.get("size_kb"),
+            "mobile_dimensions": mobile_meta.get("dimensions"),
+        },
+    }
+
+    if optimization:
+        data["optimization"] = optimization
+
+    return data
+
+
+@login_required(login_url='login')
+@cms_permission_required("media.edit")
+def convert_images_to_webp(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Falsche Anfrage (Erlaubt: POST)'}, status=405)
+
+    entries = fileentry.objects.all().order_by('id')
+    converted_variants = 0
+    skipped_variants = 0
+    touched_images = 0
+
+    for entry in entries:
+        if not image_entry_needs_webp(entry):
+            continue
+        converted_count, skipped_count = convert_image_entry_to_webp(entry)
+        converted_variants += converted_count
+        skipped_variants += skipped_count
+        if converted_count:
+            touched_images += 1
+
+    remaining = non_webp_image_count()
+    return JsonResponse({
+        'success': 'WebP-Konvertierung abgeschlossen',
+        'converted_images': touched_images,
+        'converted_variants': converted_variants,
+        'skipped_variants': skipped_variants,
+        'remaining': remaining,
+        'has_non_webp': remaining > 0,
+    })
+
+
 # get all images
 @login_required(login_url='login')
 @cms_permission_required("media.edit")
 def all_images(request):
     if request.method == 'GET':
+        try:
+            per_page = max(1, min(24, int(request.GET.get('per_page', 12))))
+        except ValueError:
+            per_page = 12
+
+        search = request.GET.get('q', '').strip()
+        images = fileentry.objects.all().order_by('-uploaddate')
+        if search:
+            images = images.filter(title__icontains=search)
+
+        paginator = Paginator(images, per_page)
+        page_obj = paginator.get_page(request.GET.get('page', 1))
+        image_urls = [serialize_image_entry(entry) for entry in page_obj.object_list]
+        non_webp_total = non_webp_image_count()
+
+        return JsonResponse({
+            'image_urls': image_urls,
+            'pagination': {
+                'page': page_obj.number,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+                'has_previous': page_obj.has_previous(),
+                'has_next': page_obj.has_next(),
+            },
+            'has_non_webp': non_webp_total > 0,
+            'non_webp_count': non_webp_total,
+        })
+
         images = fileentry.objects.all().order_by('-uploaddate')
         # Liste zur Speicherung der Bild-URLs erstellen
         image_urls = [] 

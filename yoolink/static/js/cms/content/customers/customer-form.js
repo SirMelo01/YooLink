@@ -3,6 +3,7 @@
 let customerImageLibraryItems = [];
 let customerGalerieLibraryItems = [];
 let activeImageTarget = null;
+let customerImageSearchTimeout = null;
 
 const IMAGE_TARGETS = ["titleImage", "bannerImage", "logoImage"];
 
@@ -37,7 +38,10 @@ $(document).ready(function () {
     $('#closeImageModal').click(closeCustomerImageModal);
     $('#reloadImages').click(function () { loadCustomerImages(true); });
     $('#imageSearchInput').on('input', function () {
-        renderCustomerImageLibrary(customerImageLibraryItems);
+        window.clearTimeout(customerImageSearchTimeout);
+        customerImageSearchTimeout = window.setTimeout(function () {
+            loadCustomerImages(false);
+        }, 250);
     });
 
     $('.image-modal-tab').click(function () {
@@ -156,7 +160,7 @@ function selectCustomerImage($image) {
     const $preview = $('#' + activeImageTarget + 'Preview');
     const $placeholder = $('#' + activeImageTarget + 'Placeholder');
 
-    $preview.attr('src', $image.attr('src'));
+    $preview.attr('src', $image.attr('data-full-url') || $image.attr('src'));
     $preview.attr('data-image-id', $image.attr('imgId'));
     $preview.removeClass('hidden');
     $placeholder.addClass('hidden');
@@ -229,23 +233,16 @@ function updateLivePreview() {
 }
 
 function renderCustomerImageLibrary(images) {
-    const search = ($('#imageSearchInput').val() || '').toLowerCase().trim();
-    const filteredImages = images.filter(function (image) {
-        return !search || (image.title || '').toLowerCase().includes(search);
-    });
-
     const $container = $('#possibleImages');
     $container.empty();
 
-    filteredImages.forEach(function (image) {
+    images.forEach(function (image) {
         const title = customerEscapeHtml(image.title || 'Bild');
+        const previewUrl = customerEscapeHtml(image.preview_url || image.mobile_url || image.url || '');
         const $button = $(`
             <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
-                <img src="${image.url}" imgId="${image.id}" alt="${title}" class="h-36 w-full object-cover">
-                <span class="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-1 text-[11px] font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
-                    ${(image.format || 'IMG')}${image.has_mobile ? ' + Mobil' : ''}
-                </span>
-                <span class="absolute right-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100 image-delete-button" data-image-id="${image.id}">
+                <img src="${previewUrl}" imgId="${image.id}" data-full-url="${customerEscapeHtml(image.url || '')}" alt="${title}" loading="lazy" decoding="async" class="h-24 w-full object-cover sm:h-28">
+                <span class="image-delete-button absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100" data-image-id="${image.id}">
                     <i class="bi bi-trash"></i>
                 </span>
                 <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent px-3 pb-3 pt-8 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">${title}</span>
@@ -262,7 +259,7 @@ function renderCustomerImageLibrary(images) {
         $container.append($button);
     });
 
-    $('#imageEmptyState').toggleClass('hidden', filteredImages.length > 0);
+    $('#imageEmptyState').toggleClass('hidden', images.length > 0);
 }
 
 function confirmDeleteCustomerImage(imageId, title) {
@@ -407,6 +404,11 @@ function loadCustomerImages(sendLoadMsg) {
     $.ajax({
         url: '/cms/images/all/',
         type: 'GET',
+        data: {
+            page: 1,
+            per_page: 12,
+            q: $('#imageSearchInput').val() || '',
+        },
         dataType: 'json',
         success: function (response) {
             customerImageLibraryItems = response.image_urls || [];

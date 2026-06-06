@@ -150,6 +150,31 @@ $(document).ready(function () {
         });
     });
 
+    $('#convertWebpImages').on('click', function () {
+        var button = $(this);
+        var originalHtml = button.html();
+        button.prop('disabled', true).html('<i class="bi bi-arrow-repeat animate-spin"></i> Konvertiere...');
+
+        $.ajax({
+            url: 'convert-webp/',
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+            },
+            success: function (response) {
+                var converted = response.converted_images || 0;
+                var skipped = response.skipped_variants || 0;
+                var suffix = skipped ? ' (' + skipped + ' Varianten übersprungen)' : '';
+                sendNotif(converted + ' Bilder zu WebP konvertiert' + suffix, 'success');
+                window.location.reload();
+            },
+            error: function () {
+                button.prop('disabled', false).html(originalHtml);
+                sendNotif('WebP-Konvertierung konnte nicht abgeschlossen werden', 'error');
+            }
+        });
+    });
+
     // Klick-Handler für das aktuelle Element definieren
     $('#selectImg').on('click', function () {
         var elem = $(this)
@@ -176,7 +201,7 @@ $(document).ready(function () {
                 } else {
                     sendNotif(response.error, "error")
                 }
-                $('#editModal').addClass('hidden')
+                $('#editModal').addClass('hidden').removeClass('flex')
 
             },
             error: function (error) {
@@ -197,6 +222,7 @@ $(document).ready(function () {
         // Get image source, title, and alt attributes
         var title = imgElement.attr('title');
         var place = imgElement.attr('place');
+        var src = imgElement.attr('src');
         $editImg = imgElement
 
         if (place) {
@@ -205,19 +231,28 @@ $(document).ready(function () {
             $('#imgPlace').val("nothing")
         }
         $('#imgTitle').val(title)
-        $('#editModal').removeClass('hidden')
+
+        // Vorschau befüllen
+        $('#editPreview').attr('src', src || '');
+        var fileName = (title && title.trim()) ? title : (src ? src.split('/').pop().split('?')[0] : 'Bild');
+        $('#editPreviewName').text(decodeURIComponent(fileName));
+
+        $('#editModal').removeClass('hidden').addClass('flex')
     })
 
-    $('#closeModal').click(function () {
-        $('#editModal').addClass('hidden')
-    })
+    function closeEditModal() {
+        $('#editModal').addClass('hidden').removeClass('flex')
+    }
+
+    $('#closeModal').click(closeEditModal)
+    $('#cancelEdit').click(closeEditModal)
 
     // Close the modal when clicking outside of it
     const modalContainer = $('.modal-container');
     const editModal = $('#editModal');
     $(document).mouseup(function (e) {
         if (!modalContainer.is(e.target) && modalContainer.has(e.target).length === 0) {
-            editModal.addClass('hidden');
+            editModal.addClass('hidden').removeClass('flex');
         }
     });
 });
