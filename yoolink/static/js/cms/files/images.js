@@ -204,9 +204,12 @@ $(document).ready(function () {
                 $('#editModal').addClass('hidden').removeClass('flex')
 
             },
-            error: function (error) {
-                // Funktion, die ausgeführt wird, wenn ein Fehler auftritt
-                sendNotif("Beim Speichern des Bildes ist etwas schief gelaufen", "error")
+            error: function (xhr) {
+                // Serverseitige Fehlermeldung (z. B. "Bildtitel zu lang") bevorzugt anzeigen
+                var msg = (xhr.responseJSON && xhr.responseJSON.error)
+                    ? xhr.responseJSON.error
+                    : "Beim Speichern des Bildes ist etwas schief gelaufen";
+                sendNotif(msg, "error")
             }
         });
     });

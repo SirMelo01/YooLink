@@ -38,7 +38,7 @@
             </div>
 
             <!-- Felder -->
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="grid grid-cols-1 gap-4">
                 <div>
                     <label for="imgPlace" class="mb-1.5 block text-sm font-medium text-slate-700">Anzeigeplatz</label>
                     <select id="imgPlace"
@@ -50,9 +50,9 @@
                     </select>
                 </div>
                 <div>
-                    <label for="imgTitle" class="mb-1.5 block text-sm font-medium text-slate-700">Bildtitel</label>
-                    <input id="imgTitle" type="text" placeholder="Bildtitel eingeben"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                    <label for="imgTitle" class="mb-1.5 block text-sm font-medium text-slate-700">Bildtitel <span class="font-normal text-slate-400">(auch Alt-Text für Screenreader)</span></label>
+                    <textarea id="imgTitle" rows="2" placeholder="Beschreibe das Bild – dient auch als Alt-Text für die Barrierefreiheit"
+                        class="w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm leading-relaxed text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"></textarea>
                 </div>
             </div>
         </div>
