@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.applications.content.models import Customer, PrivacyPolicy, TextContent
+from yoolink.ycms.applications.content.models import Customer, ImpressumBlock, PrivacyPolicy, TextContent
 from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, WebsiteSettings
 import datetime
 from django.http import Http404, HttpResponseRedirect
@@ -561,6 +561,22 @@ def datenschutz_view(request):
             'privacy_content_html': privacy_content_html,
             'use_policy': use_policy,
             'owner_data': owner_data,
+        },
+    )
+
+
+def impressum_view(request):
+    owner_data = WebsiteSettings.get_site_owner()
+    blocks = []
+    for block in ImpressumBlock.objects.filter(active=True):
+        blocks.append({"title": block.title, "html": block.render_html(owner_data)})
+
+    return render(
+        request,
+        'pages/impressum.html',
+        {
+            'owner_data': owner_data,
+            'impressum_blocks': blocks,
         },
     )
 

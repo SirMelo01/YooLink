@@ -32,5 +32,7 @@ urlpatterns = [
     path("webdesign-deggendorf/", pages_required(views.site_view_webdesign_deggendorf), name="site_webdesign_deggendorf"),
     path("datenschutz/", pages_required(views.site_view_datenschutz), name="site_datenschutz"),
     path("datenschutz/save/", pages_required(views.save_privacy_policy), name="save_privacy_policy"),
+    path("impressum/", pages_required(views.site_view_impressum), name="site_impressum"),
+    path("impressum/save/", pages_required(views.save_impressum), name="save_impressum"),
     path("cookies/", pages_required(views.site_view_cookies), name="site_cookies"),
 ]

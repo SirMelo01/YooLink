@@ -176,6 +176,74 @@ class PrivacyPolicy(models.Model):
         return content
 
 
+class ImpressumBlock(models.Model):
+    """
+    Ein frei konfigurierbarer Inhalts-Block für das Impressum (Builder).
+
+    Die rechtlichen Stammdaten (Unternehmen, Inhaber, Anschrift, Kontakt) werden
+    direkt aus den Unternehmensdaten (WebsiteSettings) gezogen. Diese Blöcke
+    bilden den frei pflegbaren Rest (Haftungshinweis, Copyright, eigene Abschnitte).
+
+    Im `content` werden unterstützt:
+      * Platzhalter wie [[COMPANY]], [[OWNER_NAME]], [[ADDRESS]] (aus den Unternehmensdaten)
+      * **fett** für fettgedruckten Text
+      * Leerzeilen = neue Absätze, einfache Zeilenumbrüche bleiben erhalten
+    """
+
+    title = models.CharField(max_length=200, default="", blank=True)
+    content = models.TextField(default="", blank=True)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+    active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    TOKENS = {
+        "COMPANY": "company_name",
+        "OWNER_NAME": "owner_name",
+        "ADDRESS": "address",
+        "EMAIL": "email",
+        "TEL": "tel_number",
+        "FAX": "fax_number",
+        "MOBILE": "mobile_number",
+        "WEBSITE": "website",
+        "COUNTRY": "address_country",
+    }
+
+    class Meta:
+        db_table = "ycms_impressumblock"
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.title or f"Impressum-Block #{self.pk}"
+
+    @staticmethod
+    def _owner_value(owner_data, attr):
+        if not owner_data:
+            return ""
+        return str(getattr(owner_data, attr, "") or "").strip()
+
+    @classmethod
+    def _render_inline(cls, text, owner_data):
+        # Erst alles escapen, danach Platzhalter durch (escapte) Stammdaten ersetzen.
+        out = escape(text)
+        for token, attr in cls.TOKENS.items():
+            out = out.replace(f"[[{token}]]", str(escape(cls._owner_value(owner_data, attr))))
+        # **fett** -> <strong>
+        out = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", out)
+        return out
+
+    def render_html(self, owner_data):
+        """Rendert den Block-Inhalt zu sicherem HTML (Absätze + Zeilenumbrüche)."""
+        text = (self.content or "").strip()
+        if not text:
+            return ""
+        paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+        html_parts = []
+        for paragraph in paragraphs:
+            inner = self._render_inline(paragraph, owner_data).replace("\n", "<br />")
+            html_parts.append(f"<p>{inner}</p>")
+        return "\n".join(html_parts)
+
+
 def _generate_unique_customer_slug(instance, base_slug):
     slug = slugify(base_slug or "kunde") or "kunde"
     unique_slug = slug

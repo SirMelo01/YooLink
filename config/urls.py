@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from yoolink.views import load_index, kontaktform, load_kunden, load_kunde_detail, load_cmsinfo, load_logos, load_visitenkarte, load_medien, load_webdesign, load_webdesign_deggendorf, datenschutz_view, cookies_view, leistungen_view
+from yoolink.views import load_index, kontaktform, load_kunden, load_kunde_detail, load_cmsinfo, load_logos, load_visitenkarte, load_medien, load_webdesign, load_webdesign_deggendorf, datenschutz_view, cookies_view, leistungen_view, impressum_view
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
@@ -50,7 +50,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path("", view=load_index, name="home"),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
-    path("impressum/", TemplateView.as_view(template_name="pages/impressum.html"), name="impressum"),
+    path("impressum/", view=impressum_view, name="impressum"),
     path("kontakt/", view=kontaktform, name="kontakt"),
     path("datenschutz/", view=datenschutz_view, name="datenschutz"),
     path("cookies/", view=cookies_view, name="cookies"),

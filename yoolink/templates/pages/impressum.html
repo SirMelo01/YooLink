@@ -9,12 +9,17 @@
     <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-center text-gray-900 sm:text-5xl xl:text-6xl">Impressum</h1>
   </div>
 
+  <!-- Pflichtangaben – automatisch aus den Unternehmensdaten -->
   <div class="mt-8">
     <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
       {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}
     </h2>
     <p>Angaben gemäß § 5 TMG</p>
-    <p>Inhaber: <b>Sebastian Rauch</b></p>
+    {% if owner_data and owner_data.owner_name %}
+      <p>Inhaber: <b>{{ owner_data.owner_name }}</b></p>
+    {% else %}
+      <p>Inhaber: <b>Sebastian Rauch</b></p>
+    {% endif %}
   </div>
 
   <div class="mt-6">
@@ -52,24 +57,24 @@
 
   <div class="mt-6">
     <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
-    <p>{% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}Sebastian Rauch{% endif %}</p>
+    {% if owner_data and owner_data.owner_name %}
+      <p>{{ owner_data.owner_name }}</p>
+    {% elif owner_data and owner_data.company_name %}
+      <p>{{ owner_data.company_name }}</p>
+    {% else %}
+      <p>Sebastian Rauch</p>
+    {% endif %}
     <p>Anschrift wie oben</p>
   </div>
 
-  <div class="mt-6">
-    <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">Haftungshinweis</h2>
-    <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+  <!-- Frei konfigurierbare Blöcke aus dem CMS-Builder -->
+  {% for block in impressum_blocks %}
+  <div class="mt-6{% if forloop.last %} mb-8{% endif %}">
+    {% if block.title %}
+    <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">{{ block.title }}</h2>
+    {% endif %}
+    <div class="space-y-2 [&_a]:text-blue-600 [&_a]:hover:underline">{{ block.html|safe }}</div>
   </div>
-
-  <div class="mt-6 mb-8">
-    <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">Copyright</h2>
-    <p>© {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}. Alle Rechte vorbehalten.</p>
-    <p>Text, Bilder, Grafiken und Videos unterliegen dem Schutz des Urheberrechts. Der Inhalt dieser Website darf nicht zu kommerziellen Zwecken kopiert, verbreitet oder verändert werden.</p>
-  </div>
-
-  <div class="mt-6">
-    <h2 class="mb-3 text-xl font-bold tracking-tight text-gray-900 md:text-2xl">Steuerliche Angaben</h2>
-    <p>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
-  </div>
+  {% endfor %}
 </div>
 {% endblock content %}

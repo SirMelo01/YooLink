@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 
 from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, WebsiteSettings, fileentry
 
-from .models import Customer, PrivacyPolicy, TextContent
+from .models import Customer, ImpressumBlock, PrivacyPolicy, TextContent
 
 DEFAULT_LANGUAGE = "en"
 
@@ -667,6 +667,68 @@ def save_privacy_policy(request):
     policy.save(update_fields=["use_html", "content_html", "updated_at"])
 
     return JsonResponse({"success": "DatenschutzerklÃ¤rung wurde gespeichert"}, status=200)
+
+
+# ----------------------------------------------------------------------
+# Impressum-Builder
+# ----------------------------------------------------------------------
+
+
+@login_required(login_url="login")
+def site_view_impressum(request):
+    owner_data = WebsiteSettings.get_site_owner()
+    blocks = ImpressumBlock.objects.all()
+
+    return render(
+        request,
+        "pages/cms/content/sites/ImpressumSite.html",
+        {
+            "blocks": blocks,
+            "owner_data": owner_data,
+        },
+    )
+
+
+@login_required(login_url="login")
+@require_http_methods(["POST"])
+def save_impressum(request):
+    try:
+        payload = json.loads(request.body or "{}")
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Ungültige Daten."}, status=400)
+
+    blocks = payload.get("blocks", [])
+    if not isinstance(blocks, list):
+        return JsonResponse({"error": "Ungültige Daten."}, status=400)
+
+    kept_ids = []
+    with transaction.atomic():
+        for index, raw in enumerate(blocks):
+            title = (raw.get("title") or "").strip()
+            content = (raw.get("content") or "").strip()
+            active = bool(raw.get("active", True))
+
+            # Komplett leere Blöcke ignorieren
+            if not title and not content:
+                continue
+
+            block_id = raw.get("id")
+            block = None
+            if block_id not in (None, "", "null"):
+                block = ImpressumBlock.objects.filter(id=block_id).first()
+            if block is None:
+                block = ImpressumBlock()
+
+            block.title = title
+            block.content = content
+            block.order = index
+            block.active = active
+            block.save()
+            kept_ids.append(block.id)
+
+        ImpressumBlock.objects.exclude(id__in=kept_ids).delete()
+
+    return JsonResponse({"success": "Impressum wurde gespeichert"}, status=200)
 
 
 # ----------------------------------------------------------------------
