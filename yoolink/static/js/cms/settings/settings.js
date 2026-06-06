@@ -32,6 +32,7 @@ $(document).ready(function () {
     function getPayload() {
         return {
             company_name: $.trim($('#company_name').val()),
+            owner_name: $.trim($('#owner_name').val()),
             contact_email: $.trim($('#contact_email').val()),
             tel_number: $.trim($('#tel_number').val()),
             fax_number: $.trim($('#fax_number').val()),

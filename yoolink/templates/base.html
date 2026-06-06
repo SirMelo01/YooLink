@@ -555,7 +555,7 @@
         <div class="flex flex-wrap items-center md:justify-between justify-center">
           <div class="w-full md:w-4/12 px-4 mx-auto text-center">
             <div class="text-sm  font-semibold py-1">
-              &copy; {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}, {% load tz %} {% now "Y" %}.
+              &copy; {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}{% if owner_data and owner_data.owner_name %} - {{ owner_data.owner_name }}{% endif %}, {% load tz %} {% now "Y" %}.
             </div>
           </div>
         </div>
