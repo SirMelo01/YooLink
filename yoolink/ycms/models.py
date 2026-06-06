@@ -58,7 +58,7 @@ class fileentry(models.Model):
     file = models.ImageField(upload_to=unique_image_name)
     mobile_file = models.ImageField(upload_to=unique_image_name, blank=True, null=True)
     uploaddate = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=200, default="Bildtitel")
+    title = models.TextField(default="Bildtitel")
     place = models.CharField(max_length=60, default="")
 
     def __str__(self):
@@ -357,6 +357,7 @@ def upload_to_website_settings(instance, filename):
 
 class WebsiteSettings(models.Model):
     company_name = models.CharField(max_length=255, default="", blank=True)
+    owner_name = models.CharField(max_length=255, default="", blank=True)
     contact_email = models.EmailField(max_length=255, default="", blank=True)
     tel_number = models.CharField(max_length=18, default="", blank=True)
     fax_number = models.CharField(max_length=18, default="", blank=True)

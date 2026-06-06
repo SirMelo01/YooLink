@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import logging
 import os
 import re
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
@@ -47,7 +48,7 @@ from PIL import Image
 from io import BytesIO
 from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db import IntegrityError, models, transaction
+from django.db import DataError, DatabaseError, IntegrityError, models, transaction
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -78,6 +79,8 @@ from yoolink.ycms.upload_validation import (
     validation_error_message,
 )
 from yoolink.ycms.permissions import cms_permission_required, ensure_system_roles, user_permissions
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_LANGUAGE = "en"
 DESKTOP_IMAGE_MAX_DIMENSIONS = (1920, 1920)
@@ -699,29 +702,54 @@ def generate_mobile_file(request, id):
     })
 
 
+# Oberes, großzügiges Limit für den Bildtitel / Alt-Text.
+# Der Titel dient auch als Alt-Text (Barrierefreiheit) und darf daher länger sein,
+# aber nicht beliebig groß werden.
+FILE_TITLE_MAX_LENGTH = 2000
+
+
 @login_required(login_url='login')
 @cms_permission_required("media.edit")
 def update_file(request, id):
-    if request.method == 'POST':
-        title = request.POST.get('title', '')
-        place = request.POST.get('place', '')
-        file = fileentry.objects.get(id=id)
-        lang = get_active_language(request)
-        if title:
-            setattr(file, f'title_{lang}', title)
+    if request.method != 'POST':
+        return JsonResponse({"error": "Ungültige Anfrage."}, status=405)
 
-            # Falls Standardsprache → auch Hauptfeld setzen
-            if lang == DEFAULT_LANGUAGE:
-                file.title = title
-        if place and not place == 'nothing':
-            if fileentry.objects.filter(place=place).exists():
-                extra = fileentry.objects.get(place=place)
-                extra.place = "nothing"
-                extra.save()
-            file.place = place 
+    file = fileentry.objects.filter(id=id).first()
+    if file is None:
+        return JsonResponse({"error": "Das Bild wurde nicht gefunden."}, status=404)
+
+    title = (request.POST.get('title', '') or '').strip()
+    place = request.POST.get('place', '')
+
+    if len(title) > FILE_TITLE_MAX_LENGTH:
+        return JsonResponse(
+            {"error": f"Der Bildtitel ist zu lang (max. {FILE_TITLE_MAX_LENGTH} Zeichen, aktuell {len(title)})."},
+            status=400,
+        )
+
+    lang = get_active_language(request)
+    if title:
+        setattr(file, f'title_{lang}', title)
+        # Falls Standardsprache → auch Hauptfeld setzen
+        if lang == DEFAULT_LANGUAGE:
+            file.title = title
+    if place and not place == 'nothing':
+        existing = fileentry.objects.filter(place=place).exclude(id=file.id).first()
+        if existing is not None:
+            existing.place = "nothing"
+            existing.save(update_fields=["place"])
+        file.place = place
+
+    try:
         file.save()
-        return JsonResponse({"success": "File wurde erfolgreich bearbeitet"})
-    return JsonResponse({"error": "Etwas ist schief gelaufen. Versuche es später nochmal"})
+    except (DataError, DatabaseError) as exc:
+        logger.warning("update_file failed for fileentry %s: %s", id, exc)
+        return JsonResponse(
+            {"error": "Das Bild konnte nicht gespeichert werden. Bitte kürze den Titel und versuche es erneut."},
+            status=400,
+        )
+
+    return JsonResponse({"success": "File wurde erfolgreich bearbeitet"})
 
 # Delete File
 @login_required(login_url='login')
@@ -1961,6 +1989,7 @@ def user_settings_update(request):
     website_settings = _get_website_settings()
 
     company_name = request.POST.get('company_name', '').strip()
+    owner_name = request.POST.get('owner_name', '').strip()
     contact_email = request.POST.get('contact_email', '').strip()
     tel_number = request.POST.get('tel_number', '').strip()
     fax_number = request.POST.get('fax_number', '').strip()
@@ -1991,6 +2020,7 @@ def user_settings_update(request):
             return JsonResponse({'error': 'Bitte gib eine gueltige Unternehmens-E-Mail-Adresse ein.'}, status=400)
 
     website_settings.company_name = company_name
+    website_settings.owner_name = owner_name
     website_settings.contact_email = contact_email
     website_settings.tel_number = tel_number
     website_settings.fax_number = fax_number
