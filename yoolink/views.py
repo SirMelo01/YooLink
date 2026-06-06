@@ -614,22 +614,36 @@ def kontaktform(request):
                 title=form.cleaned_data['title'],
                 message=form.cleaned_data['message'],
             )
-            return render(request, 'pages/kontakt.html', {'success': True})
+            success = True
     else:
         form = ContactForm()
 
-    owner_data = WebsiteSettings.get_site_owner()
-    return render(
-        request,
-        'pages/kontakt.html',
-        {
-            'form': form,
-            'success': success,
-            'recaptcha_public_key': settings.RECAPTCHA_PUBLIC_KEY,
-            'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
-            'owner_data': owner_data,
-        },
-    )
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    context = {
+        'form': form,
+        'success': success,
+        'recaptcha_public_key': settings.RECAPTCHA_PUBLIC_KEY,
+        'google_maps_embed_api_key': settings.GOOGLE_MAPS_EMBED_API_KEY,
+        'owner_data': WebsiteSettings.get_site_owner(),
+    }
+    context.update(get_opening_hours())
+
+    # Hero
+    context['textContent_hero'] = get_text('main_kontakt_hero')
+    # Info-Panel (links)
+    context['textContent_panel'] = get_text('main_kontakt_panel')
+    context['textContent_panel_labels'] = get_text('main_kontakt_panel_labels')
+    context['textContent_response'] = get_text('main_kontakt_response')
+    # Formular (rechts)
+    context['textContent_form'] = get_text('main_kontakt_form')
+    context['textContent_fields'] = get_text('main_kontakt_fields')
+    context['textContent_message_placeholder'] = get_text('main_kontakt_message_placeholder')
+    # Erfolgsmeldung
+    context['textContent_success'] = get_text('main_kontakt_success')
+
+    return render(request, 'pages/kontakt.html', context)
 
 # Authentication
 

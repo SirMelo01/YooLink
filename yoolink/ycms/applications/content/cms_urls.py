@@ -35,4 +35,5 @@ urlpatterns = [
     path("impressum/", pages_required(views.site_view_impressum), name="site_impressum"),
     path("impressum/save/", pages_required(views.save_impressum), name="save_impressum"),
     path("cookies/", pages_required(views.site_view_cookies), name="site_cookies"),
+    path("kontakt/", pages_required(views.site_view_kontakt), name="site_kontakt"),
 ]

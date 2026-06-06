@@ -13,9 +13,9 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     </div>
-    <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">Nachricht gesendet!</h1>
-    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">Vielen Dank für Ihre Nachricht. Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.</p>
-    <a href="{% url 'home' %}" class="inline-block rounded-full bg-blue-900 px-8 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800">Zurück zur Startseite</a>
+    <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">{{ textContent_success.title|default:"Nachricht gesendet!" }}</h1>
+    <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">{{ textContent_success.description|default:"Vielen Dank für Ihre Nachricht. Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen." }}</p>
+    <a href="{% url 'home' %}" class="inline-block rounded-full bg-blue-900 px-8 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800">{{ textContent_success.buttonText|default:"Zurück zur Startseite" }}</a>
   </div>
 </section>
 
@@ -23,8 +23,8 @@
 
 <!-- ── HERO ── -->
 <div class="bg-white pt-16 pb-10 text-center px-4">
-  <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">Nehmen Sie Kontakt auf</h1>
-  <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl">Wir freuen uns auf Ihre Anfrage – egal ob Projekt, Frage oder einfach Hallo.</p>
+  <h1 class="mb-6 text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">{{ textContent_hero.title|default:"Nehmen Sie Kontakt auf" }}</h1>
+  <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-gray-600 md:text-lg xl:text-xl">{{ textContent_hero.description|default:"Wir freuen uns auf Ihre Anfrage – egal ob Projekt, Frage oder einfach Hallo." }}</p>
 </div>
 
 <!-- ── MAIN CARD ── -->
@@ -43,8 +43,8 @@
         {% elif owner_data and owner_data.full_name %}
         <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-blue-300">{{ owner_data.full_name }}</p>
         {% endif %}
-        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none">Wir sind für<br>Sie da.</h2>
-        <p class="mt-3 text-base leading-7 text-blue-200 md:text-lg">Lassen Sie uns gemeinsam Ihr nächstes digitales Projekt umsetzen. Schreiben Sie uns – wir antworten schnell.</p>
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none">{{ textContent_panel.title|default:"Wir sind für Sie da." }}</h2>
+        <p class="mt-3 text-base leading-7 text-blue-200 md:text-lg">{{ textContent_panel.description|default:"Lassen Sie uns gemeinsam Ihr nächstes digitales Projekt umsetzen. Schreiben Sie uns – wir antworten schnell." }}</p>
 
         <div class="mt-10 space-y-6">
           <!-- Address -->
@@ -57,7 +57,7 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Adresse</p>
+              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">{{ textContent_panel_labels.header|default:"Adresse" }}</p>
               <p class="mt-0.5 text-sm text-white leading-relaxed">{{ owner_data.address }}</p>
             </div>
           </div>
@@ -72,7 +72,7 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">E-Mail</p>
+              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">{{ textContent_panel_labels.title|default:"E-Mail" }}</p>
               <a href="mailto:{{ owner_data.email }}" class="mt-0.5 block text-sm text-white hover:text-blue-200 transition">{{ owner_data.email }}</a>
             </div>
           </div>
@@ -87,7 +87,7 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Telefon</p>
+              <p class="text-xs font-semibold uppercase tracking-wider text-blue-300">{{ textContent_panel_labels.description|default:"Telefon" }}</p>
               <a href="tel:{{ owner_data.tel_number }}" class="mt-0.5 block text-sm text-white hover:text-blue-200 transition">{{ owner_data.tel_number }}</a>
             </div>
           </div>
@@ -102,42 +102,42 @@
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
             <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400"></span>
           </span>
-          <p class="text-xs text-blue-100">Antwort meist innerhalb von <strong class="text-white">24 Stunden</strong></p>
+          <p class="text-xs text-blue-100">{{ textContent_response.title|default:"Antwort meist innerhalb von" }} <strong class="text-white">{{ textContent_response.buttonText|default:"24 Stunden" }}</strong></p>
         </div>
       </div>
     </div>
 
     <!-- RIGHT: Form -->
     <div class="bg-white p-8 sm:p-10 lg:p-12">
-      <h2 class="mb-1 text-xl font-bold text-gray-900">Nachricht senden</h2>
-      <p class="mb-8 text-sm text-gray-400">Alle mit * markierten Felder sind Pflichtfelder.</p>
+      <h2 class="mb-1 text-xl font-bold text-gray-900">{{ textContent_form.title|default:"Nachricht senden" }}</h2>
+      <p class="mb-8 text-sm text-gray-400">{{ textContent_form.description|default:"Alle mit * markierten Felder sind Pflichtfelder." }}</p>
 
       <form id="emailForm" method="POST" class="space-y-5">
         {% csrf_token %}
 
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
-            <label for="name" class="mb-1.5 block text-sm font-medium text-gray-700">Name</label>
+            <label for="name" class="mb-1.5 block text-sm font-medium text-gray-700">{{ textContent_fields.header|default:"Name" }}</label>
             <input name="name" type="text" id="name" autocomplete="name"
                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100" />
           </div>
           <div>
-            <label for="email" class="mb-1.5 block text-sm font-medium text-gray-700">E-Mail Adresse *</label>
+            <label for="email" class="mb-1.5 block text-sm font-medium text-gray-700">{{ textContent_fields.title|default:"E-Mail Adresse" }} *</label>
             <input name="email" type="email" id="email" autocomplete="email" required
                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100" />
           </div>
         </div>
 
         <div>
-          <label for="title" class="mb-1.5 block text-sm font-medium text-gray-700">Anliegen</label>
+          <label for="title" class="mb-1.5 block text-sm font-medium text-gray-700">{{ textContent_fields.description|default:"Anliegen" }}</label>
           <input name="title" type="text" id="title"
                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100" />
         </div>
 
         <div>
-          <label for="message" class="mb-1.5 block text-sm font-medium text-gray-700">Nachricht *</label>
+          <label for="message" class="mb-1.5 block text-sm font-medium text-gray-700">{{ textContent_fields.buttonText|default:"Nachricht" }} *</label>
           <textarea name="message" id="message" rows="5" required
-                    placeholder="Beschreiben Sie Ihr Anliegen..."
+                    placeholder="{{ textContent_message_placeholder.title|default:'Beschreiben Sie Ihr Anliegen...' }}"
                     class="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"></textarea>
         </div>
 
@@ -158,7 +158,7 @@
 
         <button type="submit" id="contactSubmit" disabled
                 class="w-full rounded-xl bg-blue-900 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed">
-          Nachricht absenden
+          {{ textContent_form.buttonText|default:"Nachricht absenden" }}
         </button>
       </form>
     </div>

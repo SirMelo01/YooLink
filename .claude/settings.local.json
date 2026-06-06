@@ -39,7 +39,8 @@
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations ycms)",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate ycms)",
       "Bash(git add *)",
-      "Bash(git commit -q -m '@ *)"
+      "Bash(git commit -q -m '@ *)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations --check --dry-run)"
     ]
   }
 }
