@@ -25,6 +25,15 @@ class CMSPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = "pages/cms/auth/password_change.html"
     success_url = reverse_lazy("ycms:password_change_done")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if hasattr(self.request.user, "usersettings"):
+            settings_obj = self.request.user.usersettings
+            if settings_obj.must_change_password:
+                settings_obj.must_change_password = False
+                settings_obj.save(update_fields=["must_change_password"])
+        return response
+
 
 class CMSPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
     template_name = "pages/cms/auth/password_change_done.html"
@@ -70,6 +79,16 @@ class CMSPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = CMSSetPasswordForm
     template_name = "pages/cms/auth/password_reset_confirm.html"
     success_url = reverse_lazy("ycms:password_reset_complete")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.user
+        if hasattr(user, "usersettings"):
+            settings_obj = user.usersettings
+            if settings_obj.must_change_password:
+                settings_obj.must_change_password = False
+                settings_obj.save(update_fields=["must_change_password"])
+        return response
 
 
 class CMSPasswordResetCompleteView(PasswordResetCompleteView):

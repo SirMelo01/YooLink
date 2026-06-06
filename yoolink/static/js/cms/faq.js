@@ -158,28 +158,43 @@ $(document).ready(function () {
 
 });
 function createFaq(id, answer, question) {
+    // Leeren Zustand entfernen, falls vorhanden
+    $('#faqEmptyState').remove();
+
     // create the element
-    var faqElement = $('<div>').addClass('list-group-item mb-4').attr('data-id', id);
-    var innerElement = $('<div>').addClass('flex items-center w-full justify-between bg-slate-600 p-4 text-white rounded-lg');
-    innerElement.append($('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 handle mr-5 hover:cursor-pointer"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg>'))
-    var questionElement = $('<div>').addClass('w-2/5 mr-4');
+    var faqElement = $('<div>').addClass('list-group-item').attr('data-id', id);
+    var innerElement = $('<div>').addClass('group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow lg:flex-row lg:items-center');
+
+    // Drag-Handle
+    innerElement.append($('<span class="handle grid h-9 w-9 flex-shrink-0 cursor-grab place-items-center rounded-lg text-slate-300 transition hover:bg-slate-100 hover:text-slate-500 active:cursor-grabbing" title="Zum Sortieren ziehen"><i class="bi bi-grip-vertical text-xl"></i></span>'));
+
+    // Eingaben (Frage / Antwort)
+    var fieldsWrap = $('<div>').addClass('grid flex-1 gap-3 sm:grid-cols-2');
+
+    var questionElement = $('<div>');
+    questionElement.append($('<label>').addClass('mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400').text('Frage'));
     var questionInput = $('<input>').attr({
         'type': 'text',
         'value': question,
         'placeholder': "Deine Frage",
-        'class': 'appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline question'
+        'class': 'question w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100'
     });
     questionElement.append(questionInput);
-    var answerElement = $('<div>').addClass('w-2/5 mr-4');
+
+    var answerElement = $('<div>');
+    answerElement.append($('<label>').addClass('mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400').text('Antwort'));
     var answerInput = $('<input>').attr({
         'type': 'text',
         'value': answer,
         'placeholder': "Deine Antwort",
-        'class': 'appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline answer'
+        'class': 'answer w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100'
     });
     answerElement.append(answerInput);
-    var buttonElement = $('<div>').addClass('w-1/5');
-    var updateButton = $('<button>').addClass('bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline edit-faq').attr('type', 'button').text('Anzeigen');
+    fieldsWrap.append(questionElement, answerElement);
+
+    // Aktionen
+    var buttonElement = $('<div>').addClass('flex flex-shrink-0 gap-2 lg:flex-col xl:flex-row');
+    var updateButton = $('<button>').addClass('edit-faq inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 lg:flex-none').attr('type', 'button').html('<i class="bi bi-arrows-angle-expand"></i> Anzeigen');
     updateButton.click(function() {
         const $faq = $(this).closest('.list-group-item');
         const id = $faq.attr('data-id');
@@ -194,9 +209,10 @@ function createFaq(id, answer, question) {
         // Save it
         $('#editModal').removeClass("hidden");
     });
-    var deleteButton = $('<button>').addClass('bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-4 delete').attr('type', 'button').text('Lösche');
+    var deleteButton = $('<button>').addClass('delete inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 lg:flex-none').attr('type', 'button').html('<i class="bi bi-trash"></i> Löschen');
     buttonElement.append(updateButton, deleteButton);
-    innerElement.append(questionElement, answerElement, buttonElement);
+
+    innerElement.append(fieldsWrap, buttonElement);
     faqElement.append(innerElement);
     $('#simpleList').append(faqElement)
 }

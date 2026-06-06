@@ -1,13 +1,15 @@
 from yoolink.ycms.views import get_active_language
 from yoolink.ycms.applications.notifications.models import Notification
-from .models import UserSettings
+from .models import CMS_PERMISSION_CHOICES, WebsiteSettings
+from .permissions import user_permissions
 from .seo_schema import build_site_schema_jsonld
 
 def user_settings_context(request):
     context = {}
-    owner_data = UserSettings.get_site_owner()
+    owner_data = WebsiteSettings.get_site_owner()
     if owner_data:
         context['owner_data'] = owner_data
+        context['website_settings'] = owner_data
     # Site-wide Organization/WebSite/LocalBusiness JSON-LD, built from the CMS
     # owner record (with safe fallbacks). Rendered once in base.html.
     try:
@@ -15,6 +17,18 @@ def user_settings_context(request):
     except Exception:
         context['site_schema_jsonld'] = ""
     return context
+
+def cms_permissions_context(request):
+    if not request.user.is_authenticated:
+        return {}
+
+    permissions = user_permissions(request.user)
+    return {
+        "cms_permissions": permissions,
+        "cms_permission_labels": dict(CMS_PERMISSION_CHOICES),
+        "can_manage_users": "users.manage" in permissions,
+        "can_manage_roles": "roles.manage" in permissions,
+    }
 
 def notifications_context(request):
     unread_qs = Notification.objects.unread().latest_first()

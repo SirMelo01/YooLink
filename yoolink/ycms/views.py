@@ -17,6 +17,9 @@ from yoolink.ycms.models import (
     AnyFile,
     Blog,
     Button,
+    CMS_PERMISSION_CHOICES,
+    CMSRole,
+    CMSUserRole,
     DeveloperApiConnectAuthorization,
     DeveloperApiKey,
     GaleryImage,
@@ -28,6 +31,7 @@ from yoolink.ycms.models import (
     TeamMember,
     UserSettings,
     VideoFile,
+    WebsiteSettings,
     fileentry,
 )
 from django.contrib.auth.decorators import login_required
@@ -55,6 +59,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.middleware.csrf import get_token
 from django.templatetags.static import static
 from django.utils import translation
+from django.utils.crypto import get_random_string
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.core.validators import validate_email
@@ -72,6 +77,7 @@ from yoolink.ycms.upload_validation import (
     validate_video_upload,
     validation_error_message,
 )
+from yoolink.ycms.permissions import cms_permission_required, ensure_system_roles, user_permissions
 
 DEFAULT_LANGUAGE = "en"
 DESKTOP_IMAGE_MAX_DIMENSIONS = (1920, 1920)
@@ -182,6 +188,7 @@ def get_or_create_translated_blog(request, id):
     return new_blog
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def cms_files(request):
     data = {
         "file_count":  fileentry.objects.count(),
@@ -196,10 +203,14 @@ def cms(request):
     # Ensure anonymous users are redirected to the CMS login.
     if not request.user.is_authenticated:
         return redirect(reverse(settings.LOGIN_URL) + f"?next={request.path}")
+    if "dashboard.view" not in user_permissions(request.user):
+        return HttpResponse("Du hast fuer das CMS keine Berechtigung.", status=403)
 
     context = {'form': None, 'last': None}
 
     if request.method == 'POST':
+        if "media.edit" not in user_permissions(request.user):
+            return HttpResponse("Du hast fuer Medien-Uploads keine Berechtigung.", status=403)
         form = fileform(request.POST, request.FILES)
         if form.is_valid():
             context['last'] = '\n'.join([f.name for f in request.FILES.getlist('file')])
@@ -415,6 +426,8 @@ def Login_Cms(request):
             return redirect("ycms:login-2fa")
 
         login(request, authenticated_user)
+        if user_settings.must_change_password:
+            return redirect("ycms:password_change")
         return redirect("ycms:cms")
 
     return render(
@@ -555,6 +568,9 @@ def Login_Cms_2FA_Verify(request):
         login(request, pending_user, backend=backend)
         _clear_login_2fa_session(request)
 
+        if user_settings.must_change_password:
+            return redirect("ycms:password_change")
+
         return redirect("ycms:cms")
 
     return render(
@@ -568,6 +584,7 @@ def Login_Cms_2FA_Verify(request):
 # --------------- [FILES] ---------------
 # Displays Document Upload Page
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def upload_view(request):
 
 
@@ -578,6 +595,7 @@ def upload_view(request):
 
 # Uploads File (used by dropzone.js)
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def file_upload_view(request):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
@@ -625,6 +643,7 @@ def file_upload_view(request):
 
 # Delete File
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def delete_file(request, id):
     if request.method != 'POST':
         return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
@@ -634,6 +653,7 @@ def delete_file(request, id):
     return JsonResponse({"success": "File wurde erfolgreich gelöscht"})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def generate_mobile_file(request, id):
     if request.method != 'POST':
         return JsonResponse({"error": "Ungueltige Anfrage"}, status=405)
@@ -675,6 +695,7 @@ def generate_mobile_file(request, id):
 
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def update_file(request, id):
     if request.method == 'POST':
         title = request.POST.get('title', '')
@@ -699,6 +720,7 @@ def update_file(request, id):
 
 # Delete File
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def delete_file_by_name(request, name):
     try:
         cName = "yoolink/" + name
@@ -718,6 +740,7 @@ def delete_file_by_name(request, name):
 
 # Displays all your uploaded images
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def images_view(request):
     # wie viele pro Seite (Default 24)
     try:
@@ -963,6 +986,7 @@ from django.utils.translation import get_language_from_request, activate
 
 # --------------- [FAQ] ---------------
 @login_required(login_url='login')
+@cms_permission_required("faq.edit")
 def faq_view(request):
     lang = get_active_language(request)
     activate(lang)
@@ -974,6 +998,7 @@ def faq_view(request):
 
 # Update or create FAQ
 @login_required(login_url='login')
+@cms_permission_required("faq.edit")
 def update_faq(request):
     """FAQ aktualisieren oder neu erstellen, mit Unterstützung für Mehrsprachigkeit"""
     lang = get_active_language(request)  # Aktuelle Sprache holen
@@ -1020,6 +1045,7 @@ def update_faq(request):
 
 # Delete FAQ
 @login_required(login_url='login')
+@cms_permission_required("faq.edit")
 def del_faq(request, id):
     if request.method == 'POST':
         instance = get_object_or_404(FAQ, id=id)
@@ -1029,6 +1055,7 @@ def del_faq(request, id):
 
 # Update the FAQ order
 @login_required(login_url='login')
+@cms_permission_required("faq.edit")
 def update_faq_order(request):
     if request.method == 'POST':
         faqs = json.loads(request.POST.get('faqs', '[]'))
@@ -1083,6 +1110,7 @@ def _strip_generated_blog_intro(body, title, description):
     return prefix + rest
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def blog_view(request):
     query = request.GET.get("q", "")
     sort = request.GET.get("sort", "-date")  # Standard: neueste zuerst
@@ -1123,6 +1151,7 @@ def blog_view(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def download_blog_markdown_guidelines(request):
     guidelines_path = os.path.join(settings.BASE_DIR, "docs", "yoolink-blog-markdown-guidelines.md")
 
@@ -1140,6 +1169,7 @@ def download_blog_markdown_guidelines(request):
 # Delete Blog
 @login_required(login_url='login')
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def delete_blog(request, id):
     if request.method != 'POST':
         return JsonResponse({'success': False}, status=400)
@@ -1190,6 +1220,7 @@ def _blog_content_from_cms_request(request, title, description):
 
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def create_blog(request):
     if request.method == 'POST':
         # The request is a POST request
@@ -1249,6 +1280,7 @@ def create_blog(request):
         return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=400)
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def update_blog(request, id):
     if request.method == 'POST':
         # The request is a POST request
@@ -1306,6 +1338,7 @@ def update_blog(request, id):
 
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def add_blog(request):
             
     data = {
@@ -1315,6 +1348,7 @@ def add_blog(request):
     return render(request, "pages/cms/blog/add_blog.html", data)
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def blog_details(request, id):
     lang = get_active_language(request)
     blog = get_object_or_404(Blog, id=id)
@@ -1347,6 +1381,7 @@ def blog_details(request, id):
     return render(request, "pages/cms/blog/blog_update.html", data)
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def blog_code(request, id):
     blog = get_or_create_translated_blog(request, id)
     code = blog.code or build_default_code_from_markdown(blog.markdown)
@@ -1354,6 +1389,7 @@ def blog_code(request, id):
 
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def preview_blog_markdown(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=400)
@@ -1371,6 +1407,7 @@ def preview_blog_markdown(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("blog.edit")
 def convert_blog_code_to_markdown(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=400)
@@ -1394,11 +1431,13 @@ def convert_blog_code_to_markdown(request):
 # --------------- [GALERY] ---------------
 # Render Galery Detail View
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def galery_view(request, id):
     galery = get_object_or_404(Galerie, id=id)
     return render(request, "pages/cms/galery/galery.html", {"galery": galery})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def get_galery_images(request):
     id = request.GET.get("galeryId")
     galery = get_object_or_404(Galerie, id=id)
@@ -1414,6 +1453,7 @@ def get_galery_images(request):
     return JsonResponse({}, status=400)
     
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def update_galery_image(request, id):
     """Aktualisiert ein GaleryImage mit mehrsprachiger Speicherung"""
     if request.method == 'POST':
@@ -1441,6 +1481,7 @@ def update_galery_image(request, id):
 
 # Render Galery Overview
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def galerien(request):
     # Per-Page sicher parsen (Default 12, max 200)
     try:
@@ -1473,6 +1514,7 @@ def galerien(request):
 
 # Create a galery
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def create_galery(request):
     galery = Galerie.objects.create()
     # Generieren Sie die URL zur Detailseite des erstellten Modells
@@ -1482,6 +1524,7 @@ def create_galery(request):
 
 # Update a galery
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def save_galery(request, id):
     galery = get_object_or_404(Galerie, id=id)
     if request.method == 'POST':
@@ -1513,6 +1556,7 @@ def save_galery(request, id):
 
 # Upload Image for Galery
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def upload_galery_img(request, id):
     if request.method == 'POST':
         my_file = request.FILES.get('file')
@@ -1534,6 +1578,7 @@ def upload_galery_img(request, id):
 
 # Delete File
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def delete_galery_img(request, id):
     file = get_object_or_404(GaleryImage, id=id)
     file.delete()
@@ -1542,6 +1587,7 @@ def delete_galery_img(request, id):
 
 # Delete Galery
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def delete_galery(request, id):
     if request.method == 'POST':
         galery = get_object_or_404(Galerie, id=id)
@@ -1555,6 +1601,7 @@ def delete_galery(request, id):
 # --------------- [Image Helper] ---------------
 # get all images
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def all_images(request):
     if request.method == 'GET':
         images = fileentry.objects.all().order_by('-uploaddate')
@@ -1584,6 +1631,7 @@ def all_images(request):
 # --------------- [Galery Helper] ---------------
 # get all galerys
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def all_galerien(request):
     if request.method == 'GET':
         galerien = Galerie.objects.all()
@@ -1650,12 +1698,13 @@ def email_send(request):
         message_company += "Vielen Dank!\n\nMit freundlichen Grüßen,\nIhr YooLink"
 
         # Einstellungen für das Senden der E-Mail
-        user_settings = UserSettings.objects.filter(user__is_staff=False).first()
+        website_settings = _get_website_settings()
+        recipient_email = website_settings.contact_email or settings.EMAIL_HOST_USER
         send_mail(
             subject_company,
             message_company,
             settings.EMAIL_HOST_USER,
-            [user_settings.email],  # Add recipients if needed
+            [recipient_email],
             fail_silently=False,
         )
 
@@ -1680,30 +1729,40 @@ def _get_user_settings(user):
     return user_settings
 
 
+def _get_website_settings():
+    return WebsiteSettings.get_solo()
+
+
 def _get_site_owner_user(fallback_user):
-    return User.objects.filter(is_staff=False).order_by("id").first() or fallback_user
+    return User.objects.filter(cms_role_assignments__role__slug="owner").order_by("id").first() or fallback_user
 
 
 @login_required(login_url='login')
 def user_settings_view(request):
+    if "website_settings.edit" not in user_permissions(request.user):
+        return redirect("ycms:security-settings")
+
     user_settings = _get_user_settings(request.user)
+    website_settings = _get_website_settings()
 
     context = {
         'settings': user_settings,
+        'user_settings': user_settings,
+        'website_settings': website_settings,
     }
     return render(request, 'pages/cms/settings/settings.html', context)
 
 
 @login_required(login_url='login')
+@cms_permission_required("website_settings.edit")
 def user_settings_update(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Ungültige Anfrage'}, status=405)
 
-    user_settings = _get_user_settings(request.user)
+    website_settings = _get_website_settings()
 
-    email = request.POST.get('email', '').strip()
-    full_name = request.POST.get('full_name', '').strip()
     company_name = request.POST.get('company_name', '').strip()
+    contact_email = request.POST.get('contact_email', '').strip()
     tel_number = request.POST.get('tel_number', '').strip()
     fax_number = request.POST.get('fax_number', '').strip()
     mobile_number = request.POST.get('mobile_number', '').strip()
@@ -1726,75 +1785,284 @@ def user_settings_update(request):
     if global_font not in allowed_fonts:
         global_font = 'font-sans'
 
-    if email:
+    if contact_email:
         try:
-            validate_email(email)
+            validate_email(contact_email)
         except ValidationError:
-            return JsonResponse({'error': 'Bitte gib eine gültige E-Mail-Adresse ein.'}, status=400)
+            return JsonResponse({'error': 'Bitte gib eine gueltige Unternehmens-E-Mail-Adresse ein.'}, status=400)
 
-    old_email = (user_settings.email or '').strip().lower()
+    website_settings.company_name = company_name
+    website_settings.contact_email = contact_email
+    website_settings.tel_number = tel_number
+    website_settings.fax_number = fax_number
+    website_settings.mobile_number = mobile_number
+    website_settings.website = website
+    website_settings.address = address
+    website_settings.social_instagram = social_instagram
+    website_settings.social_x = social_x
+    website_settings.social_facebook = social_facebook
+    website_settings.social_linkedin = social_linkedin
+    website_settings.price_range = price_range
+    website_settings.area_served = area_served
+    website_settings.business_description = business_description
+    website_settings.address_region = address_region
+    website_settings.address_country = address_country
+    website_settings.geo_latitude = geo_latitude
+    website_settings.geo_longitude = geo_longitude
+    website_settings.global_font = global_font
 
-    if user_settings.two_factor_email_enabled and not email:
-        return JsonResponse(
-            {'error': 'Solange die E-Mail-2FA aktiv ist, darf die E-Mail-Adresse nicht leer sein.'},
-            status=400
-        )
-
-    user_settings.email = email
-    user_settings.full_name = full_name
-    user_settings.company_name = company_name
-    user_settings.tel_number = tel_number
-    user_settings.fax_number = fax_number
-    user_settings.mobile_number = mobile_number
-    user_settings.website = website
-    user_settings.address = address
-    user_settings.social_instagram = social_instagram
-    user_settings.social_x = social_x
-    user_settings.social_facebook = social_facebook
-    user_settings.social_linkedin = social_linkedin
-    user_settings.price_range = price_range
-    user_settings.area_served = area_served
-    user_settings.business_description = business_description
-    user_settings.address_region = address_region
-    user_settings.address_country = address_country
-    user_settings.geo_latitude = geo_latitude
-    user_settings.geo_longitude = geo_longitude
-    user_settings.global_font = global_font
-
-    two_factor_reset = (
-        user_settings.two_factor_email_enabled and
-        old_email != email.lower()
-    )
-
-    if two_factor_reset:
-        user_settings.two_factor_email_enabled = False
-        user_settings.two_factor_email_verified = False
-        user_settings.two_factor_email_code = ''
-        user_settings.two_factor_email_code_expires_at = None
-
-    user_settings.save()
-
-    if request.user.email != email:
-        request.user.email = email
-        request.user.save(update_fields=['email'])
+    website_settings.save()
 
     success_message = 'Die Einstellungen wurden erfolgreich gespeichert.'
-    if two_factor_reset:
-        success_message += ' Die E-Mail wurde geändert, daher wurde die E-Mail-2FA aus Sicherheitsgründen deaktiviert.'
 
     return JsonResponse({'success': success_message})
 
 
 @login_required(login_url='login')
+@cms_permission_required("website_settings.edit")
 def logo_settings_view(request):
-    user_settings = _get_user_settings(request.user)
-    return render(request, 'pages/cms/settings/profile.html', {'settings': user_settings})
+    return render(request, 'pages/cms/settings/profile.html', {'settings': _get_website_settings()})
 
 
 @login_required(login_url='login')
 def security_settings_view(request):
     user_settings = _get_user_settings(request.user)
     return render(request, 'pages/cms/settings/security.html', {'settings': user_settings})
+
+
+def _generate_initial_password():
+    chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%&*"
+    return get_random_string(16, allowed_chars=chars)
+
+
+def _send_user_credentials_email(user, raw_password, request_user):
+    recipient = (user.email or "").strip()
+    if not recipient:
+        settings_obj = _get_user_settings(user)
+        recipient = (settings_obj.email or "").strip()
+
+    if not recipient:
+        return "Fuer diesen Nutzer ist keine E-Mail-Adresse hinterlegt."
+
+    login_url = request_user.build_absolute_uri(reverse("ycms:login"))
+    subject = "Dein YooLink CMS Zugang"
+    message = (
+        f"Hallo {user.username},\n\n"
+        "fuer dich wurde ein YooLink CMS Zugang erstellt oder zurueckgesetzt.\n\n"
+        f"Login: {login_url}\n"
+        f"Benutzername: {user.username}\n"
+        f"Initiales Passwort: {raw_password}\n\n"
+        "Bitte melde dich an und aendere dein Passwort direkt beim ersten Login.\n"
+    )
+    send_mail(
+        subject,
+        message,
+        getattr(settings, "DEFAULT_FROM_EMAIL", settings.EMAIL_HOST_USER),
+        [recipient],
+        fail_silently=False,
+    )
+    return ""
+
+
+def _sync_user_roles(user, role_ids):
+    role_ids = [role_id for role_id in role_ids if str(role_id).isdigit()]
+    roles = CMSRole.objects.filter(id__in=role_ids)
+    CMSUserRole.objects.filter(user=user).exclude(role__in=roles).delete()
+    for role in roles:
+        CMSUserRole.objects.get_or_create(user=user, role=role)
+
+
+@login_required(login_url='login')
+@cms_permission_required("users.manage")
+def cms_users_view(request):
+    ensure_system_roles()
+    generated_credentials = None
+
+    if request.method == "POST":
+        action = request.POST.get("action", "create")
+        user_id = request.POST.get("user_id")
+
+        if action == "delete":
+            target = get_object_or_404(User, id=user_id)
+            if target == request.user:
+                messages.error(request, "Du kannst deinen eigenen Nutzer nicht loeschen.")
+            else:
+                target.is_active = False
+                target.save(update_fields=["is_active"])
+                CMSUserRole.objects.filter(user=target).delete()
+                messages.success(request, "Nutzer wurde deaktiviert und hat keine CMS-Rollen mehr.")
+            return redirect("ycms:users")
+
+        if action == "reset_password":
+            target = get_object_or_404(User, id=user_id)
+            raw_password = _generate_initial_password()
+            target.set_password(raw_password)
+            target.save(update_fields=["password"])
+            target_settings = _get_user_settings(target)
+            target_settings.must_change_password = True
+            target_settings.save(update_fields=["must_change_password"])
+
+            send_error = ""
+            if request.POST.get("send_email") == "true":
+                send_error = _send_user_credentials_email(target, raw_password, request)
+
+            if send_error:
+                messages.warning(request, send_error)
+            else:
+                messages.success(request, "Initiales Passwort wurde erzeugt.")
+            generated_credentials = {"user": target, "password": raw_password}
+        elif action == "update":
+            target = get_object_or_404(User, id=user_id)
+            is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
+            username = (request.POST.get("username") or "").strip()
+            email = (request.POST.get("email") or "").strip()
+            full_name = (request.POST.get("full_name") or "").strip()
+
+            def _update_fail(msg):
+                if is_ajax:
+                    return JsonResponse({"success": False, "error": msg}, status=400)
+                messages.error(request, msg)
+                return redirect("ycms:users")
+
+            if not username or not email:
+                return _update_fail("Benutzername und E-Mail sind Pflichtfelder.")
+            # Eindeutigkeit nur prüfen, wenn der Wert tatsächlich geändert wurde,
+            # damit bestehende Nutzer (z. B. mit historisch doppelter E-Mail) speicherbar bleiben.
+            if username.lower() != (target.username or "").lower() and \
+                    User.objects.filter(username__iexact=username).exclude(id=target.id).exists():
+                return _update_fail("Dieser Benutzername ist bereits vergeben.")
+            if email.lower() != (target.email or "").lower() and \
+                    User.objects.filter(email__iexact=email).exclude(id=target.id).exists():
+                return _update_fail("Diese E-Mail-Adresse ist bereits vergeben.")
+
+            target.username = username
+            target.email = email
+            target.name = full_name
+            target.is_active = request.POST.get("is_active") == "on"
+            target.save(update_fields=["username", "email", "name", "is_active"])
+
+            target_settings = _get_user_settings(target)
+            target_settings.email = target.email
+            target_settings.full_name = target.name
+            target_settings.save(update_fields=["email", "full_name"])
+            _sync_user_roles(target, request.POST.getlist("roles"))
+
+            if is_ajax:
+                return JsonResponse({
+                    "success": True,
+                    "message": "Nutzer wurde aktualisiert.",
+                    "is_active": target.is_active,
+                    "username": target.username,
+                    "email": target.email,
+                    "name": target.name,
+                })
+            messages.success(request, "Nutzer wurde aktualisiert.")
+            return redirect("ycms:users")
+        else:
+            username = (request.POST.get("username") or "").strip()
+            email = (request.POST.get("email") or "").strip()
+            full_name = (request.POST.get("full_name") or "").strip()
+
+            if not username or not email:
+                messages.error(request, "Benutzername und E-Mail sind Pflichtfelder.")
+            elif User.objects.filter(username__iexact=username).exists():
+                messages.error(request, "Dieser Benutzername ist bereits vergeben.")
+            elif User.objects.filter(email__iexact=email).exists():
+                messages.error(request, "Diese E-Mail-Adresse ist bereits vergeben.")
+            else:
+                raw_password = (request.POST.get("password") or "").strip() or _generate_initial_password()
+                target = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=raw_password,
+                    name=full_name,
+                    is_active=True,
+                )
+                target_settings = _get_user_settings(target)
+                target_settings.email = email
+                target_settings.full_name = full_name
+                target_settings.must_change_password = True
+                target_settings.save(update_fields=["email", "full_name", "must_change_password"])
+                _sync_user_roles(target, request.POST.getlist("roles"))
+
+                send_error = ""
+                if request.POST.get("send_email") == "on":
+                    send_error = _send_user_credentials_email(target, raw_password, request)
+
+                if send_error:
+                    messages.warning(request, send_error)
+                else:
+                    messages.success(request, "Nutzer wurde erstellt.")
+                generated_credentials = {"user": target, "password": raw_password}
+
+    roles = CMSRole.objects.all()
+    users = User.objects.select_related("usersettings").prefetch_related("cms_role_assignments__role").order_by("username")
+    return render(
+        request,
+        "pages/cms/settings/users.html",
+        {
+            "users": users,
+            "roles": roles,
+            "generated_credentials": generated_credentials,
+        },
+    )
+
+
+@login_required(login_url='login')
+@cms_permission_required("roles.manage")
+def cms_roles_view(request):
+    ensure_system_roles()
+
+    if request.method == "POST":
+        action = request.POST.get("action", "create")
+        role_id = request.POST.get("role_id")
+
+        if action == "delete":
+            role = get_object_or_404(CMSRole, id=role_id, is_system=False)
+            role.delete()
+            messages.success(request, "Rolle wurde geloescht.")
+            return redirect("ycms:roles")
+
+        name = (request.POST.get("name") or "").strip()
+        description = (request.POST.get("description") or "").strip()
+        permissions = request.POST.getlist("permissions")
+        valid_permissions = {code for code, _label in CMS_PERMISSION_CHOICES}
+        permissions = sorted(set(permissions) & valid_permissions)
+        slug = slugify(name)
+
+        if not name:
+            messages.error(request, "Bitte gib einen Rollennamen an.")
+        elif not permissions:
+            messages.error(request, "Bitte waehle mindestens eine Berechtigung.")
+        elif action == "update":
+            role = get_object_or_404(CMSRole, id=role_id, is_system=False)
+            if CMSRole.objects.filter(slug=slug).exclude(id=role.id).exists():
+                messages.error(request, "Eine Rolle mit diesem Namen existiert bereits.")
+                return redirect("ycms:roles")
+            role.name = name
+            role.slug = slug
+            role.description = description
+            role.permissions = permissions
+            role.save()
+            messages.success(request, "Rolle wurde aktualisiert.")
+            return redirect("ycms:roles")
+        else:
+            if CMSRole.objects.filter(slug=slug).exists():
+                messages.error(request, "Eine Rolle mit diesem Namen existiert bereits.")
+                return redirect("ycms:roles")
+            role = CMSRole(name=name, slug=slug, description=description, permissions=permissions)
+            role.save()
+            messages.success(request, "Rolle wurde erstellt.")
+            return redirect("ycms:roles")
+
+    return render(
+        request,
+        "pages/cms/settings/roles.html",
+        {
+            "roles": CMSRole.objects.all(),
+            "permission_choices": CMS_PERMISSION_CHOICES,
+        },
+    )
 
 
 def _parse_developer_key_expiry(request):
@@ -1833,6 +2101,7 @@ def _parse_developer_key_expiry(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("developer.manage")
 def developer_settings_view(request):
     generated_api_key = ""
 
@@ -1910,6 +2179,7 @@ def developer_settings_view(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("developer.manage")
 def developer_api_docs_view(request):
     return render(
         request,
@@ -2018,6 +2288,7 @@ def _get_connect_context(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("developer.manage")
 def developer_connect_view(request):
     context = _get_connect_context(request)
     params = context["connect_params"]
@@ -2052,8 +2323,9 @@ def developer_connect_view(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("website_settings.edit")
 def update_logo_favicon(request):
-    user_settings = _get_user_settings(request.user)
+    website_settings = _get_website_settings()
     updated = False
 
     if request.method == 'POST':
@@ -2062,40 +2334,41 @@ def update_logo_favicon(request):
                 validate_image_upload(request.FILES['logo'], label="Logo")
             except ValidationError as error:
                 return upload_validation_error_response(error)
-            user_settings.logo = request.FILES['logo']
+            website_settings.logo = request.FILES['logo']
             updated = True
         if 'favicon' in request.FILES:
             try:
                 validate_image_upload(request.FILES['favicon'], label="Favicon")
             except ValidationError as error:
                 return upload_validation_error_response(error)
-            user_settings.favicon = request.FILES['favicon']
+            website_settings.favicon = request.FILES['favicon']
             updated = True
         if updated:
-            user_settings.save()
+            website_settings.save()
             return JsonResponse({'success': 'Datei erfolgreich aktualisiert'})
 
     return JsonResponse({'error': 'Keine Datei übermittelt'}, status=400)
 
 
 @login_required(login_url='login')
+@cms_permission_required("website_settings.edit")
 def delete_logo_favicon(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Ungültige Anfrage'}, status=405)
 
-    user_settings = _get_user_settings(request.user)
+    website_settings = _get_website_settings()
     file_type = request.POST.get('type')
 
-    if file_type == 'logo' and user_settings.logo:
-        user_settings.logo.delete(save=False)
-        user_settings.logo = ''
-    elif file_type == 'favicon' and user_settings.favicon:
-        user_settings.favicon.delete(save=False)
-        user_settings.favicon = ''
+    if file_type == 'logo' and website_settings.logo:
+        website_settings.logo.delete(save=False)
+        website_settings.logo = ''
+    elif file_type == 'favicon' and website_settings.favicon:
+        website_settings.favicon.delete(save=False)
+        website_settings.favicon = ''
     else:
         return JsonResponse({'error': 'Ungültiger Typ oder keine Datei vorhanden'}, status=400)
 
-    user_settings.save()
+    website_settings.save()
     return JsonResponse({'success': f'{file_type.capitalize()} gelöscht'})
 
 
@@ -2192,26 +2465,29 @@ Opening Hours
 """
 
 @login_required(login_url='login')
+@cms_permission_required("opening_hours.edit")
 def opening_hours_view(request):
     # Retrieve the UserSettings for the currently logged-in user or any specific user
 
-    user = _get_site_owner_user(request.user)
-    
-    user_settings = _get_user_settings(user) 
+    website_settings = _get_website_settings()
 
     for day_abbr, _ in OpeningHours.DAY_CHOICES:
         # Überprüfen, ob bereits Öffnungszeiten für diesen Tag existieren
-        obj, created = OpeningHours.objects.get_or_create(user=user, day=day_abbr)
+        obj, created = OpeningHours.objects.get_or_create(
+            website=website_settings,
+            day=day_abbr,
+            defaults={"user": request.user},
+        )
         # Wenn Objekt gerade erstellt wurde, können Sie es initialisieren, wenn nötig
         if created:
             # obj.some_field = some_value
             obj.save()
 
-    opening_hours = OpeningHours.objects.filter(user=user)
+    opening_hours = OpeningHours.objects.filter(website=website_settings).order_by("id")
 
     context = {
         'opening_hours': opening_hours,
-        'settings': user_settings
+        'settings': website_settings
         # Other context variables if needed
     }
 
@@ -2223,9 +2499,12 @@ from django.utils import timezone as dj_timezone
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def opening_hours_update(request):
+    if "opening_hours.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Oeffnungszeiten.'}, status=403)
+
     opening_hours_data = request.POST.get('opening_hours')
     opening_hours = json.loads(opening_hours_data)
-    user = _get_site_owner_user(request.user)
+    website_settings = _get_website_settings()
     errors = []
     for item in opening_hours:
         day = item['day']
@@ -2246,7 +2525,11 @@ def opening_hours_update(request):
                 errors.append(f"Ungültiges Format für Mittagspause am {day}.")
                 continue
 
-        opening_hour = OpeningHours.objects.get(user=user, day=day)
+        opening_hour, _created = OpeningHours.objects.get_or_create(
+            website=website_settings,
+            day=day,
+            defaults={"user": request.user},
+        )
         opening_hour.is_open = is_open
         if start_time:
             opening_hour.start_time = start_time
@@ -2257,18 +2540,16 @@ def opening_hours_update(request):
         opening_hour.lunch_break_end = lunch_break_end if has_lunch_break else None
         opening_hour.save()
 
-    user_settings = _get_user_settings(user)
-
     # Toggle + Text
     vacation = request.POST.get('vacation', False)
-    user_settings.vacation = (str(vacation).lower() == 'true')
+    website_settings.vacation = (str(vacation).lower() == 'true')
 
     lang = get_active_language(request)
     vacationText = request.POST.get('vacationText')
     if vacationText is not None:
-        setattr(user_settings, f'vacationText_{lang}', vacationText)
+        setattr(website_settings, f'vacationText_{lang}', vacationText)
         if lang == DEFAULT_LANGUAGE:
-            user_settings.vacationText = vacationText
+            website_settings.vacationText = vacationText
 
     # ▼ Neu: Zeitraum
     v_start_raw = request.POST.get('vacation_start')  # "YYYY-MM-DDTHH:MM" oder ""
@@ -2295,16 +2576,16 @@ def opening_hours_update(request):
     if v_start and v_end and v_start > v_end:
         errors.append("Urlaubsbeginn darf nicht nach dem Urlaubsende liegen.")
     else:
-        user_settings.vacation_start = v_start
-        user_settings.vacation_end   = v_end
+        website_settings.vacation_start = v_start
+        website_settings.vacation_end   = v_end
 
     # Speichern
     try:
-        user_settings.clean()
+        website_settings.clean()
     except Exception as e:
         errors.append(str(e))
 
-    user_settings.save()
+    website_settings.save()
 
     if errors:
         return JsonResponse({'error': 'Eine oder mehrere Öffnungszeiten konnten nicht gespeichert werden', 'errors': errors}, status=400)
@@ -2312,6 +2593,7 @@ def opening_hours_update(request):
 
 # View to display all TeamMembers
 @login_required(login_url='login')
+@cms_permission_required("team.edit")
 def team_member_list(request):
     team_members = TeamMember.objects.all().order_by("display_order", "id")
     context = {
@@ -2326,6 +2608,9 @@ from django.db.models import Max
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_team_member(request):
+    if "team.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
         
@@ -2377,7 +2662,11 @@ def create_team_member(request):
 
 @extend_schema(exclude=True)
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_team_member(request, id):
+    if "team.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+
     team_member = get_object_or_404(TeamMember, id=id)
     return JsonResponse({
         'full_name': team_member.full_name,
@@ -2394,6 +2683,9 @@ def get_team_member(request, id):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_team_member(request, id):
+    if "team.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+
     team_member = get_object_or_404(TeamMember, id=id)
     data = request.data
 
@@ -2434,7 +2726,11 @@ def update_team_member(request, id):
 
 @extend_schema(exclude=True)
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_team_member(request, id):
+    if "team.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+
     team_member = get_object_or_404(TeamMember, id=id)
     team_member.delete()
     return JsonResponse({'success': 'Teammitglied wurde erfolgreich gelöscht'})
@@ -2445,6 +2741,9 @@ from django.views.decorators.http import require_POST
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def reorder_team_members(request):
+    if "team.edit" not in user_permissions(request.user):
+        return JsonResponse({'error': 'Du hast keine Berechtigung fuer Team.'}, status=403)
+
     # akzeptiere sowohl JSON ("order":[1,2,3]) als auch Form-POST (order[]=1&order[]=2)
     order = request.data.get('order')
 
@@ -2470,6 +2769,7 @@ def reorder_team_members(request):
 #    PRICING     #
 ##################
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def pricing_card_overview(request):
     cards = PricingCard.objects.select_related('button').all().order_by('order')
     return render(request, 'pages/cms/pricing/pricing.html', {
@@ -2477,6 +2777,7 @@ def pricing_card_overview(request):
     })
 
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def create_pricing_card(request):
     if request.method == "GET":
         # Optional: Alle Buttons anzeigen, um sie im Template als Auswahl zu rendern
@@ -2516,6 +2817,7 @@ def create_pricing_card(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def edit_pricing_card(request, pk):
     card = get_object_or_404(PricingCard, pk=pk)
 
@@ -2556,6 +2858,7 @@ def edit_pricing_card(request, pk):
 
 
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def delete_pricing_card(request, pk):
     if request.method == "POST":
         card = get_object_or_404(PricingCard, pk=pk)
@@ -2571,6 +2874,7 @@ def delete_pricing_card(request, pk):
     return HttpResponseBadRequest()
 
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def pricingcard_reorder(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -2586,6 +2890,7 @@ def pricingcard_reorder(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("pricing.edit")
 def manage_features(request, pk):
     card = get_object_or_404(PricingCard, pk=pk)
 
@@ -2633,6 +2938,7 @@ def manage_features(request, pk):
     return HttpResponseBadRequest()
 
 @login_required(login_url='login')
+@cms_permission_required("buttons.edit")
 def button_list(request):
     buttons = Button.objects.all().order_by("order")
     return render(request, "pages/cms/buttons/button_list.html", {
@@ -2640,6 +2946,7 @@ def button_list(request):
     })
 
 @login_required(login_url='login')
+@cms_permission_required("buttons.edit")
 def button_create(request):
     if request.method == "GET":
         targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
@@ -2672,6 +2979,7 @@ def button_create(request):
     return HttpResponseBadRequest()
 
 @login_required(login_url='login')
+@cms_permission_required("buttons.edit")
 def button_edit(request, pk):
     button = get_object_or_404(Button, pk=pk)
 
@@ -2707,6 +3015,7 @@ def button_edit(request, pk):
     return HttpResponseBadRequest()
 
 @login_required(login_url='login')
+@cms_permission_required("buttons.edit")
 def button_delete(request, pk):
     if request.method == "POST":
         button = get_object_or_404(Button, pk=pk)
@@ -2716,6 +3025,7 @@ def button_delete(request, pk):
 
 # AnyFiles
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def anyfile_upload_view(request):
     if request.method == 'POST':
         uploaded_file = request.FILES.get('file')
@@ -2732,6 +3042,7 @@ def anyfile_upload_view(request):
     return JsonResponse({'post': 'false'})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def anyfile_delete_view(request, id):
     try:
         file = AnyFile.objects.get(id=id)
@@ -2741,6 +3052,7 @@ def anyfile_delete_view(request, id):
         return JsonResponse({"error": "Datei nicht gefunden"})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def anyfile_uploader(request):
     files = AnyFile.objects.all().order_by('-id') 
 
@@ -2754,6 +3066,7 @@ def anyfile_uploader(request):
     })
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def anyfile_list_view(request):
     # Per-Page (12/24/48/96), sicher parsen
     try:
@@ -2785,6 +3098,7 @@ def anyfile_list_view(request):
     )
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def anyfile_update_view(request, id):
     try:
         file = AnyFile.objects.get(id=id)
@@ -2838,6 +3152,7 @@ def anyfiles_all(request):
 
 # Videos
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def list_videos(request):
     # Per-Page sicher parsen (Default 24, max 200)
     try:
@@ -2869,6 +3184,7 @@ def list_videos(request):
     )
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def create_video(request):
     if request.method == 'POST':
         video = request.FILES.get('file')
@@ -2947,6 +3263,7 @@ def create_video(request):
 
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def edit_video(request, pk):
     video = get_object_or_404(VideoFile, pk=pk)
 
@@ -3011,12 +3328,14 @@ def edit_video(request, pk):
     return render(request, 'pages/cms/video/video-edit.html', {'video': video, 'video_options': video_options, 'option_states': option_states})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def delete_video(request, pk):
     video = get_object_or_404(VideoFile, pk=pk)
     video.delete()
     return JsonResponse({'success': True})
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def list_all_videos(request):
     """
     Liefert alle VideoFile-Objekte als JSON für das Auswahl-Modal.
@@ -3053,6 +3372,7 @@ def list_all_videos(request):
     return JsonResponse({"video_urls": result}, status=200)
 
 @login_required(login_url='login')
+@cms_permission_required("media.edit")
 def get_video_details(request, pk):
     video = get_object_or_404(VideoFile, pk=pk)
 

@@ -349,6 +349,79 @@ class Message(models.Model):
 
 def upload_to_user_settings(instance, filename):
     return f"yoolink/settings/{instance.id}/{filename}"
+
+
+def upload_to_website_settings(instance, filename):
+    return f"yoolink/website-settings/{instance.id}/{filename}"
+
+
+class WebsiteSettings(models.Model):
+    company_name = models.CharField(max_length=255, default="", blank=True)
+    contact_email = models.EmailField(max_length=255, default="", blank=True)
+    tel_number = models.CharField(max_length=18, default="", blank=True)
+    fax_number = models.CharField(max_length=18, default="", blank=True)
+    mobile_number = models.CharField(max_length=18, default="", blank=True)
+    website = models.URLField(blank=True, default="")
+    address = models.CharField(max_length=255, default="", blank=True)
+    social_instagram = models.URLField(blank=True, default="https://www.instagram.com/yoolinkde/")
+    social_x = models.URLField(blank=True, default="https://x.com/YooLinkDE")
+    social_facebook = models.URLField(blank=True, default="")
+    social_linkedin = models.URLField(blank=True, default="")
+    price_range = models.CharField(max_length=50, blank=True, default="ab 40 €/Monat")
+    area_served = models.CharField(max_length=255, blank=True, default="Passau, Regensburg, Deggendorf, Niederbayern")
+    business_description = models.CharField(max_length=255, blank=True, default="Webdesign Agentur im Raum Niederbayern")
+    address_region = models.CharField(max_length=100, blank=True, default="Bayern")
+    address_country = models.CharField(max_length=2, blank=True, default="DE")
+    geo_latitude = models.CharField(max_length=20, blank=True, default="48.7667")
+    geo_longitude = models.CharField(max_length=20, blank=True, default="13.0500")
+    vacation = models.BooleanField(default=False)
+    vacationText = models.TextField(default="Wir sind aktuell im Urlaub. Ab dem XX.XX sind wir wieder für Sie da!")
+    vacation_start = models.DateTimeField(null=True, blank=True)
+    vacation_end = models.DateTimeField(null=True, blank=True)
+    global_font = models.CharField(max_length=60, default="font-sans", blank=True)
+    logo = models.ImageField(upload_to=upload_to_website_settings, default="", blank=True)
+    favicon = models.ImageField(upload_to=upload_to_website_settings, default="", blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def get_solo(cls):
+        settings_obj = cls.objects.order_by("id").first()
+        if settings_obj:
+            return settings_obj
+        return cls.objects.create()
+
+    @classmethod
+    def get_site_owner(cls):
+        return cls.get_solo()
+
+    @property
+    def email(self):
+        return self.contact_email
+
+    @email.setter
+    def email(self, value):
+        self.contact_email = value or ""
+
+    def clean(self):
+        if self.vacation_start and self.vacation_end and self.vacation_start > self.vacation_end:
+            raise ValidationError("Urlaubsbeginn darf nicht nach dem Urlaubsende liegen.")
+
+    def is_vacation_banner_active(self):
+        if not self.vacation:
+            return False
+        now = timezone.now()
+        if self.vacation_start and self.vacation_end:
+            return self.vacation_start <= now <= self.vacation_end
+        if self.vacation_start and not self.vacation_end:
+            return now >= self.vacation_start
+        if not self.vacation_start and self.vacation_end:
+            return now <= self.vacation_end
+        return True
+
+    def __str__(self):
+        return self.company_name or "Website Settings"
+
+
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=255, default='')
@@ -383,6 +456,7 @@ class UserSettings(models.Model):
     two_factor_email_verified = models.BooleanField(default=False)
     two_factor_email_code = models.CharField(max_length=6, blank=True, default='')
     two_factor_email_code_expires_at = models.DateTimeField(null=True, blank=True)
+    must_change_password = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
@@ -429,6 +503,104 @@ class UserSettings(models.Model):
         if not self.vacation_start and self.vacation_end:
             return now <= self.vacation_end
         return True  # kein Fenster gesetzt -> sichtbar solange Toggle an
+
+
+CMS_PERMISSION_CHOICES = [
+    ("dashboard.view", "Dashboard anzeigen"),
+    ("pages.edit", "Seiten bearbeiten"),
+    ("blog.edit", "Blogs verwalten"),
+    ("media.edit", "Medien verwalten"),
+    ("buttons.edit", "Buttons verwalten"),
+    ("shop.view", "Shop anzeigen"),
+    ("products.edit", "Produkte verwalten"),
+    ("orders.edit", "Bestellungen verwalten"),
+    ("team.edit", "Team verwalten"),
+    ("pricing.edit", "Preise verwalten"),
+    ("faq.edit", "FAQ verwalten"),
+    ("opening_hours.edit", "Öffnungszeiten verwalten"),
+    ("notifications.view", "Benachrichtigungen anzeigen"),
+    ("website_settings.edit", "Website-Einstellungen verwalten"),
+    ("security.edit", "Eigene Sicherheit verwalten"),
+    ("developer.manage", "Developer Settings verwalten"),
+    ("users.manage", "Benutzer verwalten"),
+    ("roles.manage", "Rollen verwalten"),
+]
+
+OWNER_PERMISSIONS = [code for code, _label in CMS_PERMISSION_CHOICES]
+EDITOR_PERMISSIONS = [
+    "dashboard.view",
+    "pages.edit",
+    "blog.edit",
+    "media.edit",
+    "buttons.edit",
+    "faq.edit",
+    "notifications.view",
+    "security.edit",
+]
+SHOP_MANAGER_PERMISSIONS = [
+    "dashboard.view",
+    "shop.view",
+    "products.edit",
+    "orders.edit",
+    "media.edit",
+    "notifications.view",
+    "security.edit",
+]
+DEVELOPER_PERMISSIONS = [
+    "dashboard.view",
+    "developer.manage",
+    "notifications.view",
+    "security.edit",
+]
+VIEWER_PERMISSIONS = [
+    "dashboard.view",
+    "notifications.view",
+    "security.edit",
+]
+
+SYSTEM_ROLE_DEFAULTS = {
+    "owner": {"name": "OWNER", "permissions": OWNER_PERMISSIONS},
+    "editor": {"name": "EDITOR", "permissions": EDITOR_PERMISSIONS},
+    "shop-manager": {"name": "SHOP MANAGER", "permissions": SHOP_MANAGER_PERMISSIONS},
+    "developer": {"name": "DEVELOPER", "permissions": DEVELOPER_PERMISSIONS},
+    "viewer": {"name": "VIEWER", "permissions": VIEWER_PERMISSIONS},
+}
+
+
+class CMSRole(models.Model):
+    name = models.CharField(max_length=80)
+    slug = models.SlugField(max_length=90, unique=True)
+    description = models.TextField(blank=True, default="")
+    permissions = models.JSONField(default=list, blank=True)
+    is_system = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        valid_permissions = {code for code, _label in CMS_PERMISSION_CHOICES}
+        self.permissions = sorted(set(self.permissions or []) & valid_permissions)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class CMSUserRole(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cms_role_assignments")
+    role = models.ForeignKey(CMSRole, on_delete=models.CASCADE, related_name="user_assignments")
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "role")
+        ordering = ["user__username", "role__name"]
+
+    def __str__(self):
+        return f"{self.user} -> {self.role}"
 
 
 class DeveloperApiKey(models.Model):
@@ -655,8 +827,9 @@ class OpeningHours(models.Model):
         ('SUN', 'Sonntag'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='opening_hours')
-    day = models.CharField(max_length=3, choices=DAY_CHOICES, unique=True)
+    website = models.ForeignKey(WebsiteSettings, on_delete=models.CASCADE, related_name='opening_hours', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='opening_hours', null=True, blank=True)
+    day = models.CharField(max_length=3, choices=DAY_CHOICES)
     is_open = models.BooleanField(default=False)
     start_time = models.TimeField(default='08:00')  # Set default start time to 8 o'clock
     end_time = models.TimeField(default='14:00')    # Set default end time to 14 o'clock
@@ -682,7 +855,12 @@ class OpeningHours(models.Model):
         return dict(self.DAY_CHOICES)[self.day]
 
     def __str__(self):
-        return f"Opening hours for {self.user.username} on {self.get_day_display()}"
+        return f"Opening hours on {self.get_day_display()}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["website", "day"], name="unique_opening_hours_per_website_day"),
+        ]
     
 class TeamMember(models.Model):
     full_name = models.CharField(max_length=120, default='')

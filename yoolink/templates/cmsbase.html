@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}YooLink - CMS{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Am Altbach 6, DE-94491 Hengersberg">
+    <meta name="author" content="Diese Webseite wurde erstellt von YooLink.de, Schanzenweg 53, 94469 Deggendorf">
     <meta name="description"
         content="YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Deinem Internetauftritt herauszuholen. Dich erwartet Transparenz, Sichtbarkeit und &amp ein junges dynamisches Team">
     <link rel="canonical" href="https://yoolink.de{{ request.path }}">
@@ -225,10 +225,18 @@
                             <p class="text-xs text-gray-500">Angemeldet als</p>
                             <p class="truncate text-sm font-semibold text-gray-900">{{ request.user.email }}</p>
                         </div>
-                        <a href="{% url 'cms:settings-view' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-person"></i> Dein Profil</a>
+                        {% if 'website_settings.edit' in cms_permissions %}
+                        <a href="{% url 'cms:settings-view' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-person"></i> Website-Daten</a>
+                        {% else %}
+                        <a href="{% url 'cms:security-settings' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-person"></i> Dein Profil</a>
+                        {% endif %}
+                        {% if 'website_settings.edit' in cms_permissions %}
                         <a href="{% url 'cms:logo-settings' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-image"></i> Logo verwalten</a>
+                        {% endif %}
                         <a href="{% url 'cms:password_change' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-key"></i> Passwort ändern</a>
+                        {% if 'developer.manage' in cms_permissions %}
                         <a href="{% url 'cms:developer-settings' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white" role="menuitem"><i class="bi bi-code-slash"></i> Developer Settings</a>
+                        {% endif %}
                         <div class="my-1 border-t border-gray-100"></div>
                         <a href="{% url 'cms:logout' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white" role="menuitem"><i class="bi bi-box-arrow-right"></i> Abmelden</a>
                     </div>

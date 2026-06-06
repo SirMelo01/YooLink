@@ -20,12 +20,12 @@ SITE_BASE_URL = "https://yoolink.de"
 _FALLBACK_NAME = "YooLink"
 _FALLBACK_EMAIL = "info@yoolink.de"
 _FALLBACK_PHONE = "+49 170 5977862"
-_FALLBACK_STREET = "Am Altbach 6"
-_POSTAL_CODE = "94491"
-_LOCALITY = "Hengersberg"
+_FALLBACK_STREET = "Schanzenweg 53"
+_POSTAL_CODE = "94469"
+_LOCALITY = "Deggendorf"
 _REGION = "Bayern"
 _COUNTRY = "DE"
-_GEO_LAT = 48.7667  # Hengersberg (registered business location)
+_GEO_LAT = 48.7667  # Deggendorf (registered business location)
 _GEO_LNG = 13.0500
 _OWNER_PERSON = "Sebastian Rauch"
 

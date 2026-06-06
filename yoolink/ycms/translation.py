@@ -1,5 +1,5 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import FAQ, AnyFile, UserSettings, VideoFile, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
+from .models import FAQ, AnyFile, UserSettings, VideoFile, WebsiteSettings, fileentry, GaleryImage, Galerie, Button, PricingCard, PricingFeature
 
 @register(FAQ)
 class FAQTranslationOptions(TranslationOptions):
@@ -43,6 +43,13 @@ class VideoFileTranslationOptions(TranslationOptions):
 
 @register(UserSettings)
 class UserSettingsTranslationOptions(TranslationOptions):
+    fields = (
+        'vacationText',
+    )
+
+
+@register(WebsiteSettings)
+class WebsiteSettingsTranslationOptions(TranslationOptions):
     fields = (
         'vacationText',
     )

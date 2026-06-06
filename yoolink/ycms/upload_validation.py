@@ -19,6 +19,21 @@ ARCHIVE_EXTENSIONS = {".zip"}
 SUBTITLE_EXTENSIONS = {".vtt"}
 ANYFILE_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS | DOCUMENT_EXTENSIONS | ARCHIVE_EXTENSIONS
 
+CONTENT_TYPE_EXTENSIONS = {
+    "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+    "video/mp4": ".mp4",
+    "video/quicktime": ".mov",
+    "video/webm": ".webm",
+    "application/pdf": ".pdf",
+    "application/zip": ".zip",
+    "text/plain": ".txt",
+    "text/vtt": ".vtt",
+}
+
 DEFAULT_UPLOAD_LIMIT_BYTES = {
     UPLOAD_KIND_IMAGE: 12 * MB,
     UPLOAD_KIND_VIDEO: 250 * MB,
@@ -53,8 +68,48 @@ def validation_error_message(error):
     return str(error)
 
 
+def _extension_from_signature(value):
+    if not hasattr(value, "read"):
+        return ""
+
+    position = None
+    try:
+        if hasattr(value, "tell"):
+            position = value.tell()
+        header = value.read(16)
+    except Exception:
+        return ""
+    finally:
+        try:
+            if position is not None:
+                value.seek(position)
+            else:
+                value.seek(0)
+        except Exception:
+            pass
+
+    if header.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if header.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if header.startswith((b"GIF87a", b"GIF89a")):
+        return ".gif"
+    if header.startswith(b"RIFF") and header[8:12] == b"WEBP":
+        return ".webp"
+    return ""
+
+
 def file_extension(value):
-    return os.path.splitext(getattr(value, "name", "") or "")[1].lower()
+    extension = os.path.splitext(getattr(value, "name", "") or "")[1].lower()
+    if extension:
+        return extension
+
+    content_type = (getattr(value, "content_type", "") or "").split(";")[0].strip().lower()
+    extension = CONTENT_TYPE_EXTENSIONS.get(content_type, "")
+    if extension:
+        return extension
+
+    return _extension_from_signature(value)
 
 
 def validate_extension(value, allowed_extensions, label="Datei"):

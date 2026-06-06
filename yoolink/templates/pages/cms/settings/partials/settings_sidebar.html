@@ -6,10 +6,11 @@
         </div>
 
         <nav class="mt-3 space-y-1">
+            {% if 'website_settings.edit' in cms_permissions %}
             <a href="{% url 'cms:settings-view' %}"
                class="{% if active_page == 'general' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
                 <i class="bi bi-person-gear text-base"></i>
-                <span>Profil</span>
+                <span>Website-Daten</span>
             </a>
 
             <a href="{% url 'cms:logo-settings' %}"
@@ -17,6 +18,7 @@
                 <i class="bi bi-image text-base"></i>
                 <span>Branding</span>
             </a>
+            {% endif %}
 
             <a href="{% url 'cms:security-settings' %}"
                class="{% if active_page == 'security' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
@@ -24,11 +26,29 @@
                 <span>Autorisierung</span>
             </a>
 
+            {% if 'developer.manage' in cms_permissions %}
             <a href="{% url 'cms:developer-settings' %}"
                class="{% if active_page == 'developer' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
                 <i class="bi bi-code-square text-base"></i>
                 <span>Developer Settings</span>
             </a>
+            {% endif %}
+
+            {% if 'users.manage' in cms_permissions %}
+            <a href="{% url 'cms:users' %}"
+               class="{% if active_page == 'users' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
+                <i class="bi bi-person-plus text-base"></i>
+                <span>Benutzer</span>
+            </a>
+            {% endif %}
+
+            {% if 'roles.manage' in cms_permissions %}
+            <a href="{% url 'cms:roles' %}"
+               class="{% if active_page == 'roles' %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %} flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition">
+                <i class="bi bi-shield-check text-base"></i>
+                <span>Rollen</span>
+            </a>
+            {% endif %}
         </nav>
     </div>
 </aside>

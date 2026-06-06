@@ -79,6 +79,8 @@ urlpatterns = [
     path("settings/developer/", views.developer_settings_view, name="developer-settings"),
     path("settings/developer/connect/", views.developer_connect_view, name="developer-connect"),
     path("settings/developer/docs/", views.developer_api_docs_view, name="developer-api-docs"),
+    path("settings/users/", views.cms_users_view, name="users"),
+    path("settings/roles/", views.cms_roles_view, name="roles"),
 
     # Opening Hours
     path("openinghours/", views.opening_hours_view, name="openinghours-view"),

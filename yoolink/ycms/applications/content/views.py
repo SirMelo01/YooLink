@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import activate, get_language_from_request
 from django.views.decorators.http import require_http_methods
 
-from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, fileentry
+from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, WebsiteSettings, fileentry
 
 from .models import Customer, PrivacyPolicy, TextContent
 
@@ -484,7 +484,7 @@ def site_view_visitenkarte(request):
 @login_required(login_url="login")
 def site_view_datenschutz(request):
     policy = PrivacyPolicy.objects.first()
-    owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
+    owner_data = WebsiteSettings.get_site_owner()
 
     return render(
         request,
@@ -607,7 +607,7 @@ def save_privacy_policy(request):
         return JsonResponse({"error": "UngÃ¼ltige Anfrage"}, status=405)
 
     content_html = request.POST.get("content_html", "")
-    owner_data = UserSettings.get_site_owner() or _get_user_settings(request.user)
+    owner_data = WebsiteSettings.get_site_owner()
     policy, _ = PrivacyPolicy.objects.get_or_create(pk=1)
 
     policy.use_html = True

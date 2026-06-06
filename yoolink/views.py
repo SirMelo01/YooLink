@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from yoolink.ycms.applications.content.models import Customer, PrivacyPolicy, TextContent
-from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, UserSettings
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, WebsiteSettings
 import datetime
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
@@ -8,12 +8,13 @@ from django.conf import settings
 
 def get_opening_hours():
     opening_hours = {}
+    website_settings = WebsiteSettings.get_solo()
     days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
     for day in days:
-        if OpeningHours.objects.filter(day=day).exists():
-            opening_hours[f"opening_{day.lower()}"] = OpeningHours.objects.get(day=day)
-        else:
-            opening_hours[f"opening_{day.lower()}"] = None
+        opening_hours[f"opening_{day.lower()}"] = OpeningHours.objects.filter(
+            website=website_settings,
+            day=day,
+        ).first()
         
     # Muss überall sein
     if TextContent.objects.filter(name="footer").exists():
@@ -508,7 +509,7 @@ def leistungen_view(request):
 
 
 def datenschutz_view(request):
-    owner_data = UserSettings.get_site_owner()
+    owner_data = WebsiteSettings.get_site_owner()
     policy = PrivacyPolicy.objects.first()
     privacy_content_html = ""
     use_policy = policy is not None
@@ -548,7 +549,7 @@ def kontaktform(request):
     else:
         form = ContactForm()
 
-    owner_data = UserSettings.get_site_owner()
+    owner_data = WebsiteSettings.get_site_owner()
     return render(
         request,
         'pages/kontakt.html',

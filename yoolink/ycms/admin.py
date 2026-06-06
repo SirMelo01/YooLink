@@ -4,6 +4,8 @@ from .models import (
     FAQ,
     Blog,
     Button,
+    CMSRole,
+    CMSUserRole,
     DeveloperApiKey,
     GaleryImage,
     Galerie,
@@ -14,6 +16,7 @@ from .models import (
     TeamMember,
     UserSettings,
     VideoFile,
+    WebsiteSettings,
     fileentry,
 )
 
@@ -24,6 +27,9 @@ admin.site.register(FAQ)
 admin.site.register(fileentry)
 admin.site.register(Blog)
 admin.site.register(UserSettings)
+admin.site.register(WebsiteSettings)
+admin.site.register(CMSRole)
+admin.site.register(CMSUserRole)
 admin.site.register(OpeningHours)
 admin.site.register(TeamMember)
 admin.site.register(PricingFeature)

@@ -31,9 +31,8 @@ $(document).ready(function () {
 
     function getPayload() {
         return {
-            email: $.trim($('#email').val()),
-            full_name: $.trim($('#full_name').val()),
             company_name: $.trim($('#company_name').val()),
+            contact_email: $.trim($('#contact_email').val()),
             tel_number: $.trim($('#tel_number').val()),
             fax_number: $.trim($('#fax_number').val()),
             mobile_number: $.trim($('#mobile_number').val()),
