@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress static %}
+{% load compress static i18n %}
 
 {% block title %}{{ block.super }} | Cookie-Einstellungen{% endblock title %}
 
@@ -27,9 +27,9 @@
           <p class="mt-2 text-sm leading-6 text-gray-600">
             {{ textContent_necessary.description|default:"Session-, CSRF-, Sprach-, Warenkorb- und Consent-Cookies. Diese Cookies sind technisch erforderlich und können über dieses Formular nicht deaktiviert werden." }}
           </p>
-          <p class="mt-2 text-xs text-gray-500">Beispiele: <code>csrftoken</code>, <code>sessionid</code>, <code>django_language</code>, <code>yoolink_cookie_consent</code>.</p>
+          <p class="mt-2 text-xs text-gray-500">{% trans "cookies_examples_label" %} <code>csrftoken</code>, <code>sessionid</code>, <code>django_language</code>, <code>yoolink_cookie_consent</code>.</p>
         </div>
-        <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-blue-100 px-4 py-1 text-sm font-bold text-blue-800">Immer aktiv</span>
+        <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-blue-100 px-4 py-1 text-sm font-bold text-blue-800">{% trans "cookies_always_active" %}</span>
       </div>
     </section>
 
@@ -82,7 +82,8 @@
       {{ textContent_hinweis.description|default:"Ihre Auswahl wird für 180 Tage gespeichert. Sie können Ihre Einwilligung jederzeit über diese Seite oder über den Link zu den Cookie-Einstellungen im Footer widerrufen oder ändern." }}
     </p>
     <p class="mt-2">
-      Weitere Details finden Sie in der <a class="font-semibold text-blue-700 underline" href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.
+      {% url 'datenschutz' as datenschutz_url %}
+      {% blocktrans %}Weitere Details finden Sie in der <a class="font-semibold text-blue-700 underline" href="{{ datenschutz_url }}">Datenschutzerklärung</a>.{% endblocktrans %}
     </p>
   </section>
 </main>
