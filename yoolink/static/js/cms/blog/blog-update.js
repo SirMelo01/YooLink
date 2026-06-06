@@ -289,7 +289,7 @@ $(document).ready(function () {
             markdownFormData.append('active', $('#activeSwitch').is(':checked'));
             markdownFormData.append('description', description);
             YooLinkBlogMarkdown.appendMarkdownToFormData(markdownFormData);
-            if (files.length > 0) markdownFormData.append('title_image', files[0], "blogTitleImage");
+            if (files.length > 0) markdownFormData.append('title_image', files[0]);
 
             $.ajax({
                 type: "POST",
@@ -367,7 +367,7 @@ $(document).ready(function () {
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
         formData.append('description', description);
-        if (files.length > 0) formData.append('title_image', files[0], "blogTitleImage");
+        if (files.length > 0) formData.append('title_image', files[0]);
         // Send the Ajax POST request //
         $.ajax({
             type: "POST",
