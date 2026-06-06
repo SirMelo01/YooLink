@@ -233,6 +233,32 @@ def load_logos(request):
 def load_medien(request):
     context = {}
     context.update(get_opening_hours())
+
+    def get_text(name: str):
+        return TextContent.objects.filter(name=name).first()
+
+    # Hero
+    context["textContent_hero"] = get_text("main_medien_hero")
+    context["textContent_hero_secondary"] = get_text("main_medien_hero_secondary")
+
+    # Inhaltsarten (Section + 4 Cards)
+    context["textContent_inhalte"] = get_text("main_medien_inhalte")
+    for i in range(1, 5):
+        context[f"textContent_inhalte_card{i}"] = get_text(f"main_medien_inhalte_card{i}")
+
+    # Prozess (Section + 3 Steps)
+    context["textContent_prozess"] = get_text("main_medien_prozess")
+    for i in range(1, 4):
+        context[f"textContent_prozess_step{i}"] = get_text(f"main_medien_prozess_step{i}")
+
+    # Mehrwert / Aus einer Hand (Section + 3 Bullets)
+    context["textContent_mehrwert"] = get_text("main_medien_mehrwert")
+    for i in range(1, 4):
+        context[f"textContent_mehrwert_bullet{i}"] = get_text(f"main_medien_mehrwert_bullet{i}")
+
+    # Bottom CTA
+    context["textContent_bottomcta"] = get_text("main_medien_bottomcta")
+
     return render(request, 'pages/leistungen_medien.html', context=context)
 
 
@@ -245,16 +271,22 @@ def load_webdesign_deggendorf(request):
     def get_text(name: str):
         return TextContent.objects.filter(name=name).first()
 
-    # Hero
+    def get_image(place: str):
+        return fileentry.objects.filter(place=place).first()
+
+    # Hero (mit Skyline-Hintergrund / Stadtübersicht)
     context["textContent_hero"] = get_text("main_deggendorf_hero")
     context["textContent_hero_highlight"] = get_text("main_deggendorf_hero_highlight")
     context["textContent_hero_secondary"] = get_text("main_deggendorf_hero_secondary")
+    context["image_skyline"] = get_image("main_deggendorf_skyline")
     for i in range(1, 5):
         context[f"textContent_hero_stat{i}"] = get_text(f"main_deggendorf_hero_stat{i}")
 
     # Intro (mit Grabkirche)
     context["textContent_intro"] = get_text("main_deggendorf_intro")
     context["textContent_intro_p2"] = get_text("main_deggendorf_intro_p2")
+    context["textContent_intro_caption"] = get_text("main_deggendorf_intro_caption")
+    context["image_intro"] = get_image("main_deggendorf_intro_image")
     for i in range(1, 5):
         context[f"textContent_intro_bullet{i}"] = get_text(f"main_deggendorf_intro_bullet{i}")
 
@@ -275,6 +307,8 @@ def load_webdesign_deggendorf(request):
     # About / Über Deggendorf (mit Altem Rathaus)
     context["textContent_about"] = get_text("main_deggendorf_about")
     context["textContent_about_p2"] = get_text("main_deggendorf_about_p2")
+    context["textContent_about_caption"] = get_text("main_deggendorf_about_caption")
+    context["image_about"] = get_image("main_deggendorf_about_image")
     for i in range(1, 5):
         context[f"textContent_about_tile{i}"] = get_text(f"main_deggendorf_about_tile{i}")
 

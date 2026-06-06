@@ -155,6 +155,26 @@ msgstr "Webseite"
 msgid "client_card_reference"
 msgstr "Referenz"
 
+#: yoolink/templates/pages/cmsinfo.html:310
+msgid "cms_visit_clients"
+msgstr "Besuche unsere Kunden"
+
+#: yoolink/templates/pages/cmsinfo.html:316
+msgid "cms_contact_direct"
+msgstr "Kontaktiere uns direkt!"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "deggendorf_phone_label"
+msgstr "Telefon"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "deggendorf_appointment_label"
+msgstr "Termin"
+
+#: yoolink/templates/pages/webdesign_deggendorf.html
+msgid "deggendorf_appointment_cta"
+msgstr "Kostenloses Erstgespräch anfragen"
+
 #: yoolink/templates/pages/index.html:396
 msgid "learn_more"
 msgstr "Erfahre mehr"
