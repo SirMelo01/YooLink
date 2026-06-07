@@ -1,6 +1,11 @@
 html, body {
-  overflow-x: hidden;
   max-width: 100%;
+}
+/* Horizontales Scrollen nur auf <body> unterbinden (NICHT auf <html>):
+   So wird das overflow auf den Viewport propagiert -> kein Scroll-Container auf
+   html/body -> position: sticky (Navbar) funktioniert weiterhin. */
+body {
+  overflow-x: hidden;
 }
 
 /* === Wellen (unverändert) === */

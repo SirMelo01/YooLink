@@ -4662,6 +4662,10 @@ body {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.will-change-transform {
+  will-change: transform;
+}
+
 /* ------------------------------------------------------------------
    Selbstgehostete Webfonts (DSGVO-konform, kein Google-Server)
    Dateien: yoolink/static/css/fonts/webfonts/

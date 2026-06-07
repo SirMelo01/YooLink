@@ -120,3 +120,72 @@ function refuseCookie() {
     }
   });
 })();
+
+/**
+ * Auto-Hide-Navbar:
+ * - Beim Herunterscrollen blendet die Navbar aus.
+ * - Beim Hochscrollen erscheint sie wieder sauber von oben (zum Navigieren).
+ * - Ganz oben ist sie immer sichtbar.
+ */
+(function () {
+  var nav = document.getElementById('mainNavbar');
+  if (!nav) return;
+
+  var mobileMenu = document.getElementById('navbar-cta');
+  var ticking = false;
+  var DELTA = 6; // winzige Scrollbewegungen ignorieren
+
+  // Robust die aktuelle Scroll-Position lesen – egal ob das Fenster,
+  // <html> oder <body> der eigentliche Scroll-Container ist
+  // (manche Seiten setzen html/body overflow, wodurch nicht das window scrollt).
+  function getScrollTop() {
+    var de = document.documentElement;
+    var b = document.body;
+    return window.pageYOffset
+      || Math.max(de ? de.scrollTop : 0, b ? b.scrollTop : 0)
+      || 0;
+  }
+
+  var lastY = getScrollTop();
+
+  function update() {
+    ticking = false;
+    var y = getScrollTop();
+
+    // Mobiles Menü offen -> Navbar sichtbar lassen
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      nav.style.transform = '';
+      lastY = y;
+      return;
+    }
+
+    // Ganz oben immer zeigen
+    if (y <= 0) {
+      nav.style.transform = '';
+      lastY = 0;
+      return;
+    }
+
+    if (Math.abs(y - lastY) < DELTA) return;
+
+    if (y > lastY && y > nav.offsetHeight) {
+      // runter scrollen -> ausblenden
+      nav.style.transform = 'translateY(-100%)';
+    } else {
+      // hoch scrollen -> einblenden
+      nav.style.transform = '';
+    }
+    lastY = y;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  // capture:true fängt Scroll-Events auch dann ab, wenn nicht das window,
+  // sondern ein innerer Container (html/body) scrollt.
+  window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+})();

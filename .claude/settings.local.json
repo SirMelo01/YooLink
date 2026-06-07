@@ -63,7 +63,11 @@
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py makemigrations cms_content)",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py migrate cms_content)",
       "Bash(MSYS_NO_PATHCONV=1 docker exec -i --env-file .envs/.local/.django --env-file .envs/.local/.postgres yoolink_local_django /entrypoint python manage.py compilemessages -l de -l en)",
-      "Bash(grep -o \"lg\\\\\\\\\\\\\\\\:top-\\\\[4\\\\.25rem\\\\]\" yoolink/static/css/output.css)"
+      "Bash(grep -o \"lg\\\\\\\\\\\\\\\\:top-\\\\[4\\\\.25rem\\\\]\" yoolink/static/css/output.css)",
+      "Bash(sed -n '560,575p' yoolink/templates/base.html)",
+      "Bash(awk 'NR>=400 && NR<=575 && /{% block|{% endblock/ {print NR\": \"$0}' yoolink/templates/base.html)",
+      "Bash(node --check yoolink/static/js/base.js)",
+      "Bash(node -e \"try{require.resolve\\('puppeteer'\\);console.log\\('puppeteer available'\\)}catch\\(e\\){console.log\\('no puppeteer module'\\)}\")"
     ]
   }
 }

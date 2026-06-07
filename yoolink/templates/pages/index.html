@@ -7,7 +7,9 @@
 <link href="{% static 'css/uboot.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
-  html {
+  /* overflow auf body (nicht html) -> wird auf den Viewport propagiert,
+     erzeugt keinen Scroll-Container -> sticky Navbar funktioniert */
+  body {
     overflow-x: hidden;
   }
 
