@@ -12,6 +12,8 @@ from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.utils.translation import get_language
 
+from yoolink.ycms.applications.content.models import TextContent
+
 
 class ConsentIframeParser(HTMLParser):
     """Move iframe sources behind the consent gate without sanitizing CMS HTML."""
@@ -165,6 +167,7 @@ class Load_Index_Blog(ListView):
             mapped.append(variant or blog)
         ctx['object_list'] = mapped
         ctx['blogs'] = mapped
+        ctx['blog_overview_hero'] = TextContent.objects.filter(name="main_blog_overview_hero").first()
         return ctx
 
 

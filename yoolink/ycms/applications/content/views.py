@@ -573,6 +573,19 @@ def site_view_kontakt(request):
 
 
 @login_required(login_url="login")
+def site_view_blog_overview(request):
+    lang = get_active_language(request)
+    return render(
+        request,
+        "pages/cms/content/sites/BlogOverviewSite.html",
+        {
+            "textContent_hero": _get_text("main_blog_overview_hero"),
+            "cms_language": lang,
+        },
+    )
+
+
+@login_required(login_url="login")
 def save_text_content(request):
     if request.method != "POST":
         return JsonResponse({"error": "Etwas ist falsch gelaufen. Versuche es spÃ¤ter nochmal"}, status=400)
