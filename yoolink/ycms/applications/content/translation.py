@@ -1,6 +1,6 @@
 from modeltranslation.translator import TranslationOptions, register
 
-from .models import Customer, ImpressumBlock, TextContent
+from .models import Customer, ImpressumBlock, PrivacyPolicy, TextContent
 
 
 @register(TextContent)
@@ -13,6 +13,11 @@ class ImpressumBlockTranslationOptions(TranslationOptions):
     fields = ("title", "content")
 
 
+@register(PrivacyPolicy)
+class PrivacyPolicyTranslationOptions(TranslationOptions):
+    fields = ("content_text", "content_html")
+
+
 @register(Customer)
 class CustomerTranslationOptions(TranslationOptions):
     fields = (
@@ -23,4 +28,3 @@ class CustomerTranslationOptions(TranslationOptions):
         "testimonial",
         "testimonial_author",
     )
-

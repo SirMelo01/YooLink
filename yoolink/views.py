@@ -543,6 +543,7 @@ def leistungen_view(request):
 
 
 def datenschutz_view(request):
+    activate(get_language_from_request(request))
     owner_data = WebsiteSettings.get_site_owner()
     policy = PrivacyPolicy.objects.first()
     privacy_content_html = ""

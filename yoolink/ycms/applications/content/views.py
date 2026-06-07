@@ -519,15 +519,21 @@ def site_view_medien(request):
 
 @login_required(login_url="login")
 def site_view_datenschutz(request):
+    lang = get_active_language(request)
     policy = PrivacyPolicy.objects.first()
     owner_data = WebsiteSettings.get_site_owner()
+    privacy_content_html = ""
+    if policy:
+        privacy_content_html = getattr(policy, f"content_html_{lang}", "") or policy.content_html
 
     return render(
         request,
         "pages/cms/content/sites/DatenschutzSite.html",
         {
             "policy": policy,
+            "privacy_content_html": privacy_content_html,
             "owner_data": owner_data,
+            "cms_language": lang,
         },
     )
 
@@ -676,13 +682,17 @@ def save_privacy_policy(request):
     if request.method != "POST":
         return JsonResponse({"error": "UngÃ¼ltige Anfrage"}, status=405)
 
+    lang = get_active_language(request)
     content_html = request.POST.get("content_html", "")
     owner_data = WebsiteSettings.get_site_owner()
     policy, _ = PrivacyPolicy.objects.get_or_create(pk=1)
+    prepared_content = PrivacyPolicy.prepare_content(content_html, owner_data, as_html=True)
 
     policy.use_html = True
-    policy.content_html = PrivacyPolicy.prepare_content(content_html, owner_data, as_html=True)
-    policy.save(update_fields=["use_html", "content_html", "updated_at"])
+    setattr(policy, f"content_html_{lang}", prepared_content)
+    if lang == DEFAULT_LANGUAGE:
+        policy.content_html = prepared_content
+    policy.save(update_fields=["use_html", f"content_html_{lang}", "content_html", "updated_at"])
 
     return JsonResponse({"success": "DatenschutzerklÃ¤rung wurde gespeichert"}, status=200)
 
