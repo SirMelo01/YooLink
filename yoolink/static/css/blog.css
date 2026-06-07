@@ -27,6 +27,14 @@ article ol, #previewModal ol {
     padding-inline-start: 40px !important;
 }
 
+article > img,
+article p img,
+article .carousel img,
+#previewModal img {
+    max-width: 100%;
+    object-fit: contain !important;
+}
+
 article {
     padding: 0.5rem;
 }

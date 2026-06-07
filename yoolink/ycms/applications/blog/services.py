@@ -1,6 +1,6 @@
 import json
 import re
-from html import escape
+from html import escape, unescape
 from html.parser import HTMLParser
 from urllib.parse import parse_qs, urlparse
 
@@ -17,6 +17,17 @@ GALLERY_END_RE = re.compile(r"^:::\s*$")
 SAFE_CSS_SIZE_RE = re.compile(r"^(?:auto|0|\d+(?:\.\d+)?(?:px|%|rem|em|vw|vh))$")
 IMAGE_DEFAULT_CSS = {"height": "auto", "width": "100%"}
 VIDEO_BOOLEAN_ATTRS = ("controls", "autoplay", "muted", "loop", "playsinline")
+
+
+def repair_ampersand_entities(value):
+    value = str(value or "")
+    while "&amp;amp;" in value:
+        value = value.replace("&amp;amp;", "&amp;")
+    return value.replace("&;amp;", "&amp;").replace("&;amp", "&amp;")
+
+
+def normalize_markdown_text(value):
+    return unescape(repair_ampersand_entities(value))
 
 
 def build_default_code_from_html(body):
@@ -919,7 +930,7 @@ def render_markdown_to_html(markdown):
     elif in_gallery:
         html.append(_render_markdown_gallery_html(gallery_images, gallery_alts, gallery_options))
 
-    return "\n".join(html)
+    return repair_ampersand_entities("\n".join(html))
 
 
 def _render_markdown_gallery_html(images, alts=None, options=None):
@@ -969,7 +980,8 @@ def _render_inline_markdown(text):
         placeholders.append(value)
         return f"@@MD{len(placeholders) - 1}@@"
 
-    escaped = escape(text)
+    working = normalize_markdown_text(text)
+
     def render_inline_image(match):
         options = _parse_image_options(match.group(3))
         style = _image_style_attr(_image_css_from_options(options)) if options else ""
@@ -981,10 +993,12 @@ def _render_inline_markdown(text):
             f'<img src="{escape(match.group(2), quote=True)}" alt="{escape(match.group(1), quote=True)}"{title_attr}{id_attr} loading="lazy" decoding="async"{style}>'
         )
 
-    escaped = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?", render_inline_image, escaped)
-    escaped = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: stash(
-        f'<a class="text-blue-500 hover:text-blue-600" href="{escape(m.group(2), quote=True)}">{m.group(1)}</a>'
-    ), escaped)
+    working = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?", render_inline_image, working)
+    working = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: stash(
+        f'<a class="text-blue-500 hover:text-blue-600" href="{escape(m.group(2), quote=True)}">{escape(m.group(1))}</a>'
+    ), working)
+
+    escaped = escape(working)
     escaped = re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
     escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
     escaped = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", escaped)
@@ -1074,7 +1088,7 @@ def render_blog_code_to_html(code):
         else:
             rendered.append(f"<{tag_name}{attrs}>{value}</{tag_name}>")
 
-    return "\n".join(rendered)
+    return repair_ampersand_entities("\n".join(rendered))
 
 
 def _render_attrs(attributes, css):
