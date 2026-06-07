@@ -564,6 +564,7 @@ def site_view_kontakt(request):
             "textContent_hero": _get_text("main_kontakt_hero"),
             "textContent_panel": _get_text("main_kontakt_panel"),
             "textContent_panel_labels": _get_text("main_kontakt_panel_labels"),
+            "textContent_opening_hours": _get_text("main_kontakt_opening_hours"),
             "textContent_response": _get_text("main_kontakt_response"),
             "textContent_form": _get_text("main_kontakt_form"),
             "textContent_fields": _get_text("main_kontakt_fields"),

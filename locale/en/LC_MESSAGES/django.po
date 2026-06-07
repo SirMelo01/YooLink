@@ -528,3 +528,36 @@ msgstr "Sunday"
 
 msgid "blog_card_read_more"
 msgstr "Read"
+
+msgid "contact_map_label"
+msgstr "Location"
+
+msgid "contact_map_title"
+msgstr "Right where you need us."
+
+msgid "contact_map_text"
+msgstr "The map shows our location and opens directions directly in Google Maps."
+
+msgid "contact_map_address_label"
+msgstr "Address"
+
+msgid "contact_map_directions"
+msgstr "Get directions"
+
+msgid "contact_map_disabled_title"
+msgstr "Google Maps is disabled."
+
+msgid "contact_map_disabled_text"
+msgstr "The map will load after your consent for external media."
+
+msgid "contact_map_cookie_button"
+msgstr "Open cookie settings"
+
+msgid "contact_map_iframe_title"
+msgstr "Google Maps location"
+
+msgid "contact_map_missing_key_title"
+msgstr "Google Maps API key is missing."
+
+msgid "contact_map_missing_key_text"
+msgstr "Please set GOOGLE_MAPS_EMBED_API_KEY in the .env file."

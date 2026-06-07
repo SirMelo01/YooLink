@@ -666,6 +666,7 @@ def kontaktform(request):
     # Info-Panel (links)
     context['textContent_panel'] = get_text('main_kontakt_panel')
     context['textContent_panel_labels'] = get_text('main_kontakt_panel_labels')
+    context['textContent_opening_hours'] = get_text('main_kontakt_opening_hours')
     context['textContent_response'] = get_text('main_kontakt_response')
     # Formular (rechts)
     context['textContent_form'] = get_text('main_kontakt_form')

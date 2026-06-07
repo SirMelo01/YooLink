@@ -80,6 +80,18 @@
         </div>
       </div>
 
+      <p class="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700">Öffnungszeiten-Intro</p>
+      <div class="text-content flex flex-col gap-3" key="main_kontakt_opening_hours">
+        <input inputType="header" type="text"
+               class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold uppercase tracking-widest text-blue-900 focus:border-blue-500 focus:bg-white focus:outline-none"
+               value="{{ textContent_opening_hours.header|default:'Erreichbarkeit' }}">
+        <input inputType="title" type="text"
+               class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-lg font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+               value="{{ textContent_opening_hours.title|default:'Öffnungszeiten' }}">
+        <textarea inputType="description" rows="2"
+                  class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_opening_hours.description|default:"Unsere regulären Zeiten für Anfragen, Rückrufe und persönliche Abstimmungen." }}</textarea>
+      </div>
+
       <p class="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700">Antwortzeit-Badge</p>
       <div class="text-content grid grid-cols-1 gap-3 md:grid-cols-2" key="main_kontakt_response">
         <div class="flex flex-col gap-2">

@@ -529,3 +529,36 @@ msgstr "Sonntag"
 
 msgid "blog_card_read_more"
 msgstr "Lesen"
+
+msgid "contact_map_label"
+msgstr "Standort"
+
+msgid "contact_map_title"
+msgstr "Direkt vor Ort."
+
+msgid "contact_map_text"
+msgstr "Unsere Karte zeigt dir den Standort und öffnet die Route direkt in Google Maps."
+
+msgid "contact_map_address_label"
+msgstr "Adresse"
+
+msgid "contact_map_directions"
+msgstr "Route planen"
+
+msgid "contact_map_disabled_title"
+msgstr "Google Maps ist deaktiviert."
+
+msgid "contact_map_disabled_text"
+msgstr "Die Karte wird erst nach deiner Einwilligung für externe Medien geladen."
+
+msgid "contact_map_cookie_button"
+msgstr "Cookie-Auswahl öffnen"
+
+msgid "contact_map_iframe_title"
+msgstr "Google Maps Standort"
+
+msgid "contact_map_missing_key_title"
+msgstr "Google Maps API Key fehlt."
+
+msgid "contact_map_missing_key_text"
+msgstr "Bitte GOOGLE_MAPS_EMBED_API_KEY in der .env setzen."
