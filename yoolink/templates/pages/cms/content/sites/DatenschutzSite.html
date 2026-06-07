@@ -51,7 +51,7 @@
       <h3 class="text-lg font-bold mt-6 mb-3">Aktuelle Daten</h3>
       {% if owner_data %}
         <div class="text-sm text-gray-700 space-y-2">
-          <div><span class="font-semibold">Name:</span> {{ owner_data.full_name|default:"-" }}</div>
+          <div><span class="font-semibold">Inhaber:</span> {{ owner_data.owner_name|default:"-" }}</div>
           <div><span class="font-semibold">Firma:</span> {{ owner_data.company_name|default:"-" }}</div>
           <div><span class="font-semibold">Adresse:</span> {{ owner_data.address|default:"-" }}</div>
           <div><span class="font-semibold">E-Mail:</span> {{ owner_data.email|default:"-" }}</div>

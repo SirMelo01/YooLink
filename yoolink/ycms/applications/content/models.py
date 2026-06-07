@@ -59,14 +59,25 @@ class PrivacyPolicy(models.Model):
         db_table = "ycms_privacypolicy"
 
     @staticmethod
-    def _owner_name(user_settings):
-        if not user_settings:
+    def _owner_name(owner_data):
+        if not owner_data:
             return ""
-        return (user_settings.company_name or user_settings.full_name or "").strip()
+        return (
+            getattr(owner_data, "company_name", "")
+            or getattr(owner_data, "owner_name", "")
+            or getattr(owner_data, "full_name", "")
+            or ""
+        ).strip()
+
+    @staticmethod
+    def _owner_value(owner_data, attr):
+        if not owner_data:
+            return ""
+        return str(getattr(owner_data, attr, "") or "").strip()
 
     @classmethod
-    def _token_values(cls, user_settings):
-        if not user_settings:
+    def _token_values(cls, owner_data):
+        if not owner_data:
             return {
                 "OWNER_NAME": "",
                 "ADDRESS": "",
@@ -78,13 +89,13 @@ class PrivacyPolicy(models.Model):
             }
 
         return {
-            "OWNER_NAME": cls._owner_name(user_settings),
-            "ADDRESS": (user_settings.address or "").strip(),
-            "EMAIL": (user_settings.email or "").strip(),
-            "TEL": (user_settings.tel_number or "").strip(),
-            "FAX": (user_settings.fax_number or "").strip(),
-            "MOBILE": (user_settings.mobile_number or "").strip(),
-            "WEBSITE": (user_settings.website or "").strip(),
+            "OWNER_NAME": cls._owner_name(owner_data),
+            "ADDRESS": cls._owner_value(owner_data, "address"),
+            "EMAIL": cls._owner_value(owner_data, "email"),
+            "TEL": cls._owner_value(owner_data, "tel_number"),
+            "FAX": cls._owner_value(owner_data, "fax_number"),
+            "MOBILE": cls._owner_value(owner_data, "mobile_number"),
+            "WEBSITE": cls._owner_value(owner_data, "website"),
         }
 
     @classmethod
@@ -101,35 +112,35 @@ class PrivacyPolicy(models.Model):
         return escaped_value
 
     @classmethod
-    def replace_tokens(cls, content, user_settings, as_html=False):
+    def replace_tokens(cls, content, owner_data, as_html=False):
         if not content:
             return content
 
-        token_values = cls._token_values(user_settings)
+        token_values = cls._token_values(owner_data)
         for token, value in token_values.items():
             content = content.replace(f"[[{token}]]", cls._format_token_value(token, value, as_html))
         return content
 
     @classmethod
-    def tokenize_content(cls, content, user_settings):
-        if not content or not user_settings:
+    def tokenize_content(cls, content, owner_data):
+        if not content or not owner_data:
             return content
 
-        owner_name = cls._owner_name(user_settings)
+        owner_name = cls._owner_name(owner_data)
         replacements = [
             (owner_name, "OWNER_NAME"),
-            ((user_settings.address or "").strip(), "ADDRESS"),
-            ((user_settings.email or "").strip(), "EMAIL"),
-            ((user_settings.tel_number or "").strip(), "TEL"),
-            ((user_settings.fax_number or "").strip(), "FAX"),
-            ((user_settings.mobile_number or "").strip(), "MOBILE"),
-            ((user_settings.website or "").strip(), "WEBSITE"),
+            (cls._owner_value(owner_data, "address"), "ADDRESS"),
+            (cls._owner_value(owner_data, "email"), "EMAIL"),
+            (cls._owner_value(owner_data, "tel_number"), "TEL"),
+            (cls._owner_value(owner_data, "fax_number"), "FAX"),
+            (cls._owner_value(owner_data, "mobile_number"), "MOBILE"),
+            (cls._owner_value(owner_data, "website"), "WEBSITE"),
         ]
 
-        if user_settings.company_name:
-            replacements.append((user_settings.company_name.strip(), "OWNER_NAME"))
-        if user_settings.full_name:
-            replacements.append((user_settings.full_name.strip(), "OWNER_NAME"))
+        for attr in ("company_name", "owner_name", "full_name"):
+            value = cls._owner_value(owner_data, attr)
+            if value:
+                replacements.append((value, "OWNER_NAME"))
 
         for value, token in replacements:
             if value and len(value) >= 3:
@@ -160,18 +171,18 @@ class PrivacyPolicy(models.Model):
             html_blocks.append(f"<p>{escaped_block}</p>")
         return "\n".join(html_blocks)
 
-    def render_content(self, user_settings):
+    def render_content(self, owner_data):
         if self.use_html:
-            content = self.replace_tokens(self.content_html, user_settings, as_html=True)
+            content = self.replace_tokens(self.content_html, owner_data, as_html=True)
             return content
 
-        content = self.replace_tokens(self.content_text, user_settings)
+        content = self.replace_tokens(self.content_text, owner_data)
         return self.text_to_html(content)
 
     @classmethod
-    def prepare_content(cls, raw, user_settings, as_html):
+    def prepare_content(cls, raw, owner_data, as_html):
         content = (raw or "").strip()
-        content = cls.tokenize_content(content, user_settings)
+        content = cls.tokenize_content(content, owner_data)
         content = cls.ensure_responsible_section(content, as_html)
         return content
 

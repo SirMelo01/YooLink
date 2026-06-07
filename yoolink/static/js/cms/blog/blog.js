@@ -36,6 +36,17 @@ function setBlogImagePanel(panelId) {
         .removeClass('text-slate-700 hover:bg-white hover:text-slate-950');
 }
 
+function openBlogPreviewModal() {
+    $('#previewModal').removeClass('hidden').addClass('flex');
+}
+
+function closeBlogPreviewModal() {
+    $('#previewModal').addClass('hidden').removeClass('flex');
+}
+
+window.openBlogPreviewModal = openBlogPreviewModal;
+window.closeBlogPreviewModal = closeBlogPreviewModal;
+
 function refreshBlogImagePreview() {
     const src = $editImg ? $editImg.attr('src') : '';
     if (src) {
@@ -561,9 +572,9 @@ function applyBlogCodeToBuilder(code) {
                     'title-3': 'title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative',
                 }
                 const placeholderMap = {
-                    'title-1': 'Überschrift I',
-                    'title-2': 'Überschrift II',
-                    'title-3': 'Überschrift III',
+                    'title-1': 'H2-Ueberschrift',
+                    'title-2': 'H3-Ueberschrift',
+                    'title-3': 'H4-Ueberschrift',
                 }
                 $container.attr('element-type', element.name)
                 $container.append(controls.delSpan.clone()).append(controls.moveHandle.clone())
@@ -818,7 +829,7 @@ $(document).ready(function () {
     }
 
     /**
-     * Add Überschrift I to Blog
+     * Add H2 heading to Blog
      */
     $('#addTitle').click(function () {
         // Create Container
@@ -828,7 +839,7 @@ $(document).ready(function () {
         $('<input/>', {
             type: "text",
             class: "title-1 my-3 text-2xl font-bold text-gray-900 w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "Überschrift I"
+            placeholder: "H2-Ueberschrift"
         }).appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
@@ -836,12 +847,12 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        sendNotif("Eine Überschrift I wurde hinzugefügt", "success")
+        sendNotif("Eine H2-Ueberschrift wurde hinzugefuegt", "success")
         scrollToBottom()
     });
 
     /**
-      * Add Überschrift II to Blog
+      * Add H3 heading to Blog
       */
     $('#addTitle2').click(function () {
         // Create Container
@@ -851,7 +862,7 @@ $(document).ready(function () {
         $('<input/>', {
             type: "text",
             class: "title-2 text-xl font-semibold w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "Überschrift II"
+            placeholder: "H3-Ueberschrift"
         }).appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
@@ -859,12 +870,12 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        sendNotif("Eine Überschrift II wurde hinzugefügt", "success")
+        sendNotif("Eine H3-Ueberschrift wurde hinzugefuegt", "success")
         scrollToBottom()
     });
 
     /**
-      * Add Überschrift III to Blog
+      * Add H4 heading to Blog
       */
     $('#addTitle3').click(function () {
         // Create Container
@@ -874,7 +885,7 @@ $(document).ready(function () {
         $('<input/>', {
             type: "text",
             class: "title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "Überschrift III"
+            placeholder: "H4-Ueberschrift"
         }).appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
@@ -882,7 +893,7 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        sendNotif("Eine Überschrift III wurde hinzugefügt", "success")
+        sendNotif("Eine H4-Ueberschrift wurde hinzugefuegt", "success")
         scrollToBottom()
     });
 
@@ -1167,7 +1178,7 @@ $(document).ready(function () {
 
     /****************** Blog Action Logic *******************/
     $('#closeModal').click(function () {
-        $('#previewModal').toggleClass("hidden")
+        closeBlogPreviewModal()
     });
     $('#closeGaleryModal').click(function () {
         $('#galleryModal').addClass('hidden').removeClass('flex')
@@ -1460,7 +1471,7 @@ $(document).ready(function () {
             $modalBody.append($elem);
         });
 
-        $('#previewModal').toggleClass("hidden")
+        openBlogPreviewModal()
 
         // Load Carousels
         setTimeout(function () {

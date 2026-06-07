@@ -782,7 +782,11 @@
                     $modalBody.append($('<h1 class="text-3xl mb-6 font-extrabold leading-tight text-gray-900 lg:text-4xl"></h1>').text(title));
                 }
                 $modalBody.append(response.body || '');
-                $('#previewModal').toggleClass('hidden');
+                if (window.openBlogPreviewModal) {
+                    window.openBlogPreviewModal();
+                } else {
+                    $('#previewModal').removeClass('hidden').addClass('flex');
+                }
                 setTimeout(function () {
                     if (window.Prism) Prism.highlightAll();
                     if (typeof loadCarousels === 'function') loadCarousels();

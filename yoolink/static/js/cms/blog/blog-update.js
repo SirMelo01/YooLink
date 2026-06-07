@@ -33,7 +33,7 @@ $(document).ready(function () {
                             $('<input/>', {
                                 type: "text",
                                 class: "title-1 my-3 text-2xl font-bold text-gray-900 w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "Überschrift I",
+                                placeholder: "H2-Ueberschrift",
                                 value: element.value
                             }).appendTo($container)
                             $container.find('.del-elem').click(function () {
@@ -47,7 +47,7 @@ $(document).ready(function () {
                             $('<input/>', {
                                 type: "text",
                                 class: "title-2 text-xl font-semibold w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "Überschrift II",
+                                placeholder: "H3-Ueberschrift",
                                 value: element.value
                             }).appendTo($container)
                             $container.find('.del-elem').click(function () {
@@ -61,7 +61,7 @@ $(document).ready(function () {
                             $('<input/>', {
                                 type: "text",
                                 class: "title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "Überschrift III",
+                                placeholder: "H4-Ueberschrift",
                                 value: element.value
                             }).appendTo($container)
                             $container.find('.del-elem').click(function () {
