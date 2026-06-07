@@ -63,8 +63,7 @@ class PrivacyPolicy(models.Model):
         if not owner_data:
             return ""
         return (
-            getattr(owner_data, "company_name", "")
-            or getattr(owner_data, "owner_name", "")
+            getattr(owner_data, "owner_name", "")
             or getattr(owner_data, "full_name", "")
             or ""
         ).strip()
@@ -137,7 +136,7 @@ class PrivacyPolicy(models.Model):
             (cls._owner_value(owner_data, "website"), "WEBSITE"),
         ]
 
-        for attr in ("company_name", "owner_name", "full_name"):
+        for attr in ("owner_name", "full_name"):
             value = cls._owner_value(owner_data, attr)
             if value:
                 replacements.append((value, "OWNER_NAME"))

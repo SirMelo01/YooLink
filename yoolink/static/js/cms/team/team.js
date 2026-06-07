@@ -136,7 +136,7 @@ $(document).ready(function () {
                             <!-- Hidden ID Element -->
                             <span class="member-id hidden">${newId}</span>
 
-                            <div class="relative">
+                            <div class="relative w-full overflow-hidden rounded-tl-2xl rounded-br-2xl bg-slate-100">
                             <span class="member-status absolute top-2 left-10 ${statusClass} text-white rounded-full px-2 py-0.5 cursor-pointer">
                                 ${statusText}
                             </span>
@@ -145,7 +145,7 @@ $(document).ready(function () {
                                 X
                             </span>
 
-                            <img src="${formData.image || ''}" alt="${formData.full_name}" class="rounded-tl-2xl rounded-br-2xl h-80" />
+                            <img src="${formData.image || ''}" alt="${formData.full_name}" class="h-80 w-full rounded-tl-2xl rounded-br-2xl object-contain" />
                             </div>
 
                             <h3 class="mt-4 text-xl font-semibold text-gray-800">${formData.full_name}</h3>

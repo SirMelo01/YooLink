@@ -35,11 +35,11 @@
     <div class="bg-white border border-gray-200 rounded-2xl shadow p-6">
       <h2 class="text-lg font-bold mb-3">Dynamische Platzhalter</h2>
       <p class="text-sm text-gray-600 mb-4">
-        Diese Werte werden automatisch aus den User Settings ersetzt und können nicht frei überschrieben werden.
+        Diese Werte werden automatisch aus den Website-Daten ersetzt und können nicht frei überschrieben werden.
         Falls sie im eingefügten HTML vorkommen, werden sie automatisch als Platzhalter gespeichert.
       </p>
       <div class="space-y-2 text-sm font-mono">
-        <div>[[OWNER_NAME]]</div>
+        <div>[[OWNER_NAME]] <span class="font-sans text-xs text-gray-500">(Inhaber)</span></div>
         <div>[[ADDRESS]]</div>
         <div>[[EMAIL]]</div>
         <div>[[TEL]]</div>
@@ -61,7 +61,7 @@
           <div><span class="font-semibold">Website:</span> {{ owner_data.website|default:"-" }}</div>
         </div>
       {% else %}
-        <p class="text-sm text-gray-500">Keine User Settings gefunden.</p>
+        <p class="text-sm text-gray-500">Keine Website-Daten gefunden.</p>
       {% endif %}
     </div>
   </div>
