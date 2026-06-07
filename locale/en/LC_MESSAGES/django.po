@@ -492,3 +492,39 @@ msgstr "Responsible for content pursuant to § 18 (2) MStV"
 
 msgid "impressum_address_as_above"
 msgstr "Address as above"
+
+msgid "contact_opening_hours_label"
+msgstr "Availability"
+
+msgid "contact_opening_hours_title"
+msgstr "Opening hours"
+
+msgid "contact_opening_hours_text"
+msgstr "Our regular hours for inquiries, callbacks and personal coordination."
+
+msgid "opening_closed"
+msgstr "Closed"
+
+msgid "opening_day_monday"
+msgstr "Monday"
+
+msgid "opening_day_tuesday"
+msgstr "Tuesday"
+
+msgid "opening_day_wednesday"
+msgstr "Wednesday"
+
+msgid "opening_day_thursday"
+msgstr "Thursday"
+
+msgid "opening_day_friday"
+msgstr "Friday"
+
+msgid "opening_day_saturday"
+msgstr "Saturday"
+
+msgid "opening_day_sunday"
+msgstr "Sunday"
+
+msgid "blog_card_read_more"
+msgstr "Read"

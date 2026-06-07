@@ -493,3 +493,39 @@ msgstr "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV"
 
 msgid "impressum_address_as_above"
 msgstr "Anschrift wie oben"
+
+msgid "contact_opening_hours_label"
+msgstr "Erreichbarkeit"
+
+msgid "contact_opening_hours_title"
+msgstr "Öffnungszeiten"
+
+msgid "contact_opening_hours_text"
+msgstr "Unsere regulären Zeiten für Anfragen, Rückrufe und persönliche Abstimmungen."
+
+msgid "opening_closed"
+msgstr "Geschlossen"
+
+msgid "opening_day_monday"
+msgstr "Montag"
+
+msgid "opening_day_tuesday"
+msgstr "Dienstag"
+
+msgid "opening_day_wednesday"
+msgstr "Mittwoch"
+
+msgid "opening_day_thursday"
+msgstr "Donnerstag"
+
+msgid "opening_day_friday"
+msgstr "Freitag"
+
+msgid "opening_day_saturday"
+msgstr "Samstag"
+
+msgid "opening_day_sunday"
+msgstr "Sonntag"
+
+msgid "blog_card_read_more"
+msgstr "Lesen"

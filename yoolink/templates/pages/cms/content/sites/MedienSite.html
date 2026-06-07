@@ -51,6 +51,12 @@
                  class="self-start rounded-md border-2 border-blue-300 bg-white px-6 py-3 text-sm font-bold text-blue-900"
                  value="{{ textContent_hero_secondary.title|default:'So läuft es ab' }}">
         </div>
+        <div class="text-content flex flex-col gap-2 border-t border-blue-200 pt-3" key="main_medien_hero_hint">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Hero-Badge an der Grafik</p>
+          <input inputType="title" type="text"
+                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold focus:border-blue-500 focus:bg-white focus:outline-none"
+                 value="{{ textContent_hero_hint.title|default:'Bilder die deine Marke erzählen' }}">
+        </div>
       </div>
     </section>
 

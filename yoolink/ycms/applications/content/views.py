@@ -492,6 +492,7 @@ def site_view_medien(request):
         # Hero
         "textContent_hero": _get_text("main_medien_hero"),
         "textContent_hero_secondary": _get_text("main_medien_hero_secondary"),
+        "textContent_hero_hint": _get_text("main_medien_hero_hint"),
         # Inhaltsarten
         "textContent_inhalte": _get_text("main_medien_inhalte"),
         # Prozess

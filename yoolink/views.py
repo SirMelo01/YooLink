@@ -9,12 +9,41 @@ from django.conf import settings
 def get_opening_hours():
     opening_hours = {}
     website_settings = WebsiteSettings.get_solo()
-    days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
-    for day in days:
-        opening_hours[f"opening_{day.lower()}"] = OpeningHours.objects.filter(
+    days = [
+        ("MON", "opening_day_monday"),
+        ("TUE", "opening_day_tuesday"),
+        ("WED", "opening_day_wednesday"),
+        ("THU", "opening_day_thursday"),
+        ("FRI", "opening_day_friday"),
+        ("SAT", "opening_day_saturday"),
+        ("SUN", "opening_day_sunday"),
+    ]
+    opening_hours_rows = []
+    for day, day_label in days:
+        opening_hour = OpeningHours.objects.filter(
             website=website_settings,
             day=day,
         ).first()
+        opening_hours[f"opening_{day.lower()}"] = opening_hour
+
+        periods = []
+        if opening_hour:
+            periods = [
+                f"{start.strftime('%H:%M')} - {end.strftime('%H:%M')}"
+                for start, end in opening_hour.calculate_opening_periods()
+            ]
+
+        opening_hours_rows.append(
+            {
+                "day": day,
+                "label_key": day_label,
+                "is_open": bool(opening_hour and opening_hour.is_open),
+                "periods": periods,
+            }
+        )
+
+    opening_hours["opening_hours_rows"] = opening_hours_rows
+    opening_hours["has_opening_hours"] = any(row["is_open"] for row in opening_hours_rows)
         
     # Muss überall sein
     if TextContent.objects.filter(name="footer").exists():
@@ -240,6 +269,7 @@ def load_medien(request):
     # Hero
     context["textContent_hero"] = get_text("main_medien_hero")
     context["textContent_hero_secondary"] = get_text("main_medien_hero_secondary")
+    context["textContent_hero_hint"] = get_text("main_medien_hero_hint")
 
     # Inhaltsarten (Section + 4 Cards)
     context["textContent_inhalte"] = get_text("main_medien_inhalte")

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}{{ block.super }} | Blog - Webdesign Tipps und News{% endblock title %}
 {% block meta_description %}Aktuelle YooLink Artikel zu Webdesign, CMS, SEO, Datenschutz und digitaler Sichtbarkeit.{% endblock %}
@@ -47,7 +47,7 @@
           {% endif %}
           <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}"
              class="mt-5 inline-flex items-center font-semibold text-blue-700 hover:text-blue-900">
-            Lesen <i class="bi bi-arrow-right ml-2"></i>
+            {% trans "blog_card_read_more" %} <i class="bi bi-arrow-right ml-2"></i>
           </a>
         </div>
       </article>
