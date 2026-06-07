@@ -46,7 +46,6 @@ from .forms import fileform, Blogform
 from django.conf import settings
 from PIL import Image
 from io import BytesIO
-from django.core import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import DataError, DatabaseError, IntegrityError, models, transaction
 from rest_framework import status
@@ -179,6 +178,9 @@ def get_or_create_translated_blog(request, id):
         title=original_blog.title,
         slug=original_blog.slug + '-' + lang,
         title_image=original_blog.title_image,
+        title_image_alt=original_blog.title_image_alt,
+        title_image_title=original_blog.title_image_title,
+        title_image_caption=original_blog.title_image_caption,
         author=original_blog.author,
         body=original_blog.body,
         code=original_blog.code,
@@ -1322,6 +1324,9 @@ def create_blog(request):
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
 
         description = (request.POST.get('description') or '').strip()
+        title_image_alt = (request.POST.get('title_image_alt') or '').strip()
+        title_image_title = (request.POST.get('title_image_title') or '').strip()
+        title_image_caption = (request.POST.get('title_image_caption') or '').strip()
         active = request.POST.get('active', False)
         
         title_image = request.FILES.get('title_image', '')
@@ -1348,6 +1353,9 @@ def create_blog(request):
                 markdown=content_data["markdown"],
                 code=content_data["code"],
                 author=request.user,
+                title_image_alt=title_image_alt,
+                title_image_title=title_image_title,
+                title_image_caption=title_image_caption,
             )
             if active == "true":
                 blog.active = True
@@ -1357,6 +1365,9 @@ def create_blog(request):
             if title_image:
                 blog.title_image = optimize_image_for_upload(title_image)
             blog.description = description
+            blog.title_image_alt = title_image_alt
+            blog.title_image_title = title_image_title
+            blog.title_image_caption = title_image_caption
             blog.save()
             return JsonResponse({'success': 'Blog successfully created', 'blogId': blog.id}, status=201)
 
@@ -1382,6 +1393,9 @@ def update_blog(request, id):
         if blog.title != title and Blog.objects.filter(title=title).exists():
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
         description = (request.POST.get('description') or '').strip()
+        title_image_alt = (request.POST.get('title_image_alt') or '').strip()
+        title_image_title = (request.POST.get('title_image_title') or '').strip()
+        title_image_caption = (request.POST.get('title_image_caption') or '').strip()
         active = request.POST.get('active', False)
         title_image = request.FILES.get('title_image', '')
         if title_image:
@@ -1400,6 +1414,9 @@ def update_blog(request, id):
 
             # Create
             blog.description = description
+            blog.title_image_alt = title_image_alt
+            blog.title_image_title = title_image_title
+            blog.title_image_caption = title_image_caption
             blog.title = title
             # 🧠 Slug setzen je nach Original oder Variante
             base_slug = slugify(title)
@@ -1456,6 +1473,9 @@ def blog_details(request, id):
                 title=original_blog.title,
                 slug=original_blog.slug + '-' + lang,
                 title_image=original_blog.title_image,
+                title_image_alt=original_blog.title_image_alt,
+                title_image_title=original_blog.title_image_title,
+                title_image_caption=original_blog.title_image_caption,
                 author=original_blog.author,
                 body=original_blog.body,
                 code=original_blog.code,
@@ -1535,8 +1555,14 @@ def get_galery_images(request):
     if galery.images:
         images_list = []
         for image in galery.images.all():
+            metadata = stored_image_metadata(image.upload)
             image_dict = {
                 'upload_url': image.upload.url,
+                'url': image.upload.url,
+                'id': image.id,
+                'title': image.title,
+                'alt': image.title,
+                'metadata': metadata,
                 'uploaddate': image.uploaddate,
             }
             images_list.append(image_dict)
@@ -1861,23 +1887,20 @@ def all_images(request):
 @cms_permission_required("media.edit")
 def all_galerien(request):
     if request.method == 'GET':
-        galerien = Galerie.objects.all()
+        galerien = Galerie.objects.prefetch_related('images').all()
         galerien_list = []
         
         for galerie in galerien:
-            images = galerie.images.all()  # Retrieve all related images for the galerie
-            
-            # Serialize each image object separately
-            serialized_images = serializers.serialize('json', images)
-            deserialized_images = serializers.deserialize('json', serialized_images)
             image_list = []
             
-            # Loop through deserialized image objects to extract required fields
-            for obj in deserialized_images:
-                image = obj.object
+            for image in galerie.images.all():
+                metadata = stored_image_metadata(image.upload)
                 image_list.append({
                     'url': image.upload.url,
-                    # Add other image fields as needed
+                    'id': image.id,
+                    'title': image.title,
+                    'alt': image.title,
+                    'metadata': metadata,
                 })
             
             galerien_list.append({
@@ -2003,6 +2026,8 @@ def user_settings_update(request):
     price_range = request.POST.get('price_range', '').strip()
     area_served = request.POST.get('area_served', '').strip()
     business_description = request.POST.get('business_description', '').strip()
+    site_meta_description = request.POST.get('site_meta_description', '').strip()
+    site_meta_author = request.POST.get('site_meta_author', '').strip()
     address_region = request.POST.get('address_region', '').strip()
     address_country = request.POST.get('address_country', '').strip()
     geo_latitude = request.POST.get('geo_latitude', '').strip()
@@ -2034,6 +2059,8 @@ def user_settings_update(request):
     website_settings.price_range = price_range
     website_settings.area_served = area_served
     website_settings.business_description = business_description
+    website_settings.site_meta_description = site_meta_description
+    website_settings.site_meta_author = site_meta_author
     website_settings.address_region = address_region
     website_settings.address_country = address_country
     website_settings.geo_latitude = geo_latitude
@@ -3653,4 +3680,3 @@ def get_video_details(request, pk):
         "show_controls": video.show_controls,
         "preload": video.preload,
     }, status=200)
-

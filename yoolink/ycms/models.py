@@ -287,6 +287,9 @@ class Blog(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, default='default-slug', max_length=255)
     title_image = models.ImageField(upload_to=upload_to_blog_image, default="", blank=True)
+    title_image_alt = models.CharField(max_length=255, default="", blank=True)
+    title_image_title = models.CharField(max_length=255, default="", blank=True)
+    title_image_caption = models.CharField(max_length=255, default="", blank=True)
     date = models.DateField(auto_now_add=True)  # Automatically set on creation
     last_updated = models.DateField(auto_now=True)  # Automatically updated on save
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -371,6 +374,8 @@ class WebsiteSettings(models.Model):
     price_range = models.CharField(max_length=50, blank=True, default="ab 40 €/Monat")
     area_served = models.CharField(max_length=255, blank=True, default="Passau, Regensburg, Deggendorf, Niederbayern")
     business_description = models.CharField(max_length=255, blank=True, default="Webdesign Agentur im Raum Niederbayern")
+    site_meta_description = models.TextField(blank=True, default="")
+    site_meta_author = models.CharField(max_length=255, blank=True, default="")
     address_region = models.CharField(max_length=100, blank=True, default="Bayern")
     address_country = models.CharField(max_length=2, blank=True, default="DE")
     geo_latitude = models.CharField(max_length=20, blank=True, default="48.7667")

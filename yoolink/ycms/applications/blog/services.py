@@ -9,7 +9,7 @@ from django.utils.html import strip_tags
 
 ALLOWED_ATTR_RE = re.compile(r"^[a-zA-Z_:][a-zA-Z0-9:._-]*$")
 IMAGE_MARKDOWN_RE = re.compile(r"^!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?$")
-IMAGE_OPTION_RE = re.compile(r"(width|height)=(\"[^\"]+\"|'[^']+'|[^\s}]+)")
+IMAGE_OPTION_RE = re.compile(r"(width|height|title|caption|id)=(\"[^\"]+\"|'[^']+'|[^\s}]+)")
 SHORTCODE_RE = re.compile(r"^::(youtube|video|file)\s*(?:\{([^}]*)\})?\s*$", re.I)
 SHORTCODE_ATTR_RE = re.compile(r"([a-zA-Z_][\w-]*)=(?:\"([^\"]*)\"|'([^']*)'|([^\s}]+))|(?<![=\w-])(controls|autoplay|muted|loop|playsinline)(?![=\w-])")
 GALLERY_START_RE = re.compile(r"^:::\s*gallery(?:\s*\{([^}]*)\})?\s*$", re.I)
@@ -130,7 +130,11 @@ def _parse_image_options(options):
         return parsed
 
     for key, raw_value in IMAGE_OPTION_RE.findall(options):
-        value = _safe_css_size(raw_value.strip("\"'"))
+        raw_value = raw_value.strip("\"'")
+        if key in ("width", "height"):
+            value = _safe_css_size(raw_value)
+        else:
+            value = raw_value.strip()
         if value:
             parsed[key] = value
 
@@ -863,8 +867,18 @@ def render_markdown_to_html(markdown):
             flush_list()
             alt_text = escape(image[0], quote=True)
             src = escape(image[1], quote=True)
-            style = _image_style_attr(_image_css_from_options(image[2]) if image[2] else {})
-            html.append(f'<img src="{src}" alt="{alt_text}" class="rounded-2xl my-4" loading="lazy" decoding="async"{style}>')
+            options = image[2] or {}
+            title_text = escape(options.get("title") or image[0] or "", quote=True)
+            caption_text = escape(options.get("caption") or "")
+            media_id = escape(options.get("id") or "", quote=True)
+            title_attr = f' title="{title_text}"' if title_text else ""
+            id_attr = f' data-media-id="{media_id}"' if media_id else ""
+            style = _image_style_attr(_image_css_from_options(options) if options else {})
+            image_html = f'<img src="{src}" alt="{alt_text}"{title_attr}{id_attr} class="rounded-2xl my-4" loading="lazy" decoding="async"{style}>'
+            if caption_text:
+                html.append(f'<figure class="my-6">{image_html}<figcaption class="mt-2 text-sm text-slate-500">{caption_text}</figcaption></figure>')
+            else:
+                html.append(image_html)
             continue
 
         if _is_raw_html_block(stripped):
@@ -877,7 +891,7 @@ def render_markdown_to_html(markdown):
         if heading:
             flush_paragraph()
             flush_list()
-            level = min(len(heading.group(1)), 6)
+            level = min(len(heading.group(1)) + 1, 6)
             classes = {
                 1: "text-3xl font-bold my-6",
                 2: "text-2xl mb-6 font-bold text-gray-900 lg:text-3xl",
@@ -958,8 +972,12 @@ def _render_inline_markdown(text):
     def render_inline_image(match):
         options = _parse_image_options(match.group(3))
         style = _image_style_attr(_image_css_from_options(options)) if options else ""
+        title_text = escape(options.get("title") or match.group(1) or "", quote=True)
+        media_id = escape(options.get("id") or "", quote=True)
+        title_attr = f' title="{title_text}"' if title_text else ""
+        id_attr = f' data-media-id="{media_id}"' if media_id else ""
         return stash(
-            f'<img src="{escape(match.group(2), quote=True)}" alt="{escape(match.group(1), quote=True)}" loading="lazy" decoding="async"{style}>'
+            f'<img src="{escape(match.group(2), quote=True)}" alt="{escape(match.group(1), quote=True)}"{title_attr}{id_attr} loading="lazy" decoding="async"{style}>'
         )
 
     escaped = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]*)\})?", render_inline_image, escaped)
@@ -1031,6 +1049,8 @@ def render_blog_code_to_html(code):
 
         if not ALLOWED_ATTR_RE.match(tag_name):
             tag_name = "div"
+        if tag_name.lower() == "h1":
+            tag_name = "h2"
 
         attributes = dict(block.get("attributes") or {})
         if name == "image":
@@ -1083,6 +1103,8 @@ def _render_attrs(attributes, css):
 def _render_gallery(block, attrs):
     images = block.get("images") or []
     image_alts = block.get("imageAlts") or []
+    image_titles = block.get("imageTitles") or []
+    image_ids = block.get("imageIds") or []
     image_class = block.get("imageClass") or "w-full rounded-xl"
     image_style = _image_style_attr(block.get("css") or {})
     image_html = ""
@@ -1090,9 +1112,13 @@ def _render_gallery(block, attrs):
         if not url:
             continue
         alt_text = image_alts[index] if index < len(image_alts) else ""
+        title_text = image_titles[index] if index < len(image_titles) else alt_text
+        media_id = image_ids[index] if index < len(image_ids) else ""
+        title_attr = f' title="{escape(str(title_text), quote=True)}"' if title_text else ""
+        id_attr = f' data-media-id="{escape(str(media_id), quote=True)}"' if media_id else ""
         image_html += (
             f'<div><img src="{escape(str(url), quote=True)}" '
             f'alt="{escape(str(alt_text), quote=True)}" '
-            f'class="{escape(image_class, quote=True)}" loading="lazy" decoding="async"{image_style}></div>'
+            f'class="{escape(image_class, quote=True)}"{title_attr}{id_attr} loading="lazy" decoding="async"{image_style}></div>'
         )
     return f"<div{attrs}>{image_html}</div>"

@@ -84,7 +84,7 @@
 
       <div class="relative">
         {% if blog.title_image %}
-        <img src="{{ blog.title_image.url }}" alt="{{ blog.title }}" class="h-40 w-full object-cover">
+        <img src="{{ blog.title_image.url }}" alt="{{ blog.title_image_alt|default:blog.title }}" title="{{ blog.title_image_title|default:blog.title }}" class="h-40 w-full object-cover">
         {% else %}
         <div class="flex h-40 w-full items-center justify-center bg-gray-100 text-gray-400"><i class="bi bi-image text-3xl"></i></div>
         {% endif %}

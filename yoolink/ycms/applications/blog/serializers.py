@@ -83,6 +83,9 @@ class ExternalBlogListSerializer(serializers.ModelSerializer):
             "title",
             "slug",
             "description",
+            "title_image_alt",
+            "title_image_title",
+            "title_image_caption",
             "active",
             "language",
             "original",
@@ -147,6 +150,9 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             "body",
             "markdown",
             "code",
+            "title_image_alt",
+            "title_image_title",
+            "title_image_caption",
             "active",
             "language",
             "original",
@@ -308,7 +314,9 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         blog = Blog.objects.create(author=request.user, **validated_data)
 
         if title_image:
-            blog.title_image = title_image
+            from yoolink.ycms.views import optimize_image_for_upload
+
+            blog.title_image = optimize_image_for_upload(title_image)
             blog.save(update_fields=["title_image", "last_updated"])
         elif title_image_media:
             self._copy_title_image_from_media(blog, title_image_media)
@@ -324,7 +332,12 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
             setattr(instance, field, value)
 
         if title_image_supplied:
-            instance.title_image = title_image or ""
+            if title_image:
+                from yoolink.ycms.views import optimize_image_for_upload
+
+                instance.title_image = optimize_image_for_upload(title_image)
+            else:
+                instance.title_image = ""
 
         instance.save()
         if title_image_media:
@@ -336,6 +349,11 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         try:
             filename = os.path.basename(media.file.name)
             blog.title_image.save(filename, media.file, save=True)
+            if not blog.title_image_title:
+                blog.title_image_title = media.title or ""
+            if not blog.title_image_alt:
+                blog.title_image_alt = media.title or blog.title
+            blog.save(update_fields=["title_image_title", "title_image_alt", "last_updated"])
         finally:
             media.file.close()
 

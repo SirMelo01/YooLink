@@ -13,21 +13,46 @@
 {% block twitter_description %}{{ blog_excerpt }}{% endblock %}
 {% block twitter_image %}{% if blog_image_url %}{{ blog_image_url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
+{% block extra_meta %}
+<meta property="article:published_time" content="{{ blog.date|date:'c' }}">
+<meta property="article:modified_time" content="{{ blog.last_updated|date:'c' }}">
+<meta property="article:author" content="{{ blog.author }}">
+{% endblock %}
+
 {% block structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "{{ blog.title|escapejs }}",
+  "url": "{{ canonical_url }}",
   "description": "{{ blog_excerpt|escapejs }}",
+  "inLanguage": "{{ blog_language|default:request.LANGUAGE_CODE|escapejs }}",
+  "wordCount": {{ blog_word_count|default:0 }},
+  "isAccessibleForFree": true,
   "datePublished": "{{ blog.date|date:'c' }}",
   "dateModified": "{{ blog.last_updated|date:'c' }}",
   "author": {
     "@type": "Person",
     "name": "{{ blog.author|escapejs }}"
   },
-  "mainEntityOfPage": "{{ canonical_url }}"{% if blog_image_url %},
-  "image": "{{ blog_image_url }}"{% endif %}
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ canonical_url }}"
+  },
+  {% if blog_image_url %}
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ blog_image_url }}",
+    "name": "{{ blog_image_title|escapejs }}",
+    "caption": "{{ blog_image_caption|default:blog_image_alt|escapejs }}"
+  },
+  "thumbnailUrl": "{{ blog_image_url }}",
+  {% endif %}
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ owner_data.company_name|default:'YooLink'|escapejs }}"
+  }
 }
 </script>
 {% endblock %}
@@ -54,6 +79,11 @@
         <time class="inline-flex items-center gap-2" pubdate datetime="{{ blog.date|date:'Y-m-d' }}">
           <i class="bi bi-calendar3"></i>{{ blog.date|date:"d.m.Y" }}
         </time>
+        {% if blog.last_updated != blog.date %}
+        <time class="inline-flex items-center gap-2" datetime="{{ blog.last_updated|date:'Y-m-d' }}">
+          <i class="bi bi-arrow-repeat"></i>Aktualisiert {{ blog.last_updated|date:"d.m.Y" }}
+        </time>
+        {% endif %}
         <span class="inline-flex items-center gap-2"><i class="bi bi-clock"></i>{{ blog_reading_time }} Min. Lesezeit</span>
       </div>
     </div>
@@ -61,6 +91,21 @@
 
   <div class="mx-auto grid max-w-6xl gap-10 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:py-14">
     <article class="min-w-0 space-y-6 format format-sm sm:format-base lg:format-lg format-blue">
+      <header class="not-format">
+        <h1 class="text-4xl font-extrabold leading-tight text-slate-950 md:text-5xl">{{ blog.title }}</h1>
+        {% if blog.description %}
+        <p class="mt-4 text-lg leading-8 text-slate-600">{{ blog.description }}</p>
+        {% endif %}
+      </header>
+      {% if blog_image_url %}
+      <figure class="not-format">
+        <img src="{{ blog_image_url }}" alt="{{ blog_image_alt }}" title="{{ blog_image_title }}"
+             class="aspect-[16/9] w-full rounded-lg object-cover" fetchpriority="high" decoding="async">
+        {% if blog_image_caption %}
+        <figcaption class="mt-2 text-sm leading-6 text-slate-500">{{ blog_image_caption }}</figcaption>
+        {% endif %}
+      </figure>
+      {% endif %}
       {% if blog.active %}
         {{ consent_safe_body|safe }}
       {% else %}
@@ -77,7 +122,7 @@
           {% for related in related_blogs %}
           <a href="{{ related.get_absolute_url }}" class="group block">
             {% if related.title_image %}
-            <img class="mb-3 aspect-[16/9] w-full rounded-md object-cover" src="{{ related.title_image.url }}" alt="{{ related.title }}">
+            <img class="mb-3 aspect-[16/9] w-full rounded-md object-cover" src="{{ related.title_image.url }}" alt="{{ related.title_image_alt|default:related.title }}" title="{{ related.title_image_title|default:related.title }}" loading="lazy" decoding="async">
             {% endif %}
             <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ related.last_updated|date:"d.m.Y" }}</p>
             <h3 class="mt-1 text-base font-bold leading-snug text-slate-900 group-hover:text-blue-700">{{ related.title }}</h3>

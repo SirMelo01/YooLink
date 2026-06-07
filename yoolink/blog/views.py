@@ -1,3 +1,4 @@
+import re
 from html import escape
 from html.parser import HTMLParser
 
@@ -189,6 +190,10 @@ class BlogDetailView(DetailView):
         word_count = len(strip_tags(source).split())
         return max(1, round(word_count / 220))
 
+    def _word_count(self, blog):
+        source = blog.markdown or blog.body or ""
+        return len(strip_tags(source).split())
+
     def _excerpt(self, blog):
         source = blog.description or strip_tags(blog.markdown or blog.body or "")
         return Truncator(" ".join(source.split())).chars(155)
@@ -197,6 +202,31 @@ class BlogDetailView(DetailView):
         if not blog.title_image:
             return ""
         return self.request.build_absolute_uri(blog.title_image.url)
+
+    def _image_alt(self, blog):
+        return (blog.title_image_alt or blog.title_image_title or blog.title or "").strip()
+
+    def _image_title(self, blog):
+        return (blog.title_image_title or blog.title_image_alt or blog.title or "").strip()
+
+    def _strip_duplicate_intro_heading(self, html, title):
+        title = " ".join((title or "").split())
+        if not html or not title:
+            return html
+
+        match = re.match(r"^\s*<h[12]\b[^>]*>.*?</h[12]>", html, flags=re.IGNORECASE | re.DOTALL)
+        if not match:
+            return html
+
+        heading_text = " ".join(strip_tags(match.group(0)).split())
+        if heading_text == title:
+            return html[match.end():]
+        return html
+
+    def _demote_body_h1(self, html):
+        if not html:
+            return html
+        return re.sub(r"<(/?)h1(\b[^>]*)>", r"<\1h2\2>", html, flags=re.IGNORECASE)
 
     def _localized_blog(self, blog, lang):
         if blog.language == lang and blog.active:
@@ -226,10 +256,17 @@ class BlogDetailView(DetailView):
         blog = context["blog"]
         lang = get_active_language(self.request)
         rendered_body = render_markdown_to_html(blog.markdown) if blog.markdown else blog.body
+        rendered_body = self._demote_body_h1(rendered_body)
+        rendered_body = self._strip_duplicate_intro_heading(rendered_body, blog.title)
         context["consent_safe_body"] = consent_gate_iframes(rendered_body)
         context["blog_excerpt"] = self._excerpt(blog)
+        context["blog_word_count"] = self._word_count(blog)
+        context["blog_language"] = blog.language or lang
         context["blog_reading_time"] = self._reading_time(blog)
         context["blog_image_url"] = self._absolute_image_url(blog)
+        context["blog_image_alt"] = self._image_alt(blog)
+        context["blog_image_title"] = self._image_title(blog)
+        context["blog_image_caption"] = blog.title_image_caption
         context["canonical_url"] = self.request.build_absolute_uri(blog.get_absolute_url())
         context["related_blogs"] = self._related_blogs(blog, lang)
         return context

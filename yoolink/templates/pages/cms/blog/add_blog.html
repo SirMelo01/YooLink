@@ -5,229 +5,225 @@
 {% block javascript %}
 <!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
 <script src="{% static 'js/cms/sortable/sortable.js' %}"></script>
-<!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
-<!-- Add the slick-theme.css if you want default styling -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
 <link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
-</link>
 <script type="text/javascript" src="{% static 'js/cms/blog/nicEdit.js' %}"></script>
-
 {% endblock %}
 
 {% block content %}
-<!--<form method="POST">
-    {% csrf_token %}
-    {{ blogform }}
-    <button>Post</button>-->
-
-<!-- **************** Preview-Modal **************** -->
-<!-- Will be opened if the user clicks on one of the info buttons -->
+<!-- **************** Modals **************** -->
 {% include 'pages/cms/blog/modals/PreviewModal.html' %}
-
 {% include 'pages/cms/blog/modals/AnyFileModal.html' %}
-
 {% include 'pages/cms/blog/modals/VideoModal.html' %}
-
 {% include 'pages/cms/blog/modals/ImageModal.html' %}
-
 {% include 'pages/cms/blog/modals/MarkdownImageModal.html' %}
-
 {% include 'pages/cms/blog/modals/MarkdownMediaModal.html' %}
-
 {% include 'pages/cms/blog/modals/YoutubeModal.html' %}
-
 {% include 'pages/cms/blog/modals/GaleryModal.html' %}
 
-<!-- **************** Content **************** -->
+<div class="mx-auto max-w-[1500px]">
+  {% csrf_token %}
 
-<div id="editorModeSwitch" class="mb-3 flex flex-wrap items-center gap-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
-    <span class="text-sm font-semibold text-gray-700">Editor</span>
-    <button type="button" data-blog-editor-mode="builder"
-        class="blog-editor-mode rounded-lg border px-4 py-2 text-sm font-semibold transition">
-        <i class="bi bi-layout-three-columns"></i> Builder
-    </button>
-    <button type="button" data-blog-editor-mode="markdown"
-        class="blog-editor-mode rounded-lg border px-4 py-2 text-sm font-semibold transition">
-        <i class="bi bi-markdown"></i> Markdown
-    </button>
-    <a class="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 hover:text-gray-950"
-        href="{% url 'cms:blog-view' %}" title="Zur Blog Übersicht">
-        <i class="bi bi-house"></i>
-        <span class="hidden sm:inline">Übersicht</span>
-    </a>
-</div>
+  <!-- **************** Sticky Control-Center **************** -->
+  <div id="editorModeSwitch"
+       class="z-40 mb-4 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-sm backdrop-blur lg:sticky lg:top-[4.25rem]">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <!-- Modus-Umschalter -->
+      <div class="inline-flex items-center gap-1 rounded-xl bg-slate-100 p-1">
+        <button type="button" data-blog-editor-mode="builder" aria-pressed="true"
+            class="blog-editor-mode inline-flex items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-semibold transition">
+            <i class="bi bi-grid-1x2"></i> <span>Builder</span>
+        </button>
+        <button type="button" data-blog-editor-mode="markdown" aria-pressed="false"
+            class="blog-editor-mode inline-flex items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-semibold transition">
+            <i class="bi bi-markdown"></i> <span>Markdown</span>
+        </button>
+      </div>
 
-<div id="buttonBar" class="sticky top-[4.25rem] z-[45] mb-3 flex w-full gap-2 overflow-x-auto rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-shadow duration-300 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:p-4">
-    <button id="addTitle" class="shrink-0 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600">
-        <i class="bi bi-fonts"></i> Titel I
-    </button>
-    <button id="addTitle2" class="shrink-0 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600">
-        <i class="bi bi-fonts"></i> Titel II
-    </button>
-    <button id="addTitle3" class="shrink-0 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600">
-        <i class="bi bi-fonts"></i> Titel III
-    </button>
-    <button id="addText" class="shrink-0 rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white hover:bg-orange-700" title="Text hinzufügen">
-        <i class="bi bi-card-text"></i> Text
-    </button>
-    <button id="addImage"
-        class="shrink-0 rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700" title="BIld hinzufügen">
-        <i class="bi bi-image"></i> Bild
-    </button>
-    <button id="addGalerie"
-        class="shrink-0 rounded-lg bg-cyan-600 px-4 py-2 font-semibold text-white hover:bg-cyan-700" title="Galerie hinzufügen">
-        <i class="bi bi-images"></i> Galerie
-    </button>
-     <button id="addVideoCMS"
-        class="shrink-0 rounded-lg bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700" title="Video hinzufügen">
-        <i class="bi bi-file-play"></i> Video
-    </button>
-    <button id="addVideo"
-        class="shrink-0 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700" title="YouTube Video hinzufügen">
-        <i class="bi bi-youtube"></i>
-    </button>
-    <button id="addCode"
-        class="shrink-0 rounded-lg bg-fuchsia-600 px-4 py-2 font-semibold text-white hover:bg-fuchsia-700" title="Code hinzufügen">
-        <i class="bi bi-code-slash"></i>
-    </button>
-    <button id="addFile"
-        class="shrink-0 rounded-lg bg-cyan-600 px-4 py-2 font-semibold text-white hover:bg-cyan-700" title="Datei hinzufügen">
-        <i class="bi bi-file-earmark"></i>
-    </button>
-</div>
-<div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
-    <div class="xl:col-span-2">
-    <div id="builderEditorPanel">
-    <div class="nested-sortable min-h-[10rem] w-full rounded-2xl border border-gray-200 p-3 shadow-xl sm:p-4" id="blogContent">
-
-        <!-- Text -->
-        <div class="relative" element-type="textArea">
-            <span
-                class="absolute top-0 right-0 inline-block px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#051AFF"
-                class="bi bi-arrows-move absolute top-0 right-1/2 inline-block rounded-full not-sortable font-bold text-xl z-40 hover:cursor-pointer handle"
-                viewBox="0 0 24 24">
-                <path fill-rule="evenodd"
-                    d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z" />
+      <!-- Aktionen -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="{% url 'cms:blog-view' %}" title="Zur Blog Übersicht"
+           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+            <i class="bi bi-arrow-left"></i> <span class="hidden sm:inline">Übersicht</span>
+        </a>
+        <button id="preview" type="button"
+            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-100 sm:flex-none">
+            <i class="bi bi-eye"></i> Vorschau
+        </button>
+        <button id="createBlog" type="button"
+            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700 sm:flex-none">
+            <svg class="h-4 w-4 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <textarea id="textArea1"
-                class="textArea w-full px-4 py-2 my-3 rounded-2xl border border-gray-300 focus:outline-none focus:border-blue-500 min-h-[5rem]"
-                rows="4" placeholder="Text">
-            </textarea>
-        </div>
+            <i class="bi bi-check-circle"></i> Erstellen
+        </button>
+      </div>
+    </div>
 
+    <!-- Element-Werkzeugleiste (nur im Builder-Modus) -->
+    <div id="buttonBar"
+         class="mt-3 flex w-full gap-2 overflow-x-auto border-t border-slate-100 pt-3 [scrollbar-width:thin] sm:flex-wrap sm:overflow-visible">
+        <button id="addTitle" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50" title="Überschrift 1">
+            <i class="bi bi-type-h1 text-blue-600"></i> Titel 1
+        </button>
+        <button id="addTitle2" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50" title="Überschrift 2">
+            <i class="bi bi-type-h2 text-blue-600"></i> Titel 2
+        </button>
+        <button id="addTitle3" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50" title="Überschrift 3">
+            <i class="bi bi-type-h3 text-blue-600"></i> Titel 3
+        </button>
+        <button id="addText" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50" title="Text hinzufügen">
+            <i class="bi bi-card-text text-slate-600"></i> Text
+        </button>
+        <span class="mx-0.5 hidden w-px self-stretch bg-slate-200 sm:block"></span>
+        <button id="addImage" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-violet-300 hover:bg-violet-50" title="Bild hinzufügen">
+            <i class="bi bi-image text-violet-600"></i> Bild
+        </button>
+        <button id="addGalerie" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-cyan-300 hover:bg-cyan-50" title="Galerie hinzufügen">
+            <i class="bi bi-images text-cyan-600"></i> Galerie
+        </button>
+        <button id="addVideoCMS" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50" title="Video hinzufügen">
+            <i class="bi bi-film text-emerald-600"></i> Video
+        </button>
+        <button id="addVideo" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-rose-300 hover:bg-rose-50" title="YouTube Video hinzufügen">
+            <i class="bi bi-youtube text-rose-600"></i> YouTube
+        </button>
+        <button id="addCode" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-fuchsia-300 hover:bg-fuchsia-50" title="Code hinzufügen">
+            <i class="bi bi-code-slash text-fuchsia-600"></i> Code
+        </button>
+        <button id="addFile" class="blog-tool shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-amber-300 hover:bg-amber-50" title="Datei hinzufügen">
+            <i class="bi bi-paperclip text-amber-600"></i> Datei
+        </button>
     </div>
-    </div>
-    <div id="markdownEditorPanel" class="hidden rounded-2xl border border-gray-200 bg-white p-3 shadow-xl sm:p-4">
-        <label class="mb-3 block text-lg font-semibold text-gray-800" for="blogMarkdown">Markdown</label>
+  </div>
+
+  <!-- **************** Editor + Einstellungen **************** -->
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+
+    <!-- ── Editor (Hauptspalte) ── -->
+    <div class="space-y-4 lg:col-span-2">
+      <!-- Blog-Titel (immer sichtbar) -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <label for="blogTitle" class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">Blog-Titel</label>
+        <input type="text" id="blogTitle" placeholder="Worum geht es in diesem Beitrag?"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-lg font-semibold text-slate-900 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+      </div>
+
+      <!-- Builder -->
+      <div id="builderEditorPanel">
+        <div class="nested-sortable min-h-[16rem] w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" id="blogContent">
+            <!-- Start-Element: Text -->
+            <div class="relative" element-type="textArea">
+                <span class="absolute top-0 right-0 z-40 inline-block rounded-full bg-red-500 px-2 py-1 text-sm text-white not-sortable hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>
+                <span class="absolute top-0 right-1/2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm text-white not-sortable hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>
+                <textarea id="textArea1"
+                    class="textArea my-3 min-h-[5rem] w-full rounded-2xl border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                    rows="4" placeholder="Text"></textarea>
+            </div>
+        </div>
+      </div>
+
+      <!-- Markdown -->
+      <div id="markdownEditorPanel" class="hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+        <div class="mb-3 flex items-center justify-between">
+            <label class="text-base font-semibold text-slate-800" for="blogMarkdown"><i class="bi bi-markdown text-slate-500"></i> Markdown</label>
+        </div>
         <textarea id="blogMarkdown" rows="22" spellcheck="false"
-            class="min-h-[32rem] w-full resize-y rounded-2xl border border-gray-300 bg-slate-50 px-4 py-3 font-mono text-sm leading-6 text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            class="min-h-[60vh] w-full resize-y rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 font-mono text-sm leading-6 text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
             placeholder="## Abschnitt&#10;&#10;Text einfügen oder schreiben.&#10;&#10;![Bildtext](/media/yoolink/images/bild.png)"></textarea>
 
         <div class="mt-3 flex flex-wrap items-center gap-2">
             <button id="openMarkdownImageModal" type="button"
                 class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"
                 title="Bild einfügen">
-                <i class="bi bi-image"></i> Bild
+                <i class="bi bi-image text-violet-600"></i> Bild
             </button>
             <button id="openMarkdownMediaModal" type="button"
                 class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"
                 title="Medien und Builder-Elemente einfügen">
-                <i class="bi bi-plus-square"></i> Elemente
+                <i class="bi bi-plus-square text-blue-600"></i> Elemente
             </button>
         </div>
+      </div>
     </div>
-    </div>
-    <!-- XXX -->
-    <div class="h-fit max-h-fit rounded-xl border border-gray-200 p-3 shadow-xl sm:p-4">
-        <div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
-            {% csrf_token %}
-            <button id="preview"
-                class="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white hover:bg-orange-600 sm:w-auto sm:py-2">
-                <i class="bi bi-eye"></i> Preview
-            </button>
-            <button id="createBlog"
-                class="flex w-full items-center justify-center rounded-lg bg-green-500 px-4 py-3 font-semibold text-white hover:bg-green-600 sm:w-auto sm:py-2">
-                <i class="bi bi-plus-circle mr-1"></i> <svg class="mr-3 h-5 w-5 animate-spin text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg> Erstellen
-            </button>
-        </div>
 
-        <div class="p-4">
-            <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg mt-6 mb-2">Blog Titel</label>
-            <input type="text"
-                    id="blogTitle"
-                    class="text-lg w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative"
-                    placeholder="Titel">
-        </div>
+    <!-- ── Einstellungen (Seitenspalte) ── -->
+    <aside class="space-y-4 lg:col-span-1">
 
-        <div class="p-4">
-            <label class="block leading-5 font-medium text-gray-700 text-lg mb-2" for="blogDescription">Beschreibung</label>
-            <p class="mb-2 text-sm text-gray-500">Pflichtfeld für Blogkarten, Vorschau und SEO Meta Description.</p>
-            <textarea
-                id="blogDescription"
-                rows="4"
-                maxlength="320"
-                class="text-base w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative"
-                placeholder="Kurze Zusammenfassung des Blogartikels"></textarea>
-        </div>
-        
+      <!-- Beschreibung -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <label class="block text-sm font-semibold text-slate-900" for="blogDescription">Beschreibung</label>
+        <p class="mt-1 mb-2 text-xs text-slate-500">Pflichtfeld für Blogkarten, Vorschau und SEO Meta Description.</p>
+        <textarea id="blogDescription" rows="4" maxlength="320"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            placeholder="Kurze Zusammenfassung des Blogartikels"></textarea>
+      </div>
 
-        <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg px-4">Titelbild</label>
-        <div class="extraOutline m-auto w-full rounded-lg bg-white p-3 sm:p-4">
-            <div class="file_upload relative w-full rounded-lg border-4 border-dotted border-gray-300 bg-cover p-4 sm:p-5"
-                id="fileUpload">
-                <svg class="text-indigo-500 w-24 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <div class="input_field mx-auto flex w-full max-w-xs flex-col text-center">
-                    <label>
-                        <input id="titleImgUpload" class="text-sm cursor-pointer w-36 hidden" type="file" accept="image/jpg,image/png,image/jpeg,image/gif" />
-                        <div
-                            class="text bg-indigo-600 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-indigo-500">
-                            Auswählen</div>
-                    </label>
+      <!-- Titelbild -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 class="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900"><i class="bi bi-card-image text-indigo-500"></i> Titelbild</h2>
 
-                    <!--<div class="title text-indigo-500 uppercase" id="fileText">Keine ausgewählt</div>-->
-                </div>
+        <div class="extraOutline">
+            <div id="fileUpload"
+                 class="file_upload group relative flex min-h-[10rem] w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 bg-cover bg-center p-4 transition hover:border-blue-400 hover:bg-blue-50">
+                <label class="input_field flex cursor-pointer flex-col items-center gap-1.5 rounded-xl bg-white/85 px-4 py-3 text-center shadow-sm ring-1 ring-slate-200 backdrop-blur">
+                    <input id="titleImgUpload" class="sr-only" type="file" accept="image/jpg,image/png,image/jpeg,image/gif,image/webp" />
+                    <span class="grid h-10 w-10 place-items-center rounded-full bg-indigo-100 text-indigo-600"><i class="bi bi-cloud-arrow-up text-xl"></i></span>
+                    <span class="text-sm font-semibold text-slate-700">Bild auswählen</span>
+                    <span class="text-xs text-slate-400">PNG, JPG, GIF oder WEBP</span>
+                </label>
             </div>
         </div>
 
-        <div class="p-4">
-            <label id="assigned-to-label" class="block leading-5 font-medium text-gray-700 text-lg">Blog Layout</label>
-            <p class="mt-2 mb-4 text-sm">Wähle ein Layout-Format für den gesamten Blog</p>
-            <div class="relative h-10 w-72 min-w-[200px]">
-                <select id="blogLayout" class="peer z-40 h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 focus:border-2 focus:border-blue-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50">
-                  <option value="left">Linksbündig</option>
-                  <option value="center">Center</option>
-                  <option value="right">Rechtsbündig</option>
-                </select>
-                <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                  Layout auswählen
-                </label>
-              </div>
+        <div class="mt-4 space-y-3">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500" for="titleImageAlt">Alt-Text</label>
+                <input id="titleImageAlt" type="text" maxlength="255"
+                    class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    placeholder="Bildbeschreibung für Screenreader &amp; SEO">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500" for="titleImageTitle">Bildtitel</label>
+                <input id="titleImageTitle" type="text" maxlength="255"
+                    class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    placeholder="Kurzer Titel des Titelbildes">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500" for="titleImageCaption">Bildunterschrift</label>
+                <input id="titleImageCaption" type="text" maxlength="255"
+                    class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    placeholder="Optional sichtbar im Blog">
+            </div>
+        </div>
+      </div>
+
+      <!-- Layout & Status -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div>
+            <label class="block text-sm font-semibold text-slate-900" for="blogLayout">Blog-Layout</label>
+            <p class="mt-1 mb-2 text-xs text-slate-500">Ausrichtung des gesamten Beitrags.</p>
+            <select id="blogLayout"
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                <option value="left">Linksbündig</option>
+                <option value="center">Zentriert</option>
+                <option value="right">Rechtsbündig</option>
+            </select>
         </div>
 
-        <div class="flex justify-center w-full mb-6 mt-6">
-            <label class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 self-start w-32" for="title">
-                Aktiv
-            </label>
-            <input
-                class="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-blue-400 checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-blue-500 checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-blue-400 checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-blue-400 dark:checked:after:bg-blue-400 dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-                type="checkbox" role="switch" id="activeSwitch" />
-        </div>
+        <label class="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span>
+                <span class="block text-sm font-semibold text-slate-900">Veröffentlicht</span>
+                <span class="block text-xs text-slate-500">Beitrag ist auf der Website sichtbar.</span>
+            </span>
+            <input type="checkbox" role="switch" id="activeSwitch" class="cms-switch-input">
+        </label>
+      </div>
 
-
-    </div>
+    </aside>
+  </div>
 </div>
-
-
-
 {% endblock %}
 
 {% block javascriptend %}
@@ -237,5 +233,4 @@
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 {% endcompress js %}
 <script src="{% static 'js/prism/prism.js' %}" data-manual></script>
-
 {% endblock javascriptend %}

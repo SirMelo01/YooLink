@@ -143,10 +143,10 @@ def build_site_schema_jsonld(owner):
     street, postal_code, locality = _parse_address(
         _field(owner, "address", ""), _FALLBACK_STREET, _POSTAL_CODE, _LOCALITY
     )
-    founder_name = _field(owner, "full_name", _OWNER_PERSON)
+    founder_name = _field(owner, "owner_name", _OWNER_PERSON)
     legal_name = f"{name} – Inhaber {founder_name}"
     price_range = _field(owner, "price_range", _PRICE_RANGE)
-    description = _field(owner, "business_description", _DESCRIPTION)
+    description = _field(owner, "site_meta_description", "") or _field(owner, "business_description", _DESCRIPTION)
     region = _field(owner, "address_region", _REGION)
     country = _field(owner, "address_country", _COUNTRY)
     same_as = _same_as(owner)

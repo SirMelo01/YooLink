@@ -29,7 +29,7 @@
       <article class="flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
         <a href="{% url 'blog:blog-detail' pk=blog.pk slug_title=blog.slug %}" class="block">
           {% if blog.title_image %}
-          <img class="aspect-[16/10] w-full object-cover" loading="lazy" src="{{ blog.title_image.url }}" alt="{{ blog.title }}">
+          <img class="aspect-[16/10] w-full object-cover" loading="lazy" decoding="async" src="{{ blog.title_image.url }}" alt="{{ blog.title_image_alt|default:blog.title }}" title="{{ blog.title_image_title|default:blog.title }}">
           {% else %}
           <div class="aspect-[16/10] w-full bg-slate-100"></div>
           {% endif %}

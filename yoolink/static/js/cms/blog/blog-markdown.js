@@ -3,6 +3,8 @@
         activePanel: 'markdownImageLibraryPanel',
         imageLibraryItems: [],
         imageLibraryLoaded: false,
+        imageLibraryPage: 1,
+        imageLibraryPagination: null,
         objectUrl: '',
         selectedFile: null,
         selectedImage: null,
@@ -52,7 +54,7 @@
         return null;
     }
 
-    function imageOptionsSuffix() {
+    function imageOptionsSuffix(extraOptions) {
         const width = normalizeCssSize($('#markdownImageWidth').val());
         const height = normalizeCssSize($('#markdownImageHeight').val());
         if (width === null || height === null) {
@@ -63,6 +65,12 @@
         const parts = [];
         if (width) parts.push('width=' + width);
         if (height) parts.push('height=' + height);
+        Object.keys(extraOptions || {}).forEach(function (key) {
+            const value = extraOptions[key];
+            if (value !== null && value !== undefined && value !== '') {
+                parts.push(key + '=' + markdownAttrValue(value));
+            }
+        });
         return parts.length ? '{' + parts.join(' ') + '}' : '';
     }
 
@@ -227,9 +235,13 @@
         $(textarea).trigger('input');
     }
 
-    function insertImageMarkdown(url, altText) {
+    function insertImageMarkdown(url, altText, imageData) {
         if (!url) return false;
-        const suffix = imageOptionsSuffix();
+        const extraOptions = {};
+        const title = imageData && (imageData.title || imageData.alt);
+        if (title) extraOptions.title = title;
+        if (imageData && imageData.id) extraOptions.id = imageData.id;
+        const suffix = imageOptionsSuffix(extraOptions);
         if (suffix === null) return false;
 
         insertAtCursor('\n\n![' + markdownAlt(altText) + '](' + url + ')' + suffix + '\n\n');
@@ -494,7 +506,12 @@
             const lines = gallery.images
                 .filter(function (image) { return image && image.url; })
                 .map(function (image, index) {
-                    return '![Galeriebild ' + (index + 1) + '](' + image.url + ')';
+                    const alt = image.alt || image.title || gallery.title || 'Galeriebild ' + (index + 1);
+                    const options = {};
+                    if (image.title) options.title = image.title;
+                    if (image.id) options.id = image.id;
+                    const suffix = shortcodeAttrs(options).replace('{}', '');
+                    return '![' + markdownAlt(alt) + '](' + image.url + ')' + suffix;
                 });
             insertAtCursor('\n\n:::gallery' + shortcodeAttrs(options).replace('{}', '') + '\n' + lines.join('\n') + '\n:::\n\n');
         } else if (state.activeMediaPanel === 'markdownFilePanel') {
@@ -532,6 +549,9 @@
     function resetImageModalState() {
         state.selectedImage = null;
         state.selectedFile = null;
+        state.imageLibraryLoaded = false;
+        state.imageLibraryPage = 1;
+        state.imageLibraryPagination = null;
         if (state.objectUrl) {
             URL.revokeObjectURL(state.objectUrl);
             state.objectUrl = '';
@@ -541,6 +561,7 @@
         $('#markdownImageSelectedFileName').text('JPG, PNG, GIF oder WebP');
         refreshSelectedPreview('');
         renderImageLibrary(state.imageLibraryItems);
+        renderImagePagination();
         updateInsertState();
     }
 
@@ -579,7 +600,7 @@
         if (!$('#markdownImageAlt').val()) {
             $('#markdownImageAlt').val(image.title || 'Bild');
         }
-        refreshSelectedPreview(image.url);
+        refreshSelectedPreview(image.preview_url || image.url);
         renderImageLibrary(state.imageLibraryItems);
         updateInsertState();
     }
@@ -604,27 +625,24 @@
     }
 
     function renderImageLibrary(items) {
-        const query = ($('#markdownImageSearchInput').val() || '').toLowerCase().trim();
-        const filteredItems = (items || []).filter(function (image) {
-            return !query || String(image.title || '').toLowerCase().includes(query);
-        });
         const $grid = $('#markdownImageLibrary');
         $grid.empty();
 
-        if (!filteredItems.length) {
+        if (!items || !items.length) {
             $('#markdownImageEmpty').removeClass('hidden');
+            renderImagePagination();
             return;
         }
 
         $('#markdownImageEmpty').addClass('hidden');
-        filteredItems.forEach(function (image) {
+        items.forEach(function (image) {
             const title = image.title || 'Bild';
             const selected = state.selectedImage && state.selectedImage.url === image.url;
             const $button = $('<button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 transition hover:-translate-y-0.5 hover:shadow-lg"></button>');
             $button.toggleClass('ring-blue-500', selected);
             $button.toggleClass('ring-slate-200 hover:ring-blue-300', !selected);
             const $img = $('<img class="h-36 w-full object-cover" loading="lazy">');
-            $img.attr('src', image.url);
+            $img.attr('src', image.preview_url || image.url);
             $img.attr('alt', title);
             const $caption = $('<span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent px-3 pb-3 pt-8 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100"></span>');
             $caption.html(escapeHtml(title));
@@ -634,9 +652,20 @@
             });
             $grid.append($button);
         });
+        renderImagePagination();
     }
 
-    function loadImageLibrary(force) {
+    function renderImagePagination() {
+        const pagination = state.imageLibraryPagination || {};
+        const page = pagination.page || state.imageLibraryPage || 1;
+        const totalPages = pagination.total_pages || 1;
+        $('#markdownImagePageInfo').text('Seite ' + page + ' / ' + totalPages);
+        $('#markdownImagePrevPage').prop('disabled', !pagination.has_previous);
+        $('#markdownImageNextPage').prop('disabled', !pagination.has_next);
+    }
+
+    function loadImageLibrary(force, page) {
+        const nextPage = page || state.imageLibraryPage || 1;
         if (state.imageLibraryLoaded && !force) {
             renderImageLibrary(state.imageLibraryItems);
             return;
@@ -647,9 +676,16 @@
         $.ajax({
             url: '/cms/images/all/',
             type: 'GET',
+            data: {
+                page: nextPage,
+                per_page: 24,
+                q: ($('#markdownImageSearchInput').val() || '').trim(),
+            },
             dataType: 'json',
             success: function (response) {
                 state.imageLibraryItems = response.image_urls || [];
+                state.imageLibraryPagination = response.pagination || null;
+                state.imageLibraryPage = state.imageLibraryPagination ? state.imageLibraryPagination.page : nextPage;
                 state.imageLibraryLoaded = true;
                 renderImageLibrary(state.imageLibraryItems);
                 if (force) {
@@ -690,7 +726,7 @@
                     return;
                 }
                 const altText = $('#markdownImageAlt').val() || response.image.title || file.name;
-                if (insertImageMarkdown(response.image.url, altText)) {
+                if (insertImageMarkdown(response.image.url, altText, response.image)) {
                     state.imageLibraryLoaded = false;
                 }
             },
@@ -715,7 +751,7 @@
             return;
         }
 
-        insertImageMarkdown(state.selectedImage.url, $('#markdownImageAlt').val() || state.selectedImage.title);
+        insertImageMarkdown(state.selectedImage.url, $('#markdownImageAlt').val() || state.selectedImage.title, state.selectedImage);
     }
 
     function previewMarkdown(title) {
@@ -771,10 +807,23 @@
             setImagePanel($(this).attr('data-target'));
         });
         $('#reloadMarkdownImages').on('click', function () {
-            loadImageLibrary(true);
+            state.imageLibraryLoaded = false;
+            loadImageLibrary(true, state.imageLibraryPage);
         });
         $('#markdownImageSearchInput').on('input', function () {
-            renderImageLibrary(state.imageLibraryItems);
+            state.imageLibraryLoaded = false;
+            state.imageLibraryPage = 1;
+            loadImageLibrary(false, 1);
+        });
+        $('#markdownImagePrevPage').on('click', function () {
+            if (!state.imageLibraryPagination || !state.imageLibraryPagination.has_previous) return;
+            state.imageLibraryLoaded = false;
+            loadImageLibrary(false, Math.max(1, state.imageLibraryPage - 1));
+        });
+        $('#markdownImageNextPage').on('click', function () {
+            if (!state.imageLibraryPagination || !state.imageLibraryPagination.has_next) return;
+            state.imageLibraryLoaded = false;
+            loadImageLibrary(false, state.imageLibraryPage + 1);
         });
         $('#insertMarkdownImage').on('click', insertSelectedImage);
 

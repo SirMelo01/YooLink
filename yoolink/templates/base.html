@@ -8,8 +8,8 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}YooLink{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Diese Webseite wurde erstellt von {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}{% if owner_data and owner_data.address %}, {{ owner_data.address }}{% else %}, Schanzenweg 53, 94469 Deggendorf{% endif %}">
-    <meta name="description" content="{% block meta_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Ihrem Internetauftritt herauszuholen.{% endblock %}">
+    <meta name="author" content="{% if owner_data and owner_data.site_meta_author %}{{ owner_data.site_meta_author }}{% else %}Diese Webseite wurde erstellt von {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}{% if owner_data and owner_data.address %}, {{ owner_data.address }}{% else %}, Schanzenweg 53, 94469 Deggendorf{% endif %}{% endif %}">
+    <meta name="description" content="{% block meta_description %}{% if owner_data and owner_data.site_meta_description %}{{ owner_data.site_meta_description }}{% else %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Unser Standard ist das Maximum aus Ihrem Internetauftritt herauszuholen.{% endif %}{% endblock %}">
     {% translate_url 'de' as de_url %}
     {% translate_url 'en' as en_url %}
     <link rel="canonical" href="{% block canonical_url %}https://yoolink.de{{ request.path }}{% endblock %}">
@@ -40,6 +40,7 @@
     <meta name="twitter:description" content="{% block twitter_description %}YooLink ist die Webdesign Agentur im Raum Deggendorf. Transparenz, Sichtbarkeit und ein junges dynamisches Team.{% endblock %}">
     <meta name="twitter:image" content="{% block twitter_image %}https://yoolink.de{% static 'images/og-preview.png' %}{% endblock %}">
 
+    {% block extra_meta %}{% endblock %}
 
 
     {% block structured_data %}{% endblock %}

@@ -221,10 +221,11 @@ function rebuildSlickGallery(images, galleryId) {
         $('<img>', {
             src: imageUrl,
             alt: altText,
+            title: image.title || altText,
             class: 'w-full rounded-xl',
             loading: 'lazy',
             decoding: 'async',
-        }).css('height', height).css('width', width).appendTo($slide);
+        }).attr('data-media-id', image.id || '').css('height', height).css('width', width).appendTo($slide);
         $editSlider.append($slide);
     });
 
@@ -1301,6 +1302,9 @@ $(document).ready(function () {
             markdownFormData.append('title', $('#blogTitle').val());
             markdownFormData.append('active', $('#activeSwitch').is(':checked'));
             markdownFormData.append('description', description);
+            markdownFormData.append('title_image_alt', $('#titleImageAlt').val() || '');
+            markdownFormData.append('title_image_title', $('#titleImageTitle').val() || '');
+            markdownFormData.append('title_image_caption', $('#titleImageCaption').val() || '');
             YooLinkBlogMarkdown.appendMarkdownToFormData(markdownFormData);
             if (files.length > 0) markdownFormData.append('title_image', files[0]);
 
@@ -1384,6 +1388,9 @@ $(document).ready(function () {
         formData.append('active', $('#activeSwitch').is(':checked'));
         if (files.length > 0) formData.append('title_image', files[0]);
         formData.append('description', description);
+        formData.append('title_image_alt', $('#titleImageAlt').val() || '');
+        formData.append('title_image_title', $('#titleImageTitle').val() || '');
+        formData.append('title_image_caption', $('#titleImageCaption').val() || '');
 
         // Send the Ajax POST request //
         $.ajax({
@@ -1903,6 +1910,8 @@ function receiveContent(blockContent) {
                 //width = $carousel[0].style.width ? $carousel[0].style.width : cssWidth;
                 var urlList = []
                 var altList = []
+                var titleList = []
+                var idList = []
 
                 var height;
                 var width;
@@ -1910,6 +1919,8 @@ function receiveContent(blockContent) {
                 $carousel.find('img').each(function () {
                     var imageUrl = $(this).attr('src');
                     var imageAlt = $(this).attr('alt') || '';
+                    var imageTitle = $(this).attr('title') || imageAlt;
+                    var imageId = $(this).attr('data-media-id') || '';
 
                     if (typeof height === 'undefined' || typeof width === 'undefined') {
                         height = typeof $(this).style !== 'undefined' && $(this).style.height ? $(this).style.height : $(this).css("height");
@@ -1919,6 +1930,8 @@ function receiveContent(blockContent) {
                     if (!urlList.includes(imageUrl)) {
                         urlList.push(imageUrl);
                         altList.push(imageAlt);
+                        titleList.push(imageTitle);
+                        idList.push(imageId);
                     }
                 });
                 content.push({
@@ -1936,6 +1949,8 @@ function receiveContent(blockContent) {
                     },
                     "images": urlList,
                     "imageAlts": altList,
+                    "imageTitles": titleList,
+                    "imageIds": idList,
                     "imageClass": "w-full rounded-xl",
                 })
                 break;
@@ -2033,12 +2048,16 @@ function getGaleryElement(gallery) {
     });
 
     const imageAlts = gallery.imageAlts || [];
+    const imageTitles = gallery.imageTitles || [];
+    const imageIds = gallery.imageIds || [];
     gallery.images.forEach(function (url, index) {
         const $div = $('<div>')
         const $img = $('<img>');
         $img.addClass(gallery.imageClass);
         $img.attr('src', url);
         $img.attr('alt', imageAlts[index] || 'Galeriebild');
+        if (imageTitles[index]) $img.attr('title', imageTitles[index]);
+        if (imageIds[index]) $img.attr('data-media-id', imageIds[index]);
         $.each(gallery.css, function (key, value) {
             $img.css(key, value);
         });

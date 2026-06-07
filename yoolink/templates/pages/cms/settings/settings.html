@@ -169,6 +169,27 @@
                             Diese Angaben erscheinen im Website-Schema (Organization &amp; LocalBusiness). Leer lassen = wird weggelassen.
                         </div>
 
+                        <div class="sm:col-span-2">
+                            <label class="mb-2 block text-sm font-medium text-slate-700" for="site_meta_description">Standard Meta Description</label>
+                            <textarea id="site_meta_description"
+                                      rows="4"
+                                      maxlength="320"
+                                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                                      placeholder="Standard-Beschreibung für Seiten ohne eigene Meta Description">{{ website_settings.site_meta_description }}</textarea>
+                            <p class="mt-1 text-xs text-slate-500">Wird als Website-Default genutzt. Blog- und Landingpage-spezifische Beschreibungen überschreiben diesen Wert weiterhin.</p>
+                        </div>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-700" for="site_meta_author">Meta Author</label>
+                            <input value="{{ website_settings.site_meta_author }}"
+                                   class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+                                   id="site_meta_author"
+                                   maxlength="255"
+                                   type="text"
+                                   placeholder="YooLink" />
+                            <p class="mt-1 text-xs text-slate-500">Erscheint im globalen <code>author</code>-Meta-Tag.</p>
+                        </div>
+
                         <div>
                             <label class="mb-2 block text-sm font-medium text-slate-700" for="social_instagram">Instagram-URL</label>
                             <input value="{{ website_settings.social_instagram }}"

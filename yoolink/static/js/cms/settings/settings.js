@@ -46,6 +46,8 @@ $(document).ready(function () {
             price_range: $.trim($('#price_range').val()),
             area_served: $.trim($('#area_served').val()),
             business_description: $.trim($('#business_description').val()),
+            site_meta_description: $.trim($('#site_meta_description').val()),
+            site_meta_author: $.trim($('#site_meta_author').val()),
             address_region: $.trim($('#address_region').val()),
             address_country: $.trim($('#address_country').val()),
             geo_latitude: $.trim($('#geo_latitude').val()),

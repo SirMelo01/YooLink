@@ -288,6 +288,9 @@ $(document).ready(function () {
             markdownFormData.append('title', $('#blogTitle').val());
             markdownFormData.append('active', $('#activeSwitch').is(':checked'));
             markdownFormData.append('description', description);
+            markdownFormData.append('title_image_alt', $('#titleImageAlt').val() || '');
+            markdownFormData.append('title_image_title', $('#titleImageTitle').val() || '');
+            markdownFormData.append('title_image_caption', $('#titleImageCaption').val() || '');
             YooLinkBlogMarkdown.appendMarkdownToFormData(markdownFormData);
             if (files.length > 0) markdownFormData.append('title_image', files[0]);
 
@@ -367,6 +370,9 @@ $(document).ready(function () {
         formData.append('code', JSON.stringify(content));
         formData.append('active', $('#activeSwitch').is(':checked'));
         formData.append('description', description);
+        formData.append('title_image_alt', $('#titleImageAlt').val() || '');
+        formData.append('title_image_title', $('#titleImageTitle').val() || '');
+        formData.append('title_image_caption', $('#titleImageCaption').val() || '');
         if (files.length > 0) formData.append('title_image', files[0]);
         // Send the Ajax POST request //
         $.ajax({
