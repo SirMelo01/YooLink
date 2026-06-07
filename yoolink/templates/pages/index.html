@@ -8,9 +8,15 @@
 <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
 <style>
   /* overflow auf body (nicht html) -> wird auf den Viewport propagiert,
-     erzeugt keinen Scroll-Container -> sticky Navbar funktioniert */
-  body {
-    overflow-x: hidden;
+     erzeugt keinen Scroll-Container -> sticky Navbar funktioniert.
+     "clip" statt "hidden", weil "hidden" auf iOS Safari weiterhin einen
+     pannbaren Scrollport erzeugt -> die 3D-transformierten Cards des
+     Heros (translateZ/perspective) ragen seitlich heraus und lassen sich
+     leicht nach rechts ziehen. "clip" schneidet hart ab, ohne Scrollport,
+     und lässt sticky weiterhin funktionieren. */
+  html,
+  body.overflow-x-hidden {
+    overflow-x: clip;
   }
 
   @media (max-width: 1023px) {
