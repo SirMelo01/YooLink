@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Case, DecimalField, ExpressionWrapper, F, Sum, When
+from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, Sum, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -1539,9 +1539,36 @@ def verify_order(request):
 @login_required(login_url="login")
 def shop(request):
     """Render the CMS shop dashboard."""
+    # Only base products (translations are counted via their original) so the
+    # numbers match the product overview, which also filters original__isnull=True.
+    base_products = Product.objects.filter(original__isnull=True)
+    product_stats = base_products.aggregate(
+        total=Count("id"),
+        active=Count("id", filter=Q(is_active=True)),
+        showcase=Count("id", filter=Q(showcase_only=True)),
+        out_of_stock=Count("id", filter=Q(is_in_stock=False)),
+        online=Count("id", filter=Q(online_sell=True, showcase_only=False)),
+        reduced=Count("id", filter=Q(is_reduced=True)),
+    )
+
+    verified_orders = Order.objects.filter(verified=True)
+    order_stats = verified_orders.aggregate(
+        total=Count("id"),
+        open=Count("id", filter=~Q(status="COMPLETED")),
+    )
+
+    recent_products = list(
+        base_products.select_related("brand").order_by("-updated_at")[:5]
+    )
+
     data = {
-        "product_count": Product.objects.count(),
-        "order_count": Order.objects.filter(verified=True).count(),
-        "order_not_closed_count": Order.objects.filter(verified=True).exclude(status="COMPLETED").count(),
+        # Backwards-compatible keys
+        "product_count": product_stats["total"],
+        "order_count": order_stats["total"],
+        "order_not_closed_count": order_stats["open"],
+        # Richer dashboard context
+        "product_stats": product_stats,
+        "order_stats": order_stats,
+        "recent_products": recent_products,
     }
     return render(request, "pages/cms/shop/shop.html", data)

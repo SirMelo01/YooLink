@@ -73,16 +73,21 @@ $(document).ready(function () {
         $('#teamMemberForm')[0].reset();  // Formular zurücksetzen
         $('#memberId').val('');  // Member ID löschen
         $('#modalTitle').text('Neues Teammitglied erstellen');
-        $('#teamMemberModal').find('button[type="submit"]').text('Erstellen');
-        $('#imagePreview').attr('src', '').addClass('hidden');  // Bildvorschau zurücksetzen
+        $('#modalSubmitLabel').text('Erstellen');
+        setTeamPreviewImage('');  // Bildvorschau zurücksetzen
         $('#teamMemberModal').removeClass('hidden');  // Modal anzeigen
     });
 
-    // Funktion zum Bearbeiten eines bestehenden Teammitglieds
-    $('.edit-member').click(function () {
-        const memberId = $(this).siblings('.member-id').text().trim();
-
+    // Funktion zum Bearbeiten eines bestehenden Teammitglieds (Event-Delegation)
+    $('#teamSortableGrid').on('click', '.edit-member', function () {
+        const memberId = $(this).closest('.team-card').data('memberId');
         openEditModal(memberId);
+    });
+
+    // Klick-Event für das Löschen (Event-Delegation)
+    $('#teamSortableGrid').on('click', '.delete-member', function () {
+        memberIdToDelete = $(this).closest('.team-card').data('memberId');
+        $('#confirmDeleteModal').removeClass('hidden');
     });
 
     // AJAX-Request zum Erstellen oder Aktualisieren eines Teammitglieds
@@ -122,81 +127,70 @@ $(document).ready(function () {
                     const newId = response.member_id;
 
                     const statusText = formData.active ? 'Aktiv' : 'Inaktiv';
-                    const statusClass = formData.active ? 'bg-green-600' : 'bg-orange-600';
+                    const statusClass = formData.active ? 'bg-emerald-500' : 'bg-amber-500';
 
                     const newMemberHtml = `
-                        <div class="relative text-center flex flex-col justify-center items-center w-fit team-card"
+                        <div class="team-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow"
                             data-member-id="${newId}">
 
-                            <!-- Drag Handle -->
-                            <div class="absolute top-2 left-2 z-10 cursor-move drag-handle bg-white/90 rounded px-2 py-1 shadow text-sm">
-                            ⇅
-                            </div>
-
-                            <!-- Hidden ID Element -->
                             <span class="member-id hidden">${newId}</span>
 
-                            <div class="relative w-full overflow-hidden rounded-tl-2xl rounded-br-2xl bg-slate-100">
-                            <span class="member-status absolute top-2 left-10 ${statusClass} text-white rounded-full px-2 py-0.5 cursor-pointer">
-                                ${statusText}
-                            </span>
+                            <div class="relative aspect-[4/5] w-full overflow-hidden bg-slate-100">
+                                <img src="${formData.image || ''}" alt="${escapeTeamImageHtml(formData.full_name)}" class="member-image h-full w-full object-cover" />
 
-                            <span class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-0.5 cursor-pointer delete-member">
-                                X
-                            </span>
+                                <button type="button"
+                                    class="drag-handle absolute left-2 top-2 z-10 inline-flex cursor-move items-center justify-center rounded-lg bg-white/90 p-1.5 text-slate-600 shadow-sm backdrop-blur transition hover:bg-white"
+                                    title="Zum Sortieren ziehen">
+                                    <i class="bi bi-grip-vertical text-base leading-none"></i>
+                                </button>
 
-                            <img src="${formData.image || ''}" alt="${formData.full_name}" class="h-80 w-full rounded-tl-2xl rounded-br-2xl object-contain" />
+                                <span class="member-status absolute right-2 top-2 z-10 inline-flex items-center gap-1 rounded-full ${statusClass} px-2.5 py-0.5 text-xs font-semibold text-white shadow-sm">
+                                    ${statusText}
+                                </span>
                             </div>
 
-                            <h3 class="mt-4 text-xl font-semibold text-gray-800">${formData.full_name}</h3>
-                            <p class="text-blue-600">${formData.position || ''}</p>
-                            <p class="text-gray-500 mt-2">Dabei seit ${formData.years_with_team || 0}</p>
+                            <div class="flex flex-1 flex-col p-4">
+                                <h3 class="member-name truncate font-semibold text-slate-900">${escapeTeamImageHtml(formData.full_name)}</h3>
+                                <p class="member-position truncate text-sm font-medium text-blue-600">${escapeTeamImageHtml(formData.position || '')}</p>
+                                <p class="member-years mt-1 text-xs text-slate-400">Dabei seit ${formData.years_with_team || 0}</p>
 
-                            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded edit-member">
-                            Verwalten
-                            </button>
+                                <div class="mt-auto flex gap-2 pt-4">
+                                    <button type="button"
+                                        class="edit-member inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
+                                        <i class="bi bi-pencil-square"></i> Verwalten
+                                    </button>
+                                    <button type="button"
+                                        class="delete-member inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-200 hover:bg-red-50"
+                                        title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         `;
 
-                    // ✅ an die richtige Grid-ID anhängen
+                    // Empty-State ausblenden und Karte anhängen (Events laufen über Delegation)
+                    $('#teamEmptyState').addClass('hidden');
                     $('#teamSortableGrid').append(newMemberHtml);
-
-                    // ✅ Events für den neu hinzugefügten Member binden
-                    const $newCard = $(`#teamSortableGrid .team-card[data-member-id="${newId}"]`);
-
-                    $newCard.find('.edit-member').on('click', function () {
-                        openEditModal(newId);
-                    });
-
-                    $newCard.find('.delete-member').on('click', function () {
-                        memberIdToDelete = newId;
-                        $('#confirmDeleteModal').removeClass('hidden');
-                    });
                 } else {
                     // Aktualisiere die vorhandenen Daten ohne Neuladen
                     const $card = $(`.team-card[data-member-id="${memberId}"]`);
 
-                    $card.find('img').attr('src', formData.image);
-                    $card.find('h3').text(formData.full_name);
-                    $card.find('.text-blue-600').text(formData.position);
-                    $card.find('.text-gray-500').text(`Dabei seit ${formData.years_with_team}`);
+                    $card.find('.member-image').attr('src', formData.image);
+                    $card.find('.member-name').text(formData.full_name);
+                    $card.find('.member-position').text(formData.position);
+                    $card.find('.member-years').text(`Dabei seit ${formData.years_with_team}`);
 
                     $card.find('.member-status')
                         .text(formData.active ? 'Aktiv' : 'Inaktiv')
-                        .removeClass('bg-green-600 bg-orange-600')
-                        .addClass(formData.active ? 'bg-green-600' : 'bg-orange-600');
+                        .removeClass('bg-emerald-500 bg-amber-500')
+                        .addClass(formData.active ? 'bg-emerald-500' : 'bg-amber-500');
                 }
             },
             error: function (error) {
                 sendNotif(error.responseJSON.error || 'Fehler beim Speichern der Daten.', "error");
             }
         });
-    });
-
-    // Klick-Event für das Löschen-Symbol (X)
-    $('.delete-member').click(function () {
-        memberIdToDelete = $(this).closest('div').siblings('.member-id').text().trim();
-        $('#confirmDeleteModal').removeClass('hidden');  // Bestätigungs-Modal anzeigen
     });
 
     // Klick-Event für Bestätigungs-Button im Bestätigungs-Modal
@@ -211,8 +205,10 @@ $(document).ready(function () {
                     $('#confirmDeleteModal').addClass('hidden');
 
                     // Entferne das gelöschte Teammitglied aus der Ansicht
-                    const $memberDiv = $(`.member-id:contains(${memberIdToDelete})`).closest('.relative');
-                    $memberDiv.remove();
+                    $(`.team-card[data-member-id="${memberIdToDelete}"]`).remove();
+                    if ($('#teamSortableGrid .team-card').length === 0) {
+                        $('#teamEmptyState').removeClass('hidden');
+                    }
                 },
                 error: function () {
                     sendNotif('Fehler beim Löschen des Teammitglieds', "error");
@@ -377,12 +373,25 @@ function refreshTeamSelectedImagePreview() {
 }
 
 function selectTeamImage($image) {
-    const $imagePreview = $('#imagePreview');
-    $imagePreview.attr('src', $image.attr('src'));
-    $imagePreview.attr('imgId', $image.attr('imgId'));
-    $imagePreview.removeClass("hidden");
+    setTeamPreviewImage($image.attr('src'), $image.attr('imgId'));
     closeTeamImageModal();
     sendNotif('Neues Bild ausgewählt', 'success');
+}
+
+// Setzt das Vorschaubild im Teammitglied-Modal und schaltet den Platzhalter um
+function setTeamPreviewImage(src, imgId) {
+    const $imagePreview = $('#imagePreview');
+    $imagePreview.attr('src', src || '');
+    if (typeof imgId !== 'undefined') {
+        $imagePreview.attr('imgId', imgId);
+    }
+    if (src) {
+        $imagePreview.removeClass('hidden');
+        $('#imagePreviewPlaceholder').addClass('hidden');
+    } else {
+        $imagePreview.addClass('hidden');
+        $('#imagePreviewPlaceholder').removeClass('hidden');
+    }
 }
 
 function renderTeamImageLibrary(images) {
@@ -602,11 +611,11 @@ function openEditModal(memberId) {
             $('#email').val(data.email);
             $('#notes').val(data.note);
             $('#activeSwitch').prop('checked', data.active);
-            $('#imagePreview').attr('src', data.image).removeClass('hidden'); // Setze Bildvorschau
+            setTeamPreviewImage(data.image); // Setze Bildvorschau
 
             // Passe die Modalüberschrift und den Button an
             $('#modalTitle').text('Teammitglied bearbeiten');
-            $('#teamMemberModal').find('button[type="submit"]').text('Speichern');
+            $('#modalSubmitLabel').text('Speichern');
 
             // Zeige das Modal an
             $('#teamMemberModal').removeClass('hidden');

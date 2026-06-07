@@ -139,7 +139,6 @@ function buildPriceBadge(product) {
       <span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.discount_price)} €</span>
       <span class="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-gray-500 line-through shadow-sm">${escapeHtml(product.price)} €</span>
     `
-    return `<span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.discount_price)} €</span>`
   }
 
   return `<span class="rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.price)} €</span>`

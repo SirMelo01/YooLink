@@ -79,7 +79,9 @@
       "Bash(node -e \"const c=require\\('fs'\\).readFileSync\\('yoolink/static/css/output.css','utf8'\\);console.log\\('z-[90] present:', c.includes\\('z-[90]'\\) || c.includes\\('z-\\\\\\\\\\\\\\\\[90\\\\\\\\\\\\\\\\]'\\)\\);\")",
       "Bash(node -e \"const c=require\\('fs'\\).readFileSync\\('yoolink/static/css/output.css','utf8'\\);['z-[45]','z-[70]','z-[80]','z-[90]','z-[100]'].forEach\\(z=>console.log\\(z, c.includes\\(z\\)\\)\\);\")",
       "Bash(node -e \"const c=require\\('fs'\\).readFileSync\\('yoolink/static/css/output.css','utf8'\\); ['z-\\\\\\\\\\\\\\\\[90\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[70\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[45\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[80\\\\\\\\\\\\\\\\]'].forEach\\(z=>console.log\\(z.replace\\(/\\\\\\\\\\\\\\\\/g,''\\), '->', c.includes\\(z\\)\\)\\);\")",
-      "Bash(node _zi.js)"
+      "Bash(node _zi.js)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(docker compose *)"
     ]
   }
 }
