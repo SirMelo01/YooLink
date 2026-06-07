@@ -143,7 +143,7 @@
     </div>
 
     <!-- RIGHT: Form -->
-    <div class="bg-white p-8 sm:p-10 lg:p-12">
+    <div class="flex flex-col bg-white p-8 sm:p-10 lg:p-12">
       <h2 class="mb-1 text-xl font-bold text-gray-900">{{ textContent_form.title|default:"Nachricht senden" }}</h2>
       <p class="mb-8 text-sm text-gray-400">{{ textContent_form.description|default:"Alle mit * markierten Felder sind Pflichtfelder." }}</p>
 
@@ -196,46 +196,44 @@
           {{ textContent_form.buttonText|default:"Nachricht absenden" }}
         </button>
       </form>
-    </div>
 
-  </div>
-</section>
-
-<!-- ── MAP ── -->
-<section class="bg-white px-4 pt-5 pb-20">
-  <div class="relative mx-auto min-h-[360px] max-w-6xl overflow-hidden rounded-3xl bg-slate-100 shadow-lg ring-1 ring-slate-200 lg:min-h-[460px]">
-    {% if google_maps_embed_api_key %}
-    <div class="absolute inset-0 flex items-center justify-center bg-slate-100 p-6"
-         data-cookie-placeholder>
-      <div class="max-w-sm rounded-2xl bg-white p-5 text-center shadow-xl ring-1 ring-slate-200">
-        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-700">
-          <i class="bi bi-map text-xl"></i>
+      <!-- Karte: füllt den freien Platz unter dem Button -->
+      <div class="relative mt-8 min-h-[360px] flex-1 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200">
+        {% if google_maps_embed_api_key %}
+        <div class="absolute inset-0 flex items-center justify-center bg-slate-100 p-6"
+             data-cookie-placeholder>
+          <div class="max-w-sm rounded-2xl bg-white p-5 text-center shadow-xl ring-1 ring-slate-200">
+            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-700">
+              <i class="bi bi-map text-xl"></i>
+            </div>
+            <p class="font-semibold text-gray-900">{% trans "contact_map_disabled_title" %}</p>
+            <p class="mt-1 text-sm leading-6 text-gray-500">{% trans "contact_map_disabled_text" %}</p>
+            <button type="button"
+                    class="mt-4 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
+                    data-consent-action="open-settings">
+              {% trans "contact_map_cookie_button" %}
+            </button>
+          </div>
         </div>
-        <p class="font-semibold text-gray-900">{% trans "contact_map_disabled_title" %}</p>
-        <p class="mt-1 text-sm leading-6 text-gray-500">{% trans "contact_map_disabled_text" %}</p>
-        <button type="button"
-                class="mt-4 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
-                data-consent-action="open-settings">
-          {% trans "contact_map_cookie_button" %}
-        </button>
+        <iframe
+          class="absolute inset-0 hidden h-full w-full"
+          title="{% trans 'contact_map_iframe_title' %} {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          data-cookie-src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_embed_api_key }}&zoom=15&maptype=roadmap&q={% if owner_data and owner_data.address %}{{ owner_data.address|urlencode }}{% else %}Schanzenweg%2053%2C%20Deggendorf{% endif %}"
+        ></iframe>
+        {% else %}
+        <div class="absolute inset-0 flex items-center justify-center bg-amber-50 px-6">
+          <div class="max-w-sm text-center">
+            <p class="font-semibold text-amber-800">{% trans "contact_map_missing_key_title" %}</p>
+            <p class="mt-1 text-sm text-amber-600">{% trans "contact_map_missing_key_text" %}</p>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
-    <iframe
-      class="hidden h-full min-h-[360px] w-full lg:min-h-[460px]"
-      title="{% trans 'contact_map_iframe_title' %} {% if owner_data and owner_data.company_name %}{{ owner_data.company_name }}{% else %}YooLink{% endif %}"
-      loading="lazy"
-      allowfullscreen
-      referrerpolicy="no-referrer-when-downgrade"
-      data-cookie-src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_embed_api_key }}&zoom=15&maptype=roadmap&q={% if owner_data and owner_data.address %}{{ owner_data.address|urlencode }}{% else %}Schanzenweg%2053%2C%20Deggendorf{% endif %}"
-    ></iframe>
-    {% else %}
-    <div class="flex h-full min-h-[360px] items-center justify-center bg-amber-50 px-6 lg:min-h-[460px]">
-      <div class="max-w-sm text-center">
-        <p class="font-semibold text-amber-800">{% trans "contact_map_missing_key_title" %}</p>
-        <p class="mt-1 text-sm text-amber-600">{% trans "contact_map_missing_key_text" %}</p>
-      </div>
-    </div>
-    {% endif %}
+
   </div>
 </section>
 
