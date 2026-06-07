@@ -901,16 +901,17 @@ def render_markdown_to_html(markdown):
         if heading:
             flush_paragraph()
             flush_list()
-            level = min(len(heading.group(1)) + 1, 6)
-            if level > 3:
-                html.append(f'<p class="text-base my-4">{_render_inline_markdown(heading.group(2))}</p>')
-                continue
-            classes = {
-                1: "text-3xl font-bold my-6",
-                2: "text-2xl mb-6 font-bold text-gray-900 lg:text-3xl",
-                3: "text-xl font-semibold my-4 lg:text-2xl",
-            }.get(level, "text-base font-semibold my-4")
-            html.append(f'<h{level} class="{classes}">{_render_inline_markdown(heading.group(2))}</h{level}>')
+            hashes = len(heading.group(1))
+            inline = _render_inline_markdown(heading.group(2))
+            # Konsistent mit MarkdownToBlogCodeParser._append_heading_block:
+            # Der Blog-Titel ist das einzige H1, darum starten Inhalts-
+            # überschriften bei H2. # und ## → H2, ### → H3, #### + → Absatz.
+            if hashes <= 2:
+                html.append(f'<h2 class="text-2xl mb-6 font-bold text-gray-900 lg:text-3xl">{inline}</h2>')
+            elif hashes == 3:
+                html.append(f'<h3 class="text-xl font-semibold my-4 lg:text-2xl">{inline}</h3>')
+            else:
+                html.append(f'<p class="text-base my-4">{inline}</p>')
             continue
 
         list_match = re.match(r"^(?:[-*]|\d+\.)\s+(.+)$", stripped)
