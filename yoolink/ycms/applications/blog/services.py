@@ -77,7 +77,9 @@ def blog_code_to_markdown(code, body=""):
         elif name == "title-2":
             markdown_blocks.append(f"### {strip_tags(value).strip()}")
         elif name == "title-3":
-            markdown_blocks.append(f"#### {strip_tags(value).strip()}")
+            text_value = strip_tags(value).strip()
+            if text_value:
+                markdown_blocks.append(text_value)
         elif name == "textArea":
             markdown_blocks.append(html_to_markdown(value))
         elif name == "image":
@@ -559,12 +561,7 @@ class MarkdownToBlogCodeParser:
                 "value": clean_text,
             })
         else:
-            self.blocks.append({
-                "name": "title-3",
-                "type": "h4",
-                "attributes": {"class": "text-lg font-medium my-4 lg:text-xl"},
-                "value": clean_text,
-            })
+            self._append_text_part(f"<p>{_render_inline_markdown(text)}</p>")
 
     def _append_text_part(self, value):
         value = (value or "").strip()
@@ -683,10 +680,12 @@ class SimpleHtmlToMarkdownParser(HTMLParser):
         attrs = dict(attrs)
         tag = tag.lower()
 
-        if tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
+        if tag in ("h1", "h2", "h3"):
             level = int(tag[1])
             self._ensure_block()
             self.parts.append("#" * level + " ")
+        elif tag in ("h4", "h5", "h6"):
+            self._ensure_block()
         elif tag == "p":
             self._ensure_block()
         elif tag == "br":
@@ -892,11 +891,13 @@ def render_markdown_to_html(markdown):
             flush_paragraph()
             flush_list()
             level = min(len(heading.group(1)) + 1, 6)
+            if level > 3:
+                html.append(f'<p class="text-base my-4">{_render_inline_markdown(heading.group(2))}</p>')
+                continue
             classes = {
                 1: "text-3xl font-bold my-6",
                 2: "text-2xl mb-6 font-bold text-gray-900 lg:text-3xl",
                 3: "text-xl font-semibold my-4 lg:text-2xl",
-                4: "text-lg font-medium my-4 lg:text-xl",
             }.get(level, "text-base font-semibold my-4")
             html.append(f'<h{level} class="{classes}">{_render_inline_markdown(heading.group(2))}</h{level}>')
             continue

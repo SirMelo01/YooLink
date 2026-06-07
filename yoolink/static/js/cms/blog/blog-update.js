@@ -33,7 +33,7 @@ $(document).ready(function () {
                             $('<input/>', {
                                 type: "text",
                                 class: "title-1 my-3 text-2xl font-bold text-gray-900 w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "H2-Ueberschrift",
+                                placeholder: "Titel 1",
                                 value: element.value
                             }).appendTo($container)
                             $container.find('.del-elem').click(function () {
@@ -47,7 +47,7 @@ $(document).ready(function () {
                             $('<input/>', {
                                 type: "text",
                                 class: "title-2 text-xl font-semibold w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "H3-Ueberschrift",
+                                placeholder: "Titel 2",
                                 value: element.value
                             }).appendTo($container)
                             $container.find('.del-elem').click(function () {
@@ -56,14 +56,13 @@ $(document).ready(function () {
                             $blogContent.append($container)
                             break;
                         case 'title-3':
-                            $container.attr('element-type', 'title-3')
+                            $container.attr('element-type', 'textArea')
                             $container.append(delSpan.clone()).append(moveHandle.clone())
-                            $('<input/>', {
-                                type: "text",
-                                class: "title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-                                placeholder: "H4-Ueberschrift",
-                                value: element.value
-                            }).appendTo($container)
+                            $('<textarea/>', {
+                                id: "textArea" + index,
+                                class: "textArea w-full px-4 py-2 my-3 rounded-2xl border border-gray-300 focus:outline-none focus:border-blue-500 min-h-[5rem]",
+                                placeholder: "Text",
+                            }).text(element.value).appendTo($container)
                             $container.find('.del-elem').click(function () {
                                 $(this).parent().remove()
                             });

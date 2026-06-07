@@ -25,6 +25,14 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
+function normalizeBlogTextHtml(value) {
+    const $wrapper = $('<div>').html(value || '');
+    $wrapper.find('h4,h5,h6').each(function () {
+        $(this).replaceWith($('<p>').html($(this).html()));
+    });
+    return $wrapper.html();
+}
+
 function setBlogImagePanel(panelId) {
     $('.blog-image-panel').addClass('hidden').removeClass('flex');
     $('#' + panelId).removeClass('hidden').addClass('flex');
@@ -562,19 +570,17 @@ function applyBlogCodeToBuilder(code) {
 
     $.each(code || [], function (index, element) {
         const $container = $('<div class="relative">')
-        switch (element.name) {
+        const elementName = element.name === 'title-3' ? 'textArea' : element.name
+        switch (elementName) {
             case 'title-1':
-            case 'title-2':
-            case 'title-3': {
+            case 'title-2': {
                 const classMap = {
                     'title-1': 'title-1 my-3 text-2xl font-bold text-gray-900 w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative',
                     'title-2': 'title-2 text-xl font-semibold w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative',
-                    'title-3': 'title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative',
                 }
                 const placeholderMap = {
-                    'title-1': 'H2-Ueberschrift',
-                    'title-2': 'H3-Ueberschrift',
-                    'title-3': 'H4-Ueberschrift',
+                    'title-1': 'Titel 1',
+                    'title-2': 'Titel 2',
                 }
                 $container.attr('element-type', element.name)
                 $container.append(controls.delSpan.clone()).append(controls.moveHandle.clone())
@@ -783,7 +789,7 @@ $(document).ready(function () {
 
     // NicEditor (TextFields)
     myNicEditor = new nicEditor({
-        buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'fontFormat', 'forecolor', 'bgcolor', 'link', 'unlink']
+        buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'forecolor', 'bgcolor', 'link', 'unlink']
     })
 
     loadSlick();
@@ -839,7 +845,7 @@ $(document).ready(function () {
         $('<input/>', {
             type: "text",
             class: "title-1 my-3 text-2xl font-bold text-gray-900 w-full px-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "H2-Ueberschrift"
+            placeholder: "Titel 1"
         }).appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
@@ -847,7 +853,7 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        sendNotif("Eine H2-Ueberschrift wurde hinzugefuegt", "success")
+        sendNotif("Titel 1 wurde hinzugefuegt", "success")
         scrollToBottom()
     });
 
@@ -862,7 +868,7 @@ $(document).ready(function () {
         $('<input/>', {
             type: "text",
             class: "title-2 text-xl font-semibold w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "H3-Ueberschrift"
+            placeholder: "Titel 2"
         }).appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
@@ -870,30 +876,7 @@ $(document).ready(function () {
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        sendNotif("Eine H3-Ueberschrift wurde hinzugefuegt", "success")
-        scrollToBottom()
-    });
-
-    /**
-      * Add H4 heading to Blog
-      */
-    $('#addTitle3').click(function () {
-        // Create Container
-        const $container = $('<div class="relative" element-type="title-3">')
-        $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'))
-        $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'))
-        $('<input/>', {
-            type: "text",
-            class: "title-3 text-lg font-medium w-full px-4 py-2 my-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent relative",
-            placeholder: "H4-Ueberschrift"
-        }).appendTo($container)
-        // Click event handler for the span with class del-elem
-        $container.find('.del-elem').click(function () {
-            $(this).parent().remove()
-        });
-        // Append Container to Blog Builder
-        $("#blogContent").append($container);
-        sendNotif("Eine H4-Ueberschrift wurde hinzugefuegt", "success")
+        sendNotif("Titel 2 wurde hinzugefuegt", "success")
         scrollToBottom()
     });
 
@@ -1821,12 +1804,12 @@ function receiveContent(blockContent) {
             case "title-3":
                 const title3Input = $(this).find('.title-3').val()
                 content.push({
-                    "name": "title-3",
-                    "type": "h4",
+                    "name": "textArea",
+                    "type": "p",
                     "attributes": {
-                        "class": "text-lg font-medium my-4 lg:text-xl",
+                        "class": "text-base my-4",
                     },
-                    "value": title3Input
+                    "value": escapeHtml(title3Input)
                 })
                 break;
             case "textArea":
@@ -1839,7 +1822,7 @@ function receiveContent(blockContent) {
                         "attributes": {
                             "class": "text-base my-4",
                         },
-                        "value": myNicEditor.instanceById(textId).getContent()
+                        "value": normalizeBlogTextHtml(myNicEditor.instanceById(textId).getContent())
                     })
                 }
                 break;
