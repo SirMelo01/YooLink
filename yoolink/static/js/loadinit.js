@@ -4,15 +4,12 @@
   const CONSENT_COOKIE = "yoolink_cookie_consent";
   const CONSENT_VERSION = 1;
   const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
-  const GA_ID = "G-ZYQPVZ3REE";
 
   const defaultPreferences = {
     necessary: true,
     analytics: false,
     external: false,
   };
-
-  window["ga-disable-" + GA_ID] = true;
 
   function getCookie(name) {
     const cookieArr = document.cookie ? document.cookie.split(";") : [];
@@ -107,36 +104,41 @@
   }
 
   function cleanupAnalyticsCookies() {
-    ["_ga", "_gid", "_gat", `_ga_${GA_ID.replace("G-", "")}`].forEach(deleteCookie);
-    window["ga-disable-" + GA_ID] = true;
+    // Matomo first-party cookies (names include site id + domain hash, so match by prefix).
+    const trackingPrefixes = ["_pk_id.", "_pk_ses.", "_pk_ref.", "_pk_cvar.", "_pk_hsr.", "mtm_"];
+    const cookieArr = document.cookie ? document.cookie.split(";") : [];
+    cookieArr.forEach((pair) => {
+      const name = pair.split("=")[0].trim();
+      if (trackingPrefixes.some((prefix) => name.indexOf(prefix) === 0)) {
+        deleteCookie(name);
+      }
+    });
   }
 
   function ensureAnalytics() {
-    if (document.querySelector(`script[data-cookie-service="ga4"]`)) return;
+    const config = window.MATOMO_CONFIG;
+    // No config means this is not the hosted production site (e.g. localhost) -> never track.
+    if (!config || !config.url || !config.siteId) return;
+    if (document.querySelector(`script[data-cookie-service="matomo"]`)) return;
 
-    window["ga-disable-" + GA_ID] = false;
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag() {
-      window.dataLayer.push(arguments);
-    };
-    window.gtag("consent", "update", {
-      analytics_storage: "granted",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
-    });
-    window.gtag("js", new Date());
-    window.gtag("config", GA_ID, { anonymize_ip: true });
+    const base = config.url.replace(/\/+$/, "") + "/";
+    window._paq = window._paq || [];
+    const paq = window._paq;
+    paq.push(["setTrackerUrl", base + "matomo.php"]);
+    paq.push(["setSiteId", String(config.siteId)]);
+    paq.push(["enableLinkTracking"]);
+    paq.push(["trackPageView"]);
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-    script.dataset.cookieService = "ga4";
+    script.src = base + "matomo.js";
+    script.dataset.cookieService = "matomo";
     document.head.appendChild(script);
   }
 
   function unloadAnalytics() {
-    document.querySelectorAll('script[data-cookie-service="ga4"]').forEach((node) => node.remove());
+    document.querySelectorAll('script[data-cookie-service="matomo"]').forEach((node) => node.remove());
+    window._paq = [];
     cleanupAnalyticsCookies();
   }
 

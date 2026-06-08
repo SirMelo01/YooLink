@@ -206,6 +206,16 @@ RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY", default="")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY", default="")
 GOOGLE_MAPS_EMBED_API_KEY = env("GOOGLE_MAPS_EMBED_API_KEY", default="")
 
+# Matomo (self-hosted analytics)
+# ------------------------------------------------------------------------------
+# MATOMO_URL is where Matomo is hosted (the analytics server, not the site URL);
+# the tracked site is identified solely by MATOMO_SITE_ID. Hardcoded because it's
+# a single self-hosted Matomo for a single site. MATOMO_ENABLED is tied to DEBUG
+# (True locally, False in production), so tracking only runs in production.
+MATOMO_URL = "https://analytics.yoolink.de"
+MATOMO_SITE_ID = "1"
+MATOMO_ENABLED = not DEBUG
+
 YCMS_UPLOAD_LIMIT_BYTES = {
     "image": env.int("YCMS_IMAGE_UPLOAD_MAX_BYTES", default=100 * 1024 * 1024),
     "video": env.int("YCMS_VIDEO_UPLOAD_MAX_BYTES", default=800 * 1024 * 1024),
@@ -241,6 +251,7 @@ TEMPLATES = [
                 "yoolink.ycms.context_processors.cms_permissions_context",
                 "yoolink.ycms.context_processors.notifications_context",
                 "yoolink.ycms.context_processors.cms_language_context",
+                "yoolink.ycms.context_processors.matomo_context",
             ],
         },
     }

@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from yoolink.ycms.views import get_active_language
 from yoolink.ycms.applications.notifications.models import Notification
 from .models import CMS_PERMISSION_CHOICES, WebsiteSettings
@@ -51,4 +53,13 @@ def cms_language_context(request):
     
     return {
         "cms_language": get_active_language(request)
+    }
+
+def matomo_context(request):
+    # Exposes the Matomo config to templates. matomo_enabled is False in DEBUG
+    # (local/dev), so base.html never emits the tracking snippet outside production.
+    return {
+        "matomo_url": settings.MATOMO_URL,
+        "matomo_site_id": settings.MATOMO_SITE_ID,
+        "matomo_enabled": settings.MATOMO_ENABLED,
     }
