@@ -60,9 +60,7 @@
       <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
-    {# Matomo-Tracking-Config – nur auf der gehosteten Produktionsseite gesetzt.
-       Wird von loadinit.js (consent-gated) gelesen. Bewusst außerhalb von
-       {% compress js %}, da template-dynamisch. #}
+    {# Matomo-Tracking-Config: nur in Produktion gesetzt, von loadinit.js consent-gated gelesen. Bewusst NICHT im compress-Block, da template-dynamisch. #}
     {% if matomo_enabled %}
     <script>
       window.MATOMO_CONFIG = { url: "{{ matomo_url|escapejs }}", siteId: "{{ matomo_site_id|escapejs }}" };
