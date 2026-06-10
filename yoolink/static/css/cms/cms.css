@@ -175,6 +175,27 @@
         line-height: 1.75rem;
     }
 
+    .cms-content-shell input:not([type="checkbox"]):not([type="radio"]),
+    .cms-content-shell textarea,
+    .cms-content-shell select {
+        font-size: 1rem;
+        line-height: 1.45rem;
+        min-width: 0;
+    }
+
+    .cms-content-shell input[inputtype="title"],
+    .cms-content-shell input[inputtype="header"],
+    .cms-content-shell input[inputtype="description"],
+    .cms-content-shell input[inputtype="buttonText"],
+    .cms-content-shell textarea[inputtype="description"] {
+        font-size: 1rem;
+        line-height: 1.45rem;
+    }
+
+    .cms-content-shell textarea {
+        min-height: 6.5rem;
+    }
+
     .cms-content-shell > .container > .flex.justify-between:first-child,
     .cms-content-shell .container > .flex.justify-between:first-child,
     .cms-content-shell .container > .flex.items-center.justify-between:first-child {
@@ -290,7 +311,6 @@
         width: calc(100vw - 2rem) !important;
     }
 }
-
 
 
 

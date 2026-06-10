@@ -331,6 +331,28 @@ def test_upload_limits_reject_oversized_cms_files(logged_in_client):
     assert VideoFile.objects.count() == 0
 
 
+def test_anyfile_upload_accepts_documents_but_rejects_images(logged_in_client, cms_user):
+    cms_user.is_superuser = True
+    cms_user.save(update_fields=["is_superuser"])
+
+    document_response = logged_in_client.post(
+        reverse("ycms:anyfile-upload"),
+        {"file": SimpleUploadedFile("info.pdf", b"pdf", content_type="application/pdf")},
+    )
+
+    assert document_response.status_code == 200
+    assert AnyFile.objects.count() == 1
+
+    image_response = logged_in_client.post(
+        reverse("ycms:anyfile-upload"),
+        {"file": SimpleUploadedFile("image.jpg", b"jpg", content_type="image/jpeg")},
+    )
+
+    assert image_response.status_code == 400
+    assert "nicht unterstuetzt" in image_response.json()["error"]
+    assert AnyFile.objects.count() == 1
+
+
 def test_image_delete_endpoint_removes_image_after_confirmation(logged_in_client):
     image = fileentry.objects.create(
         file=SimpleUploadedFile("delete-me.jpg", b"image", content_type="image/jpeg"),

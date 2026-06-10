@@ -22,7 +22,7 @@ Pure <a> links + group labels, no IDs, so it can be included twice safely.
         {% endif %}
         {% if 'media.edit' in cms_permissions %}
         {% include "pages/cms/components/_nav_item.html" with url="/cms/galerien/" match="/cms/galer" icon="bi-images" label="Galerien" %}
-        {% include "pages/cms/components/_nav_item.html" with url="/cms/files/" match="/cms/files" icon="bi-folder2-open" label="Dateien" %}
+        {% include "pages/cms/components/_nav_item.html" with url="/cms/files/" match="/cms/files" match2="/cms/images" match3="/cms/anyfiles" match4="/cms/videos" icon="bi-folder2-open" label="Dateien" %}
         {% endif %}
         {% if 'buttons.edit' in cms_permissions %}
         {% include "pages/cms/components/_nav_item.html" with url="/cms/buttons/" match="/cms/buttons" icon="bi-hand-index" label="Buttons" %}

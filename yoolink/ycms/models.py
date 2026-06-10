@@ -106,8 +106,7 @@ def unique_anyfile_name(instance, filename):
 def validate_file_extension(value):
     validate_anyfile_upload(value)
     return
-    allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm',
-                          '.pdf', '.zip', '.docx', '.xlsx', '.txt']
+    allowed_extensions = ['.pdf', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt']
     ext = os.path.splitext(value.name)[1].lower()
     if ext not in allowed_extensions:
         raise ValidationError(f'Dateiformat "{ext}" wird nicht unterstützt.')

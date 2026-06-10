@@ -14,10 +14,10 @@ UPLOAD_KIND_SUBTITLE = "subtitle"
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".webm"}
-DOCUMENT_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".txt"}
+DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt"}
 ARCHIVE_EXTENSIONS = {".zip"}
 SUBTITLE_EXTENSIONS = {".vtt"}
-ANYFILE_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS | DOCUMENT_EXTENSIONS | ARCHIVE_EXTENSIONS
+ANYFILE_EXTENSIONS = DOCUMENT_EXTENSIONS | ARCHIVE_EXTENSIONS
 
 CONTENT_TYPE_EXTENSIONS = {
     "image/jpeg": ".jpg",
@@ -30,6 +30,12 @@ CONTENT_TYPE_EXTENSIONS = {
     "video/webm": ".webm",
     "application/pdf": ".pdf",
     "application/zip": ".zip",
+    "application/msword": ".doc",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+    "application/vnd.ms-excel": ".xls",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+    "application/vnd.ms-powerpoint": ".ppt",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
     "text/plain": ".txt",
     "text/vtt": ".vtt",
 }
