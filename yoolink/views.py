@@ -508,17 +508,11 @@ def load_cmsinfo(request):
     context["textContent_company_bullet3"] = get_text("main_cmsinfo_company_bullet3")
     context["textContent_company_bullet4"] = get_text("main_cmsinfo_company_bullet4")
 
-    context["image_sec1_card_1"] = get_image("main_cmsinfo_sec1_card_1")
-    context["image_sec1_card_2"] = get_image("main_cmsinfo_sec1_card_2")
-    context["image_sec1_card_3"] = get_image("main_cmsinfo_sec1_card_3")
-    context["image_sec1_card_4"] = get_image("main_cmsinfo_sec1_card_4")
+    context["image_shot_dashboard"] = get_image("main_cmsinfo_shot_dashboard")
     context["image_sec1_preview_1"] = get_image("main_cmsinfo_sec1_preview_1")
     context["image_sec1_preview_2"] = get_image("main_cmsinfo_sec1_preview_2")
     context["image_sec1_preview_3"] = get_image("main_cmsinfo_sec1_preview_3")
     context["image_sec1_preview_4"] = get_image("main_cmsinfo_sec1_preview_4")
-    context["image_sec2_card_1"] = get_image("main_cmsinfo_sec2_card_1")
-    context["image_sec2_card_2"] = get_image("main_cmsinfo_sec2_card_2")
-    context["image_sec2_card_3"] = get_image("main_cmsinfo_sec2_card_3")
     context["image_sec2_preview_1"] = get_image("main_cmsinfo_sec2_preview_1")
     context["image_sec2_preview_2"] = get_image("main_cmsinfo_sec2_preview_2")
     context["image_sec2_preview_3"] = get_image("main_cmsinfo_sec2_preview_3")
@@ -678,4 +672,3 @@ def kontaktform(request):
     return render(request, 'pages/kontakt.html', context)
 
 # Authentication
-

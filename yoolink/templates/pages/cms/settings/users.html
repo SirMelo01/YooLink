@@ -85,8 +85,8 @@
                             {% for role in roles %}
                             <label class="cursor-pointer">
                                 <input type="checkbox" name="roles" value="{{ role.id }}" class="peer sr-only">
-                                <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 peer-checked:[&>.chk]:opacity-100">
-                                    <i class="chk bi bi-check-circle-fill text-blue-500 opacity-0 transition"></i>{{ role.name }}
+                                <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 peer-checked:[&>.chk-off]:hidden peer-checked:[&>.chk-on]:inline-block">
+                                    <i class="chk-off bi bi-x-circle text-slate-400 transition"></i><i class="chk-on hidden bi bi-check-circle-fill text-blue-500 transition"></i>{{ role.name }}
                                 </span>
                             </label>
                             {% empty %}
@@ -168,8 +168,8 @@
                                     <label class="cursor-pointer">
                                         <input type="checkbox" name="roles" value="{{ role.id }}" class="peer sr-only"
                                             {% for assignment in cms_user.cms_role_assignments.all %}{% if assignment.role_id == role.id %}checked{% endif %}{% endfor %}>
-                                        <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 peer-checked:[&>.chk]:opacity-100">
-                                            <i class="chk bi bi-check-circle-fill text-blue-500 opacity-0 transition"></i>{{ role.name }}
+                                        <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 peer-checked:[&>.chk-off]:hidden peer-checked:[&>.chk-on]:inline-block">
+                                            <i class="chk-off bi bi-x-circle text-slate-400 transition"></i><i class="chk-on hidden bi bi-check-circle-fill text-blue-500 transition"></i>{{ role.name }}
                                         </span>
                                     </label>
                                     {% empty %}

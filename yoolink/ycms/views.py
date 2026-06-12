@@ -27,6 +27,7 @@ from yoolink.ycms.models import (
     Galerie,
     Message,
     OpeningHours,
+    PageLink,
     PricingCard,
     PricingFeature,
     TeamMember,
@@ -3225,21 +3226,71 @@ def manage_features(request, pk):
 
     return HttpResponseBadRequest()
 
+# Vorschläge für den Seitenpfad beim Anlegen von Seiten-Links
+SITE_PAGE_SUGGESTIONS = [
+    ("/", "Startseite"),
+    ("/leistungen/", "Leistungen"),
+    ("/leistungen/webdesign/", "Leistungen – Webdesign"),
+    ("/leistungen/cms/", "Leistungen – CMS"),
+    ("/leistungen/logos/", "Leistungen – Logos"),
+    ("/leistungen/visitenkarte/", "Leistungen – Visitenkarte"),
+    ("/leistungen/medien/", "Leistungen – Medien"),
+    ("/webdesign-deggendorf/", "Webdesign Deggendorf"),
+    ("/kunden/", "Kunden"),
+    ("/blog/", "Blog"),
+    ("/shop/", "Shop"),
+    ("/kontakt/", "Kontakt"),
+    ("/impressum/", "Impressum"),
+    ("/datenschutz/", "Datenschutz"),
+]
+
+
+def _apply_button_payload(button, data, lang):
+    """Gemeinsame Feld-Zuweisung für Button erstellen/bearbeiten."""
+    text = (data.get("text") or "").strip()
+    if not text:
+        return "Bitte einen Button-Text angeben."
+
+    setattr(button, f"text_{lang}", text)
+    setattr(button, f"hover_text_{lang}", data.get("hover_text", ""))
+    if lang == DEFAULT_LANGUAGE:
+        button.text = text
+        button.hover_text = data.get("hover_text", "")
+
+    valid_colors = {value for value, _ in Button.COLOR_CHOICES}
+    color = data.get("color", "blue")
+    button.color = color if color in valid_colors else "blue"
+
+    page_link_id = data.get("page_link_id")
+    button.page_link = PageLink.objects.filter(pk=page_link_id).first() if page_link_id else None
+    button.url = (data.get("url") or "").strip()
+    if not button.page_link and not button.url:
+        return "Bitte ein Link-Ziel angeben (Seite auswählen oder eigene URL eintragen)."
+
+    button.target = "_blank" if data.get("target") == "_blank" else "_self"
+    button.icon = (data.get("icon") or "").strip()
+    button.order = int(data.get("order") or 0)
+    return None
+
+
 @login_required(login_url='login')
 @cms_permission_required("buttons.edit")
 def button_list(request):
-    buttons = Button.objects.all().order_by("order")
+    buttons = Button.objects.select_related("page_link").order_by("order", "id")
+    page_links = PageLink.objects.prefetch_related("buttons").all()
     return render(request, "pages/cms/buttons/button_list.html", {
-        "buttons": buttons
+        "buttons": buttons,
+        "page_links": page_links,
+        "page_suggestions": SITE_PAGE_SUGGESTIONS,
     })
 
 @login_required(login_url='login')
 @cms_permission_required("buttons.edit")
 def button_create(request):
     if request.method == "GET":
-        targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
         return render(request, "pages/cms/buttons/button_create.html", {
-            "targets": targets
+            "page_links": PageLink.objects.all(),
+            "colors": Button.COLOR_CHOICES,
         })
 
     elif request.method == "POST":
@@ -3247,22 +3298,12 @@ def button_create(request):
         lang = get_active_language(request)
 
         button = Button()
-        setattr(button, f"text_{lang}", data["text"])
-        setattr(button, f"hover_text_{lang}", data.get("hover_text", ""))
-
-        if lang == DEFAULT_LANGUAGE:
-            button.text = data["text"]
-            button.hover_text = data.get("hover_text", "")
-
-        button.url = data["url"]
-        button.target = data.get("target", "_self")
-        button.css_classes = data.get("css_classes", "")
-        button.icon = data.get("icon", "")
-        button.order = data.get("order", 0)
+        error = _apply_button_payload(button, data, lang)
+        if error:
+            return JsonResponse({"error": error}, status=400)
         button.save()
 
         return JsonResponse({"id": button.id})
-
 
     return HttpResponseBadRequest()
 
@@ -3271,34 +3312,23 @@ def button_create(request):
 def button_edit(request, pk):
     button = get_object_or_404(Button, pk=pk)
 
-    targets = [('_self', '_self'), ('_blank', '_blank'), ('_parent', '_parent'), ('_top', '_top')]
-
     if request.method == "GET":
         return render(request, "pages/cms/buttons/button_edit.html", {
             "button": button,
-            "targets": targets
+            "page_links": PageLink.objects.all(),
+            "colors": Button.COLOR_CHOICES,
         })
 
     elif request.method == "POST":
         data = json.loads(request.body)
         lang = get_active_language(request)
 
-        setattr(button, f"text_{lang}", data["text"])
-        setattr(button, f"hover_text_{lang}", data.get("hover_text", ""))
-
-        if lang == DEFAULT_LANGUAGE:
-            button.text = data["text"]
-            button.hover_text = data.get("hover_text", "")
-
-        button.url = data["url"]
-        button.target = data.get("target", "_self")
-        button.css_classes = data.get("css_classes", "")
-        button.icon = data.get("icon", "")
-        button.order = data.get("order", 0)
+        error = _apply_button_payload(button, data, lang)
+        if error:
+            return JsonResponse({"error": error}, status=400)
         button.save()
 
         return JsonResponse({"success": True})
-
 
     return HttpResponseBadRequest()
 
@@ -3308,6 +3338,66 @@ def button_delete(request, pk):
     if request.method == "POST":
         button = get_object_or_404(Button, pk=pk)
         button.delete()
+        return JsonResponse({"success": True})
+    return HttpResponseBadRequest()
+
+
+def _pagelink_payload(data):
+    """Validiert und normalisiert die Felder eines Seiten-Links."""
+    title = (data.get("title") or "").strip()
+    path = (data.get("path") or "").strip()
+    anchor = (data.get("anchor") or "").strip().lstrip("#")
+    if not title or not path:
+        return None, "Bitte Titel und Seitenpfad angeben."
+    if not path.startswith("/"):
+        path = "/" + path
+    return {"title": title, "path": path, "anchor": anchor}, None
+
+
+def _pagelink_json(link):
+    return {
+        "id": link.id,
+        "title": link.title,
+        "path": link.path,
+        "anchor": link.anchor,
+        "url": link.url,
+        "button_count": link.buttons.count(),
+    }
+
+
+@login_required(login_url='login')
+@cms_permission_required("buttons.edit")
+def pagelink_create(request):
+    if request.method == "POST":
+        fields, error = _pagelink_payload(json.loads(request.body))
+        if error:
+            return JsonResponse({"error": error}, status=400)
+        link = PageLink.objects.create(**fields)
+        return JsonResponse(_pagelink_json(link))
+    return HttpResponseBadRequest()
+
+
+@login_required(login_url='login')
+@cms_permission_required("buttons.edit")
+def pagelink_edit(request, pk):
+    if request.method == "POST":
+        link = get_object_or_404(PageLink, pk=pk)
+        fields, error = _pagelink_payload(json.loads(request.body))
+        if error:
+            return JsonResponse({"error": error}, status=400)
+        for key, value in fields.items():
+            setattr(link, key, value)
+        link.save()
+        return JsonResponse(_pagelink_json(link))
+    return HttpResponseBadRequest()
+
+
+@login_required(login_url='login')
+@cms_permission_required("buttons.edit")
+def pagelink_delete(request, pk):
+    if request.method == "POST":
+        link = get_object_or_404(PageLink, pk=pk)
+        link.delete()
         return JsonResponse({"success": True})
     return HttpResponseBadRequest()
 

@@ -33,211 +33,142 @@
       <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <!-- Text -->
         <div class="text-content flex flex-col gap-3" key="main_cmsinfo_hero">
-          <input inputType="header" type="text"
-                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-2xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                 placeholder="Überschrift"
-                 value="{{ textContent_hero.header|default:'Verwalte deine eigene Website' }}">
-          <textarea inputType="description" rows="4"
-                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_hero.description|default:"Bist du bereit, deine Website einfach und schnell selbst zu verwalten? - Mit dem Content Management System von YooLink" }}</textarea>
-          <input inputType="buttonText"
-                 value="{{ textContent_hero.buttonText|default:'Jetzt Anfragen!' }}"
-                 class="self-start rounded-md bg-blue-900 px-6 py-3 text-sm font-bold text-white">
-        </div>
-        <!-- Static placeholder (Hero-Bild ist statisch) -->
-        <div class="flex items-center justify-center rounded-xl bg-gray-200 h-52 lg:h-auto">
-          <p class="text-center text-sm text-gray-500 px-4">Hero-Bilder sind statisch<br><span class="text-xs">(cmsinfohero.png &amp; Screenloader.png)</span></p>
-        </div>
-      </div>
-    </section>
+	          <input inputType="header" type="text"
+	                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-2xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                 placeholder="Überschrift"
+	                 value="{{ textContent_hero.header|default:'Deine Website. Deine Inhalte. Deine Kontrolle.' }}">
+	          <textarea inputType="description" rows="4"
+	                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_hero.description|default:"Mit dem YooLink CMS pflegst du Texte, Bilder, Team, Preise, Blog und sogar deinen Produkt-Showcase selbst - direkt im Browser, ohne Vorkenntnisse und ohne auf eine Agentur zu warten." }}</textarea>
+	          <input inputType="buttonText"
+	                 value="{{ textContent_hero.buttonText|default:'Jetzt anfragen' }}"
+	                 class="self-start rounded-md bg-blue-900 px-6 py-3 text-sm font-bold text-white">
+	        </div>
+	        <!-- Static placeholder (Hero-Bild ist statisch) -->
+	        <div class="flex items-center justify-center rounded-xl bg-gray-200 h-52 lg:h-auto">
+	          <p class="text-center text-sm text-gray-500 px-4">Hero-Visual ist statisch<br><span class="text-xs">(animiertes CMS-Mockup im Template)</span></p>
+	        </div>
+	      </div>
+	    </section>
 
-    <!-- ══════════════════════════════════════════
-         SECTION 1 – Text links + Thumbnails, Previews rechts
-    ══════════════════════════════════════════ -->
-    <section class="rounded-2xl bg-blue-50 p-6">
-      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Section 1</p>
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+	    <!-- ══════════════════════════════════════════
+	         FEATURE GRID
+	    ══════════════════════════════════════════ -->
+	    <section class="rounded-2xl bg-blue-50 p-6">
+	      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Feature Grid</p>
+	      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+	        <div class="text-content flex flex-col gap-3" key="main_cmsinfo_sec1">
+	          <input inputType="title" type="text"
+	                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                 value="{{ textContent_sec1.title|default:'Verwalte den Inhalt deiner Website jederzeit und ohne Hilfe' }}">
+	          <textarea inputType="description" rows="5"
+	                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_sec1.description|default:"Deine Website ist in klar verständliche Bereiche unterteilt. Jeden davon pflegst du selbst - vom Text auf der Startseite bis zum Produkt-Showcase. Und das CMS wächst ständig weiter." }}</textarea>
+	        </div>
 
-        <!-- Links: Text + Thumbnail-Reihe -->
-        <div class="flex flex-col gap-4">
-          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_sec1">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   value="{{ textContent_sec1.title|default:'Verwalte den Inhalt der Website jederzeit und ohne Hilfe' }}">
-            <textarea inputType="description" rows="5"
-                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_sec1.description|default:"Deine Website ist in verschiedene Sektionen unterteilt – z. B. Team, FAQ, Preise oder Know-How. In unserem CMS kannst du in jeder dieser Sektionen die Inhalte eigenständig bearbeiten – jederzeit und ohne technisches Vorwissen. Das Layout und Design bleiben dabei immer erhalten." }}</textarea>
-          </div>
+	        <div class="flex items-center rounded-xl bg-white p-5 text-sm leading-6 text-gray-600 shadow-sm ring-1 ring-blue-100">
+	          <p>
+	            Die Feature-Karten in dieser Sektion nutzen feste Icons und feste Kurztexte im Template.
+	            Im CMS werden hier nur Überschrift und Beschreibung der Sektion gepflegt.
+	          </p>
+	        </div>
+	      </div>
+	    </section>
 
-          <!-- Karten-Thumbnails (die kleinen Bilder unten links) -->
-          <div>
-            <p class="mb-2 text-xs font-semibold text-orange-600 uppercase tracking-wider">
-              <i class="bi bi-ui-checks-grid mr-1"></i>Karten-Thumbnails (kleine Bilder)
-            </p>
-            <div class="grid grid-cols-4 gap-2">
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec1_card_1 %}
-                <img src="{{ image_sec1_card_1.file.url }}" imgId="{{ image_sec1_card_1.id }}" key="main_cmsinfo_sec1_card_1" alt="Thumbnail 1" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec1_card_1" alt="Thumbnail 1" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec1_card_2 %}
-                <img src="{{ image_sec1_card_2.file.url }}" imgId="{{ image_sec1_card_2.id }}" key="main_cmsinfo_sec1_card_2" alt="Thumbnail 2" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec1_card_2" alt="Thumbnail 2" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec1_card_3 %}
-                <img src="{{ image_sec1_card_3.file.url }}" imgId="{{ image_sec1_card_3.id }}" key="main_cmsinfo_sec1_card_3" alt="Thumbnail 3" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec1_card_3" alt="Thumbnail 3" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec1_card_4 %}
-                <img src="{{ image_sec1_card_4.file.url }}" imgId="{{ image_sec1_card_4.id }}" key="main_cmsinfo_sec1_card_4" alt="Thumbnail 4" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec1_card_4" alt="Thumbnail 4" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
+	    <!-- ══════════════════════════════════════════
+	         SCREENSHOT TABS
+	    ══════════════════════════════════════════ -->
+	    <section class="rounded-2xl bg-blue-50 p-6">
+	      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Ein Blick ins CMS</p>
+	      <div class="space-y-6">
+	        <div class="text-content flex flex-col gap-3" key="main_cmsinfo_sec2">
+	          <input inputType="title" type="text"
+	                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                 value="{{ textContent_sec2.title|default:'Klick dich durch die Bereiche' }}">
+	          <textarea inputType="description" rows="4"
+	                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_sec2.description|default:"Vom Dashboard über die Seitenverwaltung bis zu den Videos: Wähle einen Bereich und sieh dir an, wie er im CMS aussieht." }}</textarea>
+	        </div>
 
-        <!-- Rechts: Vorschau-Bilder (2×2, was beim Klick rechts erscheint) -->
-        <div>
-          <p class="mb-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-            <i class="bi bi-eye mr-1"></i>Vorschau-Bilder (beim Klick angezeigt)
-          </p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec1_preview_1 %}
-              <img src="{{ image_sec1_preview_1.file.url }}" imgId="{{ image_sec1_preview_1.id }}" key="main_cmsinfo_sec1_preview_1" alt="Vorschau 1" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_1" alt="Vorschau 1" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec1_preview_2 %}
-              <img src="{{ image_sec1_preview_2.file.url }}" imgId="{{ image_sec1_preview_2.id }}" key="main_cmsinfo_sec1_preview_2" alt="Vorschau 2" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_2" alt="Vorschau 2" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec1_preview_3 %}
-              <img src="{{ image_sec1_preview_3.file.url }}" imgId="{{ image_sec1_preview_3.id }}" key="main_cmsinfo_sec1_preview_3" alt="Vorschau 3" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_3" alt="Vorschau 3" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec1_preview_4 %}
-              <img src="{{ image_sec1_preview_4.file.url }}" imgId="{{ image_sec1_preview_4.id }}" key="main_cmsinfo_sec1_preview_4" alt="Vorschau 4" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_4" alt="Vorschau 4" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-          </div>
-        </div>
+	        <div>
+	          <p class="mb-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
+	            <i class="bi bi-eye mr-1"></i>Vorschau-Bilder der acht Tabs
+	          </p>
+	          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Dashboard</span>
+	              {% if image_shot_dashboard %}
+	              <img src="{{ image_shot_dashboard.file.url }}" imgId="{{ image_shot_dashboard.id }}" key="main_cmsinfo_shot_dashboard" alt="Dashboard Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="{% static 'images/cmsinfo/cmsinfohero.png' %}" imgId="-1" key="main_cmsinfo_shot_dashboard" alt="Dashboard Vorschau" class="content-image h-40 w-full object-contain rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Team</span>
+	              {% if image_sec1_preview_1 %}
+	              <img src="{{ image_sec1_preview_1.file.url }}" imgId="{{ image_sec1_preview_1.id }}" key="main_cmsinfo_sec1_preview_1" alt="Team Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_1" alt="Team Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">FAQ</span>
+	              {% if image_sec1_preview_2 %}
+	              <img src="{{ image_sec1_preview_2.file.url }}" imgId="{{ image_sec1_preview_2.id }}" key="main_cmsinfo_sec1_preview_2" alt="FAQ Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_2" alt="FAQ Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Preise</span>
+	              {% if image_sec1_preview_3 %}
+	              <img src="{{ image_sec1_preview_3.file.url }}" imgId="{{ image_sec1_preview_3.id }}" key="main_cmsinfo_sec1_preview_3" alt="Preise Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_3" alt="Preise Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Seiten</span>
+	              {% if image_sec1_preview_4 %}
+	              <img src="{{ image_sec1_preview_4.file.url }}" imgId="{{ image_sec1_preview_4.id }}" key="main_cmsinfo_sec1_preview_4" alt="Seiten Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec1_preview_4" alt="Seiten Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Bilder</span>
+	              {% if image_sec2_preview_1 %}
+	              <img src="{{ image_sec2_preview_1.file.url }}" imgId="{{ image_sec2_preview_1.id }}" key="main_cmsinfo_sec2_preview_1" alt="Bilder Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_1" alt="Bilder Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Galerien</span>
+	              {% if image_sec2_preview_2 %}
+	              <img src="{{ image_sec2_preview_2.file.url }}" imgId="{{ image_sec2_preview_2.id }}" key="main_cmsinfo_sec2_preview_2" alt="Galerien Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_2" alt="Galerien Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
+	              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
+	              <span class="absolute bottom-2 left-2 z-30 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-blue-900">Videos</span>
+	              {% if image_sec2_preview_3 %}
+	              <img src="{{ image_sec2_preview_3.file.url }}" imgId="{{ image_sec2_preview_3.id }}" key="main_cmsinfo_sec2_preview_3" alt="Videos Vorschau" class="content-image h-40 w-full object-cover rounded-xl" />
+	              {% else %}
+	              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_3" alt="Videos Vorschau" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
+	              {% endif %}
+	            </div>
+	          </div>
+	        </div>
 
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════
-         SECTION 2 – Previews links, Text + Thumbnails rechts
-    ══════════════════════════════════════════ -->
-    <section class="rounded-2xl bg-blue-50 p-6">
-      <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-700">Section 2</p>
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-
-        <!-- Links: Vorschau-Bilder (3er-Reihe) -->
-        <div>
-          <p class="mb-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-            <i class="bi bi-eye mr-1"></i>Vorschau-Bilder (beim Klick angezeigt)
-          </p>
-          <div class="grid grid-cols-3 gap-3">
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec2_preview_1 %}
-              <img src="{{ image_sec2_preview_1.file.url }}" imgId="{{ image_sec2_preview_1.id }}" key="main_cmsinfo_sec2_preview_1" alt="Vorschau 1" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_1" alt="Vorschau 1" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec2_preview_2 %}
-              <img src="{{ image_sec2_preview_2.file.url }}" imgId="{{ image_sec2_preview_2.id }}" key="main_cmsinfo_sec2_preview_2" alt="Vorschau 2" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_2" alt="Vorschau 2" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-            <div class="relative overflow-hidden rounded-xl bg-gray-200 ring-1 ring-slate-200">
-              <span class="edit-img absolute left-2 top-2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-              {% if image_sec2_preview_3 %}
-              <img src="{{ image_sec2_preview_3.file.url }}" imgId="{{ image_sec2_preview_3.id }}" key="main_cmsinfo_sec2_preview_3" alt="Vorschau 3" class="content-image h-40 w-full object-cover rounded-xl" />
-              {% else %}
-              <img src="" imgId="-1" key="main_cmsinfo_sec2_preview_3" alt="Vorschau 3" class="content-image h-40 w-full object-cover rounded-xl bg-gray-300" />
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Rechts: Text + Thumbnail-Reihe -->
-        <div class="flex flex-col gap-4">
-          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_sec2">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   value="{{ textContent_sec2.title|default:'Bilder, Videos und Galerien flexibel gestalten' }}">
-            <textarea inputType="description" rows="5"
-                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_sec2.description|default:"Lade ganz einfach Bilder, Videos und andere Dateien wie PDFs in unser CMS hoch. Organisiere deine Medien effizient, indem du Bilder zu Galerien zusammenfasst und deine Inhalte zentral verwaltest. Unser System macht das Hochladen, Strukturieren und Bearbeiten von Dateien besonders einfach – für eine reibungslose und schnelle Medienverwaltung." }}</textarea>
-          </div>
-
-          <div>
-            <p class="mb-2 text-xs font-semibold text-orange-600 uppercase tracking-wider">
-              <i class="bi bi-ui-checks-grid mr-1"></i>Karten-Thumbnails (kleine Bilder)
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec2_card_1 %}
-                <img src="{{ image_sec2_card_1.file.url }}" imgId="{{ image_sec2_card_1.id }}" key="main_cmsinfo_sec2_card_1" alt="Thumbnail 1" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec2_card_1" alt="Thumbnail 1" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec2_card_2 %}
-                <img src="{{ image_sec2_card_2.file.url }}" imgId="{{ image_sec2_card_2.id }}" key="main_cmsinfo_sec2_card_2" alt="Thumbnail 2" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec2_card_2" alt="Thumbnail 2" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-              <div class="relative overflow-hidden rounded-lg bg-gray-200 ring-1 ring-slate-200">
-                <span class="edit-img absolute left-1 top-1 z-40 inline-block rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white hover:cursor-pointer"><i class="bi bi-pencil-square"></i></span>
-                {% if image_sec2_card_3 %}
-                <img src="{{ image_sec2_card_3.file.url }}" imgId="{{ image_sec2_card_3.id }}" key="main_cmsinfo_sec2_card_3" alt="Thumbnail 3" class="content-image h-20 w-full object-cover rounded-lg" />
-                {% else %}
-                <img src="" imgId="-1" key="main_cmsinfo_sec2_card_3" alt="Thumbnail 3" class="content-image h-20 w-full object-cover rounded-lg bg-gray-300" />
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
+	      </div>
+	    </section>
 
     <!-- ══════════════════════════════════════════
          BLOG – Text + Bullets links, Bild rechts
@@ -248,12 +179,12 @@
 
         <!-- Links: Text + Bullets -->
         <div class="flex flex-col gap-3">
-          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_blog">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   value="{{ textContent_blog.title|default:'Verbessere das Ranking deiner Website mit unserem Blog-Builder' }}">
-            <textarea inputType="description" rows="4"
-                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_blog.description|default:"Erstelle mit unserem integrierten Blog-Tool ganz einfach professionelle Blogbeiträge – ideal für effektives SEO und starke Online-Präsenz. Füge Texte, Bilder,Videos, Galerien, Code-Snippets oder PDFs hinzu und passe das Layout flexibel an. So hast du volle Kontrolle über Struktur, Inhalt und Wirkung deiner Beiträge." }}</textarea>
+	          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_blog">
+	            <input inputType="title" type="text"
+	                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                   value="{{ textContent_blog.title|default:'Verbessere dein Google-Ranking mit eigenen Beiträgen' }}">
+	            <textarea inputType="description" rows="4"
+	                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_blog.description|default:"Mit dem integrierten Blog-Builder erstellst du Beiträge mit Texten, Bildern und Videos in klar strukturierten Layouts. Regelmäßige, relevante Inhalte sind der stärkste Hebel für deine Sichtbarkeit bei Google." }}</textarea>
           </div>
           <div class="flex flex-col gap-2 border-t border-blue-200 pt-3">
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bullet-Punkte</p>
@@ -310,12 +241,12 @@
 
         <!-- Rechts: Text + Bullets -->
         <div class="flex flex-col gap-3">
-          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_company">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   value="{{ textContent_company.title|default:'Alle Unternehmensdaten auf einem Blick verwalten' }}">
-            <textarea inputType="description" rows="4"
-                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_company.description|default:"Pflege alle wichtigen Informationen deines Unternehmens zentral und übersichtlich. Ob Kontaktdaten, Adresse, Unternehmensname oder Logo – alle Einträge lassen sich ganz einfach bearbeiten und werden automatisch auf deiner Website angezeigt. So bleibt dein Online-Auftritt stets aktuell und professionell." }}</textarea>
+	          <div class="text-content flex flex-col gap-3" key="main_cmsinfo_company">
+	            <input inputType="title" type="text"
+	                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                   value="{{ textContent_company.title|default:'Alle Unternehmensdaten an einem Ort' }}">
+	            <textarea inputType="description" rows="4"
+	                      class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_company.description|default:"Adresse, Kontaktdaten, Logo, Social-Media-Profile: Pflege alle wichtigen Informationen zentral - die Website übernimmt sie automatisch an jeder Stelle, an der sie gebraucht werden." }}</textarea>
           </div>
           <div class="flex flex-col gap-2 border-t border-blue-200 pt-3">
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bullet-Punkte</p>
@@ -361,11 +292,11 @@
           <input inputType="header" type="text"
                  class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-blue-900 focus:border-blue-500 focus:bg-white focus:outline-none"
                  value="{{ textContent_trust.header|default:'Von Unternehmen im Einsatz' }}">
-          <input inputType="title" type="text"
-                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                 value="{{ textContent_trust.title|default:'Vertrauen von Anfang an – Zahlen, die für sich sprechen' }}">
-          <textarea inputType="description" rows="4"
-                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_trust.description|default:"Obwohl wir noch am Anfang stehen, setzen bereits zahlreiche Teams auf YooLink. Wir entwickeln unser System stetig weiter – mit Fokus auf Stabilität, Nutzerfreundlichkeit und Sicherheit." }}</textarea>
+	          <input inputType="title" type="text"
+	                 class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-xl font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                 value="{{ textContent_trust.title|default:'Vertrauen von Anfang an - Zahlen, die für sich sprechen' }}">
+	          <textarea inputType="description" rows="4"
+	                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_trust.description|default:"Unternehmen aus unterschiedlichen Branchen pflegen ihre Websites bereits selbst mit dem YooLink CMS - zuverlässig, sicher und ohne Agentur-Wartezeiten." }}</textarea>
         </div>
 
         <!-- Rechts: 4 Stats (2×2) -->
@@ -392,9 +323,9 @@
                       class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_stat3.description|default:"Pflege deine Website-Inhalte ganz einfach in jeder gewünschten Sprache." }}</textarea>
           </div>
           <div class="text-content flex flex-col gap-2 rounded-xl bg-white p-4 shadow-sm" key="main_cmsinfo_stat4">
-            <input inputType="title" type="text"
-                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-lg font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
-                   value="{{ textContent_stat4.title|default:'Nahtlose integration' }}">
+	            <input inputType="title" type="text"
+	                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-lg font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
+	                   value="{{ textContent_stat4.title|default:'Nahtlose Integration' }}">
             <textarea inputType="description" rows="2"
                       class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-3 py-1.5 text-sm focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_stat4.description|default:"YooLink lässt sich unkompliziert in bestehende Workflows integrieren." }}</textarea>
           </div>

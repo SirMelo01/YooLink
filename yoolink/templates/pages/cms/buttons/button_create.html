@@ -1,64 +1,44 @@
 {% extends 'cmsbase.html' %}
+{% load compress static %}
 
 {% block title %}{{ block.super }} | CMS | Button erstellen{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-4 max-w-3xl sm:mt-8">
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 class="text-2xl font-semibold">
-            <a href="{% url 'cms:button-list' %}" class="text-blue-600 hover:underline">Buttons</a> /
-            <span id="live-button-title">Erstellen</span>
-        </h1>
-        <button
-            type="submit"
-            form="create-button-form"
-            class="w-full rounded bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-800 sm:w-auto sm:py-2">
-            Erstellen
+<div class="mx-auto max-w-6xl">
+
+    <!-- Header -->
+    <div class="mb-6 mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <nav class="mb-1 flex items-center gap-1.5 text-sm text-slate-400">
+                <a href="{% url 'cms:button-list' %}" class="transition hover:text-slate-600">Buttons</a>
+                <i class="bi bi-chevron-right text-xs"></i>
+                <span class="text-slate-500">Erstellen</span>
+            </nav>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Button erstellen</h1>
+            <p class="mt-1.5 text-slate-500">Gestalte den Button und sieh sofort, wie er aussieht.</p>
+        </div>
+        <button type="submit" form="buttonDesignerForm"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto">
+            <i class="bi bi-check-lg"></i> Erstellen
         </button>
     </div>
-  
 
-  <form id="create-button-form" class="space-y-4">
-    {% csrf_token %}
-    {% include 'pages/cms/buttons/button_form_fields.html' %}
-  </form>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <form id="buttonDesignerForm" class="space-y-5 lg:col-span-2"
+            data-endpoint="{% url 'cms:button-create' %}"
+            data-mode="create"
+            data-redirect="{% url 'cms:button-list' %}">
+            {% csrf_token %}
+            {% include 'pages/cms/buttons/button_form_fields.html' %}
+        </form>
 
-  <div id="success-message" class="mt-6 hidden bg-green-100 text-green-800 p-4 rounded">
-    ✅ Button erfolgreich erstellt!
-    <a href="{% url 'cms:button-list' %}" class="underline ml-2">Zurück zur Übersicht</a>
-  </div>
+        {% include 'pages/cms/buttons/_button_preview.html' %}
+    </div>
 </div>
 {% endblock %}
 
 {% block javascriptend %}
-<script>
-  $("#create-button-form").submit(function (e) {
-    e.preventDefault();
-
-    const payload = {
-      text: $("#text").val(),
-      url: $("#url").val(),
-      hover_text: $("#hover_text").val(),
-      target: $("#target").val(),
-      css_classes: $("#css_classes").val(),
-      icon: $("#icon").val(),
-      order: parseInt($("#order").val()) || 0,
-    };
-
-    $.ajax({
-      url: "{% url 'cms:button-create' %}",
-      method: "POST",
-      headers: { "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val() },
-      contentType: "application/json",
-      data: JSON.stringify(payload),
-      success: function () {
-        $("#success-message").removeClass("hidden");
-        $("#create-button-form")[0].reset();
-      },
-      error: function (err) {
-        alert("Fehler beim Erstellen: " + err.responseText);
-      }
-    });
-  });
-</script>
-{% endblock %}
+{% compress js %}
+<script src="{% static 'js/cms/buttons/button_designer.js' %}"></script>
+{% endcompress js %}
+{% endblock javascriptend %}

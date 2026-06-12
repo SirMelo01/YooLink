@@ -81,7 +81,16 @@
       "Bash(node -e \"const c=require\\('fs'\\).readFileSync\\('yoolink/static/css/output.css','utf8'\\); ['z-\\\\\\\\\\\\\\\\[90\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[70\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[45\\\\\\\\\\\\\\\\]','z-\\\\\\\\\\\\\\\\[80\\\\\\\\\\\\\\\\]'].forEach\\(z=>console.log\\(z.replace\\(/\\\\\\\\\\\\\\\\/g,''\\), '->', c.includes\\(z\\)\\)\\);\")",
       "Bash(node _zi.js)",
       "Bash(echo \"exit: $?\")",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(git commit *)",
+      "Bash(git fetch *)",
+      "Bash(git rebase *)",
+      "Bash(echo \"--- rebase exit: $? ---\")",
+      "Bash(git stash *)",
+      "Bash(git push *)",
+      "Bash(echo \"--- push exit: $? ---\")",
+      "Bash(python3 -c \"import json; json.load\\(open\\('.claude/settings.local.json'\\)\\); print\\('valid JSON OK'\\)\")",
+      "Bash(git *)"
     ]
   }
 }

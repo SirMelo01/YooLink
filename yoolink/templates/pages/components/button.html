@@ -1,0 +1,15 @@
+{% comment %}
+Renders a CMS-configured Button (model ycms.Button). Params:
+  button        - Button instance
+  full          - if truthy, button stretches to full width
+  extra_classes - optional additional layout classes (e.g. "mt-8")
+
+The color mapping here is the single source of truth for the frontend;
+the CMS live preview mirrors it in yoolink/static/js/cms/buttons/button_designer.js.
+{% endcomment %}
+{% if button %}
+<a href="{{ button.href }}" target="{{ button.target }}"{% if button.target == "_blank" %} rel="noopener"{% endif %}{% if button.hover_text %} title="{{ button.hover_text }}"{% endif %}
+   class="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-center text-sm font-bold transition {% if full %}w-full {% endif %}{{ extra_classes|default:'' }} {% if button.color == 'navy' %}bg-blue-900 text-white hover:bg-blue-800{% elif button.color == 'dark' %}bg-slate-900 text-white hover:bg-slate-700{% elif button.color == 'emerald' %}bg-emerald-600 text-white hover:bg-emerald-700{% elif button.color == 'white' %}bg-white text-blue-900 shadow-sm ring-1 ring-gray-200 hover:bg-blue-50{% elif button.color == 'outline' %}border border-blue-900 bg-transparent text-blue-900 hover:bg-blue-50{% else %}bg-blue-600 text-white hover:bg-blue-700{% endif %}">
+    {% if button.icon %}<i class="{{ button.icon }}"></i>{% endif %}{{ button.text }}
+</a>
+{% endif %}

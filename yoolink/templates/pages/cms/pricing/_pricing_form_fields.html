@@ -52,7 +52,7 @@ All element ids/classes are preserved for the page-level inline JS.
                 class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
                 <option value="">— Kein Button —</option>
                 {% for btn in buttons %}
-                <option value="{{ btn.id }}" {% if card.button and card.button.id == btn.id %}selected{% endif %}>{{ btn.text }} ({{ btn.url }})</option>
+                <option value="{{ btn.id }}" {% if card.button and card.button.id == btn.id %}selected{% endif %}>{{ btn.text }} ({{ btn.href }})</option>
                 {% endfor %}
             </select>
         </div>

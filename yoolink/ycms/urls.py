@@ -112,6 +112,11 @@ urlpatterns = [
     path("buttons/<int:pk>/edit/", views.button_edit, name="button-edit"),
     path("buttons/<int:pk>/delete/", views.button_delete, name="button-delete"),
 
+    # Seiten-Links (interne Link-Ziele für Buttons)
+    path("buttons/links/create/", views.pagelink_create, name="pagelink-create"),
+    path("buttons/links/<int:pk>/edit/", views.pagelink_edit, name="pagelink-edit"),
+    path("buttons/links/<int:pk>/delete/", views.pagelink_delete, name="pagelink-delete"),
+
     # AnyFiles
     path("anyfiles/upload/", views.anyfile_upload_view, name="anyfile-upload"),
     path("anyfiles/", views.anyfile_list_view, name="anyfile-list"),

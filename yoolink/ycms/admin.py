@@ -11,6 +11,7 @@ from .models import (
     Galerie,
     Message,
     OpeningHours,
+    PageLink,
     PricingCard,
     PricingFeature,
     TeamMember,
@@ -34,6 +35,7 @@ admin.site.register(OpeningHours)
 admin.site.register(TeamMember)
 admin.site.register(PricingFeature)
 admin.site.register(Button)
+admin.site.register(PageLink)
 admin.site.register(PricingCard)
 admin.site.register(VideoFile)
 

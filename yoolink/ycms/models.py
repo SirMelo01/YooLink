@@ -937,9 +937,75 @@ class PricingFeature(models.Model):
         verbose_name = "Feature"
         verbose_name_plural = "Features"
 
+class PageLink(models.Model):
+    """Vom CMS verwaltbares internes Link-Ziel (z.B. eine Seite oder ein Abschnitt
+    einer Seite), das Redakteure bei Buttons ohne URL-Kenntnisse auswählen können."""
+    title = models.CharField(
+        max_length=120,
+        verbose_name="Titel",
+        help_text="Anzeigename in der Auswahl, z.B. 'Startseite – Preise'"
+    )
+    path = models.CharField(
+        max_length=300,
+        verbose_name="Seitenpfad",
+        help_text="Pfad der Seite, z.B. '/' oder '/kontakt/'"
+    )
+    anchor = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Anker (optional)",
+        help_text="Abschnitt auf der Seite ohne '#', z.B. 'preise'"
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge")
+
+    @property
+    def url(self):
+        path = self.path or "/"
+        if self.anchor:
+            return f"{path}#{self.anchor.lstrip('#')}"
+        return path
+
+    def __str__(self):
+        return f"{self.title} ({self.url})"
+
+    class Meta:
+        ordering = ["order", "title"]
+        verbose_name = "Seiten-Link"
+        verbose_name_plural = "Seiten-Links"
+
+
 class Button(models.Model):
+    COLOR_CHOICES = [
+        ("blue", "Blau"),
+        ("navy", "Dunkelblau"),
+        ("dark", "Schwarz"),
+        ("emerald", "Grün"),
+        ("white", "Weiß"),
+        ("outline", "Umrandet"),
+    ]
+
     text = models.CharField(max_length=100, verbose_name="Button-Text")
-    url = models.URLField(max_length=500, verbose_name="Ziel-URL")
+    color = models.CharField(
+        max_length=20,
+        choices=COLOR_CHOICES,
+        default="blue",
+        verbose_name="Farbe"
+    )
+    page_link = models.ForeignKey(
+        PageLink,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="buttons",
+        verbose_name="Interne Seite",
+        help_text="Internes Link-Ziel; hat Vorrang vor der eigenen URL"
+    )
+    url = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name="Eigene URL",
+        help_text="Beliebiger Link, z.B. https://example.com oder mailto:info@example.com"
+    )
     hover_text = models.CharField(
         max_length=200,
         verbose_name="Tooltip (Hover-Text)",
@@ -949,30 +1015,28 @@ class Button(models.Model):
     target = models.CharField(
         max_length=20,
         choices=[
-            ("_self", "Gleiches Fenster (_self)"),
-            ("_blank", "Neuer Tab (_blank)"),
-            ("_parent", "Elternelement (_parent)"),
-            ("_top", "Oberstes Fenster (_top)"),
+            ("_self", "Gleicher Tab"),
+            ("_blank", "Neuer Tab"),
         ],
         default="_self",
-        verbose_name="Link-Ziel (_blank etc.)"
-    )
-    css_classes = models.CharField(
-        max_length=300,
-        verbose_name="CSS-Klassen",
-        blank=True,
-        help_text="Optional: Zusätzliche Tailwind oder CSS-Klassen"
+        verbose_name="Link-Ziel"
     )
     icon = models.CharField(
         max_length=100,
         blank=True,
         verbose_name="Icon (optional)",
-        help_text="z.B. Heroicon oder FontAwesome Klassenname"
+        help_text="Bootstrap-Icon-Klasse, z.B. 'bi bi-arrow-right'"
     )
     order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge")
 
+    @property
+    def href(self):
+        if self.page_link:
+            return self.page_link.url
+        return self.url or "#"
+
     def __str__(self):
-        return f"{self.text} → {self.url}"
+        return f"{self.text} → {self.href}"
 
     class Meta:
         ordering = ["order"]
