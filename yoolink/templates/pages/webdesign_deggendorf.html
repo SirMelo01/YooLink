@@ -12,6 +12,9 @@
 {% block twitter_title %}Webdesign Deggendorf – YooLink | Website ab 40 € im Monat{% endblock %}
 {% block twitter_description %}Individuelle Websites mit eigenem CMS für Unternehmen aus Deggendorf und Niederbayern. Abo ab 40 € im Monat – transparent und persönlich.{% endblock %}
 
+{% block og_image %}https://yoolink.de{% if image_skyline %}{{ image_skyline.file.url }}{% else %}{% static 'images/deggendorf/skyline.png' %}{% endif %}{% endblock %}
+{% block twitter_image %}https://yoolink.de{% if image_skyline %}{{ image_skyline.file.url }}{% else %}{% static 'images/deggendorf/skyline.png' %}{% endif %}{% endblock %}
+
 {% block css %}
 {% compress css %}
 <link href="{% static 'css/wellen.css' %}" rel="stylesheet" />
@@ -29,10 +32,10 @@
   .dg-hero__skyline {
     position: absolute;
     inset: 0;
-    background-image: url("{% static 'images/deggendorf/skyline.png' %}");
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-size: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
     opacity: 0.9;
     z-index: 0;
   }
@@ -173,7 +176,7 @@
      HERO mit Skyline Deggendorf
 ========================= -->
 <section class="dg-hero -mt-5">
-  <div class="dg-hero__skyline" role="img" aria-label="Stadtansicht von Deggendorf an der Donau – Blick über die Altstadt mit Kirchtürmen und Hügellandschaft Niederbayerns, im Aquarellstil"{% if image_skyline %} style="background-image: url('{{ image_skyline.file.url }}')"{% endif %}></div>
+  <img class="dg-hero__skyline" src="{% if image_skyline %}{{ image_skyline.file.url }}{% else %}{% static 'images/deggendorf/skyline.png' %}{% endif %}" alt="Stadtansicht von Deggendorf an der Donau – Blick über die Altstadt mit Kirchtürmen und Hügellandschaft Niederbayerns, im Aquarellstil" width="1448" height="1086" fetchpriority="high" decoding="async">
   <div class="dg-hero__veil" aria-hidden="true"></div>
   <div class="dg-hero__glow" aria-hidden="true"></div>
 
