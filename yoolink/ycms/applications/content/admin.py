@@ -1,10 +1,17 @@
 from django.contrib import admin
 
-from .models import Customer, PrivacyPolicy, TextContent
+from .models import Customer, PrivacyPolicy, ServiceLocation, TextContent
 
 
 admin.site.register(TextContent)
 admin.site.register(PrivacyPolicy)
+
+
+@admin.register(ServiceLocation)
+class ServiceLocationAdmin(admin.ModelAdmin):
+    list_display = ("name", "url", "latitude", "longitude", "is_headquarters", "active", "order")
+    list_filter = ("active", "is_headquarters")
+    search_fields = ("name", "url")
 
 
 @admin.register(Customer)

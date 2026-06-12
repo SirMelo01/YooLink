@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -11,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 
 from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, WebsiteSettings, fileentry
 
-from .models import Customer, ImpressumBlock, PrivacyPolicy, TextContent
+from .models import Customer, ImpressumBlock, PrivacyPolicy, ServiceLocation, TextContent
 
 DEFAULT_LANGUAGE = "en"
 
@@ -65,12 +66,14 @@ def site_view_main(request):
         "pricing_count": PricingCard.objects.count(),
         "member_count": TeamMember.objects.count(),
         "faq_count": FAQ.objects.count(),
+        "location_count": ServiceLocation.objects.count(),
         # Texts per section
         "hero_text": _get_text("main_hero"),
         "responsive_text": _get_text("main_responsive"),
         "cms_text": _get_text("main_cms"),
         "knowhow_text": _get_text("main_know_how"),
         "kunden_text": _get_text("main_kunden"),
+        "standorte_text": _get_text("main_standorte"),
         "price_text": _get_text("main_price"),
         "team_text": _get_text("main_team"),
         "faq_text": _get_text("main_faq"),
@@ -987,6 +990,148 @@ def customer_delete_view(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     customer.delete()
     return JsonResponse({"success": "Kunde wurde gelÃ¶scht"}, status=200)
+
+
+# ----------------------------------------------------------------------
+# ServiceLocation (Standorte / Einzugsgebiet) CMS-Views
+# ----------------------------------------------------------------------
+
+
+def _parse_coordinate(raw, minimum, maximum):
+    """Koordinate aus User-Eingabe parsen – akzeptiert Komma und Punkt."""
+    if raw in (None, ""):
+        return None
+    try:
+        value = Decimal(str(raw).strip().replace(",", "."))
+    except (InvalidOperation, ValueError):
+        return None
+    if value < minimum or value > maximum:
+        return None
+    return value.quantize(Decimal("0.000001"))
+
+
+def _apply_location_payload(location, payload):
+    name = (payload.get("name") or "").strip()
+    if not name:
+        return "Name darf nicht leer sein"
+
+    latitude = _parse_coordinate(payload.get("latitude"), Decimal("-90"), Decimal("90"))
+    longitude = _parse_coordinate(payload.get("longitude"), Decimal("-180"), Decimal("180"))
+    if latitude is None or longitude is None:
+        return "Bitte gültige Koordinaten angeben (z. B. 48.8372 und 12.9516)"
+
+    location.name = name[:120]
+    location.tagline = (payload.get("tagline") or "").strip()[:160]
+    location.url = (payload.get("url") or "").strip()[:300]
+    location.latitude = latitude
+    location.longitude = longitude
+    location.is_headquarters = bool(payload.get("is_headquarters", False))
+    location.active = bool(payload.get("active", True))
+
+    if location.pk is None:
+        max_order = ServiceLocation.objects.aggregate(m=Max("order"))["m"] or 0
+        location.order = max_order + 1
+
+    location.save()
+
+    # Es kann nur einen Hauptsitz geben
+    if location.is_headquarters:
+        ServiceLocation.objects.exclude(pk=location.pk).update(is_headquarters=False)
+
+    return None
+
+
+@login_required(login_url="login")
+def location_list_view(request):
+    locations = list(ServiceLocation.objects.all())
+    active_locations = [loc for loc in locations if loc.active]
+
+    return render(
+        request,
+        "pages/cms/content/locations/location_list.html",
+        {
+            "locations": locations,
+            "active_locations": active_locations,
+            "total_count": len(locations),
+            "active_count": len(active_locations),
+            "linked_count": sum(1 for loc in locations if loc.has_landing_page),
+            "area_count": sum(1 for loc in locations if not loc.has_landing_page),
+            "map_lng_min": ServiceLocation.MAP_LNG_MIN,
+            "map_lng_max": ServiceLocation.MAP_LNG_MAX,
+            "map_lat_min": ServiceLocation.MAP_LAT_MIN,
+            "map_lat_max": ServiceLocation.MAP_LAT_MAX,
+        },
+    )
+
+
+@login_required(login_url="login")
+def location_create_view(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Ungültige Daten"}, status=400)
+
+    location = ServiceLocation()
+    error = _apply_location_payload(location, payload)
+    if error:
+        return JsonResponse({"error": error}, status=400)
+
+    return JsonResponse({"success": "Standort wurde erstellt", "id": location.id}, status=201)
+
+
+@login_required(login_url="login")
+def location_edit_view(request, pk):
+    location = get_object_or_404(ServiceLocation, pk=pk)
+
+    if request.method != "POST":
+        return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Ungültige Daten"}, status=400)
+
+    error = _apply_location_payload(location, payload)
+    if error:
+        return JsonResponse({"error": error}, status=400)
+
+    return JsonResponse({"success": "Standort wurde gespeichert", "id": location.id}, status=200)
+
+
+@login_required(login_url="login")
+@require_http_methods(["POST", "DELETE"])
+def location_delete_view(request, pk):
+    location = get_object_or_404(ServiceLocation, pk=pk)
+    location.delete()
+    return JsonResponse({"success": "Standort wurde gelöscht"}, status=200)
+
+
+@login_required(login_url="login")
+def location_reorder_view(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Ungültige Anfrage"}, status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Ungültige Daten"}, status=400)
+
+    order = payload.get("order") or []
+    if not isinstance(order, list):
+        return JsonResponse({"error": "Ungültige Reihenfolge"}, status=400)
+
+    try:
+        ids = [int(x) for x in order]
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Ungültige IDs"}, status=400)
+
+    for index, location_id in enumerate(ids, start=1):
+        ServiceLocation.objects.filter(pk=location_id).update(order=index)
+
+    return JsonResponse({"success": "Reihenfolge gespeichert"}, status=200)
 
 
 @login_required(login_url="login")

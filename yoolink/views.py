@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from yoolink.ycms.applications.content.models import Customer, ImpressumBlock, PrivacyPolicy, TextContent
+from yoolink.ycms.applications.content.models import Customer, ImpressumBlock, PrivacyPolicy, ServiceLocation, TextContent
 from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, WebsiteSettings
 import datetime
 from django.http import Http404, HttpResponseRedirect
@@ -174,6 +174,13 @@ def load_index(request):
         .select_related("title_image", "logo")
         .order_by("order", "-published_date", "id")[:3]
     )
+
+    # Standorte / Einzugsgebiet (Karte mit lokalen Landingpages)
+    if TextContent.objects.filter(name="main_standorte").exists():
+        context["standorteText"] = TextContent.objects.get(name="main_standorte")
+    service_locations = list(ServiceLocation.objects.filter(active=True))
+    context["service_locations"] = service_locations
+    context["standorte_linked"] = [loc for loc in service_locations if loc.has_landing_page]
 
     context.update(get_opening_hours())
 
