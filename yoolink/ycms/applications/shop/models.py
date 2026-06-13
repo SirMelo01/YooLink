@@ -84,12 +84,80 @@ class Brand(TimeStampedModel):
         return self.name
 
 
+class ProductGroup(TimeStampedModel):
+    """
+    Gruppierung for the public grouped products layout.
+
+    Separate from Category on purpose: categories are filter tags, groups
+    define the sections (and their order) on the grouped products page.
+    """
+
+    name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name = "Produktgruppe"
+        verbose_name_plural = "Produktgruppen"
+
+    def save(self, *args, **kwargs):
+        self.slug = generate_unique_slug(ProductGroup, self.name, self.pk)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class ShopSettings(TimeStampedModel):
+    """Site wide settings for the public product pages (singleton)."""
+
+    class ProductsLayout(models.TextChoices):
+        FILTER = "filter", "Shop mit Filterleiste"
+        GROUPED = "grouped", "Gruppiert nach Kategorien"
+
+    products_layout = models.CharField(
+        max_length=20,
+        choices=ProductsLayout.choices,
+        default=ProductsLayout.FILTER,
+    )
+    products_title = models.CharField(max_length=120, default="Produkte")
+    products_intro = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Shop Einstellungen"
+        verbose_name_plural = "Shop Einstellungen"
+
+    @classmethod
+    def get_solo(cls):
+        settings_obj = cls.objects.order_by("id").first()
+        if settings_obj is None:
+            settings_obj = cls.objects.create()
+        return settings_obj
+
+    @property
+    def is_grouped_layout(self):
+        return self.products_layout == self.ProductsLayout.GROUPED
+
+    def __str__(self):
+        return f"Shop Einstellungen ({self.get_products_layout_display()})"
+
+
 class Product(TimeStampedModel):
     media_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField(blank=True)
+    sku = models.CharField("Artikelnummer", max_length=64, blank=True, default="")
+    price_note = models.CharField(
+        "Preishinweis",
+        max_length=120,
+        blank=True,
+        default="",
+        help_text='Optionaler Zusatz zum Preis, z.B. "pro Stück" oder "zzgl. Versand".',
+    )
+    featured = models.BooleanField(default=False)
     language = models.CharField(
         max_length=10,
         default="de",
@@ -131,15 +199,24 @@ class Product(TimeStampedModel):
     is_reduced = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_in_stock = models.BooleanField(default=True)
+    # Repurposed: "Produkt kann an Kunden geliefert werden" (info flag, no
+    # online purchase implied while the shop runs showcase-only).
     online_sell = models.BooleanField(default=False)
 
-    showcase_only = models.BooleanField(default=False)
+    showcase_only = models.BooleanField(default=True)
     show_price_when_showcase = models.BooleanField(default=True)
 
     categories = models.ManyToManyField(
         Category,
         related_name="products",
         blank=True,
+    )
+    group = models.ForeignKey(
+        ProductGroup,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="products",
     )
     brand = models.ForeignKey(
         Brand,
@@ -169,8 +246,6 @@ class Product(TimeStampedModel):
         if self.original_id and self.original_id == self.pk:
             raise ValidationError({"original": "Ein Produkt kann nicht seine eigene Übersetzung sein."})
 
-        if self.showcase_only:
-            self.online_sell = False
         if self.is_reduced and self.discount_price is None:
             raise ValidationError(
                 {"discount_price": "Ein reduzierter Artikel braucht einen Rabattpreis."}
@@ -190,9 +265,6 @@ class Product(TimeStampedModel):
 
         if not self.is_reduced:
             self.discount_price = None
-
-        if self.showcase_only:
-            self.online_sell = False
 
         self.full_clean()
         super().save(*args, **kwargs)

@@ -107,7 +107,9 @@ def test_product_model_enforces_discount_and_showcase_rules():
     )
 
     product.refresh_from_db()
-    assert product.online_sell is False
+    # showcase_only und online_sell ("Lieferung möglich") sind bewusst entkoppelt:
+    # ein Showcase-Produkt darf weiterhin als lieferbar markiert sein.
+    assert product.online_sell is True
     assert product.effective_price == Decimal("39.90")
     assert product.should_show_purchase_controls is False
 

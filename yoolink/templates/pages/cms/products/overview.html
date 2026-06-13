@@ -1,5 +1,5 @@
 {% extends "cmsbase.html" %}
-{% load compress static %}
+{% load compress static shop_extras %}
 
 {% block title %}{{ block.super }} | CMS | Produkte{% endblock %}
 
@@ -16,10 +16,16 @@
       <p class="mt-1.5 text-slate-500">Produkte filtern, durchsuchen und verwalten.</p>
     </div>
 
-    <a href="{% url 'cms:product-create' %}"
-      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto">
-      <i class="bi bi-plus-lg"></i> Produkt erstellen
-    </a>
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <a href="{% url 'products' %}" target="_blank" rel="noopener noreferrer"
+        class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 sm:w-auto">
+        <i class="bi bi-box-arrow-up-right"></i> Öffentliche Seite
+      </a>
+      <a href="{% url 'cms:product-create' %}"
+        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto">
+        <i class="bi bi-plus-lg"></i> Produkt erstellen
+      </a>
+    </div>
   </div>
 
   <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -96,8 +102,8 @@
               <option value="" {% if not filters.availability %}selected{% endif %}>Alle</option>
               <option value="in_stock" {% if filters.availability == "in_stock" %}selected{% endif %}>Auf Lager</option>
               <option value="out_of_stock" {% if filters.availability == "out_of_stock" %}selected{% endif %}>Nicht auf Lager</option>
-              <option value="online" {% if filters.availability == "online" %}selected{% endif %}>Online bestellbar</option>
-              <option value="offline" {% if filters.availability == "offline" %}selected{% endif %}>Nicht online</option>
+              <option value="online" {% if filters.availability == "online" %}selected{% endif %}>Lieferung möglich</option>
+              <option value="offline" {% if filters.availability == "offline" %}selected{% endif %}>Keine Lieferung</option>
             </select>
             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400">
               <i class="bi bi-chevron-down text-xs"></i>
@@ -226,8 +232,8 @@
               <span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700">Nicht auf Lager</span>
             {% endif %}
 
-            {% if product.online_sell and not product.showcase_only %}
-              <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Online</span>
+            {% if product.online_sell %}
+              <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Lieferung</span>
             {% endif %}
 
             {% if product.showcase_only %}
@@ -236,6 +242,10 @@
 
             {% if product.is_reduced %}
               <span class="rounded-full bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700">Reduziert</span>
+            {% endif %}
+
+            {% if product.featured %}
+              <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">Hervorgehoben</span>
             {% endif %}
           </div>
 
@@ -260,7 +270,7 @@
           </div>
 
           <p class="mt-4 min-h-[4.5rem] text-sm leading-6 text-gray-600">
-            {{ product.description|default:"Keine Beschreibung vorhanden"|truncatechars:140 }}
+            {{ product.description|plain_description|default:"Keine Beschreibung vorhanden"|truncatechars:140 }}
           </p>
 
           {% if product.categories.count %}

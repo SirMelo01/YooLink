@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, Sum, When
+from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, Max, Sum, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -20,14 +20,35 @@ from drf_spectacular.utils import extend_schema
 from django.core.paginator import Paginator
 from django.db.models import Q
 
+from django.utils.html import strip_tags
+
+from yoolink.utils.sanitize_html import sanitize_html
 from yoolink.views import get_opening_hours
-from yoolink.ycms.models import AnyFile, Galerie, UserSettings
+from yoolink.ycms.models import AnyFile, Galerie, UserSettings, fileentry
 from yoolink.ycms.upload_validation import validate_image_upload
-from yoolink.ycms.views import compress_image, resize_image, scale_image
+from yoolink.ycms.views import (
+    DESKTOP_IMAGE_MAX_DIMENSIONS,
+    DESKTOP_IMAGE_TARGET_KB,
+    compress_image,
+    optimize_image_for_upload,
+    resize_image,
+    scale_image,
+)
 
 from .serializers import OrderItemSerializer, OrderSerializer
 from ...views import send_mail
-from .models import Brand, Category, Order, OrderItem, Product, ProductSpecification, Review, ShippingAddress
+from .models import (
+    Brand,
+    Category,
+    Order,
+    OrderItem,
+    Product,
+    ProductGroup,
+    ProductSpecification,
+    Review,
+    ShippingAddress,
+    ShopSettings,
+)
 from .mail_service import (
     send_payment_confirmation,
     send_ready_for_pickup_confirmation,
@@ -91,6 +112,9 @@ def clone_product_translation(original_product, language):
     product = Product.objects.create(
         title=original_product.title,
         description=original_product.description,
+        sku=original_product.sku,
+        price_note=original_product.price_note,
+        featured=original_product.featured,
         price=original_product.price,
         discount_price=original_product.discount_price,
         title_image=original_product.title_image,
@@ -102,6 +126,7 @@ def clone_product_translation(original_product, language):
         showcase_only=original_product.showcase_only,
         show_price_when_showcase=original_product.show_price_when_showcase,
         brand=original_product.brand,
+        group=original_product.group,
         weight=original_product.weight,
         language=language,
         original=original_product,
@@ -230,6 +255,20 @@ def get_or_create_brand(brand_name):
     return brand
 
 
+def get_or_create_group(group_name):
+    """Create or return an existing product group."""
+    group_name = (group_name or "").strip()
+    if not group_name:
+        return None
+
+    group = ProductGroup.objects.filter(name__iexact=group_name).first()
+    if group:
+        return group
+
+    max_sort = ProductGroup.objects.aggregate(max_sort=Max("sort_order"))["max_sort"]
+    return ProductGroup.objects.create(name=group_name, sort_order=(max_sort or 0) + 1)
+
+
 def get_or_create_categories(category_names):
     """Create or return category instances from a list of names."""
     categories = []
@@ -243,6 +282,15 @@ def get_or_create_categories(category_names):
 
 
 from django.urls import reverse
+
+
+def description_plain_text(product, max_length=None):
+    """Return the description as condensed plain text (for cards/previews)."""
+    # Pad tags with spaces so block boundaries don't glue words together.
+    text = " ".join(strip_tags((product.description or "").replace("<", " <")).split())
+    if max_length and len(text) > max_length:
+        text = text[: max_length - 1].rstrip() + "…"
+    return text
 
 
 def serialize_product_for_search(product):
@@ -262,7 +310,10 @@ def serialize_product_for_search(product):
         "id": product.id,
         "slug": product.slug,
         "title": product.title,
-        "description": product.description or "",
+        "description": description_plain_text(product),
+        "sku": product.sku or "",
+        "price_note": product.price_note or "",
+        "featured": product.featured,
         "price": str(product.price) if product.price is not None else "",
         "discount_price": str(product.discount_price) if product.discount_price is not None else "",
         "image_url": product.title_image.url if product.title_image else "",
@@ -277,6 +328,7 @@ def serialize_product_for_search(product):
         "showcase_only": getattr(product, "showcase_only", False),
         "show_price_when_showcase": getattr(product, "show_price_when_showcase", True),
         "brand": product.brand.name if product.brand else "",
+        "group": product.group.name if product.group else "",
         "categories": [category.name for category in product.categories.all()],
         "language": product.language,
         "translations": translations,
@@ -292,7 +344,9 @@ def serialize_public_product(product):
         "id": product.id,
         "slug": product.slug,
         "title": product.title,
-        "description": product.description or "",
+        "description": description_plain_text(product, max_length=140),
+        "price_note": product.price_note or "",
+        "featured": product.featured,
         "image_url": product.title_image.url if product.title_image else "",
         "price": str(product.price) if product.price is not None else "",
         "discount_price": str(product.discount_price) if product.discount_price is not None else "",
@@ -429,8 +483,11 @@ def apply_product_form_data(request, product):
     product, error_response
     """
     title = (request.POST.get("title") or "").strip()
-    description = (request.POST.get("description") or "").strip()
+    description = sanitize_html((request.POST.get("description") or "").strip())
+    sku = (request.POST.get("sku") or "").strip()[:64]
+    price_note = (request.POST.get("priceNote") or "").strip()[:120]
     brand_name = (request.POST.get("hersteller") or "").strip()
+    group_name = (request.POST.get("group") or "").strip()
     selected_categories = parse_json_list(request.POST.get("selected_categories"))
     selected_file_ids = parse_json_list(request.POST.get("selected_file_ids"))
     specifications_payload = request.POST.get("specifications")
@@ -448,6 +505,7 @@ def apply_product_form_data(request, product):
     is_reduced = parse_bool(request.POST.get("isReduced"))
     showcase_only = parse_bool(request.POST.get("isShowcaseOnly"))
     show_price_when_showcase = parse_bool(request.POST.get("showPriceWhenShowcase"))
+    featured = parse_bool(request.POST.get("isFeatured"))
 
     if not title:
         return None, JsonResponse({"error": "Der Titel darf nicht leer sein."}, status=400)
@@ -491,16 +549,20 @@ def apply_product_form_data(request, product):
         with transaction.atomic():
             product.title = title
             product.description = description
+            product.sku = sku
+            product.price_note = price_note
+            product.featured = featured
             product.price = price
             product.weight = weight
             product.discount_price = reduced_price if is_reduced else None
             product.is_active = is_active
             product.is_in_stock = is_in_stock
-            product.online_sell = False if showcase_only else online_sell
+            product.online_sell = online_sell
             product.is_reduced = is_reduced
             product.showcase_only = showcase_only
             product.show_price_when_showcase = show_price_when_showcase
             product.brand = get_or_create_brand(brand_name)
+            product.group = get_or_create_group(group_name)
 
             if gallery_instance:
                 product.gallery = gallery_instance
@@ -570,7 +632,7 @@ def product_create_view(request):
 def product_detail(request, product_id, slug):
     """Render the CMS product edit page."""
     product = get_object_or_404(
-        Product.objects.select_related("brand", "gallery", "original")
+        Product.objects.select_related("brand", "gallery", "original", "group")
         .prefetch_related("categories", "files", "specifications", "translations"),
         id=product_id,
         slug=slug,
@@ -609,9 +671,9 @@ def get_filtered_products_queryset(request):
     elif availability == "out_of_stock":
         products = products.filter(is_in_stock=False)
     elif availability == "online":
-        products = products.filter(online_sell=True, showcase_only=False)
+        products = products.filter(online_sell=True)
     elif availability == "offline":
-        products = products.filter(Q(online_sell=False) | Q(showcase_only=True))
+        products = products.filter(online_sell=False)
 
     if product_type == "shop":
         products = products.filter(showcase_only=False)
@@ -713,17 +775,164 @@ def product_update(request, product_id, slug):
 
 
 @login_required(login_url="login")
+def shop_settings_update(request):
+    """Update the public product page settings from the CMS."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
+
+    shop_settings = ShopSettings.get_solo()
+
+    layout = (request.POST.get("products_layout") or "").strip()
+    valid_layouts = {choice[0] for choice in ShopSettings.ProductsLayout.choices}
+    if layout not in valid_layouts:
+        return JsonResponse({"error": "Ungültiges Layout."}, status=400)
+
+    products_title = (request.POST.get("products_title") or "").strip()[:120]
+    products_intro = (request.POST.get("products_intro") or "").strip()[:1000]
+
+    shop_settings.products_layout = layout
+    shop_settings.products_title = products_title or "Produkte"
+    shop_settings.products_intro = products_intro
+    shop_settings.save()
+
+    return JsonResponse({"success": "Die Shop Einstellungen wurden gespeichert."})
+
+
+@login_required(login_url="login")
+def product_description_image_upload(request):
+    """Upload an inline image for the rich text product description."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
+
+    uploaded_file = request.FILES.get("image") or request.FILES.get("file")
+    if not uploaded_file:
+        return JsonResponse({"error": "Keine Datei übermittelt."}, status=400)
+
+    try:
+        validate_image_upload(uploaded_file)
+    except ValidationError as error:
+        return JsonResponse({"error": validation_error_to_message(error)}, status=400)
+
+    optimized_image = optimize_image_for_upload(
+        uploaded_file,
+        max_dimensions=DESKTOP_IMAGE_MAX_DIMENSIONS,
+        max_size_kb=DESKTOP_IMAGE_TARGET_KB,
+        variant_suffix="desktop",
+    )
+
+    image = fileentry.objects.create(
+        file=optimized_image,
+        title=getattr(uploaded_file, "name", "Produktbild"),
+    )
+
+    return JsonResponse({"success": "Bild erfolgreich hochgeladen.", "url": image.file.url})
+
+
+@login_required(login_url="login")
 def get_categories(request):
-    """Return all category names for CMS autocomplete."""
-    categories = list(Category.objects.order_by("name").values_list("name", flat=True))
-    return JsonResponse({"categories": categories})
+    """Return all categories (with product counts) for the CMS picker."""
+    categories = Category.objects.annotate(product_count=Count("products", distinct=True)).order_by("name")
+    return JsonResponse(
+        {
+            "categories": [category.name for category in categories],
+            "items": [
+                {"id": category.id, "name": category.name, "product_count": category.product_count}
+                for category in categories
+            ],
+        }
+    )
 
 
 @login_required(login_url="login")
 def get_brands(request):
-    """Return all brand names for CMS autocomplete."""
-    brands = list(Brand.objects.order_by("name").values_list("name", flat=True))
-    return JsonResponse({"brands": brands})
+    """Return all brands (with product counts) for the CMS picker."""
+    brands = Brand.objects.annotate(product_count=Count("products", distinct=True)).order_by("name")
+    return JsonResponse(
+        {
+            "brands": [brand.name for brand in brands],
+            "items": [
+                {"id": brand.id, "name": brand.name, "product_count": brand.product_count}
+                for brand in brands
+            ],
+        }
+    )
+
+
+@login_required(login_url="login")
+def get_groups(request):
+    """Return all product groups (with counts) ordered for the CMS picker."""
+    groups = ProductGroup.objects.annotate(product_count=Count("products", distinct=True)).order_by("sort_order", "name")
+    return JsonResponse(
+        {
+            "groups": [group.name for group in groups],
+            "items": [
+                {
+                    "id": group.id,
+                    "name": group.name,
+                    "sort_order": group.sort_order,
+                    "product_count": group.product_count,
+                }
+                for group in groups
+            ],
+        }
+    )
+
+
+@login_required(login_url="login")
+def group_create(request):
+    """Create a new product group from the CMS picker."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
+
+    name = (request.POST.get("name") or "").strip()[:255]
+    if not name:
+        return JsonResponse({"error": "Der Name der Gruppe darf nicht leer sein."}, status=400)
+
+    if ProductGroup.objects.filter(name__iexact=name).exists():
+        return JsonResponse({"error": "Eine Gruppe mit diesem Namen existiert bereits."}, status=400)
+
+    group = get_or_create_group(name)
+    return JsonResponse({"success": "Gruppe wurde erstellt.", "id": group.id, "name": group.name}, status=201)
+
+
+@login_required(login_url="login")
+def group_move(request, group_id):
+    """Move a product group up or down in the public section order."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
+
+    direction = (request.POST.get("direction") or "").strip()
+    if direction not in {"up", "down"}:
+        return JsonResponse({"error": "Ungültige Richtung."}, status=400)
+
+    groups = list(ProductGroup.objects.order_by("sort_order", "name"))
+    index = next((i for i, group in enumerate(groups) if group.id == group_id), None)
+    if index is None:
+        return JsonResponse({"error": "Gruppe wurde nicht gefunden."}, status=404)
+
+    swap_index = index - 1 if direction == "up" else index + 1
+    if swap_index < 0 or swap_index >= len(groups):
+        return JsonResponse({"success": "Reihenfolge unverändert."})
+
+    groups[index], groups[swap_index] = groups[swap_index], groups[index]
+
+    with transaction.atomic():
+        for position, group in enumerate(groups):
+            if group.sort_order != position:
+                ProductGroup.objects.filter(pk=group.pk).update(sort_order=position)
+
+    return JsonResponse({"success": "Reihenfolge wurde angepasst."})
+
+
+@login_required(login_url="login")
+def group_delete(request, group_id):
+    """Delete a product group (products keep existing, lose the group)."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method. Only POST requests are allowed."}, status=405)
+
+    group = get_object_or_404(ProductGroup, id=group_id)
+    group.delete()
+    return JsonResponse({"success": "Gruppe wurde gelöscht."})
 
 
 @login_required(login_url="login")
@@ -795,7 +1004,7 @@ def get_public_filtered_products_queryset(request):
         products = products.filter(is_in_stock=parse_bool(is_in_stock_param))
 
     if online_only_param not in [None, ""] and parse_bool(online_only_param):
-        products = products.filter(online_sell=True, showcase_only=False)
+        products = products.filter(online_sell=True)
 
     if is_reduced_param not in [None, ""] and parse_bool(is_reduced_param):
         products = products.filter(is_reduced=True)
@@ -849,7 +1058,58 @@ def search_products(request):
         status=status.HTTP_200_OK,
     )
 
+def build_grouped_products_context(request):
+    """Build the sections for the grouped (showcase) products layout.
+
+    Sections come from ProductGroup (ordered by sort_order); products without
+    a group land in "Weitere Produkte" at the end.
+    """
+    language = get_active_product_language(request)
+
+    products = (
+        Product.objects.filter(is_active=True, original__isnull=True)
+        .select_related("brand", "group")
+        .prefetch_related("categories", "translations", "translations__categories", "translations__group")
+        .order_by("-featured", "title")
+    )
+
+    grouped = {}
+    ungrouped = []
+
+    for product in products:
+        # Sections come from the root product's group; display data from the
+        # localized variant.
+        group = product.group
+        localized = get_localized_product(product, language, require_active=True)
+
+        if group is None:
+            ungrouped.append(localized)
+            continue
+
+        grouped.setdefault(group.id, {"group": group, "products": []})
+        grouped[group.id]["products"].append(localized)
+
+    sorted_groups = sorted(
+        grouped.values(),
+        key=lambda entry: (entry["group"].sort_order, entry["group"].name.lower()),
+    )
+
+    return {
+        "product_groups": sorted_groups,
+        "ungrouped_products": ungrouped,
+        "total_products": products.count(),
+    }
+
+
 def public_shop(request):
+    shop_settings = ShopSettings.get_solo()
+
+    if shop_settings.is_grouped_layout:
+        context = {"shop_settings": shop_settings}
+        context.update(build_grouped_products_context(request))
+        context.update(get_opening_hours())
+        return render(request, "pages/shop_grouped.html", context)
+
     queryset = get_public_filtered_products_queryset(request)
     paginator = Paginator(queryset, 12)
     page_obj = paginator.get_page(request.GET.get("page", 1))
@@ -863,6 +1123,7 @@ def public_shop(request):
     categories = Category.objects.filter(products__is_active=True).distinct().order_by("name")
 
     context = {
+        "shop_settings": shop_settings,
         "page_obj": page_obj,
         "brands": brands,
         "categories": categories,
@@ -1111,8 +1372,8 @@ def add_to_cart(request, product_id):
             status=400,
         )
 
-    if not product.online_sell:
-        return JsonResponse({"error": "Dieses Produkt kann nur im Shop vor Ort erworben werden."}, status=400)
+    if product.showcase_only or not product.online_sell:
+        return JsonResponse({"error": "Dieses Produkt kann nicht online bestellt werden."}, status=400)
 
     product_amount_raw = request.data.get("amount") or request.POST.get("amount")
     if not product_amount_raw:
@@ -1562,6 +1823,7 @@ def shop(request):
     )
 
     data = {
+        "shop_settings": ShopSettings.get_solo(),
         # Backwards-compatible keys
         "product_count": product_stats["total"],
         "order_count": order_stats["total"],

@@ -43,6 +43,7 @@
     {% compress css %}
       <link href="{% static 'css/output.css' %}" rel="stylesheet">
       <link href="{% static 'css/utils.css' %}" rel="stylesheet">
+      <link href="{% static 'css/notifications.css' %}" rel="stylesheet">
       <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}" type="text/css">
     {% endcompress css %}
 
@@ -53,6 +54,7 @@
            Released under the MIT license
            https://jquery.org/license/ -->
       <script src="{% static 'js/libs/jquery-3.7.0.min.js' %}"></script>
+      <script src="{% static 'js/notifications.js' %}"></script>
       <script src="{% static 'js/cms.js' %}"></script>
     {% endcompress js %}
     

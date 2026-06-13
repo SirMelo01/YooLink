@@ -46,6 +46,8 @@ def notifications_list(request):
             "filter_priority": priority,
             "per_page": per_page,
             "unread_count": Notification.objects.unread().count(),
+            "total_count": Notification.objects.not_spam().count(),
+            "spam_count": Notification.objects.spam().count(),
         },
     )
 
@@ -133,6 +135,8 @@ def notifications_spam_list(request):
             "paginator": paginator,
             "querystring": preserved.urlencode(),
             "per_page": per_page,
+            "spam_count": paginator.count,
+            "inbox_count": Notification.objects.not_spam().count(),
         },
     )
 

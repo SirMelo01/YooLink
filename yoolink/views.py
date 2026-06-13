@@ -488,6 +488,19 @@ def load_cmsinfo(request):
     context["textContent_hero"] = TextContent.objects.filter(name="main_cmsinfo_hero").first()
     context["textContent_sec1"] = get_text("main_cmsinfo_sec1")
     context["textContent_sec2"] = get_text("main_cmsinfo_sec2")
+
+    # Feature-Grid-Kacheln (Titel + Beschreibung editierbar, Icons bleiben fest)
+    for i in range(1, 10):
+        context[f"textContent_feat{i}"] = get_text(f"main_cmsinfo_feat{i}")
+
+    # Demo-, Produkte- und Sicherheitssektion + deren Bullets
+    context["textContent_demo"] = get_text("main_cmsinfo_demo")
+    context["textContent_products"] = get_text("main_cmsinfo_products")
+    context["textContent_security"] = get_text("main_cmsinfo_security")
+    for i in range(1, 5):
+        context[f"textContent_products_bullet{i}"] = get_text(f"main_cmsinfo_products_bullet{i}")
+        context[f"textContent_security_bullet{i}"] = get_text(f"main_cmsinfo_security_bullet{i}")
+
     context["textContent_blog"] = get_text("main_cmsinfo_blog")
     context["textContent_blog_bullet1"] = get_text("main_cmsinfo_blog_bullet1")
     context["textContent_blog_bullet2"] = get_text("main_cmsinfo_blog_bullet2")

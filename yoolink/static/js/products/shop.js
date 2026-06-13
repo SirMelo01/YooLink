@@ -82,75 +82,80 @@ function buildPublicProductCard(product) {
   const title = escapeHtml(product.title)
   const description = escapeHtml(product.description || "Keine Beschreibung vorhanden")
   const brand = escapeHtml(product.brand || "")
+  const priceNote = escapeHtml(product.price_note || "")
+  const showPriceCard = !product.showcase_only || product.show_price_when_showcase
+
+  const topBadges = []
+  if (product.is_reduced && product.discount_price && showPriceCard) {
+    topBadges.push('<span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">Angebot</span>')
+  }
+  if (product.featured) {
+    topBadges.push('<span class="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Empfehlung</span>')
+  }
+
   const badges = []
-
   if (product.is_in_stock) {
-    badges.push('<span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">Auf Lager</span>')
+    badges.push('<span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">Verfügbar</span>')
   } else {
-    badges.push('<span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700">Nicht auf Lager</span>')
+    badges.push('<span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700">Aktuell nicht verfügbar</span>')
   }
 
-  if (product.online_sell && !product.showcase_only) {
-    badges.push('<span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Lieferbar</span>')
-  }
-
-  if (product.showcase_only) {
-    badges.push('<span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">Showcase</span>')
-  }
-
-  let topBadge = ""
-  if (product.showcase_only && !product.show_price_when_showcase) {
-    topBadge = '<span class="rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">Showcase</span>'
-  } else if (product.is_reduced && product.discount_price) {
-    topBadge = `<span class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.discount_price)} €</span>`
-  } else {
-    topBadge = `<span class="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(product.price)} €</span>`
+  if (product.online_sell) {
+    badges.push('<span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Lieferung möglich</span>')
   }
 
   let priceHtml = ""
-  if (product.showcase_only && !product.show_price_when_showcase) {
-    priceHtml = '<span class="text-sm font-semibold text-gray-500">Produkt ansehen</span>'
+  if (!showPriceCard) {
+    priceHtml = '<span class="text-sm font-semibold text-gray-500">Mehr erfahren</span>'
   } else if (product.is_reduced && product.discount_price) {
     priceHtml = `
-      <div class="flex items-end gap-2">
+      <div class="flex flex-wrap items-end gap-2">
         <span class="text-xl font-bold text-blue-600">${escapeHtml(product.discount_price)} €</span>
         <span class="pb-0.5 text-sm text-gray-400 line-through">${escapeHtml(product.price)} €</span>
       </div>
     `
   } else {
-    priceHtml = `<span class="text-xl font-bold text-blue-600">${escapeHtml(product.price)} €</span>`
+    priceHtml = `<span class="text-xl font-bold text-gray-900">${escapeHtml(product.price)} €</span>`
   }
 
+  if (showPriceCard && priceNote) {
+    priceHtml += `<p class="mt-0.5 truncate text-xs text-gray-500">${priceNote}</p>`
+  }
+
+  const cardBorder = product.featured
+    ? "border-blue-200 ring-1 ring-blue-100"
+    : "border-gray-200"
+
   return `
-    <a href="${detailUrl}" class="group block">
-      <div class="flex h-full flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+    <a href="${detailUrl}" class="group block h-full">
+      <div class="flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg ${cardBorder}">
         <div class="relative">
-          <div class="flex h-60 items-center justify-center bg-gray-50 p-4">
-            <img src="${imageUrl}" alt="${title}" class="max-h-full max-w-full object-contain">
+          <div class="flex h-52 items-center justify-center bg-gray-50 p-4 sm:h-60">
+            <img src="${imageUrl}" alt="${title}" loading="lazy" class="max-h-full max-w-full object-contain">
           </div>
 
           <div class="absolute left-3 top-3 flex flex-wrap gap-2">
-            ${topBadge}
+            ${topBadges.join("")}
           </div>
         </div>
 
         <div class="flex flex-1 flex-col p-5">
           <div class="min-w-0">
-            <h3 class="min-h-[3.5rem] text-lg font-bold uppercase text-gray-900">${title}</h3>
-            ${brand ? `<p class="mt-1 text-sm text-gray-500">${brand}</p>` : ""}
+            ${brand ? `<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">${brand}</p>` : ""}
+            <h3 class="mt-1 text-lg font-bold leading-snug text-gray-900 group-hover:text-blue-700">${title}</h3>
           </div>
 
-          <p class="mt-4 min-h-[4.5rem] text-sm leading-6 text-slate-600">${description}</p>
+          <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">${description}</p>
 
           <div class="mt-4 flex flex-wrap gap-2">
             ${badges.join("")}
           </div>
 
-          <div class="mt-5 flex items-center justify-between">
-            <div>${priceHtml}</div>
+          <div class="mt-auto flex items-end justify-between gap-3 pt-5">
+            <div class="min-w-0">${priceHtml}</div>
 
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white transition group-hover:bg-blue-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition group-hover:bg-blue-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
               </svg>
             </span>

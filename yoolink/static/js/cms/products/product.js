@@ -114,8 +114,8 @@ function buildStatusBadges(product) {
     badges.push('<span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700">Nicht auf Lager</span>')
   }
 
-  if (product.online_sell && !product.showcase_only) {
-    badges.push('<span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Online</span>')
+  if (product.online_sell) {
+    badges.push('<span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Lieferung</span>')
   }
 
   if (product.showcase_only) {
@@ -124,6 +124,10 @@ function buildStatusBadges(product) {
 
   if (product.is_reduced) {
     badges.push('<span class="rounded-full bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700">Reduziert</span>')
+  }
+
+  if (product.featured) {
+    badges.push('<span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">Hervorgehoben</span>')
   }
 
   return badges.join("")

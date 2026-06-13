@@ -1,13 +1,13 @@
 var imageData = null;
 var newImage = false;
-let categories = [];
+let descriptionEditor = null;
 
 const formConfig = document.getElementById("productFormConfig");
-const categoriesUrl = formConfig?.dataset.categoriesUrl;
 const productsUrl = formConfig?.dataset.productsUrl;
 const createUrl = formConfig?.dataset.createUrl;
 const updateUrl = formConfig?.dataset.updateUrl;
 const deleteUrl = formConfig?.dataset.deleteUrl;
+const descriptionImageUrl = formConfig?.dataset.descriptionImageUrl;
 
 function normalizeBaseUrl(url) {
   if (!url) {
@@ -183,59 +183,285 @@ function appendSpecificationsToFormData(formData) {
   return true;
 }
 
-function syncShowcaseState() {
-  const isShowcaseOnly = $("#showcaseOnlySwitch").is(":checked");
-  const $onlineSwitch = $("#onlineSwitch");
-  const $showPriceSwitch = $("#showPriceWhenShowcaseSwitch");
+function appendTaxonomyToFormData(formData) {
+  const taxonomy = typeof window.getProductTaxonomy === "function"
+    ? window.getProductTaxonomy()
+    : { group: "", brand: "", categories: [] };
 
-  if (isShowcaseOnly) {
-    $onlineSwitch.prop("checked", false);
-    $onlineSwitch.prop("disabled", true);
-    $showPriceSwitch.prop("disabled", false);
-    $showPriceSwitch.closest("label").removeClass("opacity-60");
-  } else {
-    $onlineSwitch.prop("disabled", false);
-    $showPriceSwitch.prop("disabled", true);
-    $showPriceSwitch.closest("label").addClass("opacity-60");
+  setFormDataValue(formData, "hersteller", taxonomy.brand);
+  setFormDataValue(formData, "group", taxonomy.group);
+  setFormDataValue(formData, "selected_categories", JSON.stringify(taxonomy.categories));
+}
+
+function quillImageHandler() {
+  if (!descriptionImageUrl) {
+    sendNotif("Der Bild Upload ist nicht konfiguriert. Bitte lade die Seite neu.", "error");
+    return;
+  }
+
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/png,image/jpeg,image/jpg,image/webp,image/gif";
+
+  input.onchange = function () {
+    const file = input.files && input.files[0];
+    if (!file) {
+      return;
+    }
+
+    sendNotif("Bild wird hochgeladen...", "info");
+
+    const uploadData = new FormData();
+    uploadData.append("image", file);
+
+    $.ajax({
+      url: descriptionImageUrl,
+      type: "POST",
+      data: uploadData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
+      },
+      success: function (response) {
+        if (!response.url) {
+          sendNotif(response.error || "Bild konnte nicht hochgeladen werden.", "error");
+          return;
+        }
+
+        const range = descriptionEditor.getSelection(true) || { index: descriptionEditor.getLength() };
+        descriptionEditor.insertEmbed(range.index, "image", response.url, "user");
+        descriptionEditor.setSelection(range.index + 1, 0, "user");
+        sendNotif("Bild wurde eingefügt.", "success");
+      },
+      error: function (xhr) {
+        sendNotif(getAjaxErrorMessage(xhr, "Bild konnte nicht hochgeladen werden."), "error");
+      }
+    });
+  };
+
+  input.click();
+}
+
+function initDescriptionEditor() {
+  const container = document.getElementById("descriptionEditor");
+
+  if (!container || typeof Quill === "undefined") {
+    return;
+  }
+
+  descriptionEditor = new Quill(container, {
+    theme: "snow",
+    placeholder: "Beschreibe das Produkt – Formatierungen, Listen, Links und Bilder sind möglich",
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [2, 3, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ align: [] }],
+          ["link", "image", "blockquote"],
+          ["clean"]
+        ],
+        handlers: {
+          image: quillImageHandler
+        }
+      }
+    }
+  });
+
+  const initialValue = ($("#description").val() || "").trim();
+
+  if (initialValue) {
+    if (/<[a-z][^>]*>/i.test(initialValue)) {
+      descriptionEditor.clipboard.dangerouslyPasteHTML(initialValue);
+    } else {
+      descriptionEditor.setText(initialValue);
+    }
+    descriptionEditor.history.clear();
   }
 }
 
-$(document).ready(function () {
-  const categoryInput = $("#autocomplete-category-input");
-  const autocompleteCategoryList = $("#autocomplete-category-list");
-  const addCategoryBtn = $("#addCategory");
-  const addedCategoryList = $("#added-category-list");
-  const addedCategories = [];
+function initImageSizeControls() {
+  const wrap = document.getElementById("descriptionEditorWrap");
+  const editorRoot = document.getElementById("descriptionEditor");
 
-  if (categoriesUrl) {
-    $.ajax({
-      url: categoriesUrl,
-      type: "GET",
-      dataType: "json",
-      success: function (response) {
-        categories = response.categories || [];
-
-        $(".added-category .category-name").each(function () {
-          const categoryName = $(this).text();
-          addedCategories.push(categoryName);
-
-          const index = categories.indexOf(categoryName);
-          if (index !== -1) {
-            categories.splice(index, 1);
-          }
-        });
-
-        updateAutocompleteCategoryList(false);
-      },
-      error: function (error) {
-        console.error("Error fetching categories:", error);
-        sendNotif("Etwas konnte nicht geladen werden. Bitte lade die Seite neu.", "error");
-      }
-    });
+  if (!wrap || !editorRoot || !descriptionEditor) {
+    return;
   }
 
+  wrap.style.position = "relative";
+
+  const SIZE_PRESETS = [
+    { label: "S", width: "240", title: "Klein (240px)" },
+    { label: "M", width: "480", title: "Mittel (480px)" },
+    { label: "L", width: "720", title: "Groß (720px)" },
+    { label: "Voll", width: null, title: "Originalgröße" }
+  ];
+
+  const bubble = document.createElement("div");
+  bubble.id = "imageSizeBubble";
+  bubble.className = "absolute z-40 hidden items-center gap-1 rounded-xl border border-gray-200 bg-white p-1 shadow-lg";
+
+  let activeImage = null;
+
+  function hideBubble() {
+    bubble.classList.add("hidden");
+    bubble.classList.remove("flex");
+    if (activeImage) {
+      activeImage.style.outline = "";
+      activeImage = null;
+    }
+  }
+
+  function applyWidth(width) {
+    if (!activeImage) {
+      return;
+    }
+
+    const blot = Quill.find(activeImage);
+    if (blot) {
+      const index = descriptionEditor.getIndex(blot);
+      descriptionEditor.formatText(index, 1, { width: width, height: null }, "user");
+    } else if (width) {
+      activeImage.setAttribute("width", width);
+      activeImage.removeAttribute("height");
+    } else {
+      activeImage.removeAttribute("width");
+      activeImage.removeAttribute("height");
+    }
+
+    hideBubble();
+  }
+
+  function removeImage() {
+    if (!activeImage) {
+      return;
+    }
+
+    const blot = Quill.find(activeImage);
+    if (blot) {
+      const index = descriptionEditor.getIndex(blot);
+      descriptionEditor.deleteText(index, 1, "user");
+    } else {
+      activeImage.remove();
+    }
+
+    hideBubble();
+  }
+
+  const sizeLabel = document.createElement("span");
+  sizeLabel.className = "px-2 text-xs font-semibold uppercase tracking-wide text-gray-400";
+  sizeLabel.textContent = "Größe";
+  bubble.appendChild(sizeLabel);
+
+  SIZE_PRESETS.forEach((preset) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.title = preset.title;
+    button.className = "rounded-lg px-2.5 py-1.5 text-sm font-semibold text-gray-700 transition hover:bg-blue-50 hover:text-blue-700";
+    button.textContent = preset.label;
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+      applyWidth(preset.width);
+    });
+    bubble.appendChild(button);
+  });
+
+  const divider = document.createElement("span");
+  divider.className = "mx-0.5 h-5 w-px bg-gray-200";
+  bubble.appendChild(divider);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.title = "Bild entfernen";
+  deleteButton.className = "rounded-lg px-2.5 py-1.5 text-sm text-red-500 transition hover:bg-red-50 hover:text-red-700";
+  deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+  deleteButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    removeImage();
+  });
+  bubble.appendChild(deleteButton);
+
+  wrap.appendChild(bubble);
+
+  editorRoot.addEventListener("click", function (event) {
+    const target = event.target;
+
+    if (target && target.tagName === "IMG") {
+      if (activeImage && activeImage !== target) {
+        activeImage.style.outline = "";
+      }
+
+      activeImage = target;
+      activeImage.style.outline = "3px solid rgba(59, 130, 246, 0.55)";
+
+      const wrapRect = wrap.getBoundingClientRect();
+      const imageRect = target.getBoundingClientRect();
+
+      bubble.classList.remove("hidden");
+      bubble.classList.add("flex");
+
+      const top = Math.max(imageRect.top - wrapRect.top - 44, 4);
+      let left = imageRect.left - wrapRect.left;
+      left = Math.min(left, wrap.clientWidth - bubble.offsetWidth - 8);
+
+      bubble.style.top = `${top}px`;
+      bubble.style.left = `${Math.max(left, 4)}px`;
+      return;
+    }
+
+    if (!bubble.contains(target)) {
+      hideBubble();
+    }
+  });
+
+  descriptionEditor.on("text-change", function (delta, oldDelta, source) {
+    if (source === "user" && activeImage && !editorRoot.contains(activeImage)) {
+      hideBubble();
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!wrap.contains(event.target)) {
+      hideBubble();
+    }
+  });
+}
+
+function syncDescriptionField() {
+  if (!descriptionEditor) {
+    return;
+  }
+
+  const text = descriptionEditor.getText().trim();
+  const html = descriptionEditor.getSemanticHTML();
+  const isEmpty = !text && html.indexOf("<img") === -1;
+
+  $("#description").val(isEmpty ? "" : html);
+}
+
+function syncShowcaseState() {
+  const $showcaseSwitch = $("#showcaseOnlySwitch");
+  const isShowcaseOnly = $showcaseSwitch.is(":checked");
+  const $showPriceSwitch = $("#showPriceWhenShowcaseSwitch");
+
+  // Showcase ist aktuell Standard: solange aktiv, lässt es sich nicht
+  // deaktivieren. Nur falls es (z.B. durch einen Bug) aus ist, kann es
+  // wieder eingeschaltet werden.
+  $showcaseSwitch.prop("disabled", isShowcaseOnly);
+  $showcaseSwitch.closest("label").toggleClass("cursor-not-allowed", isShowcaseOnly);
+
+  $showPriceSwitch.prop("disabled", !isShowcaseOnly);
+  $showPriceSwitch.closest("label").toggleClass("opacity-60", !isShowcaseOnly);
+}
+
+$(document).ready(function () {
   toggleSpecificationPlaceholder();
   syncShowcaseState();
+  initDescriptionEditor();
+  initImageSizeControls();
 
   $("#addSpecificationRow").on("click", function () {
     $("#productSpecificationsList").append(createSpecificationRow());
@@ -250,114 +476,6 @@ $(document).ready(function () {
   $("#showcaseOnlySwitch").on("change", function () {
     syncShowcaseState();
   });
-
-  categoryInput.on("focus click input", function () {
-    updateAutocompleteCategoryList(true);
-  });
-
-  function addSelectedCategory() {
-    const selectedCategory = categoryInput.val().trim();
-
-    if (selectedCategory && !addedCategories.includes(selectedCategory)) {
-      addCategory(selectedCategory);
-      removeCategoryFromAutocomplete(selectedCategory);
-      categoryInput.val("");
-      categoryInput.focus();
-    }
-  }
-
-  addCategoryBtn.on("click", function () {
-    addSelectedCategory();
-  });
-
-  categoryInput.on("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      addSelectedCategory();
-    }
-  });
-
-  addedCategoryList.on("click", ".remove-category-btn", function () {
-    const categoryToRemove = $(this).parent().data("category");
-    removeCategory(categoryToRemove);
-    addCategoryToAutocomplete(categoryToRemove);
-  });
-
-  $(document).on("click", function (event) {
-    if (!categoryInput.is(event.target) && !autocompleteCategoryList.is(event.target)) {
-      autocompleteCategoryList.addClass("hidden");
-    }
-  });
-
-  function updateAutocompleteCategoryList(show) {
-    const query = categoryInput.val().toLowerCase();
-    const matchedCategories = categories.filter((category) =>
-      category.toLowerCase().includes(query)
-    );
-
-    autocompleteCategoryList.html("");
-
-    matchedCategories.forEach((match) => {
-      const option = $("<div>")
-        .addClass("px-4 py-2 hover:bg-blue-100 cursor-pointer")
-        .text(match);
-
-      option.on("click", function () {
-        categoryInput.val(match);
-        autocompleteCategoryList.addClass("hidden");
-      });
-
-      autocompleteCategoryList.append(option);
-    });
-
-    if (show) {
-      autocompleteCategoryList.toggleClass("hidden", matchedCategories.length === 0);
-    }
-  }
-
-  function addCategory(category) {
-    addedCategories.push(category);
-    renderAddedCategories();
-  }
-
-  function removeCategory(category) {
-    const index = addedCategories.indexOf(category);
-    if (index !== -1) {
-      addedCategories.splice(index, 1);
-      renderAddedCategories();
-    }
-  }
-
-  function addCategoryToAutocomplete(category) {
-    categories.push(category);
-    updateAutocompleteCategoryList(true);
-  }
-
-  function removeCategoryFromAutocomplete(category) {
-    const index = categories.indexOf(category);
-    if (index !== -1) {
-      categories.splice(index, 1);
-      updateAutocompleteCategoryList(true);
-    }
-  }
-
-  function renderAddedCategories() {
-    addedCategoryList.html("");
-
-    addedCategories.forEach((category) => {
-      const categoryItem = $("<span>").addClass(
-        "mx-1 my-2 flex-shrink-0 rounded-xl bg-blue-100 p-1.5 added-category"
-      );
-      const categoryName = $("<span>").addClass("category-name").text(category);
-      const removeBtn = $("<span>")
-        .html("&times;")
-        .addClass("cursor-pointer pl-2 text-lg font-semibold text-red-500 remove-category-btn");
-
-      categoryItem.append(categoryName, removeBtn);
-      categoryItem.data("category", category);
-      addedCategoryList.append(categoryItem);
-    });
-  }
 
   $("#title").on("input", function () {
     $("#titleSpan").text($(this).val());
@@ -400,6 +518,8 @@ $(document).ready(function () {
       return;
     }
 
+    syncDescriptionField();
+
     const files = $("#titleImgUpload").prop("files");
     const requiredFields = ["#title", "#description", "#price"];
     const isValid = isFormValid(requiredFields);
@@ -415,14 +535,16 @@ $(document).ready(function () {
     setFormDataValue(formData, "isActive", $("#activeSwitch").is(":checked"));
     setFormDataValue(formData, "isInStock", $("#stockSwitch").is(":checked"));
     setFormDataValue(formData, "isReduced", $("#reducedSwitch").is(":checked"));
-    setFormDataValue(formData, "hersteller", $("#autocomplete-hersteller-input").val());
     setFormDataValue(formData, "price", $("#price").val());
     setFormDataValue(formData, "weight", $("#weight").val());
     setFormDataValue(formData, "isOnlineAvailable", $("#onlineSwitch").is(":checked"));
     setFormDataValue(formData, "reducedPrice", $("#reducedPrice").val());
-    setFormDataValue(formData, "selected_categories", JSON.stringify(addedCategories));
     setFormDataValue(formData, "isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
     setFormDataValue(formData, "showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
+    setFormDataValue(formData, "isFeatured", $("#featuredSwitch").is(":checked"));
+    setFormDataValue(formData, "sku", $("#sku").val() || "");
+    setFormDataValue(formData, "priceNote", $("#priceNote").val() || "");
+    appendTaxonomyToFormData(formData);
 
     if (!appendSpecificationsToFormData(formData)) {
       disableSpinner($("#updateProduct"));
@@ -542,6 +664,8 @@ $(document).ready(function () {
       return;
     }
 
+    syncDescriptionField();
+
     const files = $("#titleImgUpload").prop("files");
 
     if (!files || files.length === 0) {
@@ -566,14 +690,16 @@ $(document).ready(function () {
     setFormDataValue(formData, "isActive", $("#activeSwitch").is(":checked"));
     setFormDataValue(formData, "isInStock", $("#stockSwitch").is(":checked"));
     setFormDataValue(formData, "isReduced", $("#reducedSwitch").is(":checked"));
-    setFormDataValue(formData, "hersteller", $("#autocomplete-hersteller-input").val());
     setFormDataValue(formData, "price", $("#price").val());
     setFormDataValue(formData, "weight", $("#weight").val());
     setFormDataValue(formData, "isOnlineAvailable", $("#onlineSwitch").is(":checked"));
     setFormDataValue(formData, "reducedPrice", $("#reducedPrice").val());
-    setFormDataValue(formData, "selected_categories", JSON.stringify(addedCategories));
     setFormDataValue(formData, "isShowcaseOnly", $("#showcaseOnlySwitch").is(":checked"));
     setFormDataValue(formData, "showPriceWhenShowcase", $("#showPriceWhenShowcaseSwitch").is(":checked"));
+    setFormDataValue(formData, "isFeatured", $("#featuredSwitch").is(":checked"));
+    setFormDataValue(formData, "sku", $("#sku").val() || "");
+    setFormDataValue(formData, "priceNote", $("#priceNote").val() || "");
+    appendTaxonomyToFormData(formData);
     formData.append("title_image", titleImage, "productTitleImage");
 
     if (!appendSpecificationsToFormData(formData)) {

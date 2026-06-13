@@ -10,6 +10,7 @@ orders_required = cms_permission_required("orders.edit")
 urlpatterns = [
     # CMS shop dashboard
     path("", shop_required(views.shop), name="shop"),
+    path("settings/update/", products_required(views.shop_settings_update), name="shop-settings-update"),
 
     # CMS products
     path("products/", products_required(views.product_view), name="products"),
@@ -18,6 +19,11 @@ urlpatterns = [
     path("products/create/upload", products_required(views.product_create), name="product-create-upload"),
     path("products/get_categories/", products_required(views.get_categories), name="get-categories"),
     path("products/get_brands/", products_required(views.get_brands), name="get-brands"),
+    path("products/get_groups/", products_required(views.get_groups), name="get-groups"),
+    path("products/groups/create/", products_required(views.group_create), name="group-create"),
+    path("products/groups/<int:group_id>/move/", products_required(views.group_move), name="group-move"),
+    path("products/groups/<int:group_id>/delete/", products_required(views.group_delete), name="group-delete"),
+    path("products/description-image/", products_required(views.product_description_image_upload), name="product-description-image"),
     path("products/<int:product_id>/<slug:slug>/", products_required(views.product_detail), name="product-detail"),
     path("products/<int:product_id>/<slug:slug>/update", products_required(views.product_update), name="product-detail-update"),
     path("products/<int:product_id>/<slug:slug>/delete", products_required(views.product_delete), name="product-detail-delete"),

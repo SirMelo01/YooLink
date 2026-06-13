@@ -117,6 +117,85 @@
     </div>
   </div>
 
+  <!-- Darstellung der öffentlichen Produktseite -->
+  {% if 'products.edit' in cms_permissions %}
+  <h2 class="mb-3 mt-8 text-xs font-semibold uppercase tracking-wider text-slate-400">Darstellung der Produktseite</h2>
+  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    {% csrf_token %}
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h3 class="font-semibold text-slate-900">Layout der öffentlichen Produktseite</h3>
+        <p class="mt-1 text-sm text-slate-500">Bestimme, wie Besucher deine Produkte sehen – als klassischen Shop mit Filterleiste oder als übersichtliche, nach Kategorien gruppierte Liste.</p>
+      </div>
+      <a href="{% url 'products' %}" target="_blank" rel="noopener noreferrer"
+        class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+        <i class="bi bi-box-arrow-up-right"></i> Vorschau
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <label class="cursor-pointer">
+        <input type="radio" name="productsLayout" value="filter" class="peer sr-only" {% if shop_settings.products_layout == "filter" %}checked{% endif %}>
+        <span class="flex h-full flex-col rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 transition peer-checked:border-blue-500 peer-checked:bg-blue-50/60">
+          <span class="flex items-center gap-3">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-600"><i class="bi bi-funnel text-lg"></i></span>
+            <span class="font-semibold text-slate-900">Shop mit Filterleiste</span>
+          </span>
+          <span class="mt-2 text-sm text-slate-500">Suche, Filter und Sortierung in einer Seitenleiste. Ideal bei vielen Produkten oder wenn Besucher gezielt suchen sollen.</span>
+        </span>
+      </label>
+
+      <label class="cursor-pointer">
+        <input type="radio" name="productsLayout" value="grouped" class="peer sr-only" {% if shop_settings.products_layout == "grouped" %}checked{% endif %}>
+        <span class="flex h-full flex-col rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 transition peer-checked:border-blue-500 peer-checked:bg-blue-50/60">
+          <span class="flex items-center gap-3">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-600"><i class="bi bi-collection text-lg"></i></span>
+            <span class="font-semibold text-slate-900">Gruppiert nach Kategorien</span>
+          </span>
+          <span class="mt-2 text-sm text-slate-500">Alle Produkte direkt sichtbar, nach Kategorien gruppiert – ohne Filterleiste. Ideal für kleinere Sortimente und Präsentationsseiten.</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div>
+        <label for="productsPageTitle" class="mb-2 block text-sm font-semibold text-slate-700">Seitentitel</label>
+        <input
+          id="productsPageTitle"
+          type="text"
+          maxlength="120"
+          value="{{ shop_settings.products_title }}"
+          placeholder="Produkte"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label for="productsPageIntro" class="mb-2 block text-sm font-semibold text-slate-700">Einleitungstext (optional)</label>
+        <input
+          id="productsPageIntro"
+          type="text"
+          maxlength="1000"
+          value="{{ shop_settings.products_intro }}"
+          placeholder="Kurzer Text unter dem Seitentitel"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div class="mt-5 flex justify-end">
+      <button
+        id="saveShopSettings"
+        type="button"
+        data-update-url="{% url 'cms:shop-settings-update' %}"
+        class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+      >
+        <i class="bi bi-save"></i> Darstellung speichern
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
   <!-- Zuletzt bearbeitet -->
   <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
     <div class="mb-3 flex items-center justify-between">
@@ -159,3 +238,39 @@
 
 </div>
 {% endblock content %}
+
+{% block javascriptend %}
+<script>
+  $(document).ready(function () {
+    $("#saveShopSettings").on("click", function () {
+      const $button = $(this)
+      const updateUrl = $button.data("update-url")
+
+      $button.prop("disabled", true)
+
+      $.ajax({
+        url: updateUrl,
+        type: "POST",
+        data: {
+          products_layout: $('input[name="productsLayout"]:checked').val() || "filter",
+          products_title: $("#productsPageTitle").val(),
+          products_intro: $("#productsPageIntro").val(),
+          csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: "json",
+        success: function (response) {
+          $button.prop("disabled", false)
+          sendNotif(response.success || "Die Shop Einstellungen wurden gespeichert.", "success")
+        },
+        error: function (xhr) {
+          $button.prop("disabled", false)
+          const message = xhr.responseJSON && xhr.responseJSON.error
+            ? xhr.responseJSON.error
+            : "Die Einstellungen konnten nicht gespeichert werden."
+          sendNotif(message, "error")
+        }
+      })
+    })
+  })
+</script>
+{% endblock javascriptend %}
