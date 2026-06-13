@@ -254,6 +254,83 @@ class ImpressumBlock(models.Model):
         return "\n".join(html_parts)
 
 
+class ServiceLocation(models.Model):
+    """
+    Ein Standort/Ort im Einzugsgebiet für die Karten-Sektion auf der Startseite.
+
+    Orte mit gesetzter ``url`` verlinken auf ihre lokale Landingpage
+    (z. B. /webdesign-deggendorf/), Orte ohne URL werden nur als Punkt im
+    Einzugsgebiet dargestellt. Die Position auf der Karte wird aus den
+    Geo-Koordinaten über eine feste Bounding-Box (Niederbayern/Ostbayern)
+    berechnet – neue Orte brauchen also nur Latitude/Longitude.
+    """
+
+    # Kartenausschnitt (Bounding-Box) der Standort-Karte:
+    # deckt Niederbayern ab – von Regensburg/Landshut bis Passau/Freyung.
+    MAP_LNG_MIN = 11.80
+    MAP_LNG_MAX = 13.85
+    MAP_LAT_MIN = 48.25
+    MAP_LAT_MAX = 49.35
+
+    name = models.CharField(max_length=120, default="")
+    tagline = models.CharField(max_length=160, blank=True, default="")
+    url = models.CharField(max_length=300, blank=True, default="")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    is_headquarters = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "ycms_servicelocation"
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.name or f"Standort #{self.pk}"
+
+    @property
+    def has_landing_page(self):
+        return bool(self.url)
+
+    @staticmethod
+    def _clamped_ratio(value, low, high):
+        try:
+            ratio = (float(value) - low) / (high - low)
+        except (TypeError, ValueError, ZeroDivisionError):
+            ratio = 0.5
+        return min(max(ratio, 0.03), 0.97)
+
+    def _map_x_value(self):
+        return self._clamped_ratio(self.longitude, self.MAP_LNG_MIN, self.MAP_LNG_MAX) * 100
+
+    def _map_y_value(self):
+        # Invertiert, damit Norden oben liegt (top: 0% = MAP_LAT_MAX).
+        try:
+            lat = float(self.latitude)
+        except (TypeError, ValueError):
+            lat = (self.MAP_LAT_MIN + self.MAP_LAT_MAX) / 2
+        ratio = (self.MAP_LAT_MAX - lat) / (self.MAP_LAT_MAX - self.MAP_LAT_MIN)
+        return min(max(ratio, 0.03), 0.97) * 100
+
+    # Als vorformatierte Strings, damit Djangos Locale-Formatierung (Komma
+    # statt Punkt) die CSS-Prozentwerte im Template nicht zerstört.
+    @property
+    def map_x(self):
+        return f"{self._map_x_value():.2f}"
+
+    @property
+    def map_y(self):
+        return f"{self._map_y_value():.2f}"
+
+    @property
+    def tooltip_below(self):
+        """Pins nahe der Oberkante öffnen ihren Tooltip nach unten."""
+        return self._map_y_value() < 25
+
+
 def _generate_unique_customer_slug(instance, base_slug):
     slug = slugify(base_slug or "kunde") or "kunde"
     unique_slug = slug

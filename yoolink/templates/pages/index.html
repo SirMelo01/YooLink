@@ -546,6 +546,72 @@
     
   </section>
 
+  <!-- Standorte / Einzugsgebiet Beginn -->
+  {% block Standorte %}
+  {% if service_locations %}
+  <section id="Standorte" class="scroll-my-4 bg-blue-100 pb-20 pt-8">
+    <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+
+        <!-- Text + Chips -->
+        <div data-aos="fade-right" data-aos-delay="100">
+          <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-900">
+            {{ standorteText.header|default:"Einzugsgebiet" }}
+          </p>
+          <h2 class="mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            {{ standorteText.title|default:"Webdesign für Niederbayern – von Regensburg bis Passau" }}
+          </h2>
+          <p class="text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
+            {{ standorteText.description|default:"Unser Sitz ist in Deggendorf – mitten in Niederbayern. Von hier aus betreuen wir Unternehmen in der gesamten Region: persönlich, vor Ort und mit kurzen Wegen. Für ausgewählte Städte finden Sie eigene Seiten mit allen Infos zu Webdesign in Ihrer Nähe." }}
+          </p>
+
+          {% if standorte_linked %}
+          <p class="mt-8 mb-3 text-xs font-semibold uppercase tracking-widest text-blue-900/70">
+            Direkt zu Ihrer Region
+          </p>
+          <div class="flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="150">
+            {% for loc in standorte_linked %}
+            <a href="{{ loc.url }}"
+               data-standort-chip="{{ loc.id }}"
+               class="standort-chip group inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-900 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-blue-900 hover:text-white hover:shadow-md">
+              <i class="bi bi-geo-alt-fill text-blue-700 transition group-hover:text-white"></i>
+              Webdesign {{ loc.name }}
+              <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+            </a>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Deutschlandweit-Hinweis -->
+          <div class="mt-8 flex items-start gap-4 rounded-2xl border border-blue-200/80 bg-white/80 p-5 shadow-sm"
+               data-aos="fade-up" data-aos-delay="200">
+            <span class="grid h-11 w-11 flex-shrink-0 place-items-center rounded-full bg-blue-200/60 text-blue-900">
+              <i class="bi bi-globe-europe-africa text-xl"></i>
+            </span>
+            <div>
+              <p class="font-semibold text-gray-900">Deutschlandweit im Einsatz</p>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                {{ standorteText.buttonText|default:"Niederbayern ist unser Zuhause – Projekte setzen wir deutschlandweit um, remote genauso persönlich wie vor Ort." }}
+              </p>
+              <a href="{% url 'kontakt' %}" class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-900 hover:underline">
+                Projekt anfragen <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interaktive Karte -->
+        <div data-aos="fade-left" data-aos-delay="200">
+          {% include "pages/components/standorte_map.html" with locations=service_locations %}
+        </div>
+
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  {% endblock Standorte %}
+  <!-- Standorte / Einzugsgebiet End -->
+
   <div class="h-20 bg-gradient-to-b from-blue-100 to-blue-200"></div>
   <!--Pricing Beginn-->
   {% block Pricing %}
@@ -854,6 +920,18 @@
       `;
     }
   }
+
+  // Standorte: Chip-Hover hebt den zugehörigen Pin auf der Karte hervor (und umgekehrt)
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-standort-chip]").forEach(function (chip) {
+      const pin = document.querySelector('[data-standort-pin="' + chip.dataset.standortChip + '"]');
+      if (!pin) return;
+      chip.addEventListener("mouseenter", function () { pin.classList.add("standort-pin-active"); });
+      chip.addEventListener("mouseleave", function () { pin.classList.remove("standort-pin-active"); });
+      pin.addEventListener("mouseenter", function () { chip.classList.add("-translate-y-0.5", "shadow-md"); });
+      pin.addEventListener("mouseleave", function () { chip.classList.remove("-translate-y-0.5", "shadow-md"); });
+    });
+  });
 </script>
 
 {% endcompress js %}
