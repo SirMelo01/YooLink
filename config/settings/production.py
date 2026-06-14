@@ -1,5 +1,6 @@
 from .base import *  # noqa
 from .base import env
+from celery.schedules import crontab
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -73,6 +74,21 @@ def immutable_file_test(path, url):
 WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 # MEDIA
 # ------------------------------------------------------------------------------
+
+# Recovery backups
+# ------------------------------------------------------------------------------
+RECOVERY_REMOTE_BACKUPS_ENABLED = env.bool("RECOVERY_REMOTE_BACKUPS_ENABLED", default=True)
+RECOVERY_AUTO_BACKUPS_ENABLED = env.bool("RECOVERY_AUTO_BACKUPS_ENABLED", default=True)
+
+if RECOVERY_AUTO_BACKUPS_ENABLED and RECOVERY_REMOTE_BACKUPS_ENABLED:
+    CELERY_BEAT_SCHEDULE = {  # noqa F405
+        **globals().get("CELERY_BEAT_SCHEDULE", {}),
+        "ycms-monthly-encrypted-recovery-backup": {
+            "task": "yoolink.ycms.tasks.create_remote_recovery_backup",
+            "schedule": crontab(minute=0, hour=3, day_of_month="1"),
+            "kwargs": {"trigger": "scheduled"},
+        },
+    }
 
 
 # EMAIL

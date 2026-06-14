@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 from config.celery_app import app as celery_app
+from yoolink.users.models import User
 
 
 @celery_app.task(bind=True, autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={"max_retries": 3})
@@ -34,3 +35,14 @@ def send_login_2fa_email(self, recipient_email, recipient_name, code, expires_at
         [recipient_email],
         fail_silently=False,
     )
+
+
+@celery_app.task(bind=True, autoretry_for=(), time_limit=60 * 60, soft_time_limit=50 * 60)
+def create_remote_recovery_backup(self, trigger="scheduled", user_id=None, record_id=None):
+    """Create an encrypted private recovery backup in the configured remote storage."""
+    from yoolink.ycms.recovery import create_remote_backup
+
+    user = None
+    if user_id:
+        user = User.objects.filter(id=user_id).first()
+    return create_remote_backup(trigger=trigger, user=user, record_id=record_id)

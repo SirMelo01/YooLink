@@ -14,6 +14,7 @@ from .models import (
     PageLink,
     PricingCard,
     PricingFeature,
+    RecoveryBackup,
     TeamMember,
     UserSettings,
     VideoFile,
@@ -38,6 +39,40 @@ admin.site.register(Button)
 admin.site.register(PageLink)
 admin.site.register(PricingCard)
 admin.site.register(VideoFile)
+
+
+@admin.register(RecoveryBackup)
+class RecoveryBackupAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "trigger",
+        "status",
+        "slot",
+        "filename",
+        "size_bytes",
+        "created_by",
+        "created_at",
+        "finished_at",
+    )
+    list_filter = ("trigger", "status", "include_media", "created_at")
+    search_fields = ("filename", "object_key", "encrypted_sha256", "created_by__username")
+    readonly_fields = (
+        "trigger",
+        "status",
+        "slot",
+        "object_key",
+        "filename",
+        "size_bytes",
+        "encrypted_sha256",
+        "include_media",
+        "storage_bucket",
+        "storage_endpoint",
+        "error_message",
+        "created_by",
+        "created_at",
+        "started_at",
+        "finished_at",
+    )
 
 
 @admin.register(DeveloperApiKey)

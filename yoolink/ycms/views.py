@@ -30,6 +30,7 @@ from yoolink.ycms.models import (
     PageLink,
     PricingCard,
     PricingFeature,
+    RecoveryBackup,
     TeamMember,
     UserSettings,
     VideoFile,
@@ -69,7 +70,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from datetime import timedelta
 from random import SystemRandom
-from yoolink.ycms.tasks import send_login_2fa_email
+from yoolink.ycms.tasks import create_remote_recovery_backup, send_login_2fa_email
 from yoolink.ycms.upload_validation import (
     validate_anyfile_upload,
     validate_image_upload,
@@ -79,6 +80,13 @@ from yoolink.ycms.upload_validation import (
     validation_error_message,
 )
 from yoolink.ycms.permissions import cms_permission_required, ensure_system_roles, user_permissions
+from yoolink.ycms.recovery import (
+    build_backup_archive,
+    get_recovery_overview,
+    get_remote_backup_records,
+    remote_backups_configured,
+    restore_backup_archive,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -2085,6 +2093,147 @@ def logo_settings_view(request):
 def security_settings_view(request):
     user_settings = _get_user_settings(request.user)
     return render(request, 'pages/cms/settings/security.html', {'settings': user_settings})
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+def recovery_settings_view(request):
+    overview = get_recovery_overview()
+    return render(
+        request,
+        "pages/cms/settings/recovery.html",
+        {
+            "overview": overview,
+        },
+    )
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+def recovery_backup_download(request):
+    include_media_value = request.GET.get("include_media")
+    if include_media_value in {"1", "true", "on", "yes"}:
+        include_media = True
+    elif include_media_value in {"0", "false", "off", "no"}:
+        include_media = False
+    else:
+        include_media = None
+
+    archive, filename = build_backup_archive(user=request.user, include_media=include_media)
+    response = FileResponse(archive, as_attachment=True, filename=filename)
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    return response
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+@require_POST
+def recovery_backup_restore(request):
+    overview = get_recovery_overview()
+    expected_phrase = overview["restore_confirmation_phrase"]
+    phrase = (request.POST.get("confirmation_phrase") or "").strip()
+    backup_file = request.FILES.get("backup_file")
+    restore_media = request.POST.get("restore_media") == "on"
+
+    if phrase != expected_phrase:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Die Sicherheitsphrase stimmt nicht.",
+            },
+            status=400,
+        )
+
+    if not backup_file:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Bitte wähle eine Backup-ZIP-Datei aus.",
+            },
+            status=400,
+        )
+
+    try:
+        summary = restore_backup_archive(backup_file, restore_media=restore_media)
+    except ValueError as exc:
+        return JsonResponse({"success": False, "error": str(exc)}, status=400)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Backup wurde wiederhergestellt. Bitte melde dich neu an, falls deine Sitzung abgelaufen ist.",
+            "summary": summary,
+        }
+    )
+
+
+def _remote_backup_payload(record):
+    return {
+        "id": record.id,
+        "trigger": record.get_trigger_display(),
+        "status": record.status,
+        "status_label": record.get_status_display(),
+        "slot": record.slot,
+        "filename": record.filename,
+        "size_bytes": record.size_bytes,
+        "object_key": record.object_key,
+        "encrypted_sha256": record.encrypted_sha256,
+        "include_media": record.include_media,
+        "created_by": record.created_by.username if record.created_by else "",
+        "created_at": record.created_at.isoformat() if record.created_at else "",
+        "started_at": record.started_at.isoformat() if record.started_at else "",
+        "finished_at": record.finished_at.isoformat() if record.finished_at else "",
+        "error_message": record.error_message,
+    }
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+@require_POST
+def recovery_remote_backup_start(request):
+    if not remote_backups_configured():
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Remote-Backups sind noch nicht vollständig konfiguriert.",
+            },
+            status=400,
+        )
+
+    remote_config = get_recovery_overview()["remote_backup"]
+    backup_record = RecoveryBackup.objects.create(
+        trigger=RecoveryBackup.TRIGGER_MANUAL,
+        status=RecoveryBackup.STATUS_QUEUED,
+        created_by=request.user,
+        include_media=remote_config["include_media"],
+        storage_bucket=remote_config["bucket"],
+        storage_endpoint=remote_config["endpoint"],
+    )
+    task = create_remote_recovery_backup.delay(
+        trigger="manual",
+        user_id=request.user.id,
+        record_id=backup_record.id,
+    )
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Verschlüsseltes Remote-Backup wurde gestartet.",
+            "task_id": task.id,
+            "backup": _remote_backup_payload(backup_record),
+        }
+    )
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+def recovery_remote_backup_status(request):
+    return JsonResponse(
+        {
+            "success": True,
+            "backups": [_remote_backup_payload(record) for record in get_remote_backup_records()],
+        }
+    )
 
 
 def _generate_initial_password():

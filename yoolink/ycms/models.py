@@ -525,6 +525,7 @@ CMS_PERMISSION_CHOICES = [
     ("opening_hours.edit", "Öffnungszeiten verwalten"),
     ("notifications.view", "Benachrichtigungen anzeigen"),
     ("website_settings.edit", "Website-Einstellungen verwalten"),
+    ("recovery.manage", "Backups und Recovery verwalten"),
     ("security.edit", "Eigene Sicherheit verwalten"),
     ("developer.manage", "Developer Settings verwalten"),
     ("users.manage", "Benutzer verwalten"),
@@ -562,12 +563,19 @@ VIEWER_PERMISSIONS = [
     "notifications.view",
     "security.edit",
 ]
+RECOVERY_MANAGER_PERMISSIONS = [
+    "dashboard.view",
+    "recovery.manage",
+    "notifications.view",
+    "security.edit",
+]
 
 SYSTEM_ROLE_DEFAULTS = {
     "owner": {"name": "OWNER", "permissions": OWNER_PERMISSIONS},
     "editor": {"name": "EDITOR", "permissions": EDITOR_PERMISSIONS},
     "shop-manager": {"name": "SHOP MANAGER", "permissions": SHOP_MANAGER_PERMISSIONS},
     "developer": {"name": "DEVELOPER", "permissions": DEVELOPER_PERMISSIONS},
+    "recovery-manager": {"name": "RECOVERY MANAGER", "permissions": RECOVERY_MANAGER_PERMISSIONS},
     "viewer": {"name": "VIEWER", "permissions": VIEWER_PERMISSIONS},
 }
 
@@ -606,6 +614,54 @@ class CMSUserRole(models.Model):
 
     def __str__(self):
         return f"{self.user} -> {self.role}"
+
+
+class RecoveryBackup(models.Model):
+    TRIGGER_SCHEDULED = "scheduled"
+    TRIGGER_MANUAL = "manual"
+    TRIGGER_CHOICES = [
+        (TRIGGER_SCHEDULED, "Automatisch"),
+        (TRIGGER_MANUAL, "Manuell"),
+    ]
+
+    STATUS_QUEUED = "queued"
+    STATUS_RUNNING = "running"
+    STATUS_SUCCEEDED = "succeeded"
+    STATUS_FAILED = "failed"
+    STATUS_CHOICES = [
+        (STATUS_QUEUED, "Wartet"),
+        (STATUS_RUNNING, "Läuft"),
+        (STATUS_SUCCEEDED, "Erfolgreich"),
+        (STATUS_FAILED, "Fehlgeschlagen"),
+    ]
+
+    trigger = models.CharField(max_length=20, choices=TRIGGER_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED)
+    slot = models.PositiveSmallIntegerField(null=True, blank=True)
+    object_key = models.CharField(max_length=500, blank=True, default="")
+    filename = models.CharField(max_length=180, blank=True, default="")
+    size_bytes = models.PositiveBigIntegerField(default=0)
+    encrypted_sha256 = models.CharField(max_length=64, blank=True, default="")
+    include_media = models.BooleanField(default=False)
+    storage_bucket = models.CharField(max_length=255, blank=True, default="")
+    storage_endpoint = models.CharField(max_length=255, blank=True, default="")
+    error_message = models.TextField(blank=True, default="")
+    created_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="recovery_backups",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Recovery Backup {self.id} ({self.status})"
 
 
 class DeveloperApiKey(models.Model):

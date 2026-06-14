@@ -202,6 +202,17 @@ AWS_STORAGE_BUCKET_NAME='yoolink'
 AWS_S3_ENDPOINT_URL='https://fra1.digitaloceanspaces.com/'
 AWS_LOCATION = 'https://yoolink.fra1.digitaloceanspaces.com/'
 
+# Recovery backups
+# ------------------------------------------------------------------------------
+# Remote recovery backups are encrypted before upload and written with private ACL.
+# Keep RECOVERY_BACKUP_ENCRYPTION_KEY outside source control.
+RECOVERY_REMOTE_BACKUPS_ENABLED = env.bool("RECOVERY_REMOTE_BACKUPS_ENABLED", default=False)
+RECOVERY_BACKUP_ENCRYPTION_KEY = env("RECOVERY_BACKUP_ENCRYPTION_KEY", default="")
+RECOVERY_BACKUP_BUCKET_NAME = env("RECOVERY_BACKUP_BUCKET_NAME", default=AWS_STORAGE_BUCKET_NAME)
+RECOVERY_BACKUP_PREFIX = env("RECOVERY_BACKUP_PREFIX", default="private/recovery-backups")
+RECOVERY_REMOTE_BACKUP_ROTATION_SLOTS = env.int("RECOVERY_REMOTE_BACKUP_ROTATION_SLOTS", default=2)
+RECOVERY_REMOTE_BACKUP_INCLUDE_MEDIA = env.bool("RECOVERY_REMOTE_BACKUP_INCLUDE_MEDIA", default=False)
+
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY", default="")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY", default="")
 GOOGLE_MAPS_EMBED_API_KEY = env("GOOGLE_MAPS_EMBED_API_KEY", default="")

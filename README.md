@@ -62,6 +62,11 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ cd .production/
         $ nano .django 
 
+### Recovery Backups:
+-   Anleitung für lokale Downloads, automatische verschlüsselte Remote-Backups, Env-Variablen und Restore:
+
+        docs/yoolink-recovery-backups.md
+
 ### Konsole verlassen:
         $ exit
 
@@ -164,4 +169,3 @@ docker container prune -f
 
 docker compose -f production.yml build --no-cache django
 docker compose -f production.yml up
-

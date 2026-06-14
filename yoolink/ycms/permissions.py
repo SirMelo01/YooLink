@@ -40,6 +40,8 @@ def user_permissions(user):
     )
     for assignment in assignments:
         permissions.update(assignment.role.permissions or [])
+        if assignment.role.slug in SYSTEM_ROLE_DEFAULTS:
+            permissions.update(SYSTEM_ROLE_DEFAULTS[assignment.role.slug]["permissions"])
     return permissions
 
 
