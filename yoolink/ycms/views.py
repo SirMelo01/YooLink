@@ -84,8 +84,11 @@ from yoolink.ycms.recovery import (
     build_backup_archive,
     get_recovery_overview,
     get_remote_backup_records,
+    get_remote_backup_storage_slots,
     remote_backups_configured,
     restore_backup_archive,
+    restore_remote_backup,
+    restore_remote_backup_object,
 )
 
 logger = logging.getLogger(__name__)
@@ -2185,7 +2188,24 @@ def _remote_backup_payload(record):
         "started_at": record.started_at.isoformat() if record.started_at else "",
         "finished_at": record.finished_at.isoformat() if record.finished_at else "",
         "error_message": record.error_message,
+        "source": "database",
+        "restore_url": (
+            reverse("cms:recovery-remote-backup-restore", args=[record.id])
+            if record.status == RecoveryBackup.STATUS_SUCCEEDED
+            else ""
+        ),
     }
+
+
+def _remote_backup_payloads():
+    payloads = [_remote_backup_payload(record) for record in get_remote_backup_records()]
+    known_object_keys = {payload["object_key"] for payload in payloads if payload["object_key"]}
+    for storage_slot in get_remote_backup_storage_slots():
+        if storage_slot["object_key"] in known_object_keys:
+            continue
+        storage_slot["restore_url"] = reverse("cms:recovery-remote-backup-object-restore")
+        payloads.append(storage_slot)
+    return payloads
 
 
 @login_required(login_url='login')
@@ -2231,7 +2251,87 @@ def recovery_remote_backup_status(request):
     return JsonResponse(
         {
             "success": True,
-            "backups": [_remote_backup_payload(record) for record in get_remote_backup_records()],
+            "backups": _remote_backup_payloads(),
+        }
+    )
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+@require_POST
+def recovery_remote_backup_restore(request, backup_id):
+    overview = get_recovery_overview()
+    expected_phrase = overview["restore_confirmation_phrase"]
+    phrase = (request.POST.get("confirmation_phrase") or "").strip()
+    restore_media = request.POST.get("restore_media") == "on"
+
+    if phrase != expected_phrase:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Die Sicherheitsphrase stimmt nicht.",
+            },
+            status=400,
+        )
+
+    backup_record = get_object_or_404(
+        RecoveryBackup,
+        id=backup_id,
+        status=RecoveryBackup.STATUS_SUCCEEDED,
+    )
+
+    try:
+        summary = restore_remote_backup(backup_record, restore_media=restore_media)
+    except ValueError as exc:
+        return JsonResponse({"success": False, "error": str(exc)}, status=400)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Remote-Backup wurde wiederhergestellt. Bitte melde dich neu an, falls deine Sitzung abgelaufen ist.",
+            "summary": summary,
+        }
+    )
+
+
+@login_required(login_url='login')
+@cms_permission_required("recovery.manage")
+@require_POST
+def recovery_remote_backup_object_restore(request):
+    overview = get_recovery_overview()
+    expected_phrase = overview["restore_confirmation_phrase"]
+    phrase = (request.POST.get("confirmation_phrase") or "").strip()
+    object_key = (request.POST.get("object_key") or "").strip()
+    restore_media = request.POST.get("restore_media") == "on"
+
+    if phrase != expected_phrase:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Die Sicherheitsphrase stimmt nicht.",
+            },
+            status=400,
+        )
+
+    if not object_key:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Remote-Backup wurde nicht ausgewählt.",
+            },
+            status=400,
+        )
+
+    try:
+        summary = restore_remote_backup_object(object_key, restore_media=restore_media)
+    except ValueError as exc:
+        return JsonResponse({"success": False, "error": str(exc)}, status=400)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Remote-Backup wurde wiederhergestellt. Bitte melde dich neu an, falls deine Sitzung abgelaufen ist.",
+            "summary": summary,
         }
     )
 

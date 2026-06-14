@@ -183,9 +183,22 @@
                                     <p class="mt-3 text-xs text-slate-500">
                                         {{ backup.created_at|date:"d.m.Y H:i" }}
                                         {% if backup.size_bytes %} · {{ backup.size_bytes }} Bytes{% endif %}
+                                        · Medien {% if backup.include_media %}enthalten{% else %}nicht enthalten{% endif %}
                                     </p>
                                     {% if backup.error_message %}
                                         <p class="mt-2 text-sm text-rose-700">{{ backup.error_message }}</p>
+                                    {% endif %}
+                                    {% if backup.status == 'succeeded' %}
+                                        <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                            <p class="text-xs text-slate-500">Wiederherstellung nutzt die Sicherheitsphrase im Restore-Bereich.</p>
+                                            <button type="button"
+                                                    class="js-remote-restore inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100 disabled:cursor-wait disabled:opacity-60"
+                                                    data-remote-restore-url="{% url 'cms:recovery-remote-backup-restore' backup.id %}"
+                                                    data-slot="{{ backup.slot|default:'-' }}">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                <span>Wiederherstellen</span>
+                                            </button>
+                                        </div>
                                     {% endif %}
                                 </div>
                             {% empty %}
@@ -544,7 +557,19 @@ document.addEventListener("DOMContentLoaded", function () {
         remoteBackupList.innerHTML = backups.map(function (backup) {
             const key = backup.object_key || "Noch nicht hochgeladen";
             const size = backup.size_bytes ? " · " + backup.size_bytes + " Bytes" : "";
+            const mediaLabel = backup.include_media === null ? "unbekannt" : (backup.include_media ? "enthalten" : "nicht enthalten");
+            const source = backup.source === "storage" ? " · direkt im Storage gefunden" : "";
+            const media = " · Medien " + mediaLabel + source;
             const error = backup.error_message ? '<p class="mt-2 text-sm text-rose-700">' + escapeHtml(backup.error_message) + '</p>' : "";
+            const actions = backup.restore_url ? [
+                '<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">',
+                    '<p class="text-xs text-slate-500">Wiederherstellung nutzt die Sicherheitsphrase im Restore-Bereich.</p>',
+                    '<button type="button" class="js-remote-restore inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100 disabled:cursor-wait disabled:opacity-60" data-remote-restore-url="' + escapeHtml(backup.restore_url) + '" data-remote-object-key="' + escapeHtml(backup.object_key || "") + '" data-slot="' + escapeHtml(backup.slot || "-") + '">',
+                        '<i class="bi bi-arrow-counterclockwise"></i>',
+                        '<span>Wiederherstellen</span>',
+                    '</button>',
+                '</div>'
+            ].join("") : "";
             return [
                 '<div class="rounded-2xl border border-slate-200 bg-white p-4" data-remote-backup-row>',
                     '<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">',
@@ -554,8 +579,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         '</div>',
                         '<span class="inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ' + statusClass(backup.status) + '">' + escapeHtml(backup.status_label) + '</span>',
                     '</div>',
-                    '<p class="mt-3 text-xs text-slate-500">' + escapeHtml(formatBackupDate(backup.created_at) + size) + '</p>',
+                    '<p class="mt-3 text-xs text-slate-500">' + escapeHtml(formatBackupDate(backup.created_at) + size + media) + '</p>',
                     error,
+                    actions,
                 '</div>'
             ].join("");
         }).join("");
@@ -573,6 +599,10 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             // Status polling is best-effort; explicit actions still report errors.
         }
+    }
+
+    if (remoteBackupButton && remoteBackupButton.dataset.configured !== "0") {
+        refreshRemoteBackups();
     }
 
     function filenameFromDisposition(headerValue) {
@@ -711,17 +741,118 @@ document.addEventListener("DOMContentLoaded", function () {
         restoreLabel.textContent = isLoading ? "Backup wird wiederhergestellt..." : "Backup wiederherstellen";
     }
 
-    restoreForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
+    function validateConfirmationPhrase() {
         const expectedPhrase = (restoreForm.dataset.confirmationPhrase || "").trim();
         const enteredPhrase = confirmationPhrase ? confirmationPhrase.value.trim() : "";
         if (expectedPhrase && enteredPhrase !== expectedPhrase) {
             setPhraseError(true);
             if (confirmationPhrase) confirmationPhrase.focus();
             notify("Die Sicherheitsphrase stimmt nicht.", "error");
-            return;
+            return false;
         }
+        setPhraseError(false);
+        return true;
+    }
+
+    function setRemoteRestoreButtonsLoading(isLoading, activeButton) {
+        document.querySelectorAll(".js-remote-restore").forEach(function (restoreTrigger) {
+            restoreTrigger.disabled = isLoading;
+            restoreTrigger.setAttribute("aria-busy", isLoading && restoreTrigger === activeButton ? "true" : "false");
+        });
+    }
+
+    async function confirmRemoteRestore(slot) {
+        const text = "Remote-Backup Slot " + slot + " wird aus dem privaten Storage geladen und überschreibt den aktuellen CMS-Datenbestand.";
+        if (typeof Swal !== "undefined" && Swal.fire) {
+            const result = await Swal.fire({
+                title: "Remote-Backup wiederherstellen?",
+                text: text,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ja, wiederherstellen",
+                cancelButtonText: "Abbrechen",
+                confirmButtonColor: "#e11d48",
+                reverseButtons: true
+            });
+            return result.isConfirmed;
+        }
+        return window.confirm(text);
+    }
+
+    if (remoteBackupList) {
+        remoteBackupList.addEventListener("click", async function (event) {
+            const trigger = event.target.closest(".js-remote-restore");
+            if (!trigger) return;
+
+            if (!validateConfirmationPhrase()) return;
+            const confirmed = await confirmRemoteRestore(trigger.dataset.slot || "-");
+            if (!confirmed) return;
+
+            const formData = new FormData();
+            formData.append("confirmation_phrase", confirmationPhrase ? confirmationPhrase.value.trim() : "");
+            if (trigger.dataset.remoteObjectKey) {
+                formData.append("object_key", trigger.dataset.remoteObjectKey);
+            }
+            if (restoreForm.querySelector('input[name="restore_media"]:checked')) {
+                formData.append("restore_media", "on");
+            }
+
+            setRestoreLoading(true);
+            setRemoteRestoreButtonsLoading(true, trigger);
+            restoreStatus.classList.add("hidden");
+            openProgressDialog({
+                eyebrow: "Remote Restore",
+                title: "Remote-Backup wird wiederhergestellt",
+                detail: "Das verschlüsselte Backup wird aus dem privaten Storage geladen.",
+                steps: [
+                    "Storage-Objekt laden",
+                    "Hash-Prüfung ausführen",
+                    "Backup entschlüsseln",
+                    "Manifest validieren",
+                    "Datenbestand wiederherstellen",
+                    "Abschluss prüfen"
+                ],
+                interval: 520
+            });
+
+            try {
+                const response = await fetch(trigger.dataset.remoteRestoreUrl, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "same-origin",
+                    headers: {
+                        "X-Requested-With": "fetch",
+                        "X-CSRFToken": csrfToken || ""
+                    }
+                });
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.error || "Remote-Restore fehlgeschlagen (" + response.status + ")");
+                }
+
+                const restoredMedia = payload.summary ? payload.summary.restored_media_files : 0;
+                completeProgressDialog("Remote-Restore abgeschlossen. Abschlussprüfung läuft.");
+                notify(payload.message + " Wiederhergestellte Medien: " + restoredMedia + ".", "success");
+            } catch (error) {
+                closeProgressDialog();
+                const message = error.message || "Remote-Backup konnte nicht wiederhergestellt werden.";
+                if (message.toLowerCase().includes("sicherheitsphrase")) {
+                    setPhraseError(true);
+                    if (confirmationPhrase) confirmationPhrase.focus();
+                }
+                notify(message, "error");
+            } finally {
+                setRestoreLoading(false);
+                setRemoteRestoreButtonsLoading(false, trigger);
+            }
+        });
+    }
+
+    restoreForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (!validateConfirmationPhrase()) return;
         if (!backupFile || !backupFile.files || !backupFile.files[0]) {
             notify("Bitte wähle eine Backup-ZIP-Datei aus.", "error");
             return;
@@ -730,7 +861,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(restoreForm);
         setRestoreLoading(true);
         restoreStatus.classList.add("hidden");
-        setPhraseError(false);
         openProgressDialog({
             eyebrow: "Backup Restore",
             title: "Backup wird wiederhergestellt",

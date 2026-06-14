@@ -1,7 +1,10 @@
+import hashlib
 import io
 import json
 import zipfile
+from datetime import datetime, timezone
 
+from botocore.exceptions import ClientError
 import pytest
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -185,7 +188,7 @@ def test_recovery_remote_backup_start_requires_complete_configuration(client, se
 @pytest.mark.django_db
 def test_recovery_remote_backup_status_returns_recent_backups(client):
     user = User.objects.create_superuser(username="backup-admin", password="secret")
-    RecoveryBackup.objects.create(
+    backup_record = RecoveryBackup.objects.create(
         trigger=RecoveryBackup.TRIGGER_MANUAL,
         status=RecoveryBackup.STATUS_SUCCEEDED,
         slot=1,
@@ -201,6 +204,126 @@ def test_recovery_remote_backup_status_returns_recent_backups(client):
     assert response.status_code == 200
     payload = response.json()
     assert payload["success"] is True
+    assert payload["backups"][0]["object_key"] == "private/recovery-backups/slot-1.enc"
+    assert payload["backups"][0]["restore_url"] == reverse("cms:recovery-remote-backup-restore", args=[backup_record.id])
+
+
+@pytest.mark.django_db
+def test_recovery_remote_backup_restore_requires_confirmation_phrase(client):
+    user = User.objects.create_superuser(username="backup-admin", password="secret")
+    backup_record = RecoveryBackup.objects.create(
+        trigger=RecoveryBackup.TRIGGER_MANUAL,
+        status=RecoveryBackup.STATUS_SUCCEEDED,
+        slot=1,
+        object_key="private/recovery-backups/slot-1.enc",
+        storage_bucket="private-yoolink-backups",
+        created_by=user,
+    )
+    client.force_login(user)
+
+    response = client.post(
+        reverse("cms:recovery-remote-backup-restore", args=[backup_record.id]),
+        {"confirmation_phrase": "wrong"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["success"] is False
+
+
+@pytest.mark.django_db(transaction=True)
+def test_recovery_remote_backup_object_restore_accepts_valid_remote_backup(client, settings, monkeypatch):
+    settings.RECOVERY_REMOTE_BACKUPS_ENABLED = True
+    settings.RECOVERY_BACKUP_ENCRYPTION_KEY = "test-key"
+    settings.RECOVERY_BACKUP_BUCKET_NAME = "private-yoolink-backups"
+    settings.AWS_ACCESS_KEY_ID = "access-key"
+    settings.AWS_SECRET_ACCESS_KEY = "secret-key"
+    settings.AWS_S3_ENDPOINT_URL = "https://fra1.digitaloceanspaces.com/"
+
+    user = User.objects.create_superuser(username="backup-admin", password="secret")
+    fileentry.objects.create(title="Remote Restore", file=ContentFile(b"remote-restore", name="remote-restore.jpg"))
+    archive, _filename = build_backup_archive(user=user, include_media=True)
+    archive_payload = archive.read()
+    archive_hash = hashlib.sha256(archive_payload).hexdigest()
+    archive.close()
+
+    class FakeStreamingBody:
+        def __init__(self, payload):
+            self.buffer = io.BytesIO(payload)
+
+        def read(self, size=-1):
+            return self.buffer.read(size)
+
+        def close(self):
+            self.buffer.close()
+
+    class FakeS3Client:
+        def get_object(self, **kwargs):
+            assert kwargs["Bucket"] == "private-yoolink-backups"
+            assert kwargs["Key"] == "private/recovery-backups/slot-1.enc"
+            return {
+                "Body": FakeStreamingBody(archive_payload),
+                "Metadata": {"yoolink-backup-sha256": archive_hash},
+            }
+
+    monkeypatch.setattr("yoolink.ycms.recovery._remote_backup_client", lambda: FakeS3Client())
+
+    FAQ.objects.create(question="After remote backup", answer="Should disappear")
+    client.force_login(user)
+
+    response = client.post(
+        reverse("cms:recovery-remote-backup-object-restore"),
+        {
+            "confirmation_phrase": RESTORE_CONFIRMATION_PHRASE,
+            "object_key": "private/recovery-backups/slot-1.enc",
+            "restore_media": "on",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["success"] is True
+    assert payload["summary"]["restored_media_files"] >= 1
+    assert fileentry.objects.filter(title="Remote Restore").exists()
+    assert not FAQ.objects.filter(question="After remote backup").exists()
+
+
+@pytest.mark.django_db
+def test_recovery_remote_backup_status_includes_storage_slots_without_db_record(client, settings, monkeypatch):
+    settings.RECOVERY_REMOTE_BACKUPS_ENABLED = True
+    settings.RECOVERY_BACKUP_ENCRYPTION_KEY = "test-key"
+    settings.RECOVERY_BACKUP_BUCKET_NAME = "private-yoolink-backups"
+    settings.RECOVERY_BACKUP_PREFIX = "private/recovery-backups"
+    settings.RECOVERY_REMOTE_BACKUP_ROTATION_SLOTS = 2
+    settings.AWS_ACCESS_KEY_ID = "access-key"
+    settings.AWS_SECRET_ACCESS_KEY = "secret-key"
+    settings.AWS_S3_ENDPOINT_URL = "https://fra1.digitaloceanspaces.com/"
+
+    class FakeS3Client:
+        def head_object(self, **kwargs):
+            assert kwargs["Bucket"] == "private-yoolink-backups"
+            if kwargs["Key"] == "private/recovery-backups/slot-1.enc":
+                return {
+                    "ContentLength": 1234,
+                    "LastModified": datetime(2026, 6, 14, tzinfo=timezone.utc),
+                    "Metadata": {
+                        "yoolink-backup-sha256": "b" * 64,
+                        "yoolink-backup-include-media": "false",
+                    },
+                }
+            raise ClientError({"Error": {"Code": "404"}}, "HeadObject")
+
+    monkeypatch.setattr("yoolink.ycms.recovery._remote_backup_client", lambda: FakeS3Client())
+
+    user = User.objects.create_superuser(username="backup-admin", password="secret")
+    client.force_login(user)
+
+    response = client.get(reverse("cms:recovery-remote-backup-status"))
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["success"] is True
+    assert payload["backups"][0]["source"] == "storage"
+    assert payload["backups"][0]["restore_url"] == reverse("cms:recovery-remote-backup-object-restore")
     assert payload["backups"][0]["object_key"] == "private/recovery-backups/slot-1.enc"
 
 

@@ -214,6 +214,8 @@ def decrypt_backup_file(source_file):
         decrypted_file.write(aesgcm.decrypt(nonce, encrypted_chunk, ENCRYPTED_BACKUP_MAGIC))
 
     decrypted_file.seek(0)
+    if hasattr(source_file, "close"):
+        source_file.close()
     return decrypted_file
 
 
@@ -655,6 +657,18 @@ def _remote_backup_object_key(slot):
     return f"{prefix}/slot-{slot}.enc"
 
 
+def validate_remote_backup_object_key(object_key):
+    clean_key = _safe_zip_member_name(object_key)
+    prefix = str(_remote_backup_setting("RECOVERY_BACKUP_PREFIX", "private/recovery-backups")).strip("/")
+    if prefix and not clean_key.startswith(f"{prefix}/"):
+        raise ValueError("Remote-Backup liegt nicht im konfigurierten Backup-Prefix.")
+    slots = max(2, int(_remote_backup_setting("RECOVERY_REMOTE_BACKUP_ROTATION_SLOTS", 2) or 2))
+    valid_keys = {_remote_backup_object_key(slot) for slot in range(1, slots + 1)}
+    if clean_key not in valid_keys:
+        raise ValueError("Remote-Backup hat keinen gültigen Slot-Dateinamen.")
+    return clean_key
+
+
 def _file_hash_and_size(file_obj):
     file_obj.seek(0)
     hasher = hashlib.sha256()
@@ -719,6 +733,7 @@ def create_remote_backup(*, trigger="manual", user=None, record_id=None):
                 "yoolink-backup-source": backup_filename,
                 "yoolink-backup-trigger": trigger,
                 "yoolink-backup-sha256": encrypted_sha256,
+                "yoolink-backup-include-media": "true" if config_status["include_media"] else "false",
             },
         )
 
@@ -755,6 +770,114 @@ def create_remote_backup(*, trigger="manual", user=None, record_id=None):
             archive.close()
         if encrypted_archive is not None:
             encrypted_archive.close()
+
+
+def _copy_remote_body_to_temp(body):
+    temp_file = tempfile.TemporaryFile(mode="w+b")
+    try:
+        while True:
+            chunk = body.read(1024 * 1024)
+            if not chunk:
+                break
+            temp_file.write(chunk)
+        temp_file.seek(0)
+        return temp_file
+    except Exception:
+        temp_file.close()
+        raise
+    finally:
+        close = getattr(body, "close", None)
+        if callable(close):
+            close()
+
+
+def download_remote_backup_object(object_key, *, bucket="", expected_hash=""):
+    clean_key = validate_remote_backup_object_key(object_key)
+    bucket = bucket or _remote_backup_setting("RECOVERY_BACKUP_BUCKET_NAME", "")
+    if not bucket:
+        raise ValueError("RECOVERY_BACKUP_BUCKET_NAME ist nicht konfiguriert.")
+
+    try:
+        response = _remote_backup_client().get_object(Bucket=bucket, Key=clean_key)
+        backup_file = _copy_remote_body_to_temp(response["Body"])
+    except (KeyError, BotoCoreError, ClientError) as exc:
+        raise ValueError(f"Remote-Backup konnte nicht aus dem Storage geladen werden: {exc}") from exc
+
+    metadata_hash = (response.get("Metadata") or {}).get("yoolink-backup-sha256", "")
+    expected_hash = expected_hash or metadata_hash
+    if expected_hash:
+        actual_hash, _size = _file_hash_and_size(backup_file)
+        if actual_hash != expected_hash:
+            backup_file.close()
+            raise ValueError("Hash-Prüfung des Remote-Backups fehlgeschlagen.")
+
+    backup_file.seek(0)
+    return backup_file
+
+
+def download_remote_backup_file(record):
+    if not record.object_key:
+        raise ValueError("Dieses Remote-Backup hat keinen Storage-Pfad.")
+    if record.status != record.STATUS_SUCCEEDED:
+        raise ValueError("Nur erfolgreiche Remote-Backups können wiederhergestellt werden.")
+
+    return download_remote_backup_object(
+        record.object_key,
+        bucket=record.storage_bucket,
+        expected_hash=record.encrypted_sha256,
+    )
+
+
+def restore_remote_backup(record, *, restore_media=False):
+    backup_file = download_remote_backup_file(record)
+    return restore_backup_archive(backup_file, restore_media=restore_media)
+
+
+def restore_remote_backup_object(object_key, *, restore_media=False):
+    backup_file = download_remote_backup_object(object_key)
+    return restore_backup_archive(backup_file, restore_media=restore_media)
+
+
+def get_remote_backup_storage_slots():
+    config_status = get_remote_backup_config_status()
+    if not config_status["configured"]:
+        return []
+
+    client = _remote_backup_client()
+    slots = []
+    for slot in range(1, config_status["slots"] + 1):
+        object_key = _remote_backup_object_key(slot)
+        try:
+            response = client.head_object(Bucket=config_status["bucket"], Key=object_key)
+        except ClientError as exc:
+            code = str((exc.response.get("Error") or {}).get("Code", ""))
+            if code in {"404", "NoSuchKey", "NotFound"}:
+                continue
+            continue
+        except BotoCoreError:
+            continue
+
+        metadata = response.get("Metadata") or {}
+        include_media = metadata.get("yoolink-backup-include-media")
+        slots.append({
+            "id": None,
+            "trigger": "Storage",
+            "status": "succeeded",
+            "status_label": "Im Storage",
+            "slot": slot,
+            "filename": posixpath.basename(object_key),
+            "size_bytes": response.get("ContentLength", 0),
+            "object_key": object_key,
+            "encrypted_sha256": metadata.get("yoolink-backup-sha256", ""),
+            "include_media": include_media == "true" if include_media in {"true", "false"} else None,
+            "created_by": "",
+            "created_at": response.get("LastModified").isoformat() if response.get("LastModified") else "",
+            "started_at": "",
+            "finished_at": response.get("LastModified").isoformat() if response.get("LastModified") else "",
+            "error_message": "",
+            "source": "storage",
+        })
+    return slots
 
 
 def get_remote_backup_records(limit=6):

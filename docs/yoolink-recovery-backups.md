@@ -95,6 +95,7 @@ Im CMS:
 2. `Einstellungen -> Recovery` öffnen.
 3. Unter `Automatische Backups` auf `Remote-Backup starten` klicken.
 4. Der Lauf wird in der Liste `Letzte Remote-Backups` angezeigt.
+5. Erfolgreiche Einträge können dort direkt über `Wiederherstellen` ausgewählt werden.
 
 Der Button ist deaktiviert, wenn die Remote-Backup-Konfiguration unvollständig ist.
 
@@ -150,8 +151,10 @@ Voraussetzungen:
 
 - aktueller YooLink Source Code
 - neue Datenbank/Installation
-- verschlüsselte `.enc` Backup-Datei aus DigitalOcean Spaces
+- verschlüsselte `.enc` Backup-Datei aus DigitalOcean Spaces oder funktionierende Remote-Backup-Konfiguration im CMS
 - exakt derselbe `RECOVERY_BACKUP_ENCRYPTION_KEY`
+- Env-Secrets der neuen Installation, z. B. Datenbank, Django Secret Key, DigitalOcean/S3-Zugang
+- verfügbare Medien im Media-Storage/CDN oder ein Backup, das Medien mit `RECOVERY_REMOTE_BACKUP_INCLUDE_MEDIA=True` enthält
 
 Ablauf:
 
@@ -160,11 +163,13 @@ Ablauf:
 3. Migrationen ausführen.
 4. Superuser/Owner-Zugang herstellen.
 5. Im CMS `Einstellungen -> Recovery` öffnen.
-6. Die `.enc` Datei als Backup-ZIP auswählen.
+6. Entweder ein erfolgreiches Remote-Backup in der Liste wählen oder eine `.enc` Datei als Backup-ZIP auswählen.
 7. Sicherheitsphrase eingeben.
 8. Restore starten.
 
 Der Restore-Pfad erkennt YooLink-verschlüsselte Backups automatisch am Header, entschlüsselt sie mit dem Key und verarbeitet danach den normalen ZIP-Dump.
+
+Wichtig: Die `.enc` Datei enthält den vollständigen Django-Datenbankdump inklusive Nutzer, Rollen, Rechte, Passwort-Hashes und CMS-Inhalte. Sie enthält keine produktiven Env-Secrets und standardmäßig keine Medien-Binaries, wenn `RECOVERY_REMOTE_BACKUP_INCLUDE_MEDIA=False` gesetzt ist. In diesem Standardfall zeigen die wiederhergestellten Daten auf die bestehenden Medien im DigitalOcean/CDN-Storage.
 
 ## Deployment-Checkliste
 
@@ -184,6 +189,7 @@ Danach im CMS prüfen:
 - Ein manuelles Remote-Backup kann gestartet werden.
 - In DigitalOcean Spaces erscheint `slot-1.enc`.
 - Das Objekt ist nicht öffentlich abrufbar.
+- Erfolgreiche Remote-Backups werden in der Liste mit `Wiederherstellen` angeboten.
 
 ## Fehlersuche
 
