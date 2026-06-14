@@ -8,7 +8,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
 <link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{% static 'js/cms/blog/nicEdit.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/libs/quill.snow.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/libs/katex/katex.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/rich-text.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -222,11 +224,15 @@
 {% endblock %}
 
 {% block javascriptend %}
+<script src="{% static 'js/libs/katex/katex.min.js' %}"></script>
+<script src="{% static 'js/libs/quill/quill.min.js' %}"></script>
 {% compress js %}
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog-markdown.js' %}"></script>
+<script defer src="{% static 'js/cms/blog/blog-richtext.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog-update.js' %}"></script>
+<script defer src="{% static 'js/cms/unsaved-guard.js' %}"></script>
 {% endcompress js %}
 <script src="{% static 'js/prism/prism.js' %}" data-manual></script>
 {% endblock javascriptend %}

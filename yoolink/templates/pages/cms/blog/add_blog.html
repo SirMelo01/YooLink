@@ -8,7 +8,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-carousel.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/cms/slick/slick-theme.css' %}" />
 <link href="{% static 'css/prism/prism.css' %}" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{% static 'js/cms/blog/nicEdit.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/libs/quill.snow.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/libs/katex/katex.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/rich-text.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -113,13 +115,11 @@
       <!-- Builder -->
       <div id="builderEditorPanel">
         <div class="nested-sortable min-h-[16rem] w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" id="blogContent">
-            <!-- Start-Element: Text -->
-            <div class="relative" element-type="textArea">
+            <!-- Start-Element: Text (Quill-Editor, wird per blog-richtext.js gemountet) -->
+            <div class="relative my-2" element-type="textArea">
                 <span class="absolute top-0 right-0 z-40 inline-block rounded-full bg-red-500 px-2 py-1 text-sm text-white not-sortable hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>
                 <span class="absolute top-0 right-1/2 z-40 inline-block rounded-full bg-blue-500 px-2 py-1 text-sm text-white not-sortable hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>
-                <textarea id="textArea1"
-                    class="textArea my-3 min-h-[5rem] w-full rounded-2xl border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                    rows="4" placeholder="Text"></textarea>
+                <div class="blog-rt"><div id="textArea1" class="textArea"></div></div>
             </div>
         </div>
       </div>
@@ -226,9 +226,13 @@
 {% endblock %}
 
 {% block javascriptend %}
+<script src="{% static 'js/libs/katex/katex.min.js' %}"></script>
+<script src="{% static 'js/libs/quill/quill.min.js' %}"></script>
 {% compress js %}
 <script defer src="{% static 'js/cms/blog/blog-markdown.js' %}"></script>
+<script defer src="{% static 'js/cms/blog/blog-richtext.js' %}"></script>
 <script defer src="{% static 'js/cms/blog/blog.js' %}"></script>
+<script defer src="{% static 'js/cms/unsaved-guard.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/cms/slick/slick.min.js' %}"></script>
 {% endcompress js %}
 <script src="{% static 'js/prism/prism.js' %}" data-manual></script>

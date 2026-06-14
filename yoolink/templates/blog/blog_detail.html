@@ -63,7 +63,10 @@
 <link rel="stylesheet" href="{% static 'css/cms/slick/slick-theme.css' %}"/>
 <link href="{% static 'css/prism/prism.css' %}" rel="stylesheet">
 <link href="{% static 'css/blog.css' %}" rel="stylesheet">
+<link href="{% static 'css/rich-text.css' %}" rel="stylesheet">
 {% endcompress %}
+<!-- KaTeX: rendert Formeln aus dem Quill-Editor in veröffentlichten Beiträgen -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/libs/katex/katex.min.css' %}" />
 {% endblock %}
 
 {% block content %}

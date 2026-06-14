@@ -16,7 +16,8 @@ module.exports = {
             "./yoolink/templates/pages/cms/content/sites/**/*.{html,js}",
             "./yoolink/templates/pages/cms/blog/*.{html,js}",
             "./yoolink/static/js/**/*.js",
-            "./yoolink/blog/**/*.py"
+            "./yoolink/blog/**/*.py",
+            "./yoolink/ycms/applications/blog/**/*.py"
             ],
   theme: {
     screens: {

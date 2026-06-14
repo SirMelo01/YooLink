@@ -37,7 +37,7 @@
       if (reloadTimer) window.clearTimeout(reloadTimer);
       reloadTimer = window.setTimeout(() => {
         window.location.reload();
-      }, 1000);
+      }, 200);
     }
 
     form.addEventListener("submit", function (event) {

@@ -1,19 +1,19 @@
-/* Link and Bullet points edit */
+/* Link and Bullet points (Quill-Editor + Blog-Vorschau) */
 
-.nicEdit-main a, #previewModal a {
+.ql-editor a, #previewModal a {
     color: rgb(59, 130, 246);
 }
 
-.nicEdit-main a:hover, #previewModal a:hover {
+.ql-editor a:hover, #previewModal a:hover {
     cursor: pointer;
     color: rgb(37, 99, 235);
 }
 
 
-.nicEdit-main li, #previewModal li {
+#previewModal li {
     margin-bottom: 0.75rem !important;
 }
-.nicEdit-main ul, #previewModal ul {
+#previewModal ul {
     display: block !important;
     list-style-type: disc !important;
     margin-block-start: 1em !important;
@@ -21,7 +21,7 @@
     padding-inline-start: 40px !important;
 }
 
-.nicEdit-main ol, #previewModal ol {
+#previewModal ol {
     display: block !important;
     list-style-type: decimal !important;
     margin-block-start: 1em !important;
@@ -29,8 +29,51 @@
     padding-inline-start: 40px !important;
 }
 
-.nicEdit-main {
-    padding: 0.5rem;
+/* Quill-Text-Block im Blog-Builder: Toolbar oben abgerundet, Naht zum Textfeld
+   bündig/eckig, Textfeld unten abgerundet -> ein sauberer durchgehender Kasten. */
+.blog-rt {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    border-radius: 0.85rem;
+}
+.blog-rt .ql-toolbar.ql-snow {
+    border: 1px solid #d1d5db;
+    border-bottom: 1px solid #eef2f7;          /* bündige Trennlinie zum Text */
+    border-radius: 0.85rem 0.85rem 0 0;        /* nur oben rund */
+    background: #f8fafc;
+    padding: 0.45rem 0.5rem 0.35rem;
+    transition: border-color .15s ease;
+}
+.blog-rt .ql-container.ql-snow {
+    border: 1px solid #d1d5db;
+    border-top: none;                          /* eckig/bündig an der Naht */
+    border-radius: 0 0 0.85rem 0.85rem;        /* nur unten rund */
+    font-size: 0.95rem;
+    transition: border-color .15s ease;
+}
+.blog-rt:focus-within .ql-toolbar.ql-snow,
+.blog-rt:focus-within .ql-container.ql-snow {
+    border-color: #3b82f6;
+}
+.blog-rt .ql-editor {
+    min-height: 6.5rem;
+    padding: 0.75rem 1rem;
+}
+.blog-rt .ql-editor.ql-blank::before {
+    font-style: normal;
+    color: #9ca3af;
+    left: 1rem;
+    right: 1rem;
+}
+.blog-rt .ql-editor img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+}
+
+/* Verschieben/Löschen-Griffe hängen leicht oben am Text-Block (kleiner Überlapp),
+   ohne die Toolbar-Buttons (B/I/U …) zu überdecken. */
+#blogContent > [element-type="textArea"] {
+    padding-top: 1.4rem;
+    margin-top: 0.35rem;
 }
 
 /* Hide scrollbars (e.g. CMS sidebar) while keeping scroll via mouse/touch/keys. */
@@ -287,10 +330,14 @@
         font-size: 0.8125rem;
     }
 
-    .cms-content-shell .nicEdit-panelContain,
-    .cms-content-shell .nicEdit-main,
-    .cms-content-shell .nicEdit-mainArea {
+    .cms-content-shell .blog-rt,
+    .cms-content-shell .ql-toolbar,
+    .cms-content-shell .ql-container {
         max-width: 100% !important;
+    }
+    /* Quill-Toolbar auf schmalen Screens umbrechen statt überlaufen */
+    .cms-content-shell .ql-toolbar.ql-snow {
+        white-space: normal;
     }
 
     .cms-content-shell .dropzone {
@@ -303,7 +350,7 @@
     }
 
     .cms-content-shell iframe,
-    .cms-content-shell .nicEdit-main iframe {
+    .cms-content-shell .ql-editor iframe {
         max-width: 100% !important;
     }
 

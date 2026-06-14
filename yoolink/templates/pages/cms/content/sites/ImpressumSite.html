@@ -129,6 +129,7 @@
 {% endblock %}
 
 {% block javascriptend %}
+<script defer src="{% static 'js/cms/unsaved-guard.js' %}"></script>
 <script>
 (function () {
   var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
@@ -201,6 +202,7 @@
       data: JSON.stringify({ blocks: blocks }),
       success: function (res) {
         sendNotif(res.success || 'Impressum wurde gespeichert', 'success');
+        if (window.UnsavedGuard) UnsavedGuard.markClean();
         // IDs zuweisen, damit erneutes Speichern aktualisiert statt dupliziert
         window.location.reload();
       },
@@ -208,6 +210,7 @@
         var msg = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Fehler beim Speichern des Impressums.';
         sendNotif(msg, 'error');
         $btn.prop('disabled', false).html(original);
+        $(document).trigger('textContentSaveError');
       }
     });
   });

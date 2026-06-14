@@ -22,6 +22,8 @@ $(document).ready(function () {
                 if (window.YooLinkBlogBuilder && typeof YooLinkBlogBuilder.applyCode === 'function') {
                     YooLinkBlogBuilder.applyCode(data.code || []);
                     sendNotif('Daten wurden geladen', "success")
+                    // Unsaved-Guard erst scharf schalten, wenn der Inhalt aufgebaut ist.
+                    if (window.UnsavedGuard) setTimeout(function () { UnsavedGuard.arm(); }, 0);
                     return;
                 }
                 $.each(data.code, function (index, element) {
@@ -242,10 +244,14 @@ $(document).ready(function () {
                 loadSlick()
                 loadNicEditors()
                 // ... Perform any other actions with the data ...
+                // Schutz erst scharf schalten, wenn der Inhalt fertig aufgebaut ist
+                // (setTimeout 0, damit die MutationObserver-Callbacks vorher durch sind).
+                if (window.UnsavedGuard) setTimeout(function () { UnsavedGuard.arm(); }, 0);
             },
             error: function (xhr, status, error) {
                 // Handle the error if the request fails
                 sendNotif('Fehler beim Laden der Daten. Lade die Seite bitte nochmal neu', "error")
+                if (window.UnsavedGuard) setTimeout(function () { UnsavedGuard.arm(); }, 0);
             }
         });
 
@@ -306,14 +312,17 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.error) {
                         sendNotif(response.error, "error")
+                        $(document).trigger("blogSaveError")
                         return;
                     }
                     sendNotif("Der Blog wurde erfolgreich gespeichert", "success")
+                    $(document).trigger("blogSaved")
                 },
                 error: function (xhr, status, error) {
                     console.error("Request failed:", error);
                     const message = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Es kam zu einem unerwarten Fehler. Versuche es später nochmal";
                     sendNotif(message, "error")
+                    $(document).trigger("blogSaveError")
                 },
                 complete: function () {
                     disableSpinner($('#updateBlog'))
@@ -332,7 +341,8 @@ $(document).ready(function () {
             return;
         }
         var firstTextAreaId = $firstTextArea.attr('id')
-        var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
+        var firstRtInstance = window.BlogRichText ? BlogRichText.instanceById(firstTextAreaId) : null
+        var firstTextAreaContent = firstRtInstance ? firstRtInstance.getContent() : ''
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = firstTextAreaContent;
         var plainText = tempDiv.textContent || tempDiv.innerText || ""
@@ -389,14 +399,17 @@ $(document).ready(function () {
                 // Handle the success response here
                 if (response.error) {
                     sendNotif(response.error, "error")
+                    $(document).trigger("blogSaveError")
                     return;
                 }
                 sendNotif("Der Blog wurde erfolgreich gespeichert", "success")
+                $(document).trigger("blogSaved")
             },
             error: function (xhr, status, error) {
                 // Handle the error response here
                 console.error("Request failed:", error);
                 sendNotif("Es kam zu einem unerwarten Fehler. Versuche es später nochmal", "error")
+                $(document).trigger("blogSaveError")
             },
             complete: function (result, status) {
                 disableSpinner($('#updateBlog'))

@@ -15,12 +15,15 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     sendNotif(response.success, 'success');
+                    $(document).trigger('textContentSaved');
                 } else {
                     sendNotif(response.error || 'Fehler beim Speichern', 'error');
+                    $(document).trigger('textContentSaveError');
                 }
             },
             error: function () {
                 sendNotif('Unerwarteter Fehler beim Speichern', 'error');
+                $(document).trigger('textContentSaveError');
             }
         });
     });

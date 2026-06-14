@@ -38,3 +38,26 @@ article .carousel img,
 article {
     padding: 0.5rem;
 }
+
+/* Sehr lange Wörter / URLs umbrechen, statt aus dem Container zu laufen. */
+article,
+article p,
+article li,
+article h1,
+article h2,
+article h3,
+article h4,
+article blockquote,
+#previewModal,
+#previewModal p,
+#previewModal li {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Code-Blöcke nicht umbrechen, sondern horizontal scrollen lassen. */
+article pre,
+#previewModal pre {
+    overflow-x: auto;
+    max-width: 100%;
+}

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container mx-auto mt-8">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="sticky top-[4.25rem] z-30 mb-6 rounded-2xl border border-gray-200 bg-white/95 px-5 py-4 shadow-sm backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 class="text-2xl">
             <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a> /
             <a href="{% url 'cms:site_hauptseite' %}" class="text-blue-500">Hauptseite</a> /
@@ -69,6 +69,7 @@
 {% compress js %}
 <script defer src="{% static 'js/cms.js' %}"></script>
 <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script defer src="{% static 'js/cms/unsaved-guard.js' %}"></script>
 <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
 {% endcompress js %}
 {% endblock javascriptend %}

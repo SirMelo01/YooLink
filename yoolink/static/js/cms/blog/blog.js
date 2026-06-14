@@ -1,9 +1,12 @@
-var myNicEditor;
+// Text-Editoren laufen jetzt über Quill (siehe BlogRichText / blog-richtext.js).
 var imageData = null;
 // Editable Fields
 var $editSlider = null;
 var $editImg = null;
 var $editYoutube = null;
+// Wenn gesetzt, fügt der Bild-Dialog das gewählte Bild in den Quill-Editor ein
+// (statt ein Block-Bild zu bearbeiten): { quill, range }.
+var blogEditorImageTarget = null;
 var selectedVideoData = null;
 let selectedVideoElement = null;
 let selectedAnyfile = null; // {id,url,title,ext}
@@ -56,7 +59,9 @@ window.openBlogPreviewModal = openBlogPreviewModal;
 window.closeBlogPreviewModal = closeBlogPreviewModal;
 
 function refreshBlogImagePreview() {
-    const src = $editImg ? $editImg.attr('src') : '';
+    const src = (blogEditorImageTarget && blogEditorImageTarget.src)
+        ? blogEditorImageTarget.src
+        : ($editImg ? $editImg.attr('src') : '');
     if (src) {
         $('#blogImageSelectedPreview').attr('src', src).removeClass('hidden');
         $('#blogImageSelectedPlaceholder').addClass('hidden');
@@ -73,6 +78,7 @@ function currentCssSize($element, key, fallback) {
 }
 
 function openBlogImageModal($image) {
+    blogEditorImageTarget = null;   // Block-Bild bearbeiten, kein Editor-Einfügen
     $editImg = $image;
     const height = currentCssSize($editImg, 'height', $editImg.height() ? $editImg.height() + 'px' : 'auto');
     let width = currentCssSize($editImg, 'width', $editImg.width() ? $editImg.width() + 'px' : '100%');
@@ -93,9 +99,49 @@ function openBlogImageModal($image) {
 
 function closeBlogImageModal() {
     $('#imageModal').addClass('hidden').removeClass('flex');
+    blogEditorImageTarget = null;
 }
 
+/**
+ * Öffnet den normalen CMS-Bild-Dialog (Mediathek + Upload), um ein Bild in einen
+ * Quill-Text-Editor einzufügen – wie beim Bild-Element, nur dass das Ergebnis
+ * inline in den Editor kommt statt als eigenes Block-Bild.
+ */
+function openBlogEditorImagePicker(quill) {
+    if (!quill) return;
+    $editImg = null;
+    blogEditorImageTarget = {
+        quill: quill,
+        range: quill.getSelection(true) || { index: quill.getLength() },
+        src: ''
+    };
+    // Eigenschaften für ein frisches Bild zurücksetzen.
+    $('#imgURL').val('');
+    $('#imgAlt').val('');
+    $('#imgText').val('');
+    $('#imgWidth').val('');
+    $('#imgHeight').val('');
+    $('#imgLazy').prop('checked', true);
+    $('#imgAsync').prop('checked', true);
+    refreshBlogImagePreview();
+    $('#imageModal').removeClass('hidden').addClass('flex');
+    setBlogImagePanel('blogImageLibraryPanel');
+    loadBlogImageLibrary(false);
+}
+window.openBlogEditorImagePicker = openBlogEditorImagePicker;
+
 function selectBlogImage(image) {
+    // Einfüge-Modus (Editor): Bild nur auswählen – Titel/Alt/Größe lassen sich danach
+    // setzen, eingefügt wird per "Übernehmen" (wie beim Block-Bild).
+    if (blogEditorImageTarget && blogEditorImageTarget.quill && image && image.url) {
+        blogEditorImageTarget.src = image.url;
+        if (image.id) blogEditorImageTarget.imgId = image.id;
+        if (!$('#imgAlt').val()) $('#imgAlt').val(image.title || 'Bild');
+        if (!$('#imgText').val()) $('#imgText').val(image.title || '');
+        refreshBlogImagePreview();
+        sendNotif('Bild gewählt – mit „Übernehmen" einfügen', 'notice');
+        return;
+    }
     if (!$editImg || !image || !image.url) return;
     $editImg.attr('src', image.url);
     if (image.id) $editImg.attr('imgId', image.id);
@@ -515,11 +561,8 @@ function loadSlick() {
 }
 
 function loadNicEditors() {
-    $('.textArea').each(function () {
-        if ($(this).attr("id")) {
-            myNicEditor.panelInstance($(this).attr("id"), { hasPanel: true })
-        }
-    })
+    // Mountet alle noch nicht initialisierten Text-Blöcke als Quill-Editoren.
+    if (window.BlogRichText) BlogRichText.mountAll();
 }
 
 function isBlogBuilderVisible() {
@@ -528,7 +571,7 @@ function isBlogBuilderVisible() {
 }
 
 function refreshBlogBuilderPresentation() {
-    if (!isBlogBuilderVisible() || !myNicEditor) {
+    if (!isBlogBuilderVisible()) {
         $('#blogContent').data('needs-nic-refresh', true)
         return
     }
@@ -598,12 +641,9 @@ function applyBlogCodeToBuilder(code) {
                 const textAreaId = 'textAreaSync' + stamp + '-' + index
                 $container.attr('element-type', 'textArea')
                 $container.append(controls.delSpan.clone()).append(controls.moveHandle.clone())
-                $('<textarea/>', {
-                    id: textAreaId,
-                    rows: "4",
-                    class: "textArea w-full px-4 py-2 my-3 rounded-2xl border border-gray-300 focus:outline-none focus:border-blue-500 min-h-[5rem]",
-                    placeholder: "Text",
-                }).text(element.value || '').appendTo($container)
+                // Quill-Editor mit dem gespeicherten HTML als Start-Inhalt; das
+                // eigentliche Mounten erledigt refreshBlogBuilderPresentation()/loadNicEditors().
+                BlogRichText.create(textAreaId, element.value || '').appendTo($container)
                 bindBlogBuilderDelete($container)
                 $blogContent.append($container)
                 break;
@@ -782,18 +822,8 @@ function fileIconForExt(ext) {
 
 $(document).ready(function () {
 
-    // Inside myscript.js
-    var imageUrl = "{% static 'js/cms/blog/nicEditorIcons.gif' %}";
-
-    // Now you can use `imageUrl` in your JavaScript code
-
-    // NicEditor (TextFields)
-    myNicEditor = new nicEditor({
-        buttonList: ['bold', 'italic', 'underline', 'left', 'center', 'right', 'justify', 'ol', 'ul', 'subscript', 'superscript', 'strikethrough', 'removeformat', 'indent', 'outdent', 'hr', 'fontSize', 'fontFamily', 'forecolor', 'bgcolor', 'link', 'unlink']
-    })
-
     loadSlick();
-    loadNicEditors();
+    loadNicEditors();   // mountet vorhandene Text-Blöcke als Quill-Editoren
     loadImages();
 
     function initializeSimpleSortable() {
@@ -888,20 +918,15 @@ $(document).ready(function () {
         const $container = $('<div class="relative my-2" element-type="textArea">')
         $container.append($('<span class="absolute top-0 right-0 inline-block px-2 py-1 text-sm text-white bg-red-500 rounded-full not-sortable z-40 hover:cursor-pointer del-elem"><i class="bi bi-trash"></i></span>'))
         $container.append($('<span class="absolute top-0 right-1/2 inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded-full not-sortable z-40 hover:cursor-pointer handle"><i class="bi bi-arrows-move"></i></span>'))
-        const textAreaId = "textArea" + ($('.textArea').length + 1);
-        $('<textarea/>', {
-            id: textAreaId,
-            rows: "4",
-            class: "textArea w-full px-4 py-2 my-3 rounded-2xl border border-gray-300 focus:outline-none focus:border-blue-500 min-h-[5rem]",
-            placeholder: "Text"
-        }).appendTo($container)
+        const textAreaId = "textArea" + Date.now();
+        BlogRichText.create(textAreaId, '').appendTo($container)
         // Click event handler for the span with class del-elem
         $container.find('.del-elem').click(function () {
             $(this).parent().remove()
         });
         // Append Container to Blog Builder
         $("#blogContent").append($container);
-        myNicEditor.panelInstance(textAreaId, { hasPanel: true })
+        BlogRichText.mount(document.getElementById(textAreaId), '')
         sendNotif("Eine Text-Box wurde hinzugefügt", "success")
         scrollToBottom()
     });
@@ -1315,8 +1340,10 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.error) {
                         sendNotif(response.error, "error")
+                        $(document).trigger("blogSaveError")
                         return;
                     }
+                    if (window.UnsavedGuard) UnsavedGuard.markClean();
                     window.location.href = '/cms/blog/' + response.blogId + "/";
                 },
                 error: function (xhr, status, error) {
@@ -1324,6 +1351,7 @@ $(document).ready(function () {
                     const message = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Es kam zu einem unerwarteten Fehler. Versuche es später nochmal";
                     sendNotif(message, "error")
                     $('#createBlog').prop("disabled", false);
+                    $(document).trigger("blogSaveError")
                 },
                 complete: function () {
                     disableSpinner($('#createBlog'))
@@ -1342,7 +1370,8 @@ $(document).ready(function () {
             return;
         }
         var firstTextAreaId = $firstTextArea.attr('id')
-        var firstTextAreaContent = myNicEditor.instanceById(firstTextAreaId).getContent()
+        var firstRt = BlogRichText.instanceById(firstTextAreaId)
+        var firstTextAreaContent = firstRt ? firstRt.getContent() : ''
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = firstTextAreaContent;
         var plainText = tempDiv.textContent || tempDiv.innerText || ""
@@ -1402,8 +1431,10 @@ $(document).ready(function () {
                 // Handle the success response here
                 if (response.error) {
                     sendNotif(response.error, "error")
+                    $(document).trigger("blogSaveError")
                     return;
                 }
+                if (window.UnsavedGuard) UnsavedGuard.markClean();
                 window.location.href = '/cms/blog/' + response.blogId + "/";
             },
             error: function (xhr, status, error) {
@@ -1412,6 +1443,7 @@ $(document).ready(function () {
                 sendNotif("Es kam zu einem unerwarteten Fehler. Versuche es später nochmal")
                 $('#createBlog').prop("disabled", false);
                 $(this).find('svg').addClass('hidden');
+                $(document).trigger("blogSaveError")
             },
             complete: function (result, status) {
                 disableSpinner($('#createBlog'))
@@ -1570,12 +1602,10 @@ $(document).ready(function () {
         selectedGalleryCard($(this));
     });
 
-    // Text Field - Toggle Editor
+    // Text Field - Editor sicherstellen (Quill mountet sonst automatisch)
     $('.toggle-text-editor').click(function () {
-
-        $textSibling = $(this).siblings("textarea")
-        if (myNicEditor.nicInstances)
-            myNicEditor.panelInstance($textSibling.attr('id'), { hasPanel: true })
+        const sibling = $(this).siblings(".textArea")[0]
+        if (sibling && window.BlogRichText) BlogRichText.mount(sibling)
     })
 
     /*---- IMAGES SECTION -----*/
@@ -1693,8 +1723,16 @@ $(document).ready(function () {
 
     // Use external image
     $('#useExternImageURL').click(function () {
-        if ($editImg && $('#imgURL').val()) {
-            $editImg.attr('src', $('#imgURL').val());
+        const url = $('#imgURL').val();
+        if (!url) return;
+        if (blogEditorImageTarget && blogEditorImageTarget.quill) {
+            blogEditorImageTarget.src = url;
+            refreshBlogImagePreview();
+            sendNotif('Externes Bild gewählt – mit „Übernehmen" einfügen', 'notice');
+            return;
+        }
+        if ($editImg) {
+            $editImg.attr('src', url);
             refreshBlogImagePreview();
             sendNotif('Externes Bild ausgewählt', 'success')
         }
@@ -1702,6 +1740,30 @@ $(document).ready(function () {
 
     // Resize Image (click on "Übernehmen")
     $('#selectImg').click(function () {
+        // Editor-Einfügemodus: Bild mit Titel/Alt/Größe in den Quill-Editor einfügen.
+        if (blogEditorImageTarget && blogEditorImageTarget.quill) {
+            const src = blogEditorImageTarget.src || $('#imgURL').val();
+            if (!src) { sendNotif('Bitte zuerst ein Bild auswählen', 'error'); return; }
+            const altText = $('#imgAlt').val() || $('#imgText').val() || '';
+            const titleText = $('#imgText').val() || '';
+            const w = ($('#imgWidth').val() || '').trim();
+            const h = ($('#imgHeight').val() || '').trim();
+            const esc = function (v) { return String(v).replace(/"/g, '&quot;'); };
+            let imgHtml = '<img src="' + esc(src) + '"';
+            if (altText) imgHtml += ' alt="' + esc(altText) + '"';
+            if (titleText) imgHtml += ' title="' + esc(titleText) + '"';
+            if (w) imgHtml += ' width="' + esc(w) + '"';
+            if (h) imgHtml += ' height="' + esc(h) + '"';
+            imgHtml += '>';
+            const quill = blogEditorImageTarget.quill;
+            const range = blogEditorImageTarget.range;
+            const idx = (range && range.index != null) ? range.index : quill.getLength();
+            quill.clipboard.dangerouslyPasteHTML(idx, imgHtml, 'user');
+            quill.setSelection(idx + 1, 0, 'user');
+            closeBlogImageModal();
+            sendNotif('Bild eingefügt', 'success');
+            return;
+        }
         var imgHeight = $('#imgHeight').val();
         var imgWidth = $('#imgWidth').val();
         const $imgDiv = $editImg.closest('.relative')
@@ -1815,14 +1877,19 @@ function receiveContent(blockContent) {
             case "textArea":
                 const $textArea = $(this).find('.textArea')
                 textId = $textArea.attr('id')
-                if (textId) {
+                const rtInstance = textId ? BlogRichText.instanceById(textId) : null
+                if (rtInstance) {
                     content.push({
                         "name": "textArea",
-                        "type": "p",
+                        // div statt p: Quill liefert Block-HTML (<p>/<ul>/…), das sauber
+                        // in einem <div> sitzt (verschachtelte <p> wären ungültig).
+                        "type": "div",
                         "attributes": {
-                            "class": "text-base my-4",
+                            // rich-text: rendert Quill-Ausrichtung/Einzug/Listen/Überschriften
+                            // (rich-text.css) auf der öffentlichen Seite und in der Vorschau.
+                            "class": "text-base my-4 rich-text",
                         },
-                        "value": normalizeBlogTextHtml(myNicEditor.instanceById(textId).getContent())
+                        "value": normalizeBlogTextHtml(rtInstance.getContent())
                     })
                 }
                 break;

@@ -38,7 +38,7 @@ Für Copy-Paste ins CMS reicht nur der Inhalt aus `markdown`.
 | Titel I | `## Abschnitt` |
 | Titel II | `### Unterabschnitt` |
 | Titel III | `#### Detailabschnitt` |
-| Text | Absätze, Listen, Links, `**fett**`, `*kursiv*`, `inline code` |
+| Text | Absätze, Listen, Links, `**fett**`, `*kursiv*`, `inline code`, Zitate (`> …`), sowie Inline-Auszeichnungen via HTML (siehe unten) |
 | Bild | `![Alt-Text](/media/yoolink/images/bild.jpg){width=100% height=auto}` |
 | Galerie | `:::gallery{height=420px}` mit Bildzeilen |
 | YouTube | `::youtube{url=https://youtu.be/... title="Video Titel" width=100% height=315px}` |
@@ -71,6 +71,29 @@ Weitere Informationen gibt es auf [der Kontaktseite](/kontakt/).
 ```
 
 Vermeide verschachtelte Listen, Tabellen und stark komplexe Markdown-Strukturen, wenn der Inhalt später im CMS weiterbearbeitet werden soll.
+
+### Zitate
+
+```markdown
+> Ein hervorgehobenes Zitat. Jede Zeile beginnt mit "> ".
+```
+
+### Inline-Auszeichnungen (Farbe, hoch-/tiefgestellt, unterstrichen …)
+
+Diese Auszeichnungen kennt Markdown nicht – sie werden als **einfaches Inline-HTML**
+geschrieben und bleiben beim Hin- und Herwechseln zwischen Builder und Markdown
+sowie beim Speichern/Anzeigen vollständig erhalten:
+
+```markdown
+H<sub>2</sub>O, E = mc<sup>2</sup>
+<u>unterstrichen</u> und <s>durchgestrichen</s>
+<span style="color: rgb(230, 0, 0)">farbiger Text</span>
+<span style="background-color: #fff3cd">hervorgehoben</span>
+<mark>markiert</mark>
+```
+
+Aus Sicherheitsgründen werden bei `<span>` nur `color` und `background-color`
+übernommen; erlaubte Inline-Tags sind `sub`, `sup`, `u`, `s`/`del`, `mark`, `br`.
 
 ### Bilder
 
@@ -207,5 +230,5 @@ Der Markdown-Workflow macht YooLink flexibler, ohne den bestehenden Builder zu e
 ## Kurz-Prompt für externe KI-Tools
 
 ```text
-Erstelle einen YooLink Blogartikel. Gib title, description und markdown zurück. Der Markdown-Inhalt darf kein Frontmatter enthalten und soll mit ##-Überschriften starten, weil der Titel ein eigenes CMS-Feld ist. Nutze einfache Markdown-Elemente: ##/###/####, Absätze, - Listen, **fett**, *kursiv*, Links, einzelne Bildzeilen mit ![Alt-Text](URL), optionale Größen wie {width=50% height=auto}, :::gallery-Blöcke, ::youtube{...}, ::video{...}, ::file{...} und fenced code blocks. Bilder und Medien müssen echte erreichbare URLs haben; für YooLink bevorzugt CMS-Medien-URLs unter /media/... . Jeder Bild-Alt-Text und jeder Videotitel muss beschreibend sein. Keine komplexen Tabellen, keine verschachtelten Listen, keine kompletten HTML-Seiten.
+Erstelle einen YooLink Blogartikel. Gib title, description und markdown zurück. Der Markdown-Inhalt darf kein Frontmatter enthalten und soll mit ##-Überschriften starten, weil der Titel ein eigenes CMS-Feld ist. Nutze einfache Markdown-Elemente: ##/###/####, Absätze, - Listen, **fett**, *kursiv*, `inline code`, Zitate mit "> ", Links, einzelne Bildzeilen mit ![Alt-Text](URL), optionale Größen wie {width=50% height=auto}, :::gallery-Blöcke, ::youtube{...}, ::video{...}, ::file{...} und fenced code blocks. Für Spezial-Auszeichnungen ist einfaches Inline-HTML erlaubt: <sub>, <sup>, <u>, <s>, <mark> und <span style="color: …"> bzw. background-color. Bilder und Medien müssen echte erreichbare URLs haben; für YooLink bevorzugt CMS-Medien-URLs unter /media/... . Jeder Bild-Alt-Text und jeder Videotitel muss beschreibend sein. Keine komplexen Tabellen, keine verschachtelten Listen, keine kompletten HTML-Seiten.
 ```

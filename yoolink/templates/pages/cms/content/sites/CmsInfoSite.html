@@ -9,7 +9,7 @@
 <div class="mx-auto mt-4 max-w-6xl px-4 sm:mt-8 sm:px-6">
 
   <!-- ── Header ── -->
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div class="sticky top-[4.25rem] z-30 mb-6 rounded-2xl border border-gray-200 bg-white/95 px-5 py-4 shadow-sm backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <h1 class="text-2xl">
       <a href="{% url 'cms:sites' %}" class="text-blue-500">Seiten</a>
       / <a href="{% url 'cms:site_leistungen' %}" class="text-blue-500">Leistungen (/leistungen)</a>
@@ -567,6 +567,7 @@
 <script defer src="{% static 'js/cms.js' %}"></script>
 <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
 <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script defer src="{% static 'js/cms/unsaved-guard.js' %}"></script>
 <script src="{% static 'js/cms/content/button-slot.js' %}"></script>
 <script defer>
   $(document).ready(function () {

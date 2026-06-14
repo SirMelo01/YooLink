@@ -487,6 +487,16 @@ class MarkdownToBlogCodeParser:
                 self._append_image_block(image[0], image[1], image[2])
                 continue
 
+            if stripped.startswith(">"):
+                self._flush_paragraph()
+                self._flush_list()
+                quote = stripped[1:].strip()
+                self._append_text_part(
+                    f'<blockquote class="border-l-4 border-blue-200 pl-4 my-4 italic text-slate-600">'
+                    f'{_render_inline_markdown(quote)}</blockquote>'
+                )
+                continue
+
             heading = re.match(r"^(#{1,6})\s+(.+)$", stripped)
             if heading:
                 self._flush_paragraph()
@@ -678,6 +688,13 @@ def html_to_markdown(html):
 
 
 class SimpleHtmlToMarkdownParser(HTMLParser):
+    # Inline-Tags, die eine Farbe tragen können. Quill hängt die Farbe an das
+    # äußerste Inline-Element – also <span> bei reiner Farbe, aber <strong>/<em>/<a>
+    # wenn Farbe mit Fett/Kursiv/Link kombiniert ist. Darum prüfen wir ALLE.
+    INLINE_COLOR_TAGS = (
+        "span", "strong", "b", "em", "i", "u", "s", "strike", "del", "sub", "sup", "mark", "a",
+    )
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.parts = []
@@ -686,10 +703,30 @@ class SimpleHtmlToMarkdownParser(HTMLParser):
         self.in_pre = False
         self.in_code = False
         self.code_buffer = []
+        self.color_stack = []
+
+    # Farbe/Hintergrund eines Inline-Elements als (sicheren) Farb-Span erhalten.
+    # Markdown kennt keine Farbe, daher Inline-HTML; _render_inline_markdown lässt
+    # genau diese Spans beim Zurückwandeln wieder durch.
+    def _maybe_open_color(self, attrs):
+        style = attrs.get("style") or ""
+        decls = []
+        for prop, val in re.findall(r"(color|background-color)\s*:\s*([^;]+)", style, re.I):
+            val = val.strip()
+            if re.match(r"^(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|[a-zA-Z]+)$", val):
+                decls.append(f"{prop.lower()}: {val}")
+        if decls:
+            self.parts.append(f'<span style="{"; ".join(decls)}">')
+            return True
+        return False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         tag = tag.lower()
+
+        # Farbe zuerst öffnen (umschließt die Markdown-Auszeichnung).
+        if tag in self.INLINE_COLOR_TAGS:
+            self.color_stack.append(self._maybe_open_color(attrs))
 
         if tag in ("h1", "h2", "h3"):
             level = int(tag[1])
@@ -727,6 +764,20 @@ class SimpleHtmlToMarkdownParser(HTMLParser):
             self.in_code = True
         elif tag == "code":
             self.parts.append("`")
+        elif tag == "u":
+            self.parts.append("<u>")
+        elif tag in ("s", "strike", "del"):
+            self.parts.append("<s>")
+        elif tag == "sub":
+            self.parts.append("<sub>")
+        elif tag == "sup":
+            self.parts.append("<sup>")
+        elif tag == "mark":
+            self.parts.append("<mark>")
+        elif tag == "blockquote":
+            self._ensure_block()
+            self.parts.append("> ")
+        # <span> selbst erzeugt keine Auszeichnung – die Farbe ist oben schon behandelt.
 
     def handle_endtag(self, tag):
         tag = tag.lower()
@@ -755,6 +806,23 @@ class SimpleHtmlToMarkdownParser(HTMLParser):
             self.code_buffer = []
             self.in_pre = False
             self._ensure_block()
+        elif tag == "u":
+            self.parts.append("</u>")
+        elif tag in ("s", "strike", "del"):
+            self.parts.append("</s>")
+        elif tag == "sub":
+            self.parts.append("</sub>")
+        elif tag == "sup":
+            self.parts.append("</sup>")
+        elif tag == "mark":
+            self.parts.append("</mark>")
+        elif tag == "blockquote":
+            self._ensure_block()
+
+        # Farb-Span zuletzt schließen (umschließt die Markdown-Auszeichnung).
+        if tag in self.INLINE_COLOR_TAGS:
+            if self.color_stack and self.color_stack.pop():
+                self.parts.append("</span>")
 
     def handle_data(self, data):
         if self.in_pre:
@@ -897,6 +965,16 @@ def render_markdown_to_html(markdown):
             html.append(line)
             continue
 
+        if stripped.startswith(">"):
+            flush_paragraph()
+            flush_list()
+            quote = stripped[1:].strip()
+            html.append(
+                f'<blockquote class="border-l-4 border-blue-200 pl-4 my-4 italic text-slate-600">'
+                f'{_render_inline_markdown(quote)}</blockquote>'
+            )
+            continue
+
         heading = re.match(r"^(#{1,6})\s+(.+)$", stripped)
         if heading:
             flush_paragraph()
@@ -971,7 +1049,38 @@ def _render_shortcode_html(name, options):
 
 
 def _is_raw_html_block(line):
-    return bool(re.match(r"^</?(div|iframe|video|img|a|pre|code|figure|table|section|article)\b", line, re.I))
+    return bool(re.match(r"^</?(div|iframe|video|img|a|pre|code|figure|table|section|article|blockquote)\b", line, re.I))
+
+
+# Inline-HTML, das Markdown nicht ausdrücken kann (Farbe, hoch/tief, unterstrichen,
+# durchgestrichen, markiert) – beim Rendern erhalten wir genau diese Tags.
+_ALLOWED_INLINE_HTML_RE = re.compile(
+    r"</?(?:sub|sup|u|s|del|strike|mark|br)\s*/?>|<span\b[^>]*>|</span>",
+    re.I,
+)
+_INLINE_SPAN_STYLE_RE = re.compile(r"(color|background-color)\s*:\s*([^;\"']+)", re.I)
+
+
+def _sanitize_inline_html(tag):
+    low = tag.strip().lower()
+    match = re.match(r"</?\s*(sub|sup|u|s|del|strike|mark|br)\b", low)
+    if match:
+        name = match.group(1)
+        if name in ("del", "strike"):
+            name = "s"
+        if name == "br":
+            return "<br>"
+        return f"</{name}>" if low.startswith("</") else f"<{name}>"
+    if low.startswith("</span"):
+        return "</span>"
+    if low.startswith("<span"):
+        decls = []
+        for prop, val in _INLINE_SPAN_STYLE_RE.findall(tag):
+            val = val.strip()
+            if re.match(r"^(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|[a-zA-Z]+)$", val):
+                decls.append(f"{prop.lower()}: {val}")
+        return f'<span style="{"; ".join(decls)}">' if decls else "<span>"
+    return ""
 
 
 def _render_inline_markdown(text):
@@ -998,6 +1107,10 @@ def _render_inline_markdown(text):
     working = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: stash(
         f'<a class="text-blue-500 hover:text-blue-600" href="{escape(m.group(2), quote=True)}">{escape(m.group(1))}</a>'
     ), working)
+
+    # Sichere Inline-HTML-Auszeichnungen (Farbe, hoch/tief, unterstrichen …) erhalten:
+    # vor dem Escapen wegstashen, damit sie 1:1 wieder eingesetzt werden.
+    working = _ALLOWED_INLINE_HTML_RE.sub(lambda m: stash(_sanitize_inline_html(m.group(0))), working)
 
     escaped = escape(working)
     escaped = re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)

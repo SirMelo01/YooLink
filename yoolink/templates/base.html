@@ -89,6 +89,14 @@
   </head>
 
   <body class="bg-white overflow-x-hidden">
+    {% if website_settings and website_settings.is_vacation_banner_active %}
+    <!-- Urlaubs-/Infobanner -->
+    <div id="vacationBanner" role="status"
+      class="relative z-[60] flex items-center justify-center gap-2 bg-indigo-600 px-4 py-2 text-center text-xs font-semibold leading-snug text-white sm:text-sm">
+      <i class="bi bi-calendar-event shrink-0"></i>
+      <span>{{ website_settings.vacationText|linebreaksbr }}</span>
+    </div>
+    {% endif %}
     <!--Navbar Beginn-->
     {% block navbar %}
     <nav id="mainNavbar" aria-label="Hauptnavigation" class="sticky top-0 z-50 transition-transform duration-300 ease-in-out will-change-transform">
