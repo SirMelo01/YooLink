@@ -765,6 +765,19 @@ def update_file(request, id):
 
     return JsonResponse({"success": "File wurde erfolgreich bearbeitet"})
 
+
+@login_required(login_url='login')
+@cms_permission_required("media.edit")
+def image_info(request, id):
+    """Liefert die serialisierten Daten eines einzelnen Bildes (für das
+    Vorauswählen im Bild-Modal). Der Titel respektiert die aktive Sprache."""
+    get_active_language(request)
+    file = fileentry.objects.filter(id=id).first()
+    if file is None:
+        return JsonResponse({"error": "Das Bild wurde nicht gefunden."}, status=404)
+    return JsonResponse({"image": serialize_image_entry(file)})
+
+
 # Delete File
 @login_required(login_url='login')
 @cms_permission_required("media.edit")

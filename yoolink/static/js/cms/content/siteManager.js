@@ -121,16 +121,27 @@ $(document).ready(function () {
     const $modals = [$imageModal, $galeryModal, $videoModal];
     const $modalContainers = $modals.map($m => $m.find('.modal-container'));
 
+    function insideAnyContainer(target) {
+        for (const $container of $modalContainers) {
+            if ($container.is(target) || $container.has(target).length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Merkt sich, wo der Mausdruck begann. So schließt sich das Modal nicht,
+    // wenn man Text im Input markiert (Maus gedrückt) und dabei aus dem Modal rauszieht.
+    let mousedownInsideContainer = false;
+    $(document).mousedown(function (e) {
+        mousedownInsideContainer = insideAnyContainer(e.target);
+    });
+
     $(document).mouseup(function (e) {
         if ($(e.target).closest('.swal2-container').length > 0) return;
 
-        let clickedOutsideAll = true;
-        for (const $container of $modalContainers) {
-            if ($container.is(e.target) || $container.has(e.target).length > 0) {
-                clickedOutsideAll = false;
-                break;
-            }
-        }
+        // Nur schließen, wenn die Geste komplett außerhalb begann UND endete.
+        const clickedOutsideAll = !mousedownInsideContainer && !insideAnyContainer(e.target);
 
         if (clickedOutsideAll) {
             closeImageModal();
@@ -161,6 +172,24 @@ function openImageModal() {
     setImageModalTab('imageLibraryPanel');
     $('#imageModal').removeClass("hidden").addClass("flex");
     loadImages(false);
+    preselectCurrentImage();
+}
+
+// Lädt beim Öffnen das bereits gesetzte Bild der Stelle inkl. (übersetztem) Bildtitel,
+// damit man den Titel direkt bearbeiten kann (z.B. englische Version), ohne erst zu suchen.
+function preselectCurrentImage() {
+    const currentId = $editImg ? ($editImg.attr('imgId') || '') : '';
+    if (!currentId || currentId === '-1') return;
+    $.ajax({
+        url: '/cms/images/' + currentId + '/info/',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if (response && response.image) {
+                selectLibraryImage(response.image);
+            }
+        }
+    });
 }
 
 function closeImageModal() {
@@ -211,7 +240,17 @@ function selectLibraryImage(image) {
     $('#selectedImageTitleSave').prop('disabled', false);
     $('#selectedImageApply').prop('disabled', !$editImg);
     renderSelectedImageMetadata(image);
-    renderImageLibrary(imageLibraryItems);
+    highlightSelected();
+}
+
+// Markiert nur das aktuell gewählte Bild in der Galerie (ohne komplette Neu-Rendern,
+// das bei jeder Auswahl die Lazy-Images neu dekodieren ließ -> Laggen beim Scrollen).
+function highlightSelected() {
+    $('#possibleImages > button').each(function () {
+        const $btn = $(this);
+        const isSel = selectedLibraryImage && String($btn.attr('data-image-id')) === String(selectedLibraryImage.id);
+        $btn.toggleClass('ring-2 ring-blue-500', !!isSel).toggleClass('ring-slate-200', !isSel);
+    });
 }
 
 function applySelectedLibraryImage() {
@@ -228,10 +267,23 @@ function applySelectedLibraryImage() {
     sendNotif('Neues Bild ausgewählt', 'success');
 }
 
+// Kürzt lange Dateinamen in der Mitte (z.B. "ein-sehr…name.webp"),
+// damit das Meta-Feld unten links nicht zerbricht. Voller Name bleibt als title-Tooltip.
+function truncateMiddle(value, max) {
+    value = String(value == null ? '' : value);
+    max = max || 28;
+    if (value.length <= max) return value;
+    const keep = max - 1;
+    const front = Math.ceil(keep / 2);
+    const back = Math.floor(keep / 2);
+    return value.slice(0, front) + '…' + value.slice(value.length - back);
+}
+
 function renderSelectedImageMetadata(image) {
     const metadata = image.metadata || {};
+    const filename = metadata.filename || 'Unbekannt';
     const rows = [
-        ['Datei', metadata.filename || 'Unbekannt'],
+        ['Datei', truncateMiddle(filename, 28), filename],
         ['Format', image.format || 'Unbekannt'],
         ['Größe', metadata.size_kb ? metadata.size_kb + ' KB' : 'Unbekannt'],
         ['Abmessung', metadata.dimensions || 'Unbekannt'],
@@ -240,7 +292,8 @@ function renderSelectedImageMetadata(image) {
     ];
 
     $('#selectedImageMeta').html(rows.map(function (row) {
-        return `<div class="flex justify-between gap-3"><span class="font-semibold text-slate-600">${escapeHtml(row[0])}</span><span class="text-right">${escapeHtml(row[1])}</span></div>`;
+        const titleAttr = row[2] ? ` title="${escapeHtml(row[2])}"` : '';
+        return `<div class="flex justify-between gap-3"><span class="flex-shrink-0 font-semibold text-slate-600">${escapeHtml(row[0])}</span><span class="min-w-0 truncate text-right"${titleAttr}>${escapeHtml(row[1])}</span></div>`;
     }).join(''));
 }
 
@@ -268,7 +321,11 @@ function saveSelectedImageTitle(csrfToken) {
                 }
                 return image;
             });
-            renderImageLibrary(imageLibraryItems);
+            // Nur die betroffene Kachel aktualisieren statt komplett neu zu rendern.
+            const $tile = $('#possibleImages > button[data-image-id="' + selectedLibraryImage.id + '"]');
+            $tile.find('img').attr('alt', title);
+            $tile.find('span.truncate').attr('title', title).text(title);
+            renderSelectedImageMetadata(selectedLibraryImage);
             $('#selectedImageTitleInput').val(title);
             sendNotif(response.success || 'Bildtitel wurde gespeichert', 'success');
         },
@@ -337,12 +394,12 @@ function renderImageLibrary(images) {
         const isSelected = selectedLibraryImage && String(selectedLibraryImage.id) === String(image.id);
         const selectedRing = isSelected ? 'ring-2 ring-blue-500' : 'ring-slate-200';
         const $button = $(`
-            <button type="button" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ${selectedRing} transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
+            <button type="button" data-image-id="${image.id}" class="group relative overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ${selectedRing} transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-blue-300">
                 <img src="${previewUrl}" imgId="${image.id}" alt="${title}" loading="lazy" decoding="async" class="h-24 w-full object-cover sm:h-28">
                 <span class="absolute right-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-red-700 opacity-0 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 group-hover:opacity-100 image-delete-button" data-image-id="${image.id}">
                     <i class="bi bi-trash"></i>
                 </span>
-                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent px-3 pb-3 pt-8 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">${title}</span>
+                <span class="absolute inset-x-0 bottom-0 block truncate bg-gradient-to-t from-slate-950/80 to-transparent px-3 pb-3 pt-8 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100" title="${title}">${title}</span>
             </button>
         `);
         $button.click(function () {

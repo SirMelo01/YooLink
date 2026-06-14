@@ -28,9 +28,9 @@
                     </div>
 
                     <!-- Vorschau -->
-                    <div class="mb-4 flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div data-logo-surface class="mb-4 flex h-32 items-center justify-center rounded-2xl border border-slate-200 p-4 {% if settings.logo %}cms-logo-surface{% else %}bg-slate-50{% endif %}">
                         {% if settings.logo %}
-                            <img src="{{ settings.logo.url }}" alt="Logo" class="max-h-24 max-w-full object-contain">
+                            <img src="{{ settings.logo.url }}" alt="Logo" data-logo-contrast data-logo-target="surface" class="max-h-24 max-w-full object-contain">
                         {% else %}
                             <span class="text-sm text-slate-400"><i class="bi bi-image mr-1"></i> Noch kein Logo</span>
                         {% endif %}

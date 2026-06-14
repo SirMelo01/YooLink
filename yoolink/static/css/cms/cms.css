@@ -312,5 +312,15 @@
     }
 }
 
+/*
+ * Avatar-/Logo-Hintergrund im CMS.
+ * Das Seiten-Logo ist oft fürs (dunkle) Navbar-Design in Weiß gehalten und wäre
+ * auf dem weißen CMS-Hintergrund unsichtbar. Per JS (logo-contrast.js) wird die
+ * Helligkeit des Logos gemessen und der Hintergrund passend gesetzt – helle Logos
+ * bekommen einen dunklen Backdrop, dunkle einen hellen. Standard bleibt neutral.
+ */
+.cms-logo-surface {
+    transition: background-color .2s ease;
+}
 
 

@@ -28,6 +28,7 @@ urlpatterns = [
     path("images/update/<int:id>/", views.update_file, name="image-update"),
     path("images/convert-webp/", views.convert_images_to_webp, name="image-convert-webp"),
     path("images/all/", views.all_images, name="all-images"),
+    path("images/<int:id>/info/", views.image_info, name="image-info"),
 
     # FAQ
     path("faq/sort/", views.update_faq_order, name="faq-sort"),
