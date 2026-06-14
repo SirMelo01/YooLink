@@ -5,6 +5,7 @@
  * yoolink/templates/pages/components/button.html — bei Änderungen beide Stellen anpassen.
  */
 const BUTTON_BASE_CLASSES = 'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-center text-sm font-bold transition';
+const BUTTON_LINK_CLASSES = 'inline-flex items-center text-sm font-medium text-blue-900 transition hover:text-blue-950';
 const BUTTON_COLOR_CLASSES = {
     blue: 'bg-blue-600 text-white hover:bg-blue-700',
     navy: 'bg-blue-900 text-white hover:bg-blue-800',
@@ -12,6 +13,7 @@ const BUTTON_COLOR_CLASSES = {
     emerald: 'bg-emerald-600 text-white hover:bg-emerald-700',
     white: 'bg-white text-blue-900 shadow-sm ring-1 ring-gray-200 hover:bg-blue-50',
     outline: 'border border-blue-900 bg-transparent text-blue-900 hover:bg-blue-50',
+    link: 'text-blue-900 hover:text-blue-950',
 };
 
 const SWATCH_ACTIVE_CLASSES = 'border-blue-500 ring-2 ring-blue-100';
@@ -39,15 +41,26 @@ function updateButtonPreview() {
     const href = getButtonHref();
     const newTab = $('#targetSwitch').is(':checked');
 
-    const colorClasses = BUTTON_COLOR_CLASSES[color] || BUTTON_COLOR_CLASSES.blue;
     let html = '';
-    if (icon) {
-        html += `<i class="${escapeButtonHtml(icon)}"></i>`;
+    let previewClasses;
+    if (color === 'link') {
+        // Textlink: Icon hinter dem Text, keine Fläche/Polsterung
+        previewClasses = `pointer-events-none ${BUTTON_LINK_CLASSES}`;
+        html = escapeButtonHtml(text);
+        if (icon) {
+            html += ` <i class="${escapeButtonHtml(icon)} ml-1"></i>`;
+        }
+    } else {
+        const colorClasses = BUTTON_COLOR_CLASSES[color] || BUTTON_COLOR_CLASSES.blue;
+        previewClasses = `pointer-events-none ${BUTTON_BASE_CLASSES} ${colorClasses}`;
+        if (icon) {
+            html += `<i class="${escapeButtonHtml(icon)}"></i>`;
+        }
+        html += escapeButtonHtml(text);
     }
-    html += escapeButtonHtml(text);
 
     $('#buttonPreviewLight, #buttonPreviewDark')
-        .attr('class', `pointer-events-none ${BUTTON_BASE_CLASSES} ${colorClasses}`)
+        .attr('class', previewClasses)
         .html(html);
 
     $('#previewHref').text(href || '–');

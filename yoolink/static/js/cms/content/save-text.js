@@ -133,6 +133,25 @@ $(document).ready(function () {
         });
         requestData.videos = JSON.stringify(videos);
 
+        /* ---------- Add all button slots (Auswahl + alle Felder) ---------- */
+        const buttons = [];
+        $('.content-button').each(function () {
+            const $b = $(this);
+            const key = $b.attr('data-key');
+            if (!key) return;
+            buttons.push({
+                id: $b.attr('data-button-id') || '-1',
+                key: key,
+                text: ($b.attr('data-text') || '').trim(),
+                color: $b.attr('data-color') || '',
+                icon: ($b.attr('data-icon') || '').trim(),
+                url: ($b.attr('data-url') || '').trim(),
+                page_link_id: $b.attr('data-page-link') || '',
+                target: $b.attr('data-target') || '_self'
+            });
+        });
+        requestData.buttons = JSON.stringify(buttons);
+
         setSaveTextLoading($btn, true);
 
         $.ajax({

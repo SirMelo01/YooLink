@@ -496,15 +496,23 @@
       <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg xl:text-xl">
         {{ textContent_hero.description|default:"Mit dem YooLink CMS pflegst du Texte, Bilder, Team, Preise, Blog und sogar deinen Produkt-Showcase selbst - direkt im Browser, ohne Vorkenntnisse und ohne auf eine Agentur zu warten." }}
       </p>
-      <div class="flex flex-wrap gap-4">
-        <a href="{% url 'kontakt' %}"
-          class="inline-block rounded-md border-t border-gray-200 bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
-          {{ textContent_hero.buttonText|default:"Jetzt anfragen" }}
-        </a>
-        <a href="#playground"
-          class="inline-block rounded-md border border-blue-900 bg-white px-8 py-4 text-base font-bold text-blue-900 shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-50">
-          Direkt ausprobieren <i class="bi bi-cursor"></i>
-        </a>
+      <div class="flex flex-wrap items-center gap-4">
+        {% if cmsinfo_btn_hero %}
+          {% include "pages/components/button.html" with button=cmsinfo_btn_hero size="lg" %}
+        {% else %}
+          <a href="{% url 'kontakt' %}"
+            class="inline-block rounded-md border-t border-gray-200 bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700">
+            {{ textContent_hero.buttonText|default:"Jetzt anfragen" }}
+          </a>
+        {% endif %}
+        {% if cmsinfo_btn_demo %}
+          {% include "pages/components/button.html" with button=cmsinfo_btn_demo size="lg" %}
+        {% else %}
+          <a href="#playground"
+            class="inline-block rounded-md border border-blue-900 bg-white px-8 py-4 text-base font-bold text-blue-900 shadow-md transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-50">
+            Direkt ausprobieren <i class="bi bi-cursor"></i>
+          </a>
+        {% endif %}
       </div>
     </div>
     <div data-aos="fade-left" class="relative flex justify-center">
@@ -973,10 +981,14 @@
           </li>
         </ul>
         <div class="mt-6">
-          <a href="{% url 'products' %}" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
-            Live-Beispiel: der Produkt-Showcase von YooLink
-            <i class="bi bi-arrow-right ml-1"></i>
-          </a>
+          {% if cmsinfo_btn_products %}
+            {% include "pages/components/button.html" with button=cmsinfo_btn_products size="lg" %}
+          {% else %}
+            <a href="{% url 'products' %}" class="inline-flex items-center text-base font-medium text-blue-900 hover:text-blue-950">
+              Live-Beispiel: der Produkt-Showcase von YooLink
+              <i class="bi bi-arrow-right ml-1"></i>
+            </a>
+          {% endif %}
         </div>
       </div>
 
@@ -1260,10 +1272,14 @@
       <p class="mb-6 text-white md:text-lg">
         {{ textContent_bottomcta.description|default:"Du suchst nach einem flexiblen, leistungsstarken und einfachen CMS? Wir beraten dich persönlich!" }}
       </p>
-      <a href="{% url 'kontakt' %}"
-        class="mt-0 inline-block rounded-md bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 sm:mt-1">
-        {{ textContent_bottomcta.buttonText|default:"Lass uns gemeinsam starten" }}
-      </a>
+      {% if cmsinfo_btn_bottomcta %}
+        <div class="mt-1 flex justify-center">{% include "pages/components/button.html" with button=cmsinfo_btn_bottomcta size="lg" %}</div>
+      {% else %}
+        <a href="{% url 'kontakt' %}"
+          class="mt-0 inline-block rounded-md bg-blue-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 sm:mt-1">
+          {{ textContent_bottomcta.buttonText|default:"Lass uns gemeinsam starten" }}
+        </a>
+      {% endif %}
     </div>
   </div>
 </section>

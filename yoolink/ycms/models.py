@@ -1038,9 +1038,18 @@ class Button(models.Model):
         ("emerald", "Grün"),
         ("white", "Weiß"),
         ("outline", "Umrandet"),
+        ("link", "Textlink"),
     ]
 
     text = models.CharField(max_length=100, verbose_name="Button-Text")
+    place = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        db_index=True,
+        verbose_name="Platzierung",
+        help_text="Optionaler Slot-Schlüssel, an dem dieser Button auf einer Seite erscheint (z.B. 'main_cmsinfo_hero_cta')."
+    )
     color = models.CharField(
         max_length=20,
         choices=COLOR_CHOICES,

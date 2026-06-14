@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import activate, get_language_from_request
 from django.views.decorators.http import require_http_methods
 
-from yoolink.ycms.models import FAQ, Galerie, PricingCard, TeamMember, UserSettings, VideoFile, WebsiteSettings, fileentry
+from yoolink.ycms.models import FAQ, Button, Galerie, PageLink, PricingCard, TeamMember, UserSettings, VideoFile, WebsiteSettings, fileentry
 
 from .models import Customer, ImpressumBlock, PrivacyPolicy, ServiceLocation, TextContent
 
@@ -292,6 +292,13 @@ def site_view_cmsinfo(request):
             "image_sec2_preview_3": _get_image("main_cmsinfo_sec2_preview_3"),
             "image_blog": _get_image("main_cmsinfo_blog_image"),
             "image_company": _get_image("main_cmsinfo_company_image"),
+            # Button-Slots: aktuell platzierter Button + Liste aller Buttons zur Auswahl
+            "cmsinfo_btn_hero": Button.objects.filter(place="main_cmsinfo_hero_cta").order_by("order", "id").first(),
+            "cmsinfo_btn_demo": Button.objects.filter(place="main_cmsinfo_demo_cta").order_by("order", "id").first(),
+            "cmsinfo_btn_products": Button.objects.filter(place="main_cmsinfo_products_cta").order_by("order", "id").first(),
+            "cmsinfo_btn_bottomcta": Button.objects.filter(place="main_cmsinfo_bottomcta").order_by("order", "id").first(),
+            "all_buttons": Button.objects.order_by("order", "id"),
+            "page_links": PageLink.objects.all(),
         },
     )
 
@@ -616,10 +623,12 @@ def save_text_content(request):
     images = json.loads(request.POST.get("images", "[]"))
     galerien = json.loads(request.POST.get("galerien", "[]"))
     videos = json.loads(request.POST.get("videos", "[]"))
+    buttons = json.loads(request.POST.get("buttons", "[]"))
 
     _assign_image_slots(images)
     _assign_gallery_slots(galerien)
     _assign_video_slots(videos)
+    _assign_button_slots(buttons, lang)
 
     custom_keys = []
     for custom in custom_text:
@@ -684,6 +693,49 @@ def _assign_video_slots(videos):
                     extra_vid.save()
                 vid.place = key
                 vid.save()
+
+
+def _assign_button_slots(buttons, lang):
+    """Weist je Slot (place) genau EINEN Button zu und übernimmt dessen Felder
+    (Text in aktiver Sprache, Design, Icon, Link, Tab). id == -1 leert den Slot."""
+    valid_colors = {value for value, _ in Button.COLOR_CHOICES}
+    for entry in buttons:
+        key = (entry.get("key") or "").strip()
+        if not key:
+            continue
+
+        bid = str(entry.get("id") or "-1")
+        if bid in ("", "-1"):
+            # Slot leeren: öffentliche Seite fällt auf den Standard-Link zurück
+            Button.objects.filter(place=key).update(place="")
+            continue
+
+        btn = Button.objects.filter(id=bid).first()
+        if not btn:
+            continue
+
+        # Slot exklusiv halten
+        Button.objects.filter(place=key).exclude(id=btn.id).update(place="")
+        btn.place = key
+
+        text = (entry.get("text") or "").strip()
+        if text:
+            setattr(btn, f"text_{lang}", text)
+            if lang == DEFAULT_LANGUAGE:
+                btn.text = text
+
+        color = entry.get("color")
+        if color in valid_colors:
+            btn.color = color
+
+        btn.icon = (entry.get("icon") or "").strip()
+
+        page_link_id = entry.get("page_link_id")
+        btn.page_link = PageLink.objects.filter(id=page_link_id).first() if page_link_id else None
+        btn.url = (entry.get("url") or "").strip()
+        btn.target = "_blank" if entry.get("target") == "_blank" else "_self"
+
+        btn.save()
 
 
 def _save_text_values(name, values, lang):

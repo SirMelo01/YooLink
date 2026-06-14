@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from yoolink.ycms.applications.content.models import Customer, ImpressumBlock, PrivacyPolicy, ServiceLocation, TextContent
-from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, WebsiteSettings
+from yoolink.ycms.models import FAQ, Message, PricingCard, TeamMember, fileentry, Galerie, OpeningHours, WebsiteSettings, Button
 import datetime
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import get_language_from_request, activate
@@ -538,6 +538,15 @@ def load_cmsinfo(request):
     context["image_sec2_preview_3"] = get_image("main_cmsinfo_sec2_preview_3")
     context["image_blog"] = get_image("main_cmsinfo_blog_image")
     context["image_company"] = get_image("main_cmsinfo_company_image")
+
+    # CMS-verwaltbare Buttons (pro Slot der höchstplatzierte). Fehlt einer,
+    # rendert das Template seinen bisherigen Fallback-Link.
+    def get_button(place):
+        return Button.objects.filter(place=place).order_by("order", "id").first()
+    context["cmsinfo_btn_hero"] = get_button("main_cmsinfo_hero_cta")
+    context["cmsinfo_btn_demo"] = get_button("main_cmsinfo_demo_cta")
+    context["cmsinfo_btn_products"] = get_button("main_cmsinfo_products_cta")
+    context["cmsinfo_btn_bottomcta"] = get_button("main_cmsinfo_bottomcta")
 
     return render(request, 'pages/cmsinfo.html', context=context)
 

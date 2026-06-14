@@ -4,6 +4,7 @@
 
 {% block content %}
 {% include "pages/cms/components/ImageSelectModal.html" %}
+{% include "pages/cms/components/ButtonSlotModal.html" %}
 
 <div class="mx-auto mt-4 max-w-6xl px-4 sm:mt-8 sm:px-6">
 
@@ -41,11 +42,15 @@
 	                 value="{{ textContent_hero.header|default:'Deine Website. Deine Inhalte. Deine Kontrolle.' }}">
 	          <textarea inputType="description" rows="5"
 	                    class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_hero.description|default:"Mit dem YooLink CMS pflegst du Texte, Bilder, Team, Preise, Blog und sogar deinen Produkt-Showcase selbst - direkt im Browser, ohne Vorkenntnisse und ohne auf eine Agentur zu warten." }}</textarea>
-	          <input inputType="buttonText"
-	                 value="{{ textContent_hero.buttonText|default:'Jetzt anfragen' }}"
-	                 class="self-start rounded-md bg-blue-900 px-6 py-3 text-sm font-bold text-white">
 	        </div>
-	    </section>
+        <div class="mt-2">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700">Buttons dieser Sektion</p>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {% include "pages/cms/components/_button_slot.html" with button=cmsinfo_btn_hero slot_key="main_cmsinfo_hero_cta" label="Hauptbutton" %}
+            {% include "pages/cms/components/_button_slot.html" with button=cmsinfo_btn_demo slot_key="main_cmsinfo_demo_cta" label="Zweitbutton (mit Icon)" %}
+          </div>
+        </div>
+    </section>
 
 	        <!-- DEMO – Probier es aus -->
     <section class="rounded-2xl bg-blue-50 p-6">
@@ -296,6 +301,10 @@
         <textarea inputType="description" rows="3"
                   class="w-full rounded-lg border-2 border-gray-200 bg-gray-100 px-4 py-2 text-base leading-relaxed focus:border-blue-500 focus:bg-white focus:outline-none">{{ textContent_products.description|default:"Stelle dein Sortiment wie in einem digitalen Katalog aus: mit Bildern, Beschreibungen, Kategorien und Spezifikationen. Ob ein Preis angezeigt wird oder „Preis auf Anfrage“ steht, entscheidest du pro Produkt - Interessenten melden sich direkt bei dir." }}</textarea>
       </div>
+      <div class="mt-3">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-700">Button</p>
+        {% include "pages/cms/components/_button_slot.html" with button=cmsinfo_btn_products slot_key="main_cmsinfo_products_cta" label="Live-Beispiel-Link" %}
+      </div>
       <div class="mt-3 flex flex-col gap-2 border-t border-blue-200 pt-3">
           <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bullet-Punkte</p>
             <div class="text-content flex items-center gap-2" key="main_cmsinfo_products_bullet1">
@@ -543,9 +552,9 @@
                value="{{ textContent_bottomcta.title|default:'Jetzt unverbindlich Kontakt aufnehmen' }}">
         <textarea inputType="description" rows="3"
                   class="w-full rounded-lg border-2 border-gray-500 bg-gray-600 px-4 py-2 text-base text-white placeholder-gray-400 focus:border-blue-400 focus:bg-gray-500 focus:outline-none">{{ textContent_bottomcta.description|default:"Du suchst nach einem flexiblen, leistungsstarken und einfachen CMS? Wir beraten dich persönlich!" }}</textarea>
-        <input inputType="buttonText"
-               value="{{ textContent_bottomcta.buttonText|default:'Lass uns gemeinsam starten' }}"
-               class="rounded-md bg-blue-900 px-8 py-3 text-sm font-bold text-white">
+        <div class="w-full text-left">
+          {% include "pages/cms/components/_button_slot.html" with button=cmsinfo_btn_bottomcta slot_key="main_cmsinfo_bottomcta" label="Abschluss-Button" %}
+        </div>
       </div>
     </section>
 
@@ -558,6 +567,7 @@
 <script defer src="{% static 'js/cms.js' %}"></script>
 <script defer src="{% static 'js/cms/content/siteManager.js' %}"></script>
 <script src="{% static 'js/cms/content/save-text.js' %}"></script>
+<script src="{% static 'js/cms/content/button-slot.js' %}"></script>
 <script defer>
   $(document).ready(function () {
     loadImages(false);
