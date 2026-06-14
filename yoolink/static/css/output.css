@@ -1552,6 +1552,10 @@ body {
   height: 300px;
 }
 
+.h-\[38px\] {
+  height: 38px;
+}
+
 .h-\[420px\] {
   height: 420px;
 }
@@ -1867,6 +1871,10 @@ body {
 
 .w-96 {
   width: 24rem;
+}
+
+.w-\[38px\] {
+  width: 38px;
 }
 
 .w-\[4\.5rem\] {
@@ -7806,10 +7814,6 @@ body {
     flex-direction: row;
   }
 
-  .lg\:flex-col {
-    flex-direction: column;
-  }
-
   .lg\:items-start {
     align-items: flex-start;
   }
@@ -8140,10 +8144,6 @@ body {
 
   .xl\:grid-cols-\[220px\2c minmax\(0\2c 1fr\)\] {
     grid-template-columns: 220px minmax(0,1fr);
-  }
-
-  .xl\:flex-row {
-    flex-direction: row;
   }
 
   .xl\:gap-24 {

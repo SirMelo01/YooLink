@@ -193,7 +193,7 @@ function createFaq(id, answer, question) {
     fieldsWrap.append(questionElement, answerElement);
 
     // Aktionen
-    var buttonElement = $('<div>').addClass('flex flex-shrink-0 gap-2 lg:flex-col xl:flex-row');
+    var buttonElement = $('<div>').addClass('flex flex-shrink-0 items-center gap-2 lg:self-end');
     var updateButton = $('<button>').addClass('edit-faq inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 lg:flex-none').attr('type', 'button').html('<i class="bi bi-arrows-angle-expand"></i> Anzeigen');
     updateButton.click(function() {
         const $faq = $(this).closest('.list-group-item');
@@ -209,7 +209,7 @@ function createFaq(id, answer, question) {
         // Save it
         $('#editModal').removeClass("hidden");
     });
-    var deleteButton = $('<button>').addClass('delete inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 lg:flex-none').attr('type', 'button').html('<i class="bi bi-trash"></i> Löschen');
+    var deleteButton = $('<button>').addClass('delete inline-flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100').attr('type', 'button').attr('title', 'Löschen').attr('aria-label', 'Löschen').html('<i class="bi bi-trash"></i>');
     buttonElement.append(updateButton, deleteButton);
 
     innerElement.append(fieldsWrap, buttonElement);
