@@ -5,7 +5,7 @@
 
 {% block meta_description %}Webdesign aus Deggendorf für Unternehmen aus Deggendorf, Plattling, Osterhofen und ganz Niederbayern. Individuelle Websites mit eigenem CMS, transparenten Abo-Preisen ab 40 € im Monat und persönlicher Betreuung vor Ort.{% endblock %}
 
-{% block canonical_url %}https://yoolink.de/webdesign-deggendorf/{% endblock %}
+{% block canonical_url %}https://yoolink.de{% if request.LANGUAGE_CODE == 'en' %}{{ en_url }}{% else %}{{ de_url }}{% endif %}{% endblock %}
 
 {% block og_title %}Webdesign Deggendorf – YooLink | Website ab 40 € im Monat{% endblock %}
 {% block og_description %}Lokale Webdesign-Agentur aus dem Raum Deggendorf. Individuelle Websites mit eigenem CMS, faires Abo-Modell und persönlicher Kontakt vor Ort.{% endblock %}
