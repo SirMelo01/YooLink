@@ -1256,6 +1256,20 @@ def blog_view(request):
     page_obj = paginator.get_page(page_number)
     base_blogs = Blog.objects.filter(original__isnull=True)
 
+    # Titel + Beschreibung in der aktiven CMS-Sprache anzeigen (Rest wie Datum
+    # bleibt bewusst unverändert). Nutzt den prefetch-Cache der Übersetzungen,
+    # daher keine zusätzlichen Queries.
+    lang = get_active_language(request)
+    for blog in page_obj.object_list:
+        if blog.language == lang:
+            variant = blog
+        else:
+            variant = next(
+                (t for t in blog.translations.all() if t.language == lang), None
+            ) or blog
+        blog.display_title = variant.title
+        blog.display_description = variant.description
+
     return render(request, "pages/cms/blog/blog.html", {
         "page_obj": page_obj,
         "blogs": page_obj.object_list,

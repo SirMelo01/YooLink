@@ -84,7 +84,7 @@
 
       <div class="relative">
         {% if blog.title_image %}
-        <img src="{{ blog.title_image.url }}" alt="{{ blog.title_image_alt|default:blog.title }}" title="{{ blog.title_image_title|default:blog.title }}" class="h-40 w-full object-cover">
+        <img src="{{ blog.title_image.url }}" alt="{{ blog.title_image_alt|default:blog.display_title }}" title="{{ blog.title_image_title|default:blog.display_title }}" class="h-40 w-full object-cover">
         {% else %}
         <div class="flex h-40 w-full items-center justify-center bg-gray-100 text-gray-400"><i class="bi bi-image text-3xl"></i></div>
         {% endif %}
@@ -94,9 +94,9 @@
       </div>
 
       <div class="flex flex-1 flex-col p-4">
-        <h2 class="line-clamp-2 text-lg font-semibold text-gray-900">{{ blog.title }}</h2>
+        <h2 class="line-clamp-2 text-lg font-semibold text-gray-900">{{ blog.display_title }}</h2>
         <p class="mt-1 text-xs text-gray-500">von {{ blog.author }} · {{ blog.date }} · akt. {{ blog.last_updated }}</p>
-        <p class="mt-2 line-clamp-3 flex-1 text-sm text-gray-600">{{ blog.description|truncatewords:20 }}</p>
+        <p class="mt-2 line-clamp-3 flex-1 text-sm text-gray-600">{{ blog.display_description|truncatewords:20 }}</p>
 
         <!-- Sprachvarianten -->
         <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
