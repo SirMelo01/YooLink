@@ -42,11 +42,14 @@ https://www.youtube.com/watch?v=DLxcyndCvO4
         $ docker-compose -f production.yml run --rm django python manage.py makemigrations
         $ docker-compose -f production.yml run --rm django python manage.py migrate
 
--   Migration `0079_strip_language_suffix_from_blog_slugs` entfernt bei bestehenden
-    Blog-Übersetzungen automatisch das alte Sprach-Suffix im Slug (z. B. "-en").
-    Läuft mit dem normalen `migrate` mit, ist idempotent und vorsichtig: sie
-    benennt nur um, wenn der Ziel-Slug frei ist. Alte URLs bleiben erreichbar und
-    werden per 301 auf die neue kürzere URL weitergeleitet (die pk bleibt gleich).
+-   Migration `0079_strip_language_suffix_from_blog_slugs` (Blog) und
+    `shop.0008_strip_language_suffix_from_product_slugs` (Produkte) entfernen bei
+    bestehenden Übersetzungen automatisch das alte Sprach-Suffix im Slug
+    (z. B. "-en"). Laufen mit dem normalen `migrate` mit, sind idempotent und
+    vorsichtig: sie benennen nur um, wenn der Ziel-Slug frei ist. Alte URLs
+    bleiben erreichbar und werden per 301 auf die neue kürzere URL weitergeleitet
+    (die pk bleibt gleich). Bei Blogs und Produkten ändert sich der Slug ab jetzt
+    nicht mehr automatisch bei Titeländerungen.
 
 ### Superuser erstellen:
         $ docker-compose -f production.yml run --rm django python manage.py createsuperuser

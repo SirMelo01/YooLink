@@ -264,7 +264,9 @@ def test_cms_product_detail_creates_language_variant(logged_in_client):
     translation = Product.objects.get(original=product, language="en")
     assert translation.title == product.title
     assert translation.is_active is False
-    assert translation.slug.endswith("-en")
+    # Kein Sprach-Suffix mehr im Slug (die Sprache steckt im URL-Pfad, /en/...).
+    assert translation.slug
+    assert not translation.slug.endswith("-en")
 
 
 def test_public_product_search_uses_active_language_variant(client):

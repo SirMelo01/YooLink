@@ -1148,8 +1148,13 @@ def detail(request, product_id, slug):
         Product.objects.select_related("brand", "gallery", "original")
         .prefetch_related("categories", "translations", "specifications", "gallery__images"),
         id=product_id,
-        slug=slug,
     )
+    # Canonical Slug sicherstellen: alte oder bewusst geänderte Slugs per 301 auf
+    # die aktuelle URL umleiten. Die pk in der URL identifiziert das Produkt
+    # eindeutig, daher bleiben alte URLs erreichbar statt zu 404en.
+    if slug != product.slug:
+        return redirect(product.get_absolute_url(), permanent=True)
+
     last_url = request.META.get('HTTP_REFERER')
     if not product.is_active:
         return render(request, "pages/errors/error.html", {

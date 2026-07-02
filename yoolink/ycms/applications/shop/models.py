@@ -257,11 +257,16 @@ class Product(TimeStampedModel):
             )
 
     def save(self, *args, **kwargs):
-        slug_source = self.title
-        if self.original_id:
-            slug_source = f"{self.title}-{self.language.lower()}"
-
-        self.slug = generate_unique_slug(Product, slug_source, self.pk)
+        # Slug wird nur bei der Erstellung (oder wenn noch keiner existiert) aus
+        # dem Titel erzeugt. Danach bleibt er stabil, auch wenn der Titel später
+        # bearbeitet wird – die öffentliche URL ändert sich also nicht ungewollt.
+        # Ein Slug kann trotzdem jederzeit bewusst gesetzt/geändert werden (ein
+        # explizit vergebener Slug wird hier nicht überschrieben); die Detail-View
+        # leitet abweichende/alte Slugs per 301 auf den aktuellen um, da die pk in
+        # der URL das Produkt eindeutig identifiziert. Kein Sprach-Suffix mehr –
+        # die Sprache steckt bereits im URL-Pfad (z. B. /en/products/...).
+        if not self.slug:
+            self.slug = generate_unique_slug(Product, self.title, self.pk)
 
         if not self.is_reduced:
             self.discount_price = None
