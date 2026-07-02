@@ -185,10 +185,11 @@ def get_or_create_translated_blog(request, id):
     if variant:
         return variant
 
-    # Neue Variante anlegen
+    # Neue Variante anlegen. Kein Sprach-Suffix im Slug – das Modell erzeugt
+    # beim Speichern einen eindeutigen, suffixfreien Slug aus dem Titel (die
+    # Sprache steckt bereits im URL-Pfad, z. B. /en/blog/...).
     new_blog = Blog.objects.create(
         title=original_blog.title,
-        slug=original_blog.slug + '-' + lang,
         title_image=original_blog.title_image,
         title_image_alt=original_blog.title_image_alt,
         title_image_title=original_blog.title_image_title,
@@ -1415,7 +1416,17 @@ def update_blog(request, id):
         blog = get_or_create_translated_blog(request, id)
 
         title = request.POST.get('title')
-        if blog.title != title and Blog.objects.filter(title=title).exists():
+        # Original und seine Übersetzungen teilen sich bewusst denselben Titel,
+        # daher die Dubletten-Prüfung auf Blogs AUSSERHALB der eigenen Familie
+        # beschränken. Sonst schlägt z. B. das Angleichen des Original-Titels an
+        # einen bereits korrigierten Übersetzungstitel fälschlich mit einem
+        # "Bad Request" fehl.
+        root = blog.original or blog
+        family_ids = [root.id, *root.translations.values_list('id', flat=True)]
+        if (
+            blog.title != title
+            and Blog.objects.filter(title=title).exclude(id__in=family_ids).exists()
+        ):
             return JsonResponse({'error': 'Ein Blog mit diesem Titel existiert bereits!'}, status=400)
         description = (request.POST.get('description') or '').strip()
         title_image_alt = (request.POST.get('title_image_alt') or '').strip()
@@ -1443,12 +1454,9 @@ def update_blog(request, id):
             blog.title_image_title = title_image_title
             blog.title_image_caption = title_image_caption
             blog.title = title
-            # 🧠 Slug setzen je nach Original oder Variante
-            base_slug = slugify(title)
-            if blog.original:
-                blog.slug = f"{base_slug}-{blog.language.lower()}"
-            else:
-                blog.slug = base_slug
+            # Der Slug wird bewusst NICHT aus dem Titel neu gesetzt: er bleibt
+            # ab der Erstellung stabil, damit sich die öffentliche URL bei einer
+            # Titeländerung nicht ändert (verhindert Google-Weiterleitungen).
             blog.markdown = content_data["markdown"]
             blog.body = content_data["body"]
             blog.code = content_data["code"]
