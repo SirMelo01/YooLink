@@ -282,9 +282,12 @@ class BlogDetailView(DetailView):
             raise Http404("Blog nicht gefunden")
 
         # 1) Canonical Slug sicherstellen
+        # Permanenter Redirect (301): der Slug ist unveränderlich, alte/kürzere
+        # Slug-Varianten (z. B. ehemalige "-en"-Slugs) zeigen dauerhaft auf die
+        # aktuelle URL, damit Google das Ranking überträgt statt neu zu bewerten.
         url_slug = kwargs.get('slug_title')
         if url_slug != self.object.slug:
-            return redirect(self.object.get_absolute_url())
+            return redirect(self.object.get_absolute_url(), permanent=True)
 
         # 2) Sprachvariante prüfen → ggf. Redirect
         lang = get_active_language(request)

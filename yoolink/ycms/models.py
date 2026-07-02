@@ -327,10 +327,18 @@ class Blog(models.Model):
         return self.title + ' | ' + str(self.author)
     
     def save(self, *args, **kwargs):
-        if not self.original:
-            self.slug = generate_unique_blog_slug(self, slugify(self.title))
-        elif self.slug:
-            self.slug = generate_unique_blog_slug(self, self.slug)
+        # Der Slug wird ausschließlich einmalig bei der Erstellung festgelegt
+        # und danach NIE wieder verändert. Dadurch bleibt die öffentliche URL
+        # dauerhaft stabil, selbst wenn der Titel später bearbeitet wird.
+        # Das verhindert das Google-Problem "Seite mit Weiterleitung", das
+        # entsteht, wenn sich der Slug (und damit die URL) nachträglich ändert.
+        needs_slug = self._state.adding or not self.slug or self.slug == 'default-slug'
+        if needs_slug:
+            if self.original:
+                base_slug = self.slug if (self.slug and self.slug != 'default-slug') else slugify(self.title)
+            else:
+                base_slug = slugify(self.title)
+            self.slug = generate_unique_blog_slug(self, base_slug)
 
         super(Blog, self).save(*args, **kwargs)
 

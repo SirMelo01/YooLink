@@ -307,9 +307,11 @@ class ExternalBlogSerializer(serializers.ModelSerializer):
         title_image_media = validated_data.pop("title_image_media", None)
         request = self.context["request"]
         if validated_data.get("original"):
-            base_slug = slugify(validated_data.get("title") or "blog")
-            language = (validated_data.get("language") or "de").lower()
-            validated_data["slug"] = f"{base_slug}-{language}"
+            # Kein Sprach-Suffix mehr im Slug: die Sprache steckt bereits im
+            # URL-Pfad (z. B. /en/blog/...), daher wäre "-en" im Slug redundant.
+            # Der Slug wird aus dem Titel der Übersetzung erzeugt; Eindeutigkeit
+            # und dauerhafte Stabilität stellt das Blog-Modell in save() sicher.
+            validated_data["slug"] = slugify(validated_data.get("title") or "blog")
 
         blog = Blog.objects.create(author=request.user, **validated_data)
 
