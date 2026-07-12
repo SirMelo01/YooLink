@@ -97,13 +97,8 @@
   }
 
   /* Meldungskarten sind vollstaendig klickbar */
-  .bgp-news-card { cursor: pointer; }
   .bgp-news-card:hover .bgp-news-cta i { transform: translateX(4px); }
   .bgp-news-cta i { transition: transform .25s ease; }
-  .bgp-news-card:focus-visible {
-    outline: 3px solid #4B6671;
-    outline-offset: 3px;
-  }
 </style>
 {% endblock demo_css %}
 
@@ -349,82 +344,48 @@
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-               data-news role="button" tabindex="0" aria-label="Meldung öffnen: Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht"
                data-aos="fade-up" data-aos-delay="0">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Stellenangebot</span>
-          <span class="bgp-text-yellow text-xs font-bold" data-news-date>09.07.2026</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Stellenangebot</span>
+          <span class="bgp-text-yellow text-xs font-bold">09.07.2026</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Wir suchen Verstärkung für unsere Verwaltung. Alle Details finden Sie in der Stellenbeschreibung - bei Fragen stehen wir gerne zur Verfügung.</p>
           <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
             <i class="bi bi-file-earmark-pdf"></i> Stellenanzeige ansehen
           </span>
         </div>
-        <template data-news-body>
-          <p>Zur Verstärkung unserer Verwaltung suchen wir zum nächstmöglichen Zeitpunkt eine <strong>kaufmännische Mitarbeiterin oder einen kaufmännischen Mitarbeiter (m/w/d) in Teilzeit</strong> mit 20 bis 25 Wochenstunden.</p>
-          <p><strong>Ihre Aufgaben:</strong></p>
-          <ul>
-            <li>Betreuung unserer Mitglieder und Mieter am Telefon und im Büro</li>
-            <li>Vorbereitung von Mietverträgen und Betriebskostenabrechnungen</li>
-            <li>Allgemeine Korrespondenz und Verwaltung unserer Objektunterlagen</li>
-            <li>Terminkoordination mit Handwerkern und Hausmeisterdienst</li>
-          </ul>
-          <p><strong>Das bringen Sie mit:</strong> eine abgeschlossene kaufmännische Ausbildung, einen freundlichen und verbindlichen Umgang mit Menschen sowie sichere Kenntnisse in den gängigen Office-Programmen. Erfahrung in der Wohnungswirtschaft ist willkommen, aber keine Bedingung.</p>
-          <p><strong>Wir bieten:</strong> einen sicheren Arbeitsplatz in einer über 100 Jahre alten Genossenschaft, geregelte Arbeitszeiten, eine leistungsgerechte Vergütung und ein kleines, familiäres Team.</p>
-          <p>Ihre Bewerbung senden Sie bitte per E-Mail an info@baugenossenschaft-plattling.de oder an Baugenossenschaft Plattling eG, Schillerstr. 6b, 94447 Plattling.</p>
-        </template>
       </article>
 
       <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-               data-news role="button" tabindex="0" aria-label="Meldung öffnen: Mitgliederversammlung 2026"
                data-aos="fade-up" data-aos-delay="100">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Versammlung</span>
-          <span class="bgp-text-yellow text-xs font-bold" data-news-date>01.07.2026</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Versammlung</span>
+          <span class="bgp-text-yellow text-xs font-bold">01.07.2026</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>Mitgliederversammlung 2026</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Mitgliederversammlung 2026</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Reges Interesse im "Hotel Zur Isar": Sebastian Lallinger (Vorstand) und Bürgermeister Hans Schmalhofer (Aufsichtsrat) wurden für weitere drei Jahre bestätigt. Die Dividende bleibt bei 3&nbsp;%.</p>
           <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
             Mehr erfahren <i class="bi bi-arrow-right"></i>
           </span>
         </div>
-        <template data-news-body>
-          <p>Bei reger Beteiligung fand unsere diesjährige Mitgliederversammlung im „Hotel Zur Isar" statt. Vorstand und Aufsichtsrat berichteten über ein wirtschaftlich stabiles Geschäftsjahr.</p>
-          <p><strong>Die wichtigsten Beschlüsse:</strong></p>
-          <ul>
-            <li>Sebastian Lallinger wurde als Vorstand für weitere drei Jahre bestätigt.</li>
-            <li>Bürgermeister Hans Schmalhofer bleibt Mitglied des Aufsichtsrats.</li>
-            <li>Die Dividende auf die Geschäftsanteile bleibt unverändert bei 3&nbsp;%.</li>
-            <li>Der Jahresabschluss wurde einstimmig festgestellt, Vorstand und Aufsichtsrat wurden entlastet.</li>
-          </ul>
-          <p>Im Anschluss stellte der Vorstand die geplanten Modernisierungsmaßnahmen für das kommende Jahr vor. Schwerpunkt bleibt die energetische Sanierung unserer älteren Wohnanlagen - mit dem klaren Ziel, die Nebenkosten für unsere Mitglieder dauerhaft stabil zu halten.</p>
-          <p>Wir bedanken uns bei allen Mitgliedern für das entgegengebrachte Vertrauen und die lebhafte Diskussion.</p>
-        </template>
       </article>
 
       <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:col-span-2 lg:col-span-1"
-               data-news role="button" tabindex="0" aria-label="Meldung öffnen: 25 Jahre im Dienst: Norbert Kirchberger"
                data-aos="fade-up" data-aos-delay="200">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Jubiläum</span>
-          <span class="bgp-text-yellow text-xs font-bold" data-news-date>01.07.2025</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Jubiläum</span>
+          <span class="bgp-text-yellow text-xs font-bold">01.07.2025</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>25 Jahre im Dienst: Norbert Kirchberger</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">25 Jahre im Dienst: Norbert Kirchberger</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Wir gratulieren unserem Hausmeister herzlich zum 25-jährigen Dienstjubiläum! Mit Kompetenz und seiner freundlichen Art ist er bei Mietern wie Kollegen gleichermaßen geschätzt.</p>
           <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
             Mehr erfahren <i class="bi bi-arrow-right"></i>
           </span>
         </div>
-        <template data-news-body>
-          <p>Seit einem Vierteljahrhundert sorgt Norbert Kirchberger dafür, dass in unseren Wohnanlagen alles läuft: von der Grünpflege über kleine Reparaturen bis zum Winterdienst.</p>
-          <p>Vorstand und Aufsichtsrat gratulierten ihm im Rahmen einer kleinen Feier im Büro in der Schillerstraße und bedankten sich für 25 Jahre <strong>zuverlässige und umsichtige Arbeit</strong>.</p>
-          <p>„Wenn irgendwo etwas klemmt, ruft man den Norbert - und dann passt das", brachte es ein langjähriges Mitglied auf den Punkt. Mit seiner ruhigen, freundlichen Art ist er bei Mietern und Kollegen gleichermaßen geschätzt.</p>
-          <p>Wir sagen Danke und freuen uns auf die weitere Zusammenarbeit!</p>
-        </template>
       </article>
     </div>
   </div>
@@ -538,5 +499,4 @@
     });
   })();
 </script>
-{% include "pages/demos/_bgp_news_modal.html" %}
 {% endblock demo_js %}
