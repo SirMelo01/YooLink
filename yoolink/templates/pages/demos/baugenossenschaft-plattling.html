@@ -1,111 +1,115 @@
-{% extends "base.html" %}
-{% load compress static %}
+{% extends "pages/demos/_bgp_base.html" %}
+{% load static %}
 
 {% block title %}Baugenossenschaft Plattling eG | Sicher wohnen in Plattling - seit 1921{% endblock title %}
 {% block meta_description %}Die Baugenossenschaft Plattling eG bietet seit 1921 sicheren und bezahlbaren Wohnraum in Plattling. Als Mitglied wohnen Sie nicht nur zur Miete - Sie sind Teil einer starken Gemeinschaft.{% endblock %}
-{% block robots %}noindex, nofollow{% endblock %}
 
-{% block css %}
-{% compress css %}
-<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+{% block demo_css %}
 <style>
-  /* Markenfarben der Baugenossenschaft Plattling (aus der Bestandsseite):
-     Schieferblau #4B6671, Signalgelb #FFDC16, helles Eisblau #E3F0F4 */
-  .bgp-bg-navy { background-color: #4B6671; }
-  .bgp-bg-navy-dark { background-color: #3A505A; }
-  .bgp-bg-navy-deep { background-color: #2E434C; }
-  .bgp-bg-ice { background-color: #EEF5F8; }
-  .bgp-bg-ice-deep { background-color: #E3F0F4; }
-  .bgp-bg-yellow { background-color: #FFDC16; }
-  .bgp-text-navy { color: #4B6671; }
-  .bgp-text-navy-dark { color: #2E434C; }
-  .bgp-text-yellow { color: #FFDC16; }
-  .bgp-text-ice { color: #DCE9EF; }
-  .bgp-border-navy { border-color: #4B6671; }
-  .bgp-border-yellow { border-color: #FFDC16; }
-  .bgp-ring-ice { --tw-ring-color: #C9DEE6; }
-
-  .bgp-btn-yellow {
-    background-color: #FFDC16;
-    color: #2E434C;
+  /* Hero-Bild neigt sich zur Ecke, ueber der die Maus steht */
+  .bgp-tilt-scene { perspective: 1100px; }
+  .bgp-tilt {
+    transform-style: preserve-3d;
+    transition: transform .45s cubic-bezier(.2,.8,.25,1);
+    will-change: transform;
   }
-  .bgp-btn-yellow:hover { background-color: #F2CE00; }
-
-  .bgp-btn-navy {
-    background-color: #4B6671;
-    color: #ffffff;
-  }
-  .bgp-btn-navy:hover { background-color: #3A505A; }
-
-  .bgp-hero {
-    background: linear-gradient(160deg, #2E434C 0%, #4B6671 55%, #5C7A87 100%);
-  }
-  .bgp-hero-pattern {
+  .bgp-tilt.is-tilting { transition: transform .1s linear; }
+  /* Die Info-Kacheln schweben ueber dem Bild und bekommen dadurch Parallaxe */
+  .bgp-tilt-badge { transform: translateZ(60px); }
+  .bgp-tilt-figure { transform: translateZ(15px); }
+  .bgp-tilt-glare {
     position: absolute;
     inset: 0;
-    opacity: 0.12;
-    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.45) 1px, transparent 0);
-    background-size: 26px 26px;
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity .35s ease;
     pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+  .bgp-tilt.is-tilting .bgp-tilt-glare { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bgp-tilt { transform: none !important; }
+    .bgp-tilt-glare { display: none; }
   }
 
-  /* Gelbe Akzentlinie - Zitat der gelben Menueleiste der alten Website */
-  .bgp-accent-bar {
-    height: 5px;
-    background: linear-gradient(90deg, rgba(255,220,22,0.35) 0%, #FFDC16 50%, rgba(255,220,22,0.35) 100%);
+  /* Karten "Unsere Genossenschaft": Akzentlinie, Icon-Wechsel, Icon-Wasserzeichen */
+  .bgp-feature-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #DCE9EF;
+    background: linear-gradient(150deg, #F4FAFC 0%, #E4EFF4 100%);
+    transition: transform .35s cubic-bezier(.2,.8,.25,1), box-shadow .35s ease, border-color .35s ease;
+  }
+  .bgp-feature-card:hover {
+    transform: translateY(-6px);
+    border-color: #C9DEE6;
+    box-shadow: 0 26px 50px -22px rgba(46,67,76,.45);
+  }
+  .bgp-feature-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFDC16 0%, #F2CE00 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .45s cubic-bezier(.2,.8,.25,1);
+  }
+  .bgp-feature-card:hover::before { transform: scaleX(1); }
+
+  .bgp-feature-card-dark {
+    border-color: rgba(255,255,255,.1);
+    background: linear-gradient(150deg, #3A505A 0%, #2E434C 100%);
+  }
+  .bgp-feature-card-dark:hover { border-color: rgba(255,220,22,.35); }
+
+  .bgp-feature-icon {
+    transition: background-color .35s ease, color .35s ease, transform .35s cubic-bezier(.2,.8,.25,1);
+  }
+  .bgp-feature-card:hover .bgp-feature-icon {
+    background-color: #FFDC16;
+    color: #2E434C;
+    transform: translateY(-2px) rotate(-4deg);
   }
 
-  .bgp-card-hover { transition: transform .3s ease, box-shadow .3s ease; }
-  .bgp-card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -18px rgba(46,67,76,0.35); }
+  .bgp-feature-watermark {
+    position: absolute;
+    right: -1rem;
+    bottom: -2rem;
+    font-size: 7rem;
+    line-height: 1;
+    color: #4B6671;
+    opacity: .07;
+    pointer-events: none;
+    transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.25,1);
+  }
+  .bgp-feature-card-dark .bgp-feature-watermark { color: #FFDC16; opacity: .08; }
+  .bgp-feature-card:hover .bgp-feature-watermark {
+    opacity: .13;
+    transform: translate(-6px, -6px) scale(1.05);
+  }
 
-  .bgp-nav-link { color: #DCE9EF; transition: color .2s ease; }
-  .bgp-nav-link:hover { color: #FFDC16; }
+  @media (prefers-reduced-motion: reduce) {
+    .bgp-feature-card:hover { transform: none; }
+    .bgp-feature-card:hover .bgp-feature-icon,
+    .bgp-feature-card:hover .bgp-feature-watermark { transform: none; }
+  }
+
+  /* Meldungskarten sind vollstaendig klickbar */
+  .bgp-news-card { cursor: pointer; }
+  .bgp-news-card:hover .bgp-news-cta i { transform: translateX(4px); }
+  .bgp-news-cta i { transition: transform .25s ease; }
+  .bgp-news-card:focus-visible {
+    outline: 3px solid #4B6671;
+    outline-offset: 3px;
+  }
 </style>
-{% endcompress css %}
-{% endblock css %}
-
-{# Eigenstaendige Demo-Seite: komplett eigene Navigation und Footer im Look der Baugenossenschaft. #}
-{% block navbar %}
-<header class="bgp-bg-navy-deep sticky top-0 z-50 shadow-lg">
-  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-    <a href="#" class="flex min-w-0 items-center gap-3" aria-label="Baugenossenschaft Plattling eG - Startseite">
-      <img src="{% static 'images/demos/bgp/logo-icon.png' %}" alt="Logo Baugenossenschaft Plattling eG" class="h-11 w-auto flex-shrink-0" />
-      <span class="flex min-w-0 flex-col leading-tight">
-        <span class="truncate text-base font-bold tracking-tight text-white sm:text-lg">Baugenossenschaft Plattling <span class="bgp-text-yellow">eG</span></span>
-        <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/50">seit 1921</span>
-      </span>
-    </a>
-
-    <nav class="hidden items-center gap-1 lg:flex" aria-label="Hauptnavigation">
-      <a href="#genossenschaft" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Unsere Genossenschaft</a>
-      <a href="#vermietung" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Vermietung</a>
-      <a href="#aktuelles" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Aktuelles</a>
-      <a href="#kontakt" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Kontakt</a>
-      <a href="tel:0993189007300" class="bgp-btn-yellow ml-3 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold shadow-sm transition">
-        <i class="bi bi-telephone-fill"></i> 09931 890073-0
-      </a>
-    </nav>
-
-    <button id="bgpMenuToggle" class="rounded-lg p-2 text-white hover:bg-white/10 lg:hidden" aria-expanded="false" aria-label="Menü öffnen">
-      <i class="bi bi-list text-2xl leading-none"></i>
-    </button>
-  </div>
-
-  <div id="bgpMobileMenu" class="hidden border-t border-white/10 px-4 pb-4 pt-2 lg:hidden">
-    <a href="#genossenschaft" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Unsere Genossenschaft</a>
-    <a href="#vermietung" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Vermietung</a>
-    <a href="#aktuelles" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Aktuelles</a>
-    <a href="#kontakt" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Kontakt</a>
-    <a href="tel:0993189007300" class="bgp-btn-yellow mt-2 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold">
-      <i class="bi bi-telephone-fill"></i> 09931 890073-0
-    </a>
-  </div>
-  <div class="bgp-accent-bar"></div>
-</header>
-{% endblock navbar %}
-{% block cookies %}{% endblock cookies %}
+{% endblock demo_css %}
 
 {% block content %}
+{% url 'ycms:demo-subpage' slug='baugenossenschaft-plattling' subpage='kontakt' as bgp_kontakt_url %}
+{% url 'ycms:demo-subpage' slug='baugenossenschaft-plattling' subpage='aktuelles' as bgp_aktuelles_url %}
 
 <!-- HERO -->
 <section class="bgp-hero relative overflow-hidden px-4 pb-24 pt-16 text-white sm:pt-20 lg:pb-32">
@@ -123,29 +127,32 @@
         Dividende von aktuell 3&nbsp;% auf Ihre Geschäftsanteile.
       </p>
       <div class="flex flex-wrap gap-4">
-        <a href="#vermietung" class="bgp-btn-yellow inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
+        <a href="#vermietung" class="bgp-btn-yellow bgp-focus inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
           <i class="bi bi-house-heart"></i> Wohnungsangebote
         </a>
-        <a href="#kontakt" class="inline-flex items-center gap-2 rounded-xl border border-white/40 px-7 py-4 text-base font-bold text-white transition hover:-translate-y-1 hover:bg-white/10">
+        <a href="{{ bgp_kontakt_url }}" class="bgp-focus inline-flex items-center gap-2 rounded-xl border border-white/40 px-7 py-4 text-base font-bold text-white transition hover:-translate-y-1 hover:bg-white/10">
           Kontakt aufnehmen <i class="bi bi-arrow-right"></i>
         </a>
       </div>
     </div>
 
-    <div class="relative" data-aos="fade-left">
-      <figure class="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
-        <img src="{% static 'images/demos/bgp/gebaeude.jpg' %}" alt="Büro- und Geschäftsgebäude der Baugenossenschaft Plattling eG" class="h-full w-full object-cover" />
-        <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 pb-5 pt-14 text-sm font-medium text-white/90">
-          Unser Büro- und Geschäftsgebäude in der Schillerstraße 6b
-        </figcaption>
-      </figure>
-      <div class="absolute -left-4 -top-4 hidden rounded-2xl bg-white px-5 py-3 shadow-xl sm:block">
-        <p class="bgp-text-navy-dark text-2xl font-bold leading-none">100+</p>
-        <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Jahre Erfahrung</p>
-      </div>
-      <div class="bgp-bg-yellow absolute -bottom-4 -right-2 hidden rounded-2xl px-5 py-3 shadow-xl sm:block">
-        <p class="bgp-text-navy-dark text-2xl font-bold leading-none">3&nbsp;%</p>
-        <p class="bgp-text-navy-dark mt-1 text-xs font-semibold uppercase tracking-wider">Dividende 2025</p>
+    <div class="bgp-tilt-scene relative" data-aos="fade-left">
+      <div id="bgpHeroVisual" class="bgp-tilt relative">
+        <figure class="bgp-tilt-figure relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
+          <img src="{% static 'images/demos/bgp/gebaeude.jpg' %}" alt="Büro- und Geschäftsgebäude der Baugenossenschaft Plattling eG" class="h-full w-full object-cover" />
+          <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 pb-5 pt-14 text-sm font-medium text-white/90">
+            Unser Büro- und Geschäftsgebäude in der Schillerstraße 6b
+          </figcaption>
+          <span id="bgpHeroGlare" class="bgp-tilt-glare" aria-hidden="true"></span>
+        </figure>
+        <div class="bgp-tilt-badge absolute -left-4 -top-4 hidden rounded-2xl bg-white px-5 py-3 shadow-xl sm:block">
+          <p class="bgp-text-navy-dark text-2xl font-bold leading-none">100+</p>
+          <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Jahre Erfahrung</p>
+        </div>
+        <div class="bgp-tilt-badge bgp-bg-yellow absolute -bottom-4 -right-2 hidden rounded-2xl px-5 py-3 shadow-xl sm:block">
+          <p class="bgp-text-navy-dark text-2xl font-bold leading-none">3&nbsp;%</p>
+          <p class="bgp-text-navy-dark mt-1 text-xs font-semibold uppercase tracking-wider">Dividende 2025</p>
+        </div>
       </div>
     </div>
   </div>
@@ -242,26 +249,32 @@
     </div>
 
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2" data-aos="fade-left">
-      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7">
-        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
+      <div class="bgp-feature-card rounded-2xl p-7">
+        <i class="bi bi-building bgp-feature-watermark" aria-hidden="true"></i>
+        <span class="bgp-feature-icon bgp-bg-navy relative inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
           <i class="bi bi-building text-xl"></i>
         </span>
-        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Wir über uns</h3>
-        <p class="text-sm leading-6 text-gray-600">Gepflegte Wohngebäude an zentralen und ruhigen Lagen in Plattling - mit Weitblick verwaltet und regelmäßig modernisiert.</p>
+        <h3 class="bgp-text-navy-dark relative mb-2 mt-4 text-lg font-bold">Wir über uns</h3>
+        <p class="relative text-sm leading-6 text-gray-600">Gepflegte Wohngebäude an zentralen und ruhigen Lagen in Plattling - mit Weitblick verwaltet und regelmäßig modernisiert.</p>
       </div>
-      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7">
-        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
+      <div class="bgp-feature-card rounded-2xl p-7">
+        <i class="bi bi-diagram-3 bgp-feature-watermark" aria-hidden="true"></i>
+        <span class="bgp-feature-icon bgp-bg-navy relative inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
           <i class="bi bi-diagram-3 text-xl"></i>
         </span>
-        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Organe</h3>
-        <p class="text-sm leading-6 text-gray-600">Vorstand und Aufsichtsrat arbeiten ehrenamtlich und transparent - gewählt von den Mitgliedern der Genossenschaft.</p>
+        <h3 class="bgp-text-navy-dark relative mb-2 mt-4 text-lg font-bold">Organe</h3>
+        <p class="relative text-sm leading-6 text-gray-600">Vorstand und Aufsichtsrat arbeiten ehrenamtlich und transparent - gewählt von den Mitgliedern der Genossenschaft.</p>
       </div>
-      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7 sm:col-span-2">
-        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
-          <i class="bi bi-hourglass-split text-xl"></i>
-        </span>
-        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Historie seit 1921</h3>
-        <p class="text-sm leading-6 text-gray-600">Über ein Jahrhundert Genossenschaftsgeschichte in Plattling: vom Wiederaufbau bis zur laufenden Modernisierung unserer Objekte. Mitglieder wie das Bezirksklinikum Mainkofen halten uns seit über 70 Jahren die Treue.</p>
+      <div class="bgp-feature-card bgp-feature-card-dark rounded-2xl p-7 sm:col-span-2">
+        <i class="bi bi-hourglass-split bgp-feature-watermark" aria-hidden="true"></i>
+        <div class="relative flex flex-wrap items-center gap-4">
+          <span class="bgp-feature-icon bgp-bg-yellow inline-flex h-12 w-12 items-center justify-center rounded-xl">
+            <i class="bi bi-hourglass-split bgp-text-navy-dark text-xl"></i>
+          </span>
+          <span class="bgp-text-yellow rounded-full border border-white/20 px-3 py-1 text-xs font-bold uppercase tracking-widest">seit 1921</span>
+        </div>
+        <h3 class="relative mb-2 mt-4 text-lg font-bold text-white">Historie seit 1921</h3>
+        <p class="bgp-text-ice relative text-sm leading-6">Über ein Jahrhundert Genossenschaftsgeschichte in Plattling: vom Wiederaufbau bis zur laufenden Modernisierung unserer Objekte. Mitglieder wie das Bezirksklinikum Mainkofen halten uns seit über 70 Jahren die Treue.</p>
       </div>
     </div>
   </div>
@@ -312,7 +325,7 @@
     </div>
 
     <div class="mt-10 text-center" data-aos="fade-up">
-      <a href="#kontakt" class="bgp-btn-navy inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-lg transition-transform duration-300 hover:-translate-y-1">
+      <a href="{{ bgp_kontakt_url }}" class="bgp-btn-navy bgp-focus inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-lg transition-transform duration-300 hover:-translate-y-1">
         Verfügbare Objekte erfragen <i class="bi bi-arrow-right"></i>
       </a>
     </div>
@@ -327,56 +340,97 @@
         <p class="bgp-text-navy mb-4 text-sm font-semibold uppercase tracking-widest">Aktuelles</p>
         <h2 class="bgp-text-navy-dark text-3xl font-bold tracking-tight sm:text-4xl">Neuigkeiten aus der Genossenschaft</h2>
       </div>
-      <p class="text-sm text-gray-500">Ältere Meldungen finden Sie in unserem Meldungsarchiv.</p>
+      <a href="{{ bgp_aktuelles_url }}"
+         class="bgp-text-navy bgp-focus group inline-flex items-center gap-2 self-start rounded-xl border-2 border-gray-200 px-5 py-3 text-sm font-bold transition hover:border-gray-300 hover:bg-gray-50 sm:self-auto">
+        <i class="bi bi-newspaper"></i> Weitere Neuigkeiten
+        <i class="bi bi-arrow-right transition-transform duration-200 group-hover:translate-x-1"></i>
+      </a>
     </div>
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" data-aos="fade-up" data-aos-delay="0">
+      <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+               data-news role="button" tabindex="0" aria-label="Meldung öffnen: Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht"
+               data-aos="fade-up" data-aos-delay="0">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Stellenangebot</span>
-          <span class="bgp-text-yellow text-xs font-bold">09.07.2026</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Stellenangebot</span>
+          <span class="bgp-text-yellow text-xs font-bold" data-news-date>09.07.2026</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Wir suchen Verstärkung für unsere Verwaltung. Alle Details finden Sie in der Stellenbeschreibung - bei Fragen stehen wir gerne zur Verfügung.</p>
-          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+          <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
             <i class="bi bi-file-earmark-pdf"></i> Stellenanzeige ansehen
           </span>
         </div>
+        <template data-news-body>
+          <p>Zur Verstärkung unserer Verwaltung suchen wir zum nächstmöglichen Zeitpunkt eine <strong>kaufmännische Mitarbeiterin oder einen kaufmännischen Mitarbeiter (m/w/d) in Teilzeit</strong> mit 20 bis 25 Wochenstunden.</p>
+          <p><strong>Ihre Aufgaben:</strong></p>
+          <ul>
+            <li>Betreuung unserer Mitglieder und Mieter am Telefon und im Büro</li>
+            <li>Vorbereitung von Mietverträgen und Betriebskostenabrechnungen</li>
+            <li>Allgemeine Korrespondenz und Verwaltung unserer Objektunterlagen</li>
+            <li>Terminkoordination mit Handwerkern und Hausmeisterdienst</li>
+          </ul>
+          <p><strong>Das bringen Sie mit:</strong> eine abgeschlossene kaufmännische Ausbildung, einen freundlichen und verbindlichen Umgang mit Menschen sowie sichere Kenntnisse in den gängigen Office-Programmen. Erfahrung in der Wohnungswirtschaft ist willkommen, aber keine Bedingung.</p>
+          <p><strong>Wir bieten:</strong> einen sicheren Arbeitsplatz in einer über 100 Jahre alten Genossenschaft, geregelte Arbeitszeiten, eine leistungsgerechte Vergütung und ein kleines, familiäres Team.</p>
+          <p>Ihre Bewerbung senden Sie bitte per E-Mail an info@baugenossenschaft-plattling.de oder an Baugenossenschaft Plattling eG, Schillerstr. 6b, 94447 Plattling.</p>
+        </template>
       </article>
 
-      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" data-aos="fade-up" data-aos-delay="100">
+      <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+               data-news role="button" tabindex="0" aria-label="Meldung öffnen: Mitgliederversammlung 2026"
+               data-aos="fade-up" data-aos-delay="100">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Versammlung</span>
-          <span class="bgp-text-yellow text-xs font-bold">01.07.2026</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Versammlung</span>
+          <span class="bgp-text-yellow text-xs font-bold" data-news-date>01.07.2026</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Mitgliederversammlung 2026</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>Mitgliederversammlung 2026</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Reges Interesse im "Hotel Zur Isar": Sebastian Lallinger (Vorstand) und Bürgermeister Hans Schmalhofer (Aufsichtsrat) wurden für weitere drei Jahre bestätigt. Die Dividende bleibt bei 3&nbsp;%.</p>
-          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
-            <i class="bi bi-arrow-right"></i> Mehr erfahren
+          <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+            Mehr erfahren <i class="bi bi-arrow-right"></i>
           </span>
         </div>
+        <template data-news-body>
+          <p>Bei reger Beteiligung fand unsere diesjährige Mitgliederversammlung im „Hotel Zur Isar" statt. Vorstand und Aufsichtsrat berichteten über ein wirtschaftlich stabiles Geschäftsjahr.</p>
+          <p><strong>Die wichtigsten Beschlüsse:</strong></p>
+          <ul>
+            <li>Sebastian Lallinger wurde als Vorstand für weitere drei Jahre bestätigt.</li>
+            <li>Bürgermeister Hans Schmalhofer bleibt Mitglied des Aufsichtsrats.</li>
+            <li>Die Dividende auf die Geschäftsanteile bleibt unverändert bei 3&nbsp;%.</li>
+            <li>Der Jahresabschluss wurde einstimmig festgestellt, Vorstand und Aufsichtsrat wurden entlastet.</li>
+          </ul>
+          <p>Im Anschluss stellte der Vorstand die geplanten Modernisierungsmaßnahmen für das kommende Jahr vor. Schwerpunkt bleibt die energetische Sanierung unserer älteren Wohnanlagen - mit dem klaren Ziel, die Nebenkosten für unsere Mitglieder dauerhaft stabil zu halten.</p>
+          <p>Wir bedanken uns bei allen Mitgliedern für das entgegengebrachte Vertrauen und die lebhafte Diskussion.</p>
+        </template>
       </article>
 
-      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="200">
+      <article class="bgp-card-hover bgp-news-card flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:col-span-2 lg:col-span-1"
+               data-news role="button" tabindex="0" aria-label="Meldung öffnen: 25 Jahre im Dienst: Norbert Kirchberger"
+               data-aos="fade-up" data-aos-delay="200">
         <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Jubiläum</span>
-          <span class="bgp-text-yellow text-xs font-bold">01.07.2025</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80" data-news-kicker>Jubiläum</span>
+          <span class="bgp-text-yellow text-xs font-bold" data-news-date>01.07.2025</span>
         </div>
         <div class="flex flex-1 flex-col p-6">
-          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">25 Jahre im Dienst: Norbert Kirchberger</h3>
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug" data-news-title>25 Jahre im Dienst: Norbert Kirchberger</h3>
           <p class="flex-1 text-sm leading-6 text-gray-600">Wir gratulieren unserem Hausmeister herzlich zum 25-jährigen Dienstjubiläum! Mit Kompetenz und seiner freundlichen Art ist er bei Mietern wie Kollegen gleichermaßen geschätzt.</p>
-          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
-            <i class="bi bi-arrow-right"></i> Mehr erfahren
+          <span class="bgp-news-cta bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+            Mehr erfahren <i class="bi bi-arrow-right"></i>
           </span>
         </div>
+        <template data-news-body>
+          <p>Seit einem Vierteljahrhundert sorgt Norbert Kirchberger dafür, dass in unseren Wohnanlagen alles läuft: von der Grünpflege über kleine Reparaturen bis zum Winterdienst.</p>
+          <p>Vorstand und Aufsichtsrat gratulierten ihm im Rahmen einer kleinen Feier im Büro in der Schillerstraße und bedankten sich für 25 Jahre <strong>zuverlässige und umsichtige Arbeit</strong>.</p>
+          <p>„Wenn irgendwo etwas klemmt, ruft man den Norbert - und dann passt das", brachte es ein langjähriges Mitglied auf den Punkt. Mit seiner ruhigen, freundlichen Art ist er bei Mietern und Kollegen gleichermaßen geschätzt.</p>
+          <p>Wir sagen Danke und freuen uns auf die weitere Zusammenarbeit!</p>
+        </template>
       </article>
     </div>
   </div>
 </section>
 
-<!-- KONTAKT -->
+<!-- KONTAKT (Teaser, Detail auf der Kontaktseite) -->
 <section id="kontakt" class="bgp-bg-navy-deep px-4 py-20 text-white lg:py-28">
   <div class="mx-auto max-w-6xl">
     <div class="mx-auto mb-14 max-w-2xl text-center" data-aos="fade-up">
@@ -422,54 +476,67 @@
       </div>
     </div>
 
-    <div class="mt-14 border-t border-white/10 pt-10 text-center" data-aos="fade-up">
-      <p class="bgp-text-ice mb-5 text-sm">Sie haben Fragen oder möchten Mitglied werden?</p>
-      <a href="tel:0993189007300" class="bgp-btn-yellow inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
-        <i class="bi bi-telephone-fill"></i> 09931 890073-0
-      </a>
+    <div class="mt-14 flex flex-col items-center gap-5 border-t border-white/10 pt-10 text-center" data-aos="fade-up">
+      <p class="bgp-text-ice text-sm">Sie haben Fragen oder möchten Mitglied werden?</p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="{{ bgp_kontakt_url }}" class="bgp-btn-yellow bgp-focus inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
+          <i class="bi bi-envelope-paper"></i> Zum Kontaktformular
+        </a>
+        <a href="tel:0993189007300" class="bgp-focus inline-flex items-center gap-2 rounded-xl border border-white/40 px-8 py-4 text-base font-bold text-white transition hover:-translate-y-1 hover:bg-white/10">
+          <i class="bi bi-telephone-fill"></i> 09931 890073-0
+        </a>
+      </div>
     </div>
   </div>
 </section>
 
 {% endblock content %}
 
-{% block footer %}
-<footer class="bgp-bg-navy-deep border-t border-white/10 px-4 py-10 text-sm text-white/60">
-  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-    <div class="flex items-center gap-3">
-      <img src="{% static 'images/demos/bgp/logo-icon.png' %}" alt="" class="h-9 w-auto" />
-      <div>
-        <p class="font-bold text-white">Baugenossenschaft Plattling eG</p>
-        <p class="text-xs">Schillerstr. 6b · 94447 Plattling · seit 1921</p>
-      </div>
-    </div>
-    <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2" aria-label="Rechtliches">
-      <span class="cursor-default hover:text-white">Kontakt</span>
-      <span class="cursor-default hover:text-white">Impressum</span>
-      <span class="cursor-default hover:text-white">Satzung</span>
-      <span class="cursor-default hover:text-white">Datenschutz</span>
-    </nav>
-  </div>
-</footer>
-{% endblock footer %}
-
-{% block javascriptend %}
-<script src="{% static 'js/aos.js' %}"></script>
+{% block demo_js %}
 <script>
-  AOS.init({ duration: 700, once: true, easing: 'ease-out', disable: 'phone' });
+  /* Hero: 3D-Neigung in Richtung der Ecke, ueber der die Maus steht */
+  (function () {
+    var visual = document.getElementById('bgpHeroVisual');
+    var glare = document.getElementById('bgpHeroGlare');
+    if (!visual) { return; }
 
-  var bgpToggle = document.getElementById('bgpMenuToggle');
-  var bgpMenu = document.getElementById('bgpMobileMenu');
-  bgpToggle.addEventListener('click', function () {
-    var open = !bgpMenu.classList.contains('hidden');
-    bgpMenu.classList.toggle('hidden');
-    bgpToggle.setAttribute('aria-expanded', String(!open));
-  });
-  bgpMenu.querySelectorAll('a').forEach(function (link) {
-    link.addEventListener('click', function () {
-      bgpMenu.classList.add('hidden');
-      bgpToggle.setAttribute('aria-expanded', 'false');
+    var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!finePointer || reducedMotion) { return; }
+
+    var MAX_TILT = 9;
+    var frame = null;
+
+    visual.addEventListener('pointermove', function (event) {
+      if (frame) { return; }
+      frame = window.requestAnimationFrame(function () {
+        frame = null;
+        var rect = visual.getBoundingClientRect();
+        var px = (event.clientX - rect.left) / rect.width;
+        var py = (event.clientY - rect.top) / rect.height;
+        var x = Math.max(-1, Math.min(1, (px - 0.5) * 2));
+        var y = Math.max(-1, Math.min(1, (py - 0.5) * 2));
+
+        visual.classList.add('is-tilting');
+        visual.style.transform =
+          'rotateY(' + (x * MAX_TILT).toFixed(2) + 'deg) ' +
+          'rotateX(' + (-y * MAX_TILT).toFixed(2) + 'deg) ' +
+          'scale(1.02)';
+        glare.style.background =
+          'radial-gradient(circle at ' + (px * 100).toFixed(1) + '% ' + (py * 100).toFixed(1) + '%, ' +
+          'rgba(255,255,255,.5), rgba(255,255,255,0) 55%)';
+      });
     });
-  });
+
+    visual.addEventListener('pointerleave', function () {
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+        frame = null;
+      }
+      visual.classList.remove('is-tilting');
+      visual.style.transform = '';
+    });
+  })();
 </script>
-{% endblock javascriptend %}
+{% include "pages/demos/_bgp_news_modal.html" %}
+{% endblock demo_js %}

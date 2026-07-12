@@ -673,8 +673,16 @@ body {
   bottom: -4rem;
 }
 
+.-bottom-4 {
+  bottom: -1rem;
+}
+
 .-left-10 {
   left: -2.5rem;
+}
+
+.-left-4 {
+  left: -1rem;
 }
 
 .-right-1 {
@@ -723,6 +731,10 @@ body {
 
 .-top-3\.5 {
   top: -0.875rem;
+}
+
+.-top-4 {
+  top: -1rem;
 }
 
 .bottom-0 {
@@ -863,18 +875,6 @@ body {
 
 .top-full {
   top: 100%;
-}
-
-.-bottom-4 {
-  bottom: -1rem;
-}
-
-.-left-4 {
-  left: -1rem;
-}
-
-.-top-4 {
-  top: -1rem;
 }
 
 .isolate {
@@ -1096,6 +1096,10 @@ body {
 
 .-mt-10 {
   margin-top: -2.5rem;
+}
+
+.-mt-12 {
+  margin-top: -3rem;
 }
 
 .-mt-2 {
@@ -1328,10 +1332,6 @@ body {
 
 .mt-auto {
   margin-top: auto;
-}
-
-.-mt-12 {
-  margin-top: -3rem;
 }
 
 .line-clamp-2 {
@@ -2166,6 +2166,10 @@ body {
   cursor: pointer;
 }
 
+.cursor-wait {
+  cursor: wait;
+}
+
 .select-none {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -2887,6 +2891,10 @@ body {
   border-color: rgb(255 255 255 / 0.1);
 }
 
+.border-white\/20 {
+  border-color: rgb(255 255 255 / 0.2);
+}
+
 .border-white\/30 {
   border-color: rgb(255 255 255 / 0.3);
 }
@@ -3372,6 +3380,10 @@ body {
   background-color: rgb(255 255 255 / 0.4);
 }
 
+.bg-white\/5 {
+  background-color: rgb(255 255 255 / 0.05);
+}
+
 .bg-white\/80 {
   background-color: rgb(255 255 255 / 0.8);
 }
@@ -3387,10 +3399,6 @@ body {
 .bg-yellow-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(250 204 21 / var(--tw-bg-opacity));
-}
-
-.bg-white\/5 {
-  background-color: rgb(255 255 255 / 0.05);
 }
 
 .bg-opacity-60 {
@@ -3428,6 +3436,12 @@ body {
 .from-amber-900 {
   --tw-gradient-from: #78350f var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(120 53 15 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-black\/70 {
+  --tw-gradient-from: rgb(0 0 0 / 0.7) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -3524,12 +3538,6 @@ body {
 .from-white\/95 {
   --tw-gradient-from: rgb(255 255 255 / 0.95) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.from-black\/70 {
-  --tw-gradient-from: rgb(0 0 0 / 0.7) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -3702,6 +3710,11 @@ body {
   padding: 2rem;
 }
 
+.px-0 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -3710,6 +3723,11 @@ body {
 .px-1\.5 {
   padding-left: 0.375rem;
   padding-right: 0.375rem;
+}
+
+.px-12 {
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 
 .px-2 {
@@ -3745,6 +3763,11 @@ body {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-7 {
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
 }
 
 .px-8 {
@@ -3842,6 +3865,11 @@ body {
   padding-bottom: 1.5rem;
 }
 
+.py-7 {
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
+
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -3850,16 +3878,6 @@ body {
 .py-\[100px\] {
   padding-top: 100px;
   padding-bottom: 100px;
-}
-
-.px-0 {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.px-7 {
-  padding-left: 1.75rem;
-  padding-right: 1.75rem;
 }
 
 .pb-0 {
@@ -3888,6 +3906,10 @@ body {
 
 .pb-16 {
   padding-bottom: 4rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
 }
 
 .pb-20 {
@@ -3920,6 +3942,10 @@ body {
 
 .pb-6 {
   padding-bottom: 1.5rem;
+}
+
+.pb-7 {
+  padding-bottom: 1.75rem;
 }
 
 .pb-8 {
@@ -4056,6 +4082,10 @@ body {
 
 .pt-8 {
   padding-top: 2rem;
+}
+
+.pt-9 {
+  padding-top: 2.25rem;
 }
 
 .pt-\[3\.25rem\] {
@@ -4718,6 +4748,10 @@ body {
   color: rgb(255 255 255 / 0.4);
 }
 
+.text-white\/50 {
+  color: rgb(255 255 255 / 0.5);
+}
+
 .text-white\/60 {
   color: rgb(255 255 255 / 0.6);
 }
@@ -4726,21 +4760,17 @@ body {
   color: rgb(255 255 255 / 0.7);
 }
 
-.text-yellow-600 {
-  --tw-text-opacity: 1;
-  color: rgb(202 138 4 / var(--tw-text-opacity));
-}
-
-.text-white\/50 {
-  color: rgb(255 255 255 / 0.5);
-}
-
 .text-white\/80 {
   color: rgb(255 255 255 / 0.8);
 }
 
 .text-white\/90 {
   color: rgb(255 255 255 / 0.9);
+}
+
+.text-yellow-600 {
+  --tw-text-opacity: 1;
+  color: rgb(202 138 4 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -4813,6 +4843,10 @@ body {
 
 .opacity-75 {
   opacity: 0.75;
+}
+
+.opacity-80 {
+  opacity: 0.8;
 }
 
 .opacity-\[0\.15\] {
@@ -6607,6 +6641,11 @@ body {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.group:hover .group-hover\:translate-x-1 {
+  --tw-translate-x: 0.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .group:hover .group-hover\:scale-105 {
   --tw-scale-x: 1.05;
   --tw-scale-y: 1.05;
@@ -7257,6 +7296,10 @@ body {
     padding: 2rem;
   }
 
+  .sm\:p-9 {
+    padding: 2.25rem;
+  }
+
   .sm\:px-10 {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
@@ -7285,6 +7328,11 @@ body {
   .sm\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .sm\:px-9 {
+    padding-left: 2.25rem;
+    padding-right: 2.25rem;
   }
 
   .sm\:py-2 {
@@ -7395,6 +7443,11 @@ body {
     font-size: 9px;
   }
 
+  .sm\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -7408,11 +7461,6 @@ body {
   .sm\:text-xs {
     font-size: 0.75rem;
     line-height: 1rem;
-  }
-
-  .sm\:text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
   }
 
   .sm\:leading-none {
@@ -8096,6 +8144,11 @@ body {
     padding-bottom: 5rem;
   }
 
+  .lg\:py-24 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
   .lg\:py-28 {
     padding-top: 7rem;
     padding-bottom: 7rem;
@@ -8111,6 +8164,10 @@ body {
 
   .lg\:pb-28 {
     padding-bottom: 7rem;
+  }
+
+  .lg\:pb-32 {
+    padding-bottom: 8rem;
   }
 
   .lg\:pb-48 {
@@ -8141,6 +8198,10 @@ body {
     padding-top: 4rem;
   }
 
+  .lg\:pt-20 {
+    padding-top: 5rem;
+  }
+
   .lg\:pt-24 {
     padding-top: 6rem;
   }
@@ -8159,10 +8220,6 @@ body {
 
   .lg\:pt-\[6\.25rem\] {
     padding-top: 6.25rem;
-  }
-
-  .lg\:pb-32 {
-    padding-bottom: 8rem;
   }
 
   .lg\:text-left {

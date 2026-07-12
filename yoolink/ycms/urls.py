@@ -106,6 +106,7 @@ urlpatterns = [
     # Kunden-Demos
     path("demos/", views.cms_demos_view, name="demos-view"),
     path("demos/<slug:slug>/", views.cms_demo_detail, name="demo-detail"),
+    path("demos/<slug:slug>/<slug:subpage>/", views.cms_demo_subpage, name="demo-subpage"),
 
     # Utils
     path("set-language/<str:lang_code>/", views.cms_set_language, name="set-language"),
