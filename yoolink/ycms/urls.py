@@ -103,6 +103,10 @@ urlpatterns = [
     path("team/<int:id>/delete/", views.delete_team_member, name="delete-team-member"),
     path("team/reorder/", views.reorder_team_members, name="team-reorder"),
 
+    # Kunden-Demos
+    path("demos/", views.cms_demos_view, name="demos-view"),
+    path("demos/<slug:slug>/", views.cms_demo_detail, name="demo-detail"),
+
     # Utils
     path("set-language/<str:lang_code>/", views.cms_set_language, name="set-language"),
 

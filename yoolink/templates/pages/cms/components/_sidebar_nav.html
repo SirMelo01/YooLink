@@ -62,6 +62,11 @@ Pure <a> links + group labels, no IDs, so it can be included twice safely.
     </div>
 
     <div class="flex flex-col gap-1">
+        <p class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Demos</p>
+        {% include "pages/cms/components/_nav_item.html" with url="/cms/demos/" match="/cms/demos" icon="bi-easel" label="Kunden-Demos" %}
+    </div>
+
+    <div class="flex flex-col gap-1">
         <p class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">System</p>
         {% if 'notifications.view' in cms_permissions %}
         {% include "pages/cms/components/_nav_item.html" with url="/cms/notifications/" match="/cms/notifications" icon="bi-bell" label="Benachrichtigungen" badge=nav_unread_notifications_count %}

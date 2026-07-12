@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+{% load compress static %}
+
+{% block title %}Baugenossenschaft Plattling eG | Sicher wohnen in Plattling - seit 1921{% endblock title %}
+{% block meta_description %}Die Baugenossenschaft Plattling eG bietet seit 1921 sicheren und bezahlbaren Wohnraum in Plattling. Als Mitglied wohnen Sie nicht nur zur Miete - Sie sind Teil einer starken Gemeinschaft.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block css %}
+{% compress css %}
+<link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+<style>
+  /* Markenfarben der Baugenossenschaft Plattling (aus der Bestandsseite):
+     Schieferblau #4B6671, Signalgelb #FFDC16, helles Eisblau #E3F0F4 */
+  .bgp-bg-navy { background-color: #4B6671; }
+  .bgp-bg-navy-dark { background-color: #3A505A; }
+  .bgp-bg-navy-deep { background-color: #2E434C; }
+  .bgp-bg-ice { background-color: #EEF5F8; }
+  .bgp-bg-ice-deep { background-color: #E3F0F4; }
+  .bgp-bg-yellow { background-color: #FFDC16; }
+  .bgp-text-navy { color: #4B6671; }
+  .bgp-text-navy-dark { color: #2E434C; }
+  .bgp-text-yellow { color: #FFDC16; }
+  .bgp-text-ice { color: #DCE9EF; }
+  .bgp-border-navy { border-color: #4B6671; }
+  .bgp-border-yellow { border-color: #FFDC16; }
+  .bgp-ring-ice { --tw-ring-color: #C9DEE6; }
+
+  .bgp-btn-yellow {
+    background-color: #FFDC16;
+    color: #2E434C;
+  }
+  .bgp-btn-yellow:hover { background-color: #F2CE00; }
+
+  .bgp-btn-navy {
+    background-color: #4B6671;
+    color: #ffffff;
+  }
+  .bgp-btn-navy:hover { background-color: #3A505A; }
+
+  .bgp-hero {
+    background: linear-gradient(160deg, #2E434C 0%, #4B6671 55%, #5C7A87 100%);
+  }
+  .bgp-hero-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.45) 1px, transparent 0);
+    background-size: 26px 26px;
+    pointer-events: none;
+  }
+
+  /* Gelbe Akzentlinie - Zitat der gelben Menueleiste der alten Website */
+  .bgp-accent-bar {
+    height: 5px;
+    background: linear-gradient(90deg, rgba(255,220,22,0.35) 0%, #FFDC16 50%, rgba(255,220,22,0.35) 100%);
+  }
+
+  .bgp-card-hover { transition: transform .3s ease, box-shadow .3s ease; }
+  .bgp-card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -18px rgba(46,67,76,0.35); }
+
+  .bgp-nav-link { color: #DCE9EF; transition: color .2s ease; }
+  .bgp-nav-link:hover { color: #FFDC16; }
+</style>
+{% endcompress css %}
+{% endblock css %}
+
+{# Eigenstaendige Demo-Seite: komplett eigene Navigation und Footer im Look der Baugenossenschaft. #}
+{% block navbar %}
+<header class="bgp-bg-navy-deep sticky top-0 z-50 shadow-lg">
+  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <a href="#" class="flex min-w-0 items-center gap-3" aria-label="Baugenossenschaft Plattling eG - Startseite">
+      <img src="{% static 'images/demos/bgp/logo-icon.png' %}" alt="Logo Baugenossenschaft Plattling eG" class="h-11 w-auto flex-shrink-0" />
+      <span class="flex min-w-0 flex-col leading-tight">
+        <span class="truncate text-base font-bold tracking-tight text-white sm:text-lg">Baugenossenschaft Plattling <span class="bgp-text-yellow">eG</span></span>
+        <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/50">seit 1921</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Hauptnavigation">
+      <a href="#genossenschaft" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Unsere Genossenschaft</a>
+      <a href="#vermietung" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Vermietung</a>
+      <a href="#aktuelles" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Aktuelles</a>
+      <a href="#kontakt" class="bgp-nav-link rounded-lg px-3 py-2 text-sm font-medium">Kontakt</a>
+      <a href="tel:0993189007300" class="bgp-btn-yellow ml-3 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold shadow-sm transition">
+        <i class="bi bi-telephone-fill"></i> 09931 890073-0
+      </a>
+    </nav>
+
+    <button id="bgpMenuToggle" class="rounded-lg p-2 text-white hover:bg-white/10 lg:hidden" aria-expanded="false" aria-label="Menü öffnen">
+      <i class="bi bi-list text-2xl leading-none"></i>
+    </button>
+  </div>
+
+  <div id="bgpMobileMenu" class="hidden border-t border-white/10 px-4 pb-4 pt-2 lg:hidden">
+    <a href="#genossenschaft" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Unsere Genossenschaft</a>
+    <a href="#vermietung" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Vermietung</a>
+    <a href="#aktuelles" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Aktuelles</a>
+    <a href="#kontakt" class="bgp-nav-link block rounded-lg px-3 py-3 text-base font-medium">Kontakt</a>
+    <a href="tel:0993189007300" class="bgp-btn-yellow mt-2 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold">
+      <i class="bi bi-telephone-fill"></i> 09931 890073-0
+    </a>
+  </div>
+  <div class="bgp-accent-bar"></div>
+</header>
+{% endblock navbar %}
+{% block cookies %}{% endblock cookies %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="bgp-hero relative overflow-hidden px-4 pb-24 pt-16 text-white sm:pt-20 lg:pb-32">
+  <div class="bgp-hero-pattern" aria-hidden="true"></div>
+  <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-0 sm:px-4 lg:grid-cols-2">
+    <div data-aos="fade-right">
+      <h1 class="mb-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl xl:text-6xl">
+        Gemeinsam bauen.<br />
+        Sicher wohnen.<br />
+        <span class="bgp-text-yellow">Seit 1921 in Plattling.</span>
+      </h1>
+      <p class="mb-8 max-w-xl text-base leading-7 text-white/80 md:text-lg">
+        Als Genossenschaft bieten wir unseren Mitgliedern bezahlbaren, sicheren Wohnraum in Plattling.
+        Werden Sie Teil einer starken Gemeinschaft - mit Mitspracherecht, fairen Mieten und einer
+        Dividende von aktuell 3&nbsp;% auf Ihre Geschäftsanteile.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#vermietung" class="bgp-btn-yellow inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
+          <i class="bi bi-house-heart"></i> Wohnungsangebote
+        </a>
+        <a href="#kontakt" class="inline-flex items-center gap-2 rounded-xl border border-white/40 px-7 py-4 text-base font-bold text-white transition hover:-translate-y-1 hover:bg-white/10">
+          Kontakt aufnehmen <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="relative" data-aos="fade-left">
+      <figure class="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
+        <img src="{% static 'images/demos/bgp/gebaeude.jpg' %}" alt="Büro- und Geschäftsgebäude der Baugenossenschaft Plattling eG" class="h-full w-full object-cover" />
+        <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 pb-5 pt-14 text-sm font-medium text-white/90">
+          Unser Büro- und Geschäftsgebäude in der Schillerstraße 6b
+        </figcaption>
+      </figure>
+      <div class="absolute -left-4 -top-4 hidden rounded-2xl bg-white px-5 py-3 shadow-xl sm:block">
+        <p class="bgp-text-navy-dark text-2xl font-bold leading-none">100+</p>
+        <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Jahre Erfahrung</p>
+      </div>
+      <div class="bgp-bg-yellow absolute -bottom-4 -right-2 hidden rounded-2xl px-5 py-3 shadow-xl sm:block">
+        <p class="bgp-text-navy-dark text-2xl font-bold leading-none">3&nbsp;%</p>
+        <p class="bgp-text-navy-dark mt-1 text-xs font-semibold uppercase tracking-wider">Dividende 2025</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAKTEN-LEISTE -->
+<section class="bg-white px-4">
+  <div class="mx-auto -mt-12 max-w-6xl">
+    <div class="bgp-ring-ice relative z-10 grid grid-cols-2 gap-2 rounded-2xl bg-white p-4 shadow-2xl ring-1 sm:p-6 lg:grid-cols-4" data-aos="fade-up">
+      <div class="flex items-center gap-4 px-3 py-2">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
+          <i class="bi bi-calendar-check text-xl"></i>
+        </span>
+        <div>
+          <p class="bgp-text-navy-dark text-lg font-bold leading-tight">1921</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">gegründet</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 px-3 py-2">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
+          <i class="bi bi-graph-up-arrow text-xl"></i>
+        </span>
+        <div>
+          <p class="bgp-text-navy-dark text-lg font-bold leading-tight">3&nbsp;% Dividende</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">stabil seit Jahren</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 px-3 py-2">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
+          <i class="bi bi-people text-xl"></i>
+        </span>
+        <div>
+          <p class="bgp-text-navy-dark text-lg font-bold leading-tight">Mitglieder</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">statt nur Mieter</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 px-3 py-2">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
+          <i class="bi bi-clock text-xl"></i>
+        </span>
+        <div>
+          <p class="bgp-text-navy-dark text-lg font-bold leading-tight">Mo / Mi / Fr</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">8:00 - 12:00 Uhr</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNSERE GENOSSENSCHAFT -->
+<section id="genossenschaft" class="bg-white px-4 py-20 lg:py-28">
+  <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+    <div data-aos="fade-right">
+      <p class="bgp-text-navy mb-4 text-sm font-semibold uppercase tracking-widest">Unsere Genossenschaft</p>
+      <h2 class="bgp-text-navy-dark mb-6 text-3xl font-bold tracking-tight sm:text-4xl sm:leading-tight">
+        Mehr als nur ein Vermieter
+      </h2>
+      <p class="mb-4 text-base leading-7 text-gray-600 md:text-lg">
+        Die Baugenossenschaft Plattling eG steht seit über 100 Jahren für <strong class="text-gray-900">sicheres,
+        bezahlbares Wohnen</strong> in der Region. Anders als bei einem klassischen Vermieter sind unsere
+        Mieter zugleich Mitglieder und Miteigentümer der Genossenschaft.
+      </p>
+      <p class="mb-8 text-base leading-7 text-gray-600 md:text-lg">
+        Das bedeutet für Sie: faire Mieten, lebenslanges Wohnrecht und ein echtes Mitspracherecht.
+        Unsere Mitglieder wählen den Aufsichtsrat und gestalten die Zukunft der Genossenschaft aktiv mit -
+        gelebte Demokratie im Wohnungswesen, jedes Jahr aufs Neue bei unserer Mitgliederversammlung.
+      </p>
+      <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <li class="flex items-center gap-3">
+          <span class="bgp-bg-yellow inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
+            <i class="bi bi-check-lg bgp-text-navy-dark text-sm"></i>
+          </span>
+          <span class="text-sm font-semibold text-gray-800">Faire, stabile Mieten</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="bgp-bg-yellow inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
+            <i class="bi bi-check-lg bgp-text-navy-dark text-sm"></i>
+          </span>
+          <span class="text-sm font-semibold text-gray-800">Lebenslanges Wohnrecht</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="bgp-bg-yellow inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
+            <i class="bi bi-check-lg bgp-text-navy-dark text-sm"></i>
+          </span>
+          <span class="text-sm font-semibold text-gray-800">Mitspracherecht als Mitglied</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="bgp-bg-yellow inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
+            <i class="bi bi-check-lg bgp-text-navy-dark text-sm"></i>
+          </span>
+          <span class="text-sm font-semibold text-gray-800">3&nbsp;% Dividende auf Anteile</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2" data-aos="fade-left">
+      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7">
+        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
+          <i class="bi bi-building text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Wir über uns</h3>
+        <p class="text-sm leading-6 text-gray-600">Gepflegte Wohngebäude an zentralen und ruhigen Lagen in Plattling - mit Weitblick verwaltet und regelmäßig modernisiert.</p>
+      </div>
+      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7">
+        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
+          <i class="bi bi-diagram-3 text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Organe</h3>
+        <p class="text-sm leading-6 text-gray-600">Vorstand und Aufsichtsrat arbeiten ehrenamtlich und transparent - gewählt von den Mitgliedern der Genossenschaft.</p>
+      </div>
+      <div class="bgp-bg-ice bgp-card-hover rounded-2xl p-7 sm:col-span-2">
+        <span class="bgp-bg-navy inline-flex h-12 w-12 items-center justify-center rounded-xl text-white">
+          <i class="bi bi-hourglass-split text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Historie seit 1921</h3>
+        <p class="text-sm leading-6 text-gray-600">Über ein Jahrhundert Genossenschaftsgeschichte in Plattling: vom Wiederaufbau bis zur laufenden Modernisierung unserer Objekte. Mitglieder wie das Bezirksklinikum Mainkofen halten uns seit über 70 Jahren die Treue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERMIETUNG -->
+<section id="vermietung" class="bgp-bg-ice px-4 py-20 lg:py-28">
+  <div class="mx-auto max-w-6xl">
+    <div class="mx-auto mb-14 max-w-2xl text-center" data-aos="fade-up">
+      <p class="bgp-text-navy mb-4 text-sm font-semibold uppercase tracking-widest">Vermietung</p>
+      <h2 class="bgp-text-navy-dark mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Ihr neues Zuhause in Plattling</h2>
+      <p class="text-base leading-7 text-gray-600 md:text-lg">
+        Wir vermieten gepflegte Wohnungen an unsere Mitglieder - für Singles, Paare und Familien.
+        Voraussetzung ist die Mitgliedschaft in der Genossenschaft: Der Erwerb von Geschäftsanteilen
+        macht Sie zum Miteigentümer und sichert Ihr Wohnrecht langfristig.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="bgp-card-hover rounded-2xl bg-white p-7 shadow-md" data-aos="fade-up" data-aos-delay="0">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-house-door text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Mietangebote</h3>
+        <p class="text-sm leading-6 text-gray-600">Aktuelle freie Wohnungen auf einen Blick - fragen Sie gerne auch telefonisch nach kommenden Angeboten.</p>
+      </div>
+      <div class="bgp-card-hover rounded-2xl bg-white p-7 shadow-md" data-aos="fade-up" data-aos-delay="100">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-buildings text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Unsere Objekte</h3>
+        <p class="text-sm leading-6 text-gray-600">Unsere Wohnanlagen in Plattling - zentral gelegen, gepflegt und laufend modernisiert.</p>
+      </div>
+      <div class="bgp-card-hover rounded-2xl bg-white p-7 shadow-md" data-aos="fade-up" data-aos-delay="200">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-file-earmark-text text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Bewerbungsformular</h3>
+        <p class="text-sm leading-6 text-gray-600">Interesse an einer Wohnung? Mit dem Bewerbungsformular nehmen wir Sie in unsere Interessentenliste auf.</p>
+      </div>
+      <div class="bgp-card-hover rounded-2xl bg-white p-7 shadow-md" data-aos="fade-up" data-aos-delay="300">
+        <span class="bgp-bg-ice-deep bgp-text-navy inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-info-circle text-xl"></i>
+        </span>
+        <h3 class="bgp-text-navy-dark mb-2 mt-4 text-lg font-bold">Wichtige Mieterinfos</h3>
+        <p class="text-sm leading-6 text-gray-600">Alles Wissenswerte für unsere Mieter - von Nebenkosten bis zu aktuellen Hinweisen rund um Ihre Wohnung.</p>
+      </div>
+    </div>
+
+    <div class="mt-10 text-center" data-aos="fade-up">
+      <a href="#kontakt" class="bgp-btn-navy inline-flex items-center gap-2 rounded-xl px-7 py-4 text-base font-bold shadow-lg transition-transform duration-300 hover:-translate-y-1">
+        Verfügbare Objekte erfragen <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- AKTUELLES -->
+<section id="aktuelles" class="bg-white px-4 py-20 lg:py-28">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between" data-aos="fade-up">
+      <div>
+        <p class="bgp-text-navy mb-4 text-sm font-semibold uppercase tracking-widest">Aktuelles</p>
+        <h2 class="bgp-text-navy-dark text-3xl font-bold tracking-tight sm:text-4xl">Neuigkeiten aus der Genossenschaft</h2>
+      </div>
+      <p class="text-sm text-gray-500">Ältere Meldungen finden Sie in unserem Meldungsarchiv.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" data-aos="fade-up" data-aos-delay="0">
+        <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Stellenangebot</span>
+          <span class="bgp-text-yellow text-xs font-bold">09.07.2026</span>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Kaufmännischer Mitarbeiter (m/w/d) in Teilzeit gesucht</h3>
+          <p class="flex-1 text-sm leading-6 text-gray-600">Wir suchen Verstärkung für unsere Verwaltung. Alle Details finden Sie in der Stellenbeschreibung - bei Fragen stehen wir gerne zur Verfügung.</p>
+          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+            <i class="bi bi-file-earmark-pdf"></i> Stellenanzeige ansehen
+          </span>
+        </div>
+      </article>
+
+      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" data-aos="fade-up" data-aos-delay="100">
+        <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Versammlung</span>
+          <span class="bgp-text-yellow text-xs font-bold">01.07.2026</span>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">Mitgliederversammlung 2026</h3>
+          <p class="flex-1 text-sm leading-6 text-gray-600">Reges Interesse im "Hotel Zur Isar": Sebastian Lallinger (Vorstand) und Bürgermeister Hans Schmalhofer (Aufsichtsrat) wurden für weitere drei Jahre bestätigt. Die Dividende bleibt bei 3&nbsp;%.</p>
+          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+            <i class="bi bi-arrow-right"></i> Mehr erfahren
+          </span>
+        </div>
+      </article>
+
+      <article class="bgp-card-hover flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="200">
+        <div class="bgp-bg-navy flex items-center justify-between px-6 py-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-white/80">Jubiläum</span>
+          <span class="bgp-text-yellow text-xs font-bold">01.07.2025</span>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="bgp-text-navy-dark mb-3 text-lg font-bold leading-snug">25 Jahre im Dienst: Norbert Kirchberger</h3>
+          <p class="flex-1 text-sm leading-6 text-gray-600">Wir gratulieren unserem Hausmeister herzlich zum 25-jährigen Dienstjubiläum! Mit Kompetenz und seiner freundlichen Art ist er bei Mietern wie Kollegen gleichermaßen geschätzt.</p>
+          <span class="bgp-text-navy mt-4 inline-flex items-center gap-2 text-sm font-bold">
+            <i class="bi bi-arrow-right"></i> Mehr erfahren
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt" class="bgp-bg-navy-deep px-4 py-20 text-white lg:py-28">
+  <div class="mx-auto max-w-6xl">
+    <div class="mx-auto mb-14 max-w-2xl text-center" data-aos="fade-up">
+      <p class="bgp-text-yellow mb-4 text-sm font-semibold uppercase tracking-widest">Kontakt</p>
+      <h2 class="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">So erreichen Sie uns</h2>
+      <p class="bgp-text-ice text-base leading-7 md:text-lg">Wir sind persönlich für Sie da - rufen Sie uns an oder besuchen Sie uns in der Schillerstraße.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-2xl bg-white/5 p-7 ring-1 ring-white/10" data-aos="fade-up" data-aos-delay="0">
+        <span class="bgp-bg-yellow inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-geo-alt bgp-text-navy-dark text-xl"></i>
+        </span>
+        <h3 class="mb-2 mt-4 text-lg font-bold">Anschrift</h3>
+        <p class="bgp-text-ice text-sm leading-6">Baugenossenschaft Plattling eG<br />Schillerstr. 6b<br />94447 Plattling</p>
+      </div>
+      <div class="rounded-2xl bg-white/5 p-7 ring-1 ring-white/10" data-aos="fade-up" data-aos-delay="100">
+        <span class="bgp-bg-yellow inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-telephone bgp-text-navy-dark text-xl"></i>
+        </span>
+        <h3 class="mb-2 mt-4 text-lg font-bold">Telefon &amp; Fax</h3>
+        <p class="bgp-text-ice text-sm leading-6">
+          Tel: <a href="tel:0993189007300" class="font-semibold text-white hover:underline">09931 890073-0</a><br />
+          Fax: 09931 890073-9
+        </p>
+      </div>
+      <div class="rounded-2xl bg-white/5 p-7 ring-1 ring-white/10" data-aos="fade-up" data-aos-delay="200">
+        <span class="bgp-bg-yellow inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-envelope bgp-text-navy-dark text-xl"></i>
+        </span>
+        <h3 class="mb-2 mt-4 text-lg font-bold">E-Mail</h3>
+        <p class="bgp-text-ice break-words text-sm leading-6">
+          <a href="mailto:info@baugenossenschaft-plattling.de" class="font-semibold text-white hover:underline">info@baugenossenschaft-plattling.de</a>
+        </p>
+      </div>
+      <div class="rounded-2xl bg-white/5 p-7 ring-1 ring-white/10" data-aos="fade-up" data-aos-delay="300">
+        <span class="bgp-bg-yellow inline-flex h-12 w-12 items-center justify-center rounded-xl">
+          <i class="bi bi-clock bgp-text-navy-dark text-xl"></i>
+        </span>
+        <h3 class="mb-2 mt-4 text-lg font-bold">Öffnungszeiten</h3>
+        <p class="bgp-text-ice text-sm leading-6">Montag / Mittwoch / Freitag<br />jeweils 08:00 - 12:00 Uhr</p>
+        <p class="mt-2 text-xs text-white/50">An Brückentagen ist unser Büro geschlossen.</p>
+      </div>
+    </div>
+
+    <div class="mt-14 border-t border-white/10 pt-10 text-center" data-aos="fade-up">
+      <p class="bgp-text-ice mb-5 text-sm">Sie haben Fragen oder möchten Mitglied werden?</p>
+      <a href="tel:0993189007300" class="bgp-btn-yellow inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-bold shadow-xl transition-transform duration-300 hover:-translate-y-1">
+        <i class="bi bi-telephone-fill"></i> 09931 890073-0
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
+
+{% block footer %}
+<footer class="bgp-bg-navy-deep border-t border-white/10 px-4 py-10 text-sm text-white/60">
+  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
+    <div class="flex items-center gap-3">
+      <img src="{% static 'images/demos/bgp/logo-icon.png' %}" alt="" class="h-9 w-auto" />
+      <div>
+        <p class="font-bold text-white">Baugenossenschaft Plattling eG</p>
+        <p class="text-xs">Schillerstr. 6b · 94447 Plattling · seit 1921</p>
+      </div>
+    </div>
+    <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2" aria-label="Rechtliches">
+      <span class="cursor-default hover:text-white">Kontakt</span>
+      <span class="cursor-default hover:text-white">Impressum</span>
+      <span class="cursor-default hover:text-white">Satzung</span>
+      <span class="cursor-default hover:text-white">Datenschutz</span>
+    </nav>
+  </div>
+</footer>
+{% endblock footer %}
+
+{% block javascriptend %}
+<script src="{% static 'js/aos.js' %}"></script>
+<script>
+  AOS.init({ duration: 700, once: true, easing: 'ease-out', disable: 'phone' });
+
+  var bgpToggle = document.getElementById('bgpMenuToggle');
+  var bgpMenu = document.getElementById('bgpMobileMenu');
+  bgpToggle.addEventListener('click', function () {
+    var open = !bgpMenu.classList.contains('hidden');
+    bgpMenu.classList.toggle('hidden');
+    bgpToggle.setAttribute('aria-expanded', String(!open));
+  });
+  bgpMenu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      bgpMenu.classList.add('hidden');
+      bgpToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
+{% endblock javascriptend %}

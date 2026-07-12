@@ -3174,6 +3174,37 @@ def team_member_list(request):
     }
     return render(request, 'pages/cms/team/team.html', context)
 
+# Kunden-Demos: statische Übersicht, keine DB-Objekte (bewusst hart codiert)
+DEMO_PROJECTS = [
+    {
+        "slug": "baugenossenschaft-plattling",
+        "customer": "Baugenossenschaft Plattling eG",
+        "title": "Landingpage-Demo: Baugenossenschaft Plattling eG",
+        "description": "Modernisierte Landingpage im Original-Farbschema (Schieferblau/Gelb) mit echten Inhalten der Bestandsseite.",
+        "icon": "bi-buildings",
+        "tone": "slate",
+    },
+    {
+        "slug": "musterkunde",
+        "customer": "Café Musterkunde",
+        "title": "Landingpage-Demo: Café Musterkunde",
+        "description": "Beispiel-Landingpage für ein fiktives Café - als Vorlage für Kundenpräsentationen.",
+        "icon": "bi-cup-hot",
+        "tone": "amber",
+    },
+]
+
+@login_required(login_url='login')
+def cms_demos_view(request):
+    return render(request, 'pages/cms/demos/demos.html', {'demos': DEMO_PROJECTS})
+
+@login_required(login_url='login')
+def cms_demo_detail(request, slug):
+    demo = next((d for d in DEMO_PROJECTS if d["slug"] == slug), None)
+    if demo is None:
+        raise Http404("Demo nicht gefunden.")
+    return render(request, f'pages/demos/{slug}.html', {'demo': demo})
+
 from django.db.models import Max
 
 # View to handle the creation of a TeamMember
