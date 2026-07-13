@@ -3199,23 +3199,27 @@ DEMO_SUBPAGES = {
     "baugenossenschaft-plattling": ["kontakt", "aktuelles"],
 }
 
+def _demo_noindex(response):
+    # Demos sind ohne Login erreichbar, duerfen aber nicht in Suchmaschinen landen.
+    response['X-Robots-Tag'] = 'noindex, nofollow'
+    return response
+
 @login_required(login_url='login')
 def cms_demos_view(request):
     return render(request, 'pages/cms/demos/demos.html', {'demos': DEMO_PROJECTS})
 
-@login_required(login_url='login')
+# Bewusst ohne Login: Kunden bekommen den Demo-Link direkt zugeschickt.
 def cms_demo_detail(request, slug):
     demo = next((d for d in DEMO_PROJECTS if d["slug"] == slug), None)
     if demo is None:
         raise Http404("Demo nicht gefunden.")
-    return render(request, f'pages/demos/{slug}.html', {'demo': demo, 'demo_page': 'start'})
+    return _demo_noindex(render(request, f'pages/demos/{slug}.html', {'demo': demo, 'demo_page': 'start'}))
 
-@login_required(login_url='login')
 def cms_demo_subpage(request, slug, subpage):
     demo = next((d for d in DEMO_PROJECTS if d["slug"] == slug), None)
     if demo is None or subpage not in DEMO_SUBPAGES.get(slug, []):
         raise Http404("Demo-Unterseite nicht gefunden.")
-    return render(request, f'pages/demos/{slug}-{subpage}.html', {'demo': demo, 'demo_page': subpage})
+    return _demo_noindex(render(request, f'pages/demos/{slug}-{subpage}.html', {'demo': demo, 'demo_page': subpage}))
 
 from django.db.models import Max
 
