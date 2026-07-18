@@ -96,10 +96,8 @@
 </div>
 
 <!-- Modal zum Erstellen/Bearbeiten eines Teammitglieds -->
-<div id="teamMemberModal" class="fixed inset-0 z-[75] hidden bg-slate-900/60 backdrop-blur-sm sm:p-4"
-  onclick="closeModalOnClickOutside(event)">
-  <div class="mx-auto flex h-[100dvh] w-full max-w-5xl flex-col overflow-y-auto bg-white shadow-xl sm:h-auto sm:max-h-[90dvh] sm:rounded-2xl lg:flex-row"
-    onclick="event.stopPropagation()">
+<div id="teamMemberModal" class="fixed inset-0 z-[75] hidden items-center justify-center overflow-y-auto bg-slate-900/60 p-3 backdrop-blur-sm sm:p-6">
+  <div class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-y-auto rounded-2xl bg-white shadow-xl sm:max-h-[calc(100dvh-3rem)] lg:flex-row">
 
     <!-- Eingabeformular -->
     <form id="teamMemberForm" class="w-full space-y-4 p-5 sm:p-6 lg:w-2/3">

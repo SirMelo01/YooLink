@@ -2,6 +2,7 @@ let teamImageLibraryItems = [];
 
 $(document).ready(function () {
     let memberIdToDelete = null;
+    const $teamMemberModal = $('#teamMemberModal');
     const $imageModal = $('#imageModal');
     const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
@@ -75,7 +76,7 @@ $(document).ready(function () {
         $('#modalTitle').text('Neues Teammitglied erstellen');
         $('#modalSubmitLabel').text('Erstellen');
         setTeamPreviewImage('');  // Bildvorschau zurücksetzen
-        $('#teamMemberModal').removeClass('hidden');  // Modal anzeigen
+        openTeamMemberModal();  // Modal anzeigen
     });
 
     // Funktion zum Bearbeiten eines bestehenden Teammitglieds (Event-Delegation)
@@ -121,7 +122,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 sendNotif(response.success || 'Daten erfolgreich verarbeitet', "success");
-                $('#teamMemberModal').addClass('hidden');
+                closeTeamMemberModal();
 
                 if (isNewMember) {
                     const newId = response.member_id;
@@ -219,19 +220,14 @@ $(document).ready(function () {
     });
 
     // Funktion, um das Create-Modal zu schließen, wenn außerhalb geklickt wird und Image-Modal nicht sichtbar ist
-    function closeModalOnClickOutside(event) {
-        const teamMemberModal = document.getElementById('teamMemberModal');
+    $teamMemberModal.on('click', function (event) {
         const imageModal = document.getElementById('imageModal');
 
         // Überprüfen, ob der Klick außerhalb des Modals und das Image-Select-Modal nicht sichtbar ist
-        if (event.target === teamMemberModal && imageModal.classList.contains('hidden')) {
-            closeModal();
+        if (event.target === this && imageModal.classList.contains('hidden')) {
+            closeTeamMemberModal();
         }
-    }
-
-    function closeModal() {
-        document.getElementById('teamMemberModal').classList.add('hidden');
-    }
+    });
 
     // Klick-Event für den Abbrechen-Button im Bestätigungs-Modal
     $('#bDeclineDelete').click(function () {
@@ -297,9 +293,17 @@ $(document).ready(function () {
     loadImages(false);
 });
 
-// Modal schließen
+// Modal öffnen/schließen
+function openTeamMemberModal() {
+    $('#teamMemberModal').removeClass('hidden').addClass('flex');
+}
+
+function closeTeamMemberModal() {
+    $('#teamMemberModal').addClass('hidden').removeClass('flex');
+}
+
 function closeModal() {
-    $('#teamMemberModal').addClass('hidden');
+    closeTeamMemberModal();
 }
 
 /**
@@ -618,7 +622,7 @@ function openEditModal(memberId) {
             $('#modalSubmitLabel').text('Speichern');
 
             // Zeige das Modal an
-            $('#teamMemberModal').removeClass('hidden');
+            openTeamMemberModal();
         },
         error: function () {
             sendNotif('Fehler beim Laden der Teammitglied-Daten.', 'error');
